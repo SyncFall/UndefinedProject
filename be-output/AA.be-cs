@@ -1,0 +1,17 @@
+using System;
+using System.IO;
+
+namespace AA
+{
+	public class TestObject
+	{
+		public int number = 528;
+		public string str1 = "Symmetry";
+
+		public string testMethod()
+		{
+			return "you!";
+		}
+
+	}
+}

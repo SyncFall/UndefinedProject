@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{081915F2-F76D-4943-815E-A3523DC20A67}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Be</RootNamespace>
+    <AssemblyName>Be.Runtime</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TRACK</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>SPEED</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <CodeAnalysisRuleSet>BasicDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Be.BeEntry</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Runtime\Convert\ObjectConverter.cs" />
+    <Compile Include="Runtime\Format\CharFormat.cs" />
+    <Compile Include="Runtime\Format\NumberFormat.cs" />
+    <Compile Include="Runtime\Format\StringFormat.cs" />
+    <Compile Include="Runtime\ObjectLoader.cs" />
+    <Compile Include="Runtime\Symbol\SymbolContainer.cs" />
+    <Compile Include="Runtime\Symbol\SymbolParser.cs" />
+    <Compile Include="Runtime\Token\Keywords.cs" />
+    <Compile Include="Runtime\Token\Literals.cs" />
+    <Compile Include="Runtime\Token\TokenLiteralParser.cs" />
+    <Compile Include="Runtime\Token\TokenContainer.cs" />
+    <Compile Include="Runtime\Token\TokenTextParser.cs" />
+    <Compile Include="Runtime\Token\TokenParser.cs" />
+    <Compile Include="Runtime\Types\AnonType.cs" />
+    <Compile Include="Runtime\Types\AttrType.cs" />
+    <Compile Include="Runtime\Types\ConstructorType.cs" />
+    <Compile Include="Runtime\Types\InterfaceType.cs" />
+    <Compile Include="Runtime\Types\PropertySymbol.cs" />
+    <Compile Include="Runtime\Token\Tokens.cs" />
+    <Compile Include="Runtime\Types\UtilType.cs" />
+    <Compile Include="Runtime\Validate\CodeValidator.cs" />
+    <Compile Include="Runtime\Validate\GenericsValidator.cs" />
+    <Compile Include="Runtime\Validate\ImplemenationValidator.cs" />
+    <Compile Include="Runtime\Validate\InterfaceValidator.cs" />
+    <Compile Include="Runtime\Parse\ArrayParser.cs" />
+    <Compile Include="Runtime\Parse\ExpressionParser.cs" />
+    <Compile Include="Runtime\Parse\GenericsParser.cs" />
+    <Compile Include="Runtime\Types\AccessorType.cs" />
+    <Compile Include="Runtime\Types\ArrayType.cs" />
+    <Compile Include="Runtime\Types\AttributeType.cs" />
+    <Compile Include="Runtime\Types\CodeType.cs" />
+    <Compile Include="Runtime\Types\CollectionType.cs" />
+    <Compile Include="Runtime\Types\ExceptionType.cs" />
+    <Compile Include="Runtime\Types\ExpressionOperatorType.cs" />
+    <Compile Include="Runtime\Types\Extend.cs" />
+    <Compile Include="Runtime\Types\GenericType.cs" />
+    <Compile Include="Runtime\Types\Implement.cs" />
+    <Compile Include="Runtime\Types\NativeType.cs" />
+    <Compile Include="Runtime\Types\SourceFile.cs" />
+    <Compile Include="Runtime\Types\EnumType.cs" />
+    <Compile Include="Runtime\Types\ParameterType.cs" />
+    <Compile Include="Runtime\Types\MethodType.cs" />
+    <Compile Include="Runtime\Types\MemberType.cs" />
+    <Compile Include="Runtime\Types\ObjectType.cs" />
+    <Compile Include="Main\Const.cs" />
+    <Compile Include="Runtime\Types\StatementType.cs" />
+    <Compile Include="Runtime\Types\ExpressionType.cs" />
+    <Compile Include="Runtime\Types\NamespaceType.cs" />
+    <Compile Include="Runtime\Types\Using.cs" />
+    <Compile Include="Runtime\Types\OperandType.cs" />
+    <Compile Include="Runtime\Types\OperandOperatorType.cs" />
+    <Compile Include="Runtime\Types\OperationType.cs" />
+    <Compile Include="Main\Main.cs" />
+    <Compile Include="Runtime\Parse\CodeParser.cs" />
+    <Compile Include="Runtime\Parse\SourceParser.cs" />
+    <Compile Include="Runtime\Parse\TextParser.cs" />
+    <Compile Include="Main\Utils.cs" />
+    <Compile Include="Runtime\Types\VariableType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

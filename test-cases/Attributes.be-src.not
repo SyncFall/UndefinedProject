@@ -1,0 +1,41 @@
+package AA;
+
+[TestAttrA(str = "str"), TestAttrB(1, 2, "str"), TestAttrC(1, 2, "str", number = 3)]
+object TestAttrObject
+{
+	[TestAttrA]
+	TestAttrObject()
+	{ }
+
+	[TestAttrB(1, 2, "str")]
+	void TestMethod()
+	{ }
+}
+
+object TestAttrA
+{
+	string str;
+
+	TestAttrA()
+	{
+	
+	}
+}
+
+object TestAttrB
+{
+	TestAttrB(int a, int b, string c)
+	{
+
+	}
+}
+
+object TestAttrC
+{
+	int number;
+
+	TestAttrC(int a, int b, string c)
+	{
+
+	}
+}

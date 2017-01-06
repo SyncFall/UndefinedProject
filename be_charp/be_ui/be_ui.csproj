@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{996F03D6-43AF-446C-B05F-57F86E6E7168}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Be.UI</RootNamespace>
+    <AssemblyName>Be.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Be.UI.BeEntry</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="SharpFont, Version=4.0.1.200, Culture=neutral, PublicKeyToken=48add4c483071cdf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\SharpFont.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Cases\FontDraw.cs" />
+    <Compile Include="Cases\SurfaceDraw.cs" />
+    <Compile Include="Cases\CurveDraw.cs" />
+    <Compile Include="Cases\PolygonDraw.cs" />
+    <Compile Include="Cases\RectDraw.cs" />
+    <Compile Include="Cases\ScreenDraw.cs" />
+    <Compile Include="Integrator\CodeView\CodeAssistent.cs" />
+    <Compile Include="Integrator\CodeView\CodeColor.cs" />
+    <Compile Include="Integrator\CodeView\CodeContainer.cs" />
+    <Compile Include="Integrator\CodeView\CodeCursor.cs" />
+    <Compile Include="Integrator\CodeView\CodeHistory.cs" />
+    <Compile Include="Integrator\CodeView\CodeInput.cs" />
+    <Compile Include="Integrator\CodeView\CodeSelection.cs" />
+    <Compile Include="Integrator\CodeView\CodeMessage.cs" />
+    <Compile Include="Integrator\CodeView\CodeText.cs" />
+    <Compile Include="Integrator\CodeView\CodeView.cs" />
+    <Compile Include="Integrator\FpsCounter.cs" />
+    <Compile Include="Integrator\IntegratorView.cs" />
+    <Compile Include="Other\CollectionType.cs" />
+    <Compile Include="Other\DrawUtils.cs" />
+    <Compile Include="Cases\LineDraw.cs" />
+    <Compile Include="Cases\TrackBox.cs" />
+    <Compile Include="Other\GeometryUtils.cs" />
+    <Compile Include="Other\Utils.cs" />
+    <Compile Include="Types\Buffer.cs" />
+    <Compile Include="Types\Glyph.cs" />
+    <Compile Include="Types\Input.cs" />
+    <Compile Include="Types\LineCurve.cs" />
+    <Compile Include="Types\Font.cs" />
+    <Compile Include="Types\Point.cs" />
+    <Compile Include="Types\Polygon.cs" />
+    <Compile Include="Types\Position.cs" />
+    <Compile Include="Types\Rect.cs" />
+    <Compile Include="Types\Screen.cs" />
+    <Compile Include="Types\Shader.cs" />
+    <Compile Include="Types\Size.cs" />
+    <Compile Include="Types\SurfacePatch.cs" />
+    <Compile Include="Types\Texture.cs" />
+    <Compile Include="Types\ToolBox.cs" />
+    <Compile Include="Types\Window.cs" />
+    <Compile Include="Main\Main.cs" />
+    <Compile Include="Types\Mouse.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\be_lang\be_lang.csproj">
+      <Project>{081915f2-f76d-4943-815e-a3523dc20a67}</Project>
+      <Name>be_lang</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
