@@ -28,6 +28,13 @@ namespace Be.Runtime.Types
         public UsingCollection Usings = new UsingCollection();
         public NamespaceCollection Namespaces = new NamespaceCollection();
 
+        public static SourceFile FromText(string text)
+        {
+            SourceFile sourceFile = new SourceFile();
+            sourceFile.SetText(text);
+            return sourceFile;
+        }
+
         public SourceFile()
         {}
 
@@ -41,9 +48,10 @@ namespace Be.Runtime.Types
             this.Source = File.ReadAllText(this.Filepath).Replace("\r", "");
         }
 
-        public void Set(string Source)
+        public SourceFile SetText(string Source)
         {
             this.Source = Source;
+            return this;
         }
 
         public void Parse()

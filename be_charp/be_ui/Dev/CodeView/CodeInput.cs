@@ -1,4 +1,5 @@
 ﻿using Be.Integrator;
+using Be.UI;
 using Be.UI.Types;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,29 @@ namespace Be.Integrator
 
         public bool MouseInputs(InputEvent InputEvent)
         {
+            if(InputEvent.IsMouseButton())
+            {
+                MouseButtonState buttonState = InputEvent.GetMouseButtonEvent().State;
+                if(buttonState.IsDown && buttonState.Button == MouseButton.Left)
+                {
+                    MouseCursorState cursorState = Input.Mouse.GetCursorState();
+                    CodeText.CodeCursor.SetCursor(cursorState.X, cursorState.Y);
+                    CodeText.CodeSelection.Begin(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
+                    CodeText.CodeCursor.CursorBlink.Reset();
+                    return true;
+                }
+            }
+            else if(InputEvent.IsMouseCursor())
+            {
+                MouseCursorState cursorState = InputEvent.GetMouseCursorEvent().State;
+                if (Input.Mouse.IsButtonDown(MouseButton.Left))
+                {
+                    CodeText.CodeCursor.SetCursor(cursorState.X, cursorState.Y);
+                    CodeText.CodeSelection.End(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
+                    CodeText.CodeCursor.CursorBlink.Reset();
+                    return true;
+                }
+            }
             return false;
         }
 
@@ -43,6 +67,7 @@ namespace Be.Integrator
                 bool isClick = keyState.IsClick;
 
                 // cursor-navigation
+                bool cursorNavigation = true;
                 if (key == Key.Left && isDown)
                 {
                     CodeText.CodeCursor.CursorLeft();
@@ -61,21 +86,25 @@ namespace Be.Integrator
                 }
                 else
                 {
-                    return false;
+                    cursorNavigation = false;
                 }
 
                 // code-selection
-                if(Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight))
-                {
-                    CodeText.CodeSelection.End(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
-                }
-                else
+                if (keyState.IsClick && (keyState.Key == Key.ShiftLeft || keyState.Key == Key.ShiftRight))
                 {
                     CodeText.CodeSelection.Begin(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
                 }
+                else if(cursorNavigation && (Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight)))
+                {
+                    CodeText.CodeSelection.End(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
+                }
+                else if(cursorNavigation)
+                {
+                    CodeText.CodeSelection.Clear();
+                }
 
                 CodeText.CodeCursor.CursorBlink.Reset();
-                return true;
+                return false;
             }
             return false;
         }
@@ -115,12 +144,28 @@ namespace Be.Integrator
                     CodeText.CodeContainer.Save();
                 }
             }
+            // paste
+            else if (isClick && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.V)
+            {
+                if (isClick)
+                {
+                    CodeText.CodeCursor.Paste();
+                }
+            }
             // cut
             else if(isClick && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.X)
             {
                 if(isClick)
                 {
-                    ;//
+                    CodeText.CodeCursor.Cut();
+                }
+            }
+            // copy
+            else if (isClick && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.C)
+            {
+                if (isClick)
+                {
+                    CodeText.CodeCursor.Copy();
                 }
             }
             // undo

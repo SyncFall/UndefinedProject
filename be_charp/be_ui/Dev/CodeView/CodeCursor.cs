@@ -71,6 +71,138 @@ namespace Be.Integrator
             this.CursorPreferedPosition = this.CursorPosition;
         }
 
+        public void Paste()
+        {
+            string insertText = Clipboard.GetText();
+            if (insertText != null && insertText.Length > 0)
+            {
+                TextInsert(insertText);
+            }
+        }
+
+        public void Copy()
+        {
+            CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
+            if (selection.HasSelection())
+            {
+                string sourceText = CodeText.SourceFile.Source;
+                StringBuilder strBuilder = new StringBuilder();
+                int line = 0, cursor = 0;
+                bool copy = false;
+                for (int i = 0; i < sourceText.Length; i++, cursor++)
+                {
+                    if (line == selection.StartLinePosition && cursor == selection.StartCursorPosition)
+                    {
+                        copy = true;
+                    }
+                    else if(line == selection.EndLinePosition && cursor == selection.EndCursorPosition)
+                    {
+                        copy = false;
+                    }
+                    if(copy)
+                    {
+                        strBuilder.Append(sourceText[i]);
+                    }
+                    if(sourceText[i] == '\n')
+                    {
+                        line++;
+                        cursor = -1;
+                    }
+                }
+                Clipboard.SetText(strBuilder.ToString().Replace("\n", "\r\n"));
+            }
+        }
+
+        public void Cut()
+        {
+            CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
+            if (selection.HasSelection())
+            {
+                string sourceText = CodeText.SourceFile.Source;
+                StringBuilder strBuilder = new StringBuilder(sourceText.Length);
+                StringBuilder strBuilderCut = new StringBuilder();
+                int line = 0, cursor = 0;
+                bool cut = false;
+                for (int i = 0; i < sourceText.Length; i++, cursor++)
+                {
+                    if (line == selection.StartLinePosition && cursor == selection.StartCursorPosition)
+                    {
+                        cut = true;
+                    }
+                    else if (line == selection.EndLinePosition && cursor == selection.EndCursorPosition)
+                    {
+                        cut = false;
+                    }
+                    if (cut)
+                    {
+                        strBuilderCut.Append(sourceText[i]);
+                    }
+                    else
+                    {
+                        strBuilder.Append(sourceText[i]);
+                    }
+                    if (sourceText[i] == '\n')
+                    {
+                        line++;
+                        cursor = -1;
+                    }
+                }
+                Clipboard.SetText(strBuilderCut.ToString().Replace("\n", "\r\n"));
+                CodeText.CodeSelection.Clear();
+                CodeText.SetSourceFile(CodeText.SourceFile.SetText(strBuilder.ToString()));
+                SetPosition(selection.StartLinePosition, selection.StartCursorPosition);
+            }
+        }
+
+        public void SetCursor(int CursorX, int CursorY)
+        {
+            GlyphContainer GlyphContainer = CodeText.GlyphContainer;
+            GlyphMetrics GlyphMetrics = CodeText.CodeContainer.GlyphMetrics;
+
+            int lineNumber = ((CursorY - GlyphMetrics.TopSpace) / ((GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace)));
+            int cursorPosition = 0;
+            if(lineNumber < 0)
+            {
+                lineNumber = 0;
+            }
+            else if(lineNumber > CodeText.TokenContainer.LineCount()-1)
+            {
+                lineNumber = CodeText.TokenContainer.LineCount()-1;
+            }
+
+            string lineText = CodeText.TokenContainer.LineText(lineNumber);
+            float currentX = GlyphMetrics.LeftSpace;
+            bool cursorSet = false;
+            for (int i = 0; i < lineText.Length; i++)
+            {
+                char charCode = lineText[i];
+                if (charCode == ' ')
+                {
+                    currentX += GlyphMetrics.SpaceWidth;
+                }
+                else if (charCode == '\t')
+                {
+                    currentX += GlyphMetrics.TabWidth;
+                }
+                else
+                {
+                    Glyph glyph = GlyphContainer.GetGlyph(charCode);
+                    currentX += glyph.HoriziontalAdvance;
+                }
+                if (currentX > CursorX)
+                {
+                    CodeText.CodeCursor.SetPosition(lineNumber, i);
+                    cursorSet = true;
+                    break;
+                }
+            }
+            if (!cursorSet)
+            {
+                CodeText.CodeCursor.SetPosition(lineNumber, CodeText.TokenContainer.TextCount(lineNumber));
+                cursorSet = true;
+            }
+        }
+
         private void EnsureCursor()
         {
             if (LineNumber < 0)
@@ -93,20 +225,171 @@ namespace Be.Integrator
 
         public void TextInsert(string insertText)
         {
-            TokenContainer.InsertText(LineNumber, CursorPosition, insertText);
-            string[] insertLineSplit = insertText.Split('\n');
-            SetPosition(LineNumber + insertLineSplit.Length - 1, CursorPosition + insertLineSplit[insertLineSplit.Length - 1].Length);
+            insertText = insertText.Replace("\r", "");
+            CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
+            string sourceText = CodeText.SourceFile.Source;
+            StringBuilder strBuilder = new StringBuilder(sourceText.Length);
+            if (selection.HasSelection())
+            {
+                int line=0, cursor=0;
+                bool append = true;
+                for(int i=0; i<sourceText.Length; i++, cursor++)
+                {
+                    if(selection.StartLinePosition == line && selection.StartCursorPosition == cursor)
+                    {
+                        strBuilder.Append(insertText);
+                        append = false;
+                    }
+                    else if(selection.EndLinePosition == line && selection.EndCursorPosition == cursor)
+                    {
+                        append = true;
+                    }
+                    if (append)
+                    {
+                        strBuilder.Append(sourceText[i]);
+                    }
+                    if (sourceText[i] == '\n')
+                    {
+                        line++;
+                        cursor = -1;
+                    }
+                }
+            }
+            else
+            {
+                int line = 0, cursor = 0;
+                for (int i = 0; i < sourceText.Length; i++, cursor++)
+                {
+                    if(LineNumber == line && CursorPosition == cursor)
+                    {
+                        strBuilder.Append(insertText);
+                    }
+                    if (sourceText[i] == '\n')
+                    {
+                        line++;
+                        cursor = -1;
+                    }
+                    strBuilder.Append(sourceText[i]);
+                }
+            }
+            string[] insertLines = insertText.Split('\n');
+            int newLine = (insertLines.Length == 1 ? LineNumber : LineNumber + insertLines.Length);
+            int newCursor = (insertLines.Length == 1 ? CursorPosition + insertLines.Length : insertLines[insertLines.Length-1].Length);
+            CodeText.SetSourceFile(CodeText.SourceFile.SetText(strBuilder.ToString()));
+            CodeText.CodeSelection.Clear();
+            SetPosition(newLine, newCursor);
         }
 
         public void KeyBackspace()
         {
-            TokenContainer.DeleteText(LineNumber, (CursorPosition-1), 1);
-            CursorLeft();
+            if(LineNumber == 0 && CursorPosition == 0)
+            {
+                return;
+            }
+            CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
+            string sourceText = CodeText.SourceFile.Source;
+            StringBuilder strBuilder = new StringBuilder(sourceText.Length);
+            if(selection.HasSelection())
+            {
+                int line = 0, cursor = 0;
+                bool append = true;
+                for (int i = 0; i < sourceText.Length; i++, cursor++)
+                {
+                    if (selection.StartLinePosition == line && selection.StartCursorPosition == cursor)
+                    {
+                        append = false;
+                    }
+                    else if (selection.EndLinePosition == line && selection.EndCursorPosition == cursor)
+                    {
+                        append = true;
+                    }
+                    if (append)
+                    {
+                        strBuilder.Append(sourceText[i]);
+                    }
+                    if (sourceText[i] == '\n')
+                    {
+                        line++;
+                        cursor = -1;
+                    }
+                }
+                SetPosition(selection.StartLinePosition, selection.StartCursorPosition);
+                CursorLeft();
+            }
+            else
+            {
+                int line = 0, cursor = 0;
+                for (int i = 0; i < sourceText.Length; i++, cursor++)
+                {
+                    if (line == LineNumber && CursorPosition == cursor)
+                    {
+                        strBuilder.Remove(i - 1, 1);
+                    }
+                    if (sourceText[i] == '\n')
+                    {
+                        line++;
+                        cursor = -1;
+                    }
+                    strBuilder.Append(sourceText[i]);
+                }
+                CursorLeft();
+            }
+            CodeText.SetSourceFile(CodeText.SourceFile.SetText(strBuilder.ToString()));
+            CodeText.CodeSelection.Clear();
         }
 
         public void KeyDelete()
         {
-            TokenContainer.DeleteText(LineNumber, CursorPosition, 1);
+            CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
+            string sourceText = CodeText.SourceFile.Source;
+            StringBuilder strBuilder = new StringBuilder(sourceText.Length);
+            if (selection.HasSelection())
+            {
+                int line = 0, cursor = 0;
+                bool append = true;
+                for (int i = 0; i < sourceText.Length; i++, cursor++)
+                {
+                    if (selection.StartLinePosition == line && selection.StartCursorPosition == cursor)
+                    {
+                        append = false;
+                    }
+                    else if (selection.EndLinePosition == line && selection.EndCursorPosition == cursor)
+                    {
+                        append = true;
+                    }
+                    if (append)
+                    {
+                        strBuilder.Append(sourceText[i]);
+                    }
+                    if (sourceText[i] == '\n')
+                    {
+                        line++;
+                        cursor = -1;
+                    }
+                }
+                CodeText.SetSourceFile(CodeText.SourceFile.SetText(strBuilder.ToString()));
+                CodeText.CodeSelection.Clear();
+                SetPosition(selection.StartLinePosition, selection.StartCursorPosition);
+            }
+            else
+            {
+                int line = 0, cursor = 0;
+                for (int i = 0; i < sourceText.Length; i++, cursor++)
+                {
+                    strBuilder.Append(sourceText[i]);
+                    if (line == LineNumber && CursorPosition == cursor && i + 1 < sourceText.Length)
+                    {
+                        strBuilder.Remove(i, 1);
+                    }
+                    if (sourceText[i] == '\n')
+                    {
+                        line++;
+                        cursor = -1;
+                    }
+                }
+                CodeText.SetSourceFile(CodeText.SourceFile.SetText(strBuilder.ToString()));
+                CodeText.CodeSelection.Clear();
+            }
         }
 
         public void KeyEnter()

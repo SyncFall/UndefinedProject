@@ -81,6 +81,8 @@ namespace Be.Integrator
                 orderedSelection.EndLinePosition = EndLinePosition;
                 orderedSelection.EndCursorPosition = EndCursorPosition;
             }
+            orderedSelection.HasSelectionBegin = HasSelectionBegin;
+            orderedSelection.HasSelectionEnd = HasSelectionEnd;
             return orderedSelection;
         }
 

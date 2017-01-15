@@ -48,20 +48,15 @@ namespace Be.Runtime
 
         public bool EqualString(string str)
         {
-            // todo: bounds check
-            for (int i = 0; i < str.Length; i++)
+            for (int i = 0; i < str.Length; i++, Position++)
             {
-                if (Text[Position] == str[i])
+                if (Text[Position] != str[i])
                 {
-                    Position++;
-                }
-                else
-                {
-                    Finish(false);
+                    Position = Start;
                     return false;
                 }
             }
-            Finish(true);
+            Start = Position;
             return true;
         }
 
@@ -133,6 +128,7 @@ namespace Be.Runtime
 
         public string GetNamePath()
         {
+            Position = Start;
             if (!Char.IsLetter(Text[Position]))
             {
                 Finish(false);

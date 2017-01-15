@@ -14,6 +14,8 @@ namespace Be.Lang
         [STAThread]
         public static int Main(string[] args)
         { 
+            
+
             ObjectLoader loader = new ObjectLoader();
 
             Utils.PrintSourceTreeStatistics(@"..\..");

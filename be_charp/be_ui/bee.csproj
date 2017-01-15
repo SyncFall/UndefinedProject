@@ -73,10 +73,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dev\CodeView\CodeTextScroller.cs" />
     <Compile Include="Dev\CodeView\CodeToken.cs" />
     <Compile Include="Lib\StringUtils.cs" />
     <Compile Include="Main\Const.cs" />
     <Compile Include="Main\LangMain.cs" />
+    <Compile Include="Main\TestMain.cs" />
     <Compile Include="Main\Utils.cs" />
     <Compile Include="UI\Cases\FontDraw.cs" />
     <Compile Include="UI\Cases\SurfaceDraw.cs" />
@@ -157,6 +159,7 @@
     <Compile Include="Lang\Validate\ImplemenationValidator.cs" />
     <Compile Include="Lang\Validate\InterfaceValidator.cs" />
     <Compile Include="UI\Types\Buffer.cs" />
+    <Compile Include="UI\Types\Clipboard.cs" />
     <Compile Include="UI\Types\Color.cs" />
     <Compile Include="UI\Types\Glyph.cs" />
     <Compile Include="UI\Types\Input.cs" />

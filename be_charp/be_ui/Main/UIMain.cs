@@ -19,26 +19,9 @@ namespace Be.UI
         [STAThread]
         public static void Main()
         {
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-
             Utils.PrintSourceTreeStatistics(@"..\..");
 
-            /*
-            FontType fontType = new FontType("Arial Black");
-
-            FontImageAtlas fontImageAtlas = new FontImageAtlas(fontType.GlyphCollection);
-            fontImageAtlas.CreateAtlas();
-
-            DistanceField distanceField = new DistanceField();
-            distanceField.CreateDistanceField(new Bitmap("ImageMap.png")).Save("DistanceField.png");
-            */
-
             new Entry().RenderCycle();
-
-            stopWatch.Stop();
-            //Console.WriteLine("\nDone in: " + Utils.FormatMilliseconds(stopWatch.ElapsedMilliseconds));
-            //Console.ReadLine();
         }
 
         public void RenderCycle()
@@ -98,8 +81,6 @@ namespace Be.UI
 
                 gameWindow.RenderFrame += (sender, e) =>
                 {
-                    Thread.Sleep(25);
-
                     /*
                     new Thread(() =>
                     {
@@ -148,7 +129,7 @@ namespace Be.UI
                 };
 
                 // Run the game at 60 updates per second
-                gameWindow.Run(90.0);
+                gameWindow.Run(60.0);
 
             };
         }

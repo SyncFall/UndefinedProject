@@ -55,6 +55,7 @@ namespace Be.Integrator
         {
             CurrentX = GlyphMetrics.LeftSpace;
             CurrentY = GlyphMetrics.TopSpace;
+
             LineNumber = 0;
 
             TokenNode node = TokenContainer.FirstLineTokenNode(LineNumber);
@@ -115,15 +116,10 @@ namespace Be.Integrator
             }
         }
 
-        private float StartX;
-        private float StartY;
-        private Glyph Glyph;
-        private float GlyphX;
-        private float GlyphY;
         public void DrawToken(TokenSymbol token, CodeColorType Color)
         {
-            StartX = CurrentX;
-            StartY = CurrentY;
+            float StartX = CurrentX;
+            float StartY = CurrentY;
 
             CodeColor.Set(Color);
 
@@ -146,9 +142,9 @@ namespace Be.Integrator
                 }
                 else
                 {
-                    Glyph = GlyphContainer.GetGlyph(charCode);
-                    GlyphX = (CurrentX + Glyph.HoriziontalBearingX);
-                    GlyphY = (CurrentY + Glyph.VerticalAdvance - Glyph.HoriziontalBearingY);
+                    Glyph Glyph = GlyphContainer.GetGlyph(charCode);
+                    float GlyphX = (CurrentX + Glyph.HoriziontalBearingX);
+                    float GlyphY = (CurrentY + Glyph.VerticalAdvance - Glyph.HoriziontalBearingY);
                     Glyph.Draw(GlyphX, GlyphY);
                     CurrentX += Glyph.HoriziontalAdvance;
                 }

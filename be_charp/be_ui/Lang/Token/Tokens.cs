@@ -72,12 +72,6 @@ namespace Be.Runtime
             new TokenSymbol(Token.WhiteSpace, TokenGroup.Space, " "),
             new TokenSymbol(Token.TabSpace, TokenGroup.Space, "\t"),
             new TokenSymbol(Token.LineSpace, TokenGroup.Space, "\n"),
-            new TokenSymbol(Token.RegionBegin, TokenGroup.Region, "#region"),
-            new TokenSymbol(Token.RegionEnd, TokenGroup.Region, "#regionend"),
-            new TokenSymbol(Token.ProcessorIf, TokenGroup.Processor, "#if"),
-            new TokenSymbol(Token.ProcessorElseIf, TokenGroup.Processor, "#elseif"),
-            new TokenSymbol(Token.ProcessorElse, TokenGroup.Processor, "#else"),
-            new TokenSymbol(Token.ProcessorEndIf, TokenGroup.Processor, "#endif"),
             new TokenSymbol(Token.Complete, TokenGroup.Statement, ";"),
             new TokenSymbol(Token.Assigment, TokenGroup.Statement, "="),
             new TokenSymbol(Token.Comma, TokenGroup.Statement, ","),
@@ -91,6 +85,14 @@ namespace Be.Runtime
             new TokenSymbol(Token.BracketEnd, TokenGroup.Block, "]"),
             new TokenSymbol(Token.ShiftBegin, TokenGroup.Block, "<"),
             new TokenSymbol(Token.ShiftEnd, TokenGroup.Block, ">"),
+            /*
+            new TokenSymbol(Token.RegionBegin, TokenGroup.Region, "#region"),
+            new TokenSymbol(Token.RegionEnd, TokenGroup.Region, "#regionend"),
+            new TokenSymbol(Token.ProcessorIf, TokenGroup.Processor, "#if"),
+            new TokenSymbol(Token.ProcessorElseIf, TokenGroup.Processor, "#elseif"),
+            new TokenSymbol(Token.ProcessorElse, TokenGroup.Processor, "#else"),
+            new TokenSymbol(Token.ProcessorEndIf, TokenGroup.Processor, "#endif"),
+            */
         };
         public static readonly MapCollection<string, TokenSymbol> StructureTokenStringMap = new MapCollection<string, TokenSymbol>();
         

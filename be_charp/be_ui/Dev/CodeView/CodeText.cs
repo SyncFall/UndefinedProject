@@ -29,6 +29,7 @@ namespace Be.Integrator
         public CodeInput CodeInput;
         public CodeSelection CodeSelection;
         public CodeHistory CodeHistory;
+        public CodeTextScroller CodeTextScroller;
         
         public CodeText(SourceFile SourceFile)
         {
@@ -44,6 +45,7 @@ namespace Be.Integrator
             this.CodeInput = new CodeInput(this);
             this.CodeSelection = new CodeSelection(this);
             this.CodeHistory = new CodeHistory(this);
+            this.CodeTextScroller = new CodeTextScroller(this);
             this.SetSourceFile(SourceFile);
         }
 

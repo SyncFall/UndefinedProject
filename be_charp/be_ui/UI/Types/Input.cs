@@ -17,10 +17,10 @@ namespace Be.UI.Types
 
     public class Input
     {
-        private static ListCollection<InputListener> InputListeners = new ListCollection<InputListener>();
+        public static ListCollection<InputListener> InputListeners = new ListCollection<InputListener>();
 
-        private static MouseState Mouse;
-        private static KeyboardState Keyboard;
+        public static MouseState Mouse;
+        public static KeyboardState Keyboard;
 
         public static void Inititialize(OpenTK.GameWindow GameWindow)
         {
@@ -261,6 +261,7 @@ namespace Be.UI.Types
             GameWindow.MouseDown += (object sender, OpenTK.Input.MouseButtonEventArgs e) =>
             {
                 MouseButtonState mouseButton = MouseButtonStates.GetValue((MouseButton)e.Button);
+                mouseButton.IsClick = (!mouseButton.IsDown ? true : false);
                 mouseButton.IsDown = true;
                 mouseButton.IsUp = false;
                 Input.FireListeners(new MouseButtonEvent(mouseButton));
