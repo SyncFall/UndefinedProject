@@ -16,13 +16,14 @@ namespace Be.Runtime
         public SymbolParser(TokenContainer TokenContainer)
         {
             this.TokenContainer = TokenContainer;
-            if (TokenContainer.AllTokens.Size() == 0)
+            if (TokenContainer.AllTokenNodes.Size() == 0)
             {
                 return;
             }
-            token = TokenContainer.AllTokens.First();
+            //token = TokenContainer.AllTokenNodes.First();
         }
 
+        /*
         public bool Next()
         {
             token = token.NextToken;
@@ -77,7 +78,7 @@ namespace Be.Runtime
 
         public bool TryRegionToken()
         {
-            if(token.Type == Token.RegionStart)
+            if(token.Type == Token.RegionBegin)
             {
                 RegionToken regionToken = token as RegionToken;
                 Next();
@@ -85,7 +86,7 @@ namespace Be.Runtime
                 {
                     regionToken.Status = new TokenStatusSymbol(TokenStatus.Error, "invalid 'region' declaration");
                 }
-                else if(token.Type != Token.NamePath)
+                else if(token.Type != Token.Identifier)
                 {
                     regionToken.Status = new TokenStatusSymbol(TokenStatus.Error, "invalid 'region' declaration");
                 }
@@ -106,7 +107,7 @@ namespace Be.Runtime
         public UsingSymbol TryUsingSymbol()
         {
             // using-keyword
-            if (token.Type == Token.Keyword && (token as KeywordToken).KeywordSymbol.Keyword == Keyword.Using)
+            if (token.Type == Token.Keyword && (token as KeywordToken).KeywordSymbol.Type == KeywordType.Using)
             {
                 KeywordToken usingToken = token as KeywordToken;
                 // space
@@ -125,7 +126,7 @@ namespace Be.Runtime
                         usingToken.Status = new TokenStatusSymbol(TokenStatus.Error, "incomplete 'using namepath declaration'");
                         break;
                     }
-                    else if (token.Type == Token.NamePath)
+                    else if (token.Type == Token.Identifier)
                     {
                         TokenSymbol nameToken = token;
                         Next();
@@ -165,7 +166,7 @@ namespace Be.Runtime
 
         public NamespaceSymbol TryNamespaceSymbol()
         {
-            if(token.Type == Token.Keyword && (token as KeywordToken).KeywordSymbol.Keyword == Keyword.Namespace)
+            if(token.Type == Token.Keyword && (token as KeywordToken).KeywordSymbol.Type == KeywordType.Namespace)
             {
                 KeywordToken namespaceToken = token as KeywordToken;
                 // space
@@ -176,7 +177,7 @@ namespace Be.Runtime
                     return null;
                 }
                 // namepath
-                if(token.Type == Token.NamePath)
+                if(token.Type == Token.Identifier)
                 {
                     Next();
                 }
@@ -188,7 +189,7 @@ namespace Be.Runtime
                 }
                 // block start
                 SpaceNext();
-                if(token.Type != Token.BlockStart)
+                if(token.Type != Token.BlockBegin)
                 {
                     token.Status = new TokenStatusSymbol(TokenStatus.Error, "- invalid 'token'\n- missing 'namespace block-start'");
                     namespaceToken.Status = new TokenStatusSymbol(TokenStatus.Error, "invalid 'namespace declaration'");
@@ -209,7 +210,7 @@ namespace Be.Runtime
                         break;
                     }
                 }
-                /*
+                
                 // block end
                 SpaceNext();
                 if(token.Type != Token.BlockEnd)
@@ -218,18 +219,18 @@ namespace Be.Runtime
                     namespaceToken.Status = new TokenStatusSymbol(TokenStatus.Error, "invalid 'namespace declaration'");
                     return null;
                 }
-                */
+                
             }
             return null;
         }
 
         public ObjectSymbol TryObjectSymbol()
         {
-            if(token.Group == TokenGroup.Keyword && (token as KeywordToken).KeywordSymbol.KeywordGroup == KeywordGroup.Accessor)
+            if(token.Group == TokenGroup.Keyword && (token as KeywordToken).KeywordSymbol.Group == KeywordGroup.Accessor)
             {
                 SpaceNext();
             }
-            if(token.Group == TokenGroup.Keyword && (token as KeywordToken).KeywordSymbol.KeywordGroup == KeywordGroup.ObjectType)
+            if(token.Group == TokenGroup.Keyword && (token as KeywordToken).KeywordSymbol.Group == KeywordGroup.ObjectType)
             {
                 SpaceNext();
                 KeywordToken objectToken = token as KeywordToken;
@@ -238,19 +239,19 @@ namespace Be.Runtime
                 {
                     objectToken.Status = new TokenStatusSymbol(TokenStatus.Error, "- invalid 'object-declaration'\n- missing 'object-name'");
                 }
-                else if(token.Type != Token.NamePath)
+                else if(token.Type != Token.Identifier)
                 {
                     objectToken.Status = new TokenStatusSymbol(TokenStatus.Error, "- invalid 'object-declaration'\n- invalid 'object-name'");
                 }
                 Next();
                 SpaceNext();
-                if(token.Type == Token.Keyword && (token as KeywordToken).KeywordSymbol.Keyword == Keyword.Extend)
+                if(token.Type == Token.Keyword && (token as KeywordToken).KeywordSymbol.Type == KeywordType.Extend)
                 {
                     Next();
                     SpaceNext();
                 }
                 
-                if(token.Type != Token.BlockStart)
+                if(token.Type != Token.BlockBegin)
                 {
                     objectToken.Status = new TokenStatusSymbol(TokenStatus.Error, "- invalid 'object-declaration'\n- invalid 'object-block-start'");
                 }
@@ -258,13 +259,13 @@ namespace Be.Runtime
                 {
                     //objectToken.Status = new TokenStatusSymbol(TokenStatus.Error, "- invalid 'object-content-block'");
                 }
-                /*
+                
                 SpaceNext();
                 if (token.Type != Token.BlockEnd)
                 {
                     objectToken.Status = new TokenStatusSymbol(TokenStatus.Error, "- invalid 'object-declaration'\n- invalid 'object-block-end'");
                 }
-                */
+                
             }
 
             return null;
@@ -284,5 +285,6 @@ namespace Be.Runtime
         {
             return false;
         }
+        */
     }
 }

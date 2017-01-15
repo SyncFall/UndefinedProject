@@ -1,0 +1,126 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Be.Runtime
+{
+    public class LiteralParser
+    {
+        public TokenReader TextParser;
+
+        public LiteralParser(TokenReader TextParser)
+        {
+            this.TextParser = TextParser;
+        }
+
+        public LiteralSymbol TryLiteral()
+        {
+            LiteralSymbol literal = null;
+            if((literal = TryString()) != null ||
+               (literal = TryChar()) != null ||
+               (literal = TryNumber()) != null ||
+               (literal = TryBool()) != null ||
+               (literal = TryNull()) != null
+            ){
+                return literal;
+            }
+            return null;
+        }
+
+        public NullLiteral TryNull()
+        {
+            if(TextParser.EqualString(LiteralConst.Null))
+            {
+                return new NullLiteral();
+            }
+            return null;
+        }
+
+        public BoolLiteral TryBool()
+        {
+            if (TextParser.EqualString(LiteralConst.True))
+            {
+                return new BoolLiteral(true);
+            }
+            else if(TextParser.EqualString(LiteralConst.False))
+            {
+                return new BoolLiteral(false);
+            }
+            return null;
+        }
+
+        public CharLiteral TryChar()
+        {
+            if (TextParser.EqualChar(LiteralConst.CharEscape))
+            {
+                int startPosition = TextParser.Position;
+                TextParser.ToCharWithoutEscapeOrFileEnd(LiteralConst.CharEscape);
+                int endPosition = TextParser.Position;
+                string dataValue = TextParser.Text.Substring(startPosition, endPosition - startPosition - 1);
+                return new CharLiteral(dataValue);
+            }
+            return null;
+        }
+
+        public StringLiteral TryString()
+        {
+            if(TextParser.EqualChar(LiteralConst.StringEscape))
+            {
+                int startPosition = TextParser.Position;
+                TextParser.ToCharWithoutEscapeOrFileEnd(LiteralConst.StringEscape);
+                int endPosition = TextParser.Position;
+                string dataValue = TextParser.Text.Substring(startPosition, endPosition - startPosition - 1);
+                return new StringLiteral(dataValue);
+            }
+            return null;
+        }
+
+        public NumberLiteral TryNumber()
+        {
+            int startPosition = TextParser.Position;
+            int idx = startPosition;
+            char chr = TextParser.Text[idx];
+            if(chr == '.' && idx + 1 < TextParser.Length)
+            {
+                chr = TextParser.Text[idx + 1];
+                idx++;
+            }
+            if (Char.IsDigit(chr))
+            {
+                for (; idx < TextParser.Length; idx++)
+                {
+                    chr = TextParser.Text[idx];
+                    if (Char.IsDigit(chr))
+                    {
+                        ;
+                    }
+                    else if(chr == '.')
+                    {
+                        ;
+                    }
+                    else if(chr == 'f' || chr == 'd' || chr == 'i' || chr == 'l')
+                    {
+                        ;
+                    }
+                    else if(chr == 'u' || chr == 's')
+                    {
+                        ;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                TextParser.Finish(idx);
+                return new NumberLiteral(TextParser.Text.Substring(startPosition, idx - startPosition));
+            }
+            // none
+            else
+            {
+                return null;
+            }
+        }
+    }
+}

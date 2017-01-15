@@ -107,7 +107,7 @@
     <Compile Include="Runtime\Types\OperandType.cs" />
     <Compile Include="Runtime\Types\OperandOperatorType.cs" />
     <Compile Include="Runtime\Types\OperationType.cs" />
-    <Compile Include="Main\Main.cs" />
+    <Compile Include="Main\LangMain.cs" />
     <Compile Include="Runtime\Parse\CodeParser.cs" />
     <Compile Include="Runtime\Parse\SourceParser.cs" />
     <Compile Include="Runtime\Parse\TextParser.cs" />

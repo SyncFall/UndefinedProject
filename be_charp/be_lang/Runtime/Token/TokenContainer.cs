@@ -26,7 +26,7 @@ namespace Be.Runtime
         public SourceFile SourceFile;
         public TokenParser Parser;
         public ListCollection<TokenSymbol> AllTokens = new ListCollection<TokenSymbol>();
-        public ListCollection<TokenLine> TokenLines = new ListCollection<TokenLine>();
+        public ListCollection<TokenLine> TokesPerLine = new ListCollection<TokenLine>();
 
         public TokenContainer()
         { }
@@ -41,16 +41,16 @@ namespace Be.Runtime
             }
             AllTokens.Add(token);
 
-            if (TokenLines.Size() == 0)
+            if (TokesPerLine.Size() == 0)
             {
-                TokenLines.Add(new TokenLine());
+                TokesPerLine.Add(new TokenLine());
             }
             if (token.Type == Token.LineSpace)
             {
-                TokenLines.Add(new TokenLine());
+                TokesPerLine.Add(new TokenLine());
                 return;
             }
-            TokenLine tokenLine = TokenLines.Get(TokenLines.Size() - 1);
+            TokenLine tokenLine = TokesPerLine.Last();
             tokenLine.Add(token);
         }
 
@@ -58,7 +58,7 @@ namespace Be.Runtime
         {
             this.SourceFile = SourceFile;
             AllTokens.Clear();
-            TokenLines.Clear();
+            TokesPerLine.Clear();
             Parser = new TokenParser(SourceFile.Source);
             while(true)
             {

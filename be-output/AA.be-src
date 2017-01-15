@@ -52,3 +52,4 @@ namespace OneThing
 	abstract object BaseOne
 	{ }
 }
+

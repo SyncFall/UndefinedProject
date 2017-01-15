@@ -126,7 +126,7 @@ namespace Be.Runtime
         public TokenSymbol PrevToken;
         public TokenSymbol NextToken;
         public TokenStatusSymbol Status;
-
+        
         public TokenSymbol(Token Type, TokenGroup Group, string TextString)
         {
             this.Type = Type;
