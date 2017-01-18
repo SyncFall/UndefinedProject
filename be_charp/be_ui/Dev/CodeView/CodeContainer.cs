@@ -62,15 +62,15 @@ namespace Be.Integrator
             while(node != null)
             {
                 TokenSymbol token = node.Token;
-                if (token.Type == Token.WhiteSpace)
+                if (token.Type == TokenType.WhiteSpace)
                 {
                     CurrentX += GlyphMetrics.SpaceWidth;
                 }
-                else if (token.Type == Token.TabSpace)
+                else if (token.Type == TokenType.TabSpace)
                 {
                     CurrentX += GlyphMetrics.TabWidth;
                 }
-                else if (token.Type == Token.LineSpace)
+                else if (token.Type == TokenType.LineSpace)
                 {
                     LineNumber++;
                     CurrentX = GlyphMetrics.LeftSpace;
@@ -84,11 +84,11 @@ namespace Be.Integrator
                 {
                     DrawToken(token, CodeColorType.Region);
                 }
-                else if (token.Type == Token.Keyword)
+                else if (token.Type == TokenType.Keyword)
                 {
                     DrawToken(token, CodeColorType.Keyword);
                 }
-                else if (token.Type == Token.Literal)
+                else if (token.Type == TokenType.Literal)
                 {
                     LiteralSymbol literal = (token as LiteralToken).LiteralSymbol;
                     if (literal.Type == LiteralType.String || literal.Type == LiteralType.Char)
@@ -104,7 +104,7 @@ namespace Be.Integrator
                         DrawToken(token, CodeColorType.Keyword);
                     }
                 }
-                else if (token.Type == Token.Unknown)
+                else if (token.Type == TokenType.Unknown)
                 {
                     DrawToken(token, CodeColorType.Normal);
                 }

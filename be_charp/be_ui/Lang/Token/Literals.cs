@@ -20,8 +20,8 @@ namespace Be.Runtime
         public static readonly string Null = "null";
         public static readonly string True = "true";
         public static readonly string False = "false";
-        public static readonly char CharEscape = '\'';
-        public static readonly char StringEscape ='"';
+        public static readonly string CharEscape = "'";
+        public static readonly string StringEscape = "\"";
     }
 
     public abstract class LiteralSymbol

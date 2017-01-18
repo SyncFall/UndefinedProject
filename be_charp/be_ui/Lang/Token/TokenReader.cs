@@ -39,8 +39,7 @@ namespace Be.Runtime
         {
             if(Text[Position] == chr)
             {
-                Position++;
-                Finish(true);
+                Start = ++Position;
                 return true;
             }
             return false;
@@ -60,7 +59,7 @@ namespace Be.Runtime
             return true;
         }
 
-        public void ToLineEndOrFileEnd()
+        public void ToLineOrFileEnd()
         {
             while(Position < Length)
             {
@@ -73,7 +72,7 @@ namespace Be.Runtime
                     break;
                 }
             }
-            Finish(true);
+            Start = Position;
         }
 
         public void ToStringOrFileEnd(string str)
@@ -99,7 +98,7 @@ namespace Be.Runtime
                     break;
                 }
             }
-            Finish(true);
+            Start = Position;
         }
 
         public void ToCharWithoutEscapeOrFileEnd(char chr)
@@ -108,7 +107,7 @@ namespace Be.Runtime
             {
                 if (Text[Position] == chr)
                 {
-                    if ((Position < Length && Text[Position - 1] == '\\'))
+                    if (Position < Length && Text[Position - 1] == '\\')
                     {
                         Position++;
                     }
@@ -123,15 +122,13 @@ namespace Be.Runtime
                     Position++;
                 }
             }
-            Finish(true);
+            Start = Position;
         }
 
-        public string GetNamePath()
+        public string TryIdentifier()
         {
-            Position = Start;
             if (!Char.IsLetter(Text[Position]))
             {
-                Finish(false);
                 return null;
             }
             Position++;
@@ -147,7 +144,7 @@ namespace Be.Runtime
                 }
             }
             string result = Text.Substring(Start, Position - Start);
-            Finish(true);
+            Start = Position;
             return result;
         }
     }

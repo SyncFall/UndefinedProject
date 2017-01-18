@@ -53,10 +53,10 @@ namespace Be.Runtime
 
         public CharLiteral TryChar()
         {
-            if (TextParser.EqualChar(LiteralConst.CharEscape))
+            if (TextParser.EqualChar(LiteralConst.CharEscape[0]))
             {
                 int startPosition = TextParser.Position;
-                TextParser.ToCharWithoutEscapeOrFileEnd(LiteralConst.CharEscape);
+                TextParser.ToCharWithoutEscapeOrFileEnd(LiteralConst.CharEscape[0]);
                 int endPosition = TextParser.Position;
                 string dataValue = TextParser.Text.Substring(startPosition, endPosition - startPosition - 1);
                 return new CharLiteral(dataValue);
@@ -66,10 +66,10 @@ namespace Be.Runtime
 
         public StringLiteral TryString()
         {
-            if(TextParser.EqualChar(LiteralConst.StringEscape))
+            if(TextParser.EqualChar(LiteralConst.StringEscape[0]))
             {
                 int startPosition = TextParser.Position;
-                TextParser.ToCharWithoutEscapeOrFileEnd(LiteralConst.StringEscape);
+                TextParser.ToCharWithoutEscapeOrFileEnd(LiteralConst.StringEscape[0]);
                 int endPosition = TextParser.Position;
                 string dataValue = TextParser.Text.Substring(startPosition, endPosition - startPosition - 1);
                 return new StringLiteral(dataValue);

@@ -115,9 +115,9 @@ namespace Be.Runtime.Types
     {
         public string NumberContentString;
         public NativeType NativeTypeEnum;
-        public NativeNumberCategory NativeNumberTypeEnum;
+        public NativeNumberGroup NativeNumberTypeEnum;
 
-        public NumberOperand(string numberContentString, NativeType NativeTypeEnum, NativeNumberCategory NativeNumberTypeEnum) : base(OperandTypeEnum.NUMBER)
+        public NumberOperand(string numberContentString, NativeType NativeTypeEnum, NativeNumberGroup NativeNumberTypeEnum) : base(OperandTypeEnum.NUMBER)
         {
             this.NumberContentString = numberContentString;
             this.NativeTypeEnum = NativeTypeEnum;

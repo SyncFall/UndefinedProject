@@ -32,14 +32,14 @@ namespace Be.Runtime.Types
         Var
     }
 
-    public enum NativeNumberGroup
+    public enum NativeNumberType
     {
         None,
         Integral,
         Floating,
     }
 
-    public enum NativeNumberCategory
+    public enum NativeNumberGroup
     {
         None,
         Signed,
@@ -60,8 +60,8 @@ namespace Be.Runtime.Types
         public readonly string String;
         public readonly NativeType Type;
         public readonly NativeGroup Group;
-        public readonly NativeNumberGroup NumberGroup;
-        public readonly NativeNumberCategory NumberCategory;
+        public readonly NativeNumberType NumberGroup;
+        public readonly NativeNumberGroup NumberCategory;
 
         public NativeSymbol(string TypeName, NativeType Type, NativeGroup Group) : base(TypeName, null, AccessorConst.NoneType, null, null, null, false)
         {
@@ -69,11 +69,11 @@ namespace Be.Runtime.Types
             this.IsNative = true;
             this.Type = Type;
             this.Group = Group;
-            this.NumberGroup = NativeNumberGroup.None;
-            this.NumberCategory = NativeNumberCategory.None;
+            this.NumberGroup = NativeNumberType.None;
+            this.NumberCategory = NativeNumberGroup.None;
         }
 
-        public NativeSymbol(string TypeName, NativeType Type, NativeGroup Group, NativeNumberGroup NumberGroup, NativeNumberCategory NumberCategory) : base(TypeName, null, AccessorConst.NoneType, null, null, null, false)
+        public NativeSymbol(string TypeName, NativeType Type, NativeGroup Group, NativeNumberType NumberGroup, NativeNumberGroup NumberCategory) : base(TypeName, null, AccessorConst.NoneType, null, null, null, false)
         {
             this.String = TypeName;
             this.IsNative = true;
@@ -95,15 +95,15 @@ namespace Be.Runtime.Types
         {
             new NativeSymbol("void", NativeType.Void, NativeGroup.Void),
             new NativeSymbol("bool", NativeType.Bool, NativeGroup.Boolean),
-            new NativeSymbol("byte", NativeType.Byte, NativeGroup.Number, NativeNumberGroup.Integral, NativeNumberCategory.Signed),
-            new NativeSymbol("int", NativeType.Int, NativeGroup.Number, NativeNumberGroup.Integral, NativeNumberCategory.Signed),
-            new NativeSymbol("uint", NativeType.Int, NativeGroup.Number, NativeNumberGroup.Integral, NativeNumberCategory.Unsigned),
-            new NativeSymbol("long", NativeType.Long, NativeGroup.Number, NativeNumberGroup.Integral, NativeNumberCategory.Signed),
-            new NativeSymbol("ulong", NativeType.Long, NativeGroup.Number, NativeNumberGroup.Integral, NativeNumberCategory.Unsigned),
-            new NativeSymbol("float", NativeType.Float, NativeGroup.Number, NativeNumberGroup.Floating, NativeNumberCategory.Signed),
-            new NativeSymbol("ufloat", NativeType.Float, NativeGroup.Number, NativeNumberGroup.Floating, NativeNumberCategory.Unsigned),
-            new NativeSymbol("double", NativeType.Double, NativeGroup.Number, NativeNumberGroup.Floating, NativeNumberCategory.Signed),
-            new NativeSymbol("udouble", NativeType.Double, NativeGroup.Number, NativeNumberGroup.Floating, NativeNumberCategory.Unsigned),
+            new NativeSymbol("byte", NativeType.Byte, NativeGroup.Number, NativeNumberType.Integral, NativeNumberGroup.Signed),
+            new NativeSymbol("int", NativeType.Int, NativeGroup.Number, NativeNumberType.Integral, NativeNumberGroup.Signed),
+            new NativeSymbol("uint", NativeType.Int, NativeGroup.Number, NativeNumberType.Integral, NativeNumberGroup.Unsigned),
+            new NativeSymbol("long", NativeType.Long, NativeGroup.Number, NativeNumberType.Integral, NativeNumberGroup.Signed),
+            new NativeSymbol("ulong", NativeType.Long, NativeGroup.Number, NativeNumberType.Integral, NativeNumberGroup.Unsigned),
+            new NativeSymbol("float", NativeType.Float, NativeGroup.Number, NativeNumberType.Floating, NativeNumberGroup.Signed),
+            new NativeSymbol("ufloat", NativeType.Float, NativeGroup.Number, NativeNumberType.Floating, NativeNumberGroup.Unsigned),
+            new NativeSymbol("double", NativeType.Double, NativeGroup.Number, NativeNumberType.Floating, NativeNumberGroup.Signed),
+            new NativeSymbol("udouble", NativeType.Double, NativeGroup.Number, NativeNumberType.Floating, NativeNumberGroup.Unsigned),
             new NativeSymbol("object", NativeType.Object, NativeGroup.Object),
             new NativeSymbol("type", NativeType.Type, NativeGroup.Type),
             new NativeSymbol("char", NativeType.Char, NativeGroup.String),
@@ -146,7 +146,7 @@ namespace Be.Runtime.Types
 
     public class NativeUtils
     {
-        public static NativeSymbol GetNativeType(NativeType nativeType, NativeNumberCategory nativeNumberType)
+        public static NativeSymbol GetNativeType(NativeType nativeType, NativeNumberGroup nativeNumberType)
         {
             if(nativeType == NativeType.None)
             {
@@ -188,19 +188,19 @@ namespace Be.Runtime.Types
             }
         }
 
-        public static NativeNumberCategory GetNativeNumberTypeEnum(char chr)
+        public static NativeNumberGroup GetNativeNumberTypeEnum(char chr)
         {
             if (chr == 'u')
             {
-                return NativeNumberCategory.Unsigned;
+                return NativeNumberGroup.Unsigned;
             }
             else if(chr == 's')
             {
-                return NativeNumberCategory.Signed;
+                return NativeNumberGroup.Signed;
             }
             else
             {
-                return NativeNumberCategory.None;
+                return NativeNumberGroup.None;
             }
         }
 
@@ -219,11 +219,11 @@ namespace Be.Runtime.Types
             // prefer unsigned if from same base number-type
             if(one.NumberCategory == two.NumberCategory)
             {
-                if (one.NumberCategory == NativeNumberCategory.Unsigned)
+                if (one.NumberCategory == NativeNumberGroup.Unsigned)
                 {
                     return one;
                 }
-                else if(two.NumberCategory == NativeNumberCategory.Unsigned)
+                else if(two.NumberCategory == NativeNumberGroup.Unsigned)
                 {
                     return two;
                 }

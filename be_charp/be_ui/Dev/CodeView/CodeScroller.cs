@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Be.Integrator
 {
-    public class CodeTextScroller
+    public class CodeScroller
     {
         public CodeText CodeText;
 
-        public CodeTextScroller(CodeText CodeText)
+        public CodeScroller(CodeText CodeText)
         {
             this.CodeText = CodeText;
         }

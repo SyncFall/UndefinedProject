@@ -1,16 +1,15 @@
-﻿using System;
+﻿using Bee.Library;
+using System;
 using System.Text;
 
-namespace Be.Runtime.Types
+namespace Bee.Language
 {
-    public enum ObjectCategory
+    public enum ObjectType
     {
-        OBJECT,
-        INTERFACE,
-        ENUM,
-        ATTR,
-        EXCEPTION,
-        NONE,
+        Object,
+        Enum,
+        Attr,
+        Exception,
     }
 
     public class ObjectConst

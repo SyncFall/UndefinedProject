@@ -110,26 +110,26 @@ namespace Be.Runtime.Parse
             }
 
             // check for class-statement
-            ObjectCategory objectCategory = ObjectCategory.NONE;
+            ObjectType objectCategory = ObjectType.NONE;
             if (textParser.EqualEndSpace(ObjectConst.Object, true))
             {
-                objectCategory = ObjectCategory.OBJECT;
+                objectCategory = ObjectType.Object;
             }
             else if(textParser.EqualEndSpace(ObjectConst.Interface, true))
             {
-                objectCategory = ObjectCategory.INTERFACE;
+                objectCategory = ObjectType.INTERFACE;
             }
             else if(textParser.EqualEndSpace(ObjectConst.Enum, true))
             {
-                objectCategory = ObjectCategory.ENUM;
+                objectCategory = ObjectType.Enum;
             }
             else if(textParser.EqualEndSpace(ObjectConst.Attr, true))
             {
-                objectCategory = ObjectCategory.ATTR;
+                objectCategory = ObjectType.Attr;
             }
             else if(textParser.EqualEndSpace(ObjectConst.Exception, true))
             {
-                objectCategory = ObjectCategory.EXCEPTION;
+                objectCategory = ObjectType.Exception;
             }
             // no object-type
             else
@@ -169,23 +169,23 @@ namespace Be.Runtime.Parse
 
             // create specific object type
             ObjectSymbol objectItem = null;
-            if (objectCategory == ObjectCategory.OBJECT)
+            if (objectCategory == ObjectType.Object)
             {
                 objectItem = new ObjectSymbol(objectName, attribute, accessor, generics, extend, implementList, isVirtual);
             }
-            else if (objectCategory == ObjectCategory.INTERFACE)
+            else if (objectCategory == ObjectType.INTERFACE)
             {
                 objectItem = new InterfaceType(objectName, attribute, generics, extend, isVirtual);
             }
-            else if (objectCategory == ObjectCategory.ENUM)
+            else if (objectCategory == ObjectType.Enum)
             {
                 objectItem = new EnumType(objectName, attribute, accessor, extend, implementList, isVirtual);
             }
-            else if (objectCategory == ObjectCategory.ATTR)
+            else if (objectCategory == ObjectType.Attr)
             {
                 objectItem = new AttrType(objectName, attribute, accessor, generics, extend, implementList, isVirtual);
             }
-            else if(objectCategory == ObjectCategory.EXCEPTION)
+            else if(objectCategory == ObjectType.Exception)
             {
                 objectItem = new ExcpetionType(objectName, attribute, accessor, generics, extend, implementList, isVirtual);
             }
@@ -204,7 +204,7 @@ namespace Be.Runtime.Parse
                 textParser.SkipSpace(true);
 
                 // parse possible enum-items
-                if (objectCategory == ObjectCategory.ENUM)
+                if (objectCategory == ObjectType.Enum)
                 {
                     ParseEnumItems(objectItem as EnumType, textParser.GetPosition(), depth);
                 }

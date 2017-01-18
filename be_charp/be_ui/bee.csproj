@@ -73,8 +73,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dev\CodeView\CodeTextScroller.cs" />
+    <Compile Include="Dev\CodeView\CodeScroller.cs" />
     <Compile Include="Dev\CodeView\CodeToken.cs" />
+    <Compile Include="Lang\Signatur\Signaturs.cs" />
     <Compile Include="Lib\StringUtils.cs" />
     <Compile Include="Main\Const.cs" />
     <Compile Include="Main\LangMain.cs" />
@@ -98,7 +99,6 @@
     <Compile Include="Dev\CodeView\CodeView.cs" />
     <Compile Include="Dev\FpsCounter.cs" />
     <Compile Include="Dev\IntegratorView.cs" />
-    <Compile Include="Lib\Collections.cs" />
     <Compile Include="UI\DrawUtils.cs" />
     <Compile Include="UI\Cases\LineDraw.cs" />
     <Compile Include="UI\Cases\TrackBox.cs" />
@@ -114,8 +114,8 @@
     <Compile Include="Lang\Parse\GenericsParser.cs" />
     <Compile Include="Lang\Parse\SourceParser.cs" />
     <Compile Include="Lang\Parse\TextParser.cs" />
-    <Compile Include="Lang\Symbol\SymbolContainer.cs" />
-    <Compile Include="Lang\Symbol\SymbolParser.cs" />
+    <Compile Include="Lang\Signatur\SignaturContainer.cs" />
+    <Compile Include="Lang\Signatur\SignaturParser.cs" />
     <Compile Include="Lang\Token\Keywords.cs" />
     <Compile Include="Lang\Token\Literals.cs" />
     <Compile Include="Lang\Token\TokenContainer.cs" />
@@ -123,13 +123,13 @@
     <Compile Include="Lang\Token\TokenParser.cs" />
     <Compile Include="Lang\Token\Tokens.cs" />
     <Compile Include="Lang\Token\TokenReader.cs" />
-    <Compile Include="Lang\Types\AccessorType.cs" />
+    <Compile Include="Lang\Types\Accessor.cs" />
     <Compile Include="Lang\Types\AnonType.cs" />
     <Compile Include="Lang\Types\ArrayType.cs" />
     <Compile Include="Lang\Types\AttributeType.cs" />
     <Compile Include="Lang\Types\AttrType.cs" />
     <Compile Include="Lang\Types\CodeType.cs" />
-    <Compile Include="Lang\Types\CollectionType.cs" />
+    <Compile Include="Lib\Collections.cs" />
     <Compile Include="Lang\Types\ConstructorType.cs" />
     <Compile Include="Lang\Types\EnumType.cs" />
     <Compile Include="Lang\Types\ExceptionType.cs" />
@@ -143,7 +143,7 @@
     <Compile Include="Lang\Types\MethodType.cs" />
     <Compile Include="Lang\Types\NamespaceType.cs" />
     <Compile Include="Lang\Types\NativeType.cs" />
-    <Compile Include="Lang\Types\ObjectType.cs" />
+    <Compile Include="Lang\Types\ObjectSymbol.cs" />
     <Compile Include="Lang\Types\OperandOperatorType.cs" />
     <Compile Include="Lang\Types\OperandType.cs" />
     <Compile Include="Lang\Types\OperationType.cs" />
@@ -179,6 +179,9 @@
     <Compile Include="UI\Types\Window.cs" />
     <Compile Include="Main\UIMain.cs" />
     <Compile Include="UI\Types\Mouse.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Lang\Symbol\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

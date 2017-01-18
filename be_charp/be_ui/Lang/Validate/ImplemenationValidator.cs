@@ -259,7 +259,7 @@ namespace Be.Runtime.Validate
                 throw new Exception("extend method extern missmatch");
             }
             // exist can not private
-            else if (extendOrImplementMethod.Accessor.Type == AccessorTypeEnum.PRIVATE)
+            else if (extendOrImplementMethod.Accessor.Type == AccessorType.PRIVATE)
             {
                 throw new Exception("extend method can not marked as private");
             }

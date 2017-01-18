@@ -20,7 +20,7 @@ namespace Be.Integrator
         public Font SourceFont;
         public SourceFile SourceFile;
         public TokenContainer TokenContainer;
-        public SymbolContainer SymbolContainer;
+        public SignaturContainer SignaturContainer;
         public GlyphMetrics GlyphMetrics;
         public GlyphContainer GlyphContainer;
         public CodeColor CodeColor;
@@ -29,14 +29,14 @@ namespace Be.Integrator
         public CodeInput CodeInput;
         public CodeSelection CodeSelection;
         public CodeHistory CodeHistory;
-        public CodeTextScroller CodeTextScroller;
+        public CodeScroller CodeScroller;
         
         public CodeText(SourceFile SourceFile)
         {
             this.SourceFont = new Font(@"D:\dev\UndefinedProject\be-output\source-code-pro-regular.ttf", DefaultFontSize);
             this.SourceFile = SourceFile;
             this.TokenContainer = new TokenContainer();
-            this.SymbolContainer = new SymbolContainer();
+            this.SignaturContainer = new SignaturContainer();
             this.GlyphMetrics = new GlyphMetrics(SourceFont, DefaultTopSpace, DefaultLeftSpace);
             this.GlyphContainer = new GlyphContainer(SourceFont);
             this.CodeColor = new CodeColor();
@@ -45,7 +45,7 @@ namespace Be.Integrator
             this.CodeInput = new CodeInput(this);
             this.CodeSelection = new CodeSelection(this);
             this.CodeHistory = new CodeHistory(this);
-            this.CodeTextScroller = new CodeTextScroller(this);
+            this.CodeScroller = new CodeScroller(this);
             this.SetSourceFile(SourceFile);
         }
 
@@ -54,7 +54,7 @@ namespace Be.Integrator
             this.SourceFile = SourceFile;
             this.TokenContainer.SetSourceFile(SourceFile);
             this.CodeContainer.SetTokenContainer(TokenContainer);
-            this.SymbolContainer.Operate(TokenContainer);
+            this.SignaturContainer.SetTokenContainer(TokenContainer);
         }
        
         public void Draw()

@@ -1,4 +1,5 @@
-﻿using Be.Runtime.Parse;
+﻿using Bee.Library;
+using Be.Runtime.Parse;
 using Be.Runtime.Types;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,42 @@ using System.Threading.Tasks;
 namespace Be.Runtime
 {
     public class TokenNodeList : ListCollection<TokenNode>
-    { }
+    {
+        public TokenNodeList(int InitialSize) : base(InitialSize)
+        { }
+    }
+
+	public class TokenPointer
+	{
+		public TokenNode Root;
+		public TokenNode Current;
+        public TokenNode BeginStepNode;
+
+		public TokenPointer(TokenNode Root)
+		{
+			this.Current = this.Root = Root;
+		}
+
+        public TokenNode Next()
+        {
+            if(Current != null)
+            {
+                Current = Current.Next;
+                return Current;
+            }
+            return null;
+        }
+
+        public void StepBegin()
+        {
+            BeginStepNode = Current;
+        }
+
+        public void StepReset()
+        {
+            Current = BeginStepNode;
+        }
+	}
 
     public class TokenNode
     {
@@ -20,15 +56,15 @@ namespace Be.Runtime
         public TokenNode(TokenSymbol Token)
         {
             this.Token = Token;  
-         }
+        }
     }
 
     public class TokenContainer
     {
         public SourceFile SourceFile;
         public TokenParser TokenParser;
-        public TokenNodeList AllTokenNodes = new TokenNodeList();
-        public TokenNodeList LineTokenNodes = new TokenNodeList();
+        public TokenNodeList AllTokenNodes = new TokenNodeList(4096);
+        public TokenNodeList LineTokenNodes = new TokenNodeList(128);
 
         public TokenContainer()
         { }
@@ -43,7 +79,7 @@ namespace Be.Runtime
                 newNode.Prev = lastNode;
             }
             AllTokenNodes.Add(newNode);
-            if(token.Type == Token.LineSpace)
+            if(token.Type == TokenType.LineSpace)
             {
                 LineTokenNodes.Add(newNode);
             }
@@ -66,7 +102,7 @@ namespace Be.Runtime
         {
             int textCount = 0;
             TokenNode node = FirstLineTokenNode(lineNumber);
-            while (node != null && node.Token.Type != Token.LineSpace)
+            while (node != null && node.Token.Type != TokenType.LineSpace)
             {
                 textCount += node.Token.String.Length;
                 node = node.Next;
@@ -78,7 +114,7 @@ namespace Be.Runtime
         {
             string lineText = "";
             TokenNode node = FirstLineTokenNode(lineNumber);
-            while (node != null && node.Token.Type != Token.LineSpace)
+            while (node != null && node.Token.Type != TokenType.LineSpace)
             {
                 lineText += node.Token.String;
                 node = node.Next;

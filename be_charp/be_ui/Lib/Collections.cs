@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
-namespace Be.Runtime.Types
+namespace Bee.Library
 {
     public class ListCollection<T>
     {
@@ -16,6 +16,12 @@ namespace Be.Runtime.Types
             index = -1;
         }
 
+        public ListCollection(int Size)
+        {
+            list = new List<T>(Size);
+            index = -1;
+        }
+
         public virtual void Add(T item)
         {
             if (item == null)
@@ -23,6 +29,18 @@ namespace Be.Runtime.Types
                 throw new Exception("can not add null-reference to collection");
             }
             list.Add(item);
+        }
+
+        public virtual void Add(ListCollection<T> items)
+        {
+            if (items == null)
+            {
+                throw new Exception("can not add null-reference to collection");
+            }
+            for(int i=0; i<items.Size(); i++)
+            {
+                this.Add(items.Get(i));
+            }
         }
 
         public virtual void Insert(int index, T item)
@@ -170,14 +188,14 @@ namespace Be.Runtime.Types
 
     public class MapCollection<K, V>
     {
-        private OrderedDictionary map;
+        private Dictionary<K,V> map;
 
         public MapCollection()
         {
-            map = new OrderedDictionary();
+            map = new Dictionary<K, V>();
         }
 
-        public void Add(K key, V value)
+        public virtual void Add(K key, V value)
         {
             if (key == null || value == null)
             {
@@ -193,12 +211,7 @@ namespace Be.Runtime.Types
 
         public bool KeyExist(K key)
         {
-            return map.Contains(key);
-        }
-
-        public V GetValue(int index)
-        {
-            return (V)map[index];
+            return map.ContainsKey(key);
         }
 
         public K[] GetKeys()

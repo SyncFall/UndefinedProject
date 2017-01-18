@@ -1,4 +1,5 @@
 ﻿using Be.Runtime.Types;
+using Bee.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,7 +88,6 @@ namespace Be.Runtime
             new KeywordSymbol(KeywordType.Get, "get", KeywordGroup.PropertyCode),
             new KeywordSymbol(KeywordType.Set, "set", KeywordGroup.PropertyCode),
         };
-
         public static readonly MapCollection<KeywordType, KeywordSymbol> EnumMap = new MapCollection<KeywordType, KeywordSymbol>();
         public static readonly MapCollection<string, KeywordSymbol> StringMap = new MapCollection<string, KeywordSymbol>();
 

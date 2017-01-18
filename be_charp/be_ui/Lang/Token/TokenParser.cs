@@ -1,4 +1,5 @@
 ﻿using Be.Runtime.Types;
+using Bee.Language;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,17 +60,25 @@ namespace Be.Runtime
                 return null;
             }
             string str = TextParser.Text.Substring(startPosition, endPositon - startPosition);
+            TokenSymbol tokenSymbol;
             if(Keywords.StringMap.KeyExist(str))
-            {
-                TextParser.Finish(endPositon);
-                return Tokens.KeywordTokenStringMap.GetValue(str);
+            {   
+                tokenSymbol = Tokens.KeywordTokenStringMap.GetValue(str);
             }
             else if(Natives.StringMap.KeyExist(str))
             {
-                TextParser.Finish(endPositon);
-                return Tokens.NativeTokenStringMap.GetValue(str);
+                tokenSymbol = Tokens.NativeTokenStringMap.GetValue(str);
             }
-            return null;
+            else if(Accessors.StringMap.KeyExist(str))
+            {
+                tokenSymbol = Tokens.AccessorTokenStringMap.GetValue(str);
+            }
+            else
+            {
+                return null;
+            }
+            TextParser.Finish(endPositon);
+            return tokenSymbol;
         }
 
         public TokenSymbol TryStructureToken()
@@ -77,7 +86,7 @@ namespace Be.Runtime
             for(int i=0; i<Tokens.StructureTokensArray.Length; i++)
             {
                 TokenSymbol structureToken = Tokens.StructureTokensArray[i];
-                if(TextParser.EqualString(structureToken.String))
+                if(TextParser.EqualChar(structureToken.String[0]))
                 {
                     return structureToken;
                 }
@@ -97,10 +106,10 @@ namespace Be.Runtime
 
         public IdentifierToken TryIdentifierToken()
         {
-            string namePath = TextParser.GetNamePath();
-            if (namePath != null)
+            string identifiere = TextParser.TryIdentifier();
+            if (identifiere != null)
             {
-                return new IdentifierToken(namePath);
+                return new IdentifierToken(identifiere);
             }
             return null;
         }
@@ -110,7 +119,7 @@ namespace Be.Runtime
             if (TextParser.EqualString("//"))
             {
                 int commentStartPosition = TextParser.Position;
-                TextParser.ToLineEndOrFileEnd();
+                TextParser.ToLineOrFileEnd();
                 int commentEndPosition = TextParser.Position;
                 string commentData = TextParser.Text.Substring(commentStartPosition, commentEndPosition - commentStartPosition);
                 return new CommentToken("//"+commentData, commentData);

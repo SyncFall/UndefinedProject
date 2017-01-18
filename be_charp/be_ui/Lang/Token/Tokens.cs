@@ -1,4 +1,6 @@
 ﻿using Be.Runtime.Types;
+using Bee.Language;
+using Bee.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Be.Runtime
 {
-    public enum Token
+    public enum TokenType
     {
         // spaces
         WhiteSpace,
@@ -42,8 +44,10 @@ namespace Be.Runtime
         Keyword,
         // literal
         Literal,
-        // namepath
+        // identfier
         Identifier,
+        // accessor
+        Accessor,
         // unknowns
         Unknown,
     }
@@ -60,6 +64,7 @@ namespace Be.Runtime
         Native,
         Literal,
         Identifier,
+        Accessor,
         Unknown,
     }
 
@@ -69,22 +74,22 @@ namespace Be.Runtime
 
         public static readonly TokenSymbol[] StructureTokensArray = new TokenSymbol[]
         {
-            new TokenSymbol(Token.WhiteSpace, TokenGroup.Space, " "),
-            new TokenSymbol(Token.TabSpace, TokenGroup.Space, "\t"),
-            new TokenSymbol(Token.LineSpace, TokenGroup.Space, "\n"),
-            new TokenSymbol(Token.Complete, TokenGroup.Statement, ";"),
-            new TokenSymbol(Token.Assigment, TokenGroup.Statement, "="),
-            new TokenSymbol(Token.Comma, TokenGroup.Statement, ","),
-            new TokenSymbol(Token.Point, TokenGroup.Statement, "."),
-            new TokenSymbol(Token.Seperator, TokenGroup.Statement, ";"),
-            new TokenSymbol(Token.BlockBegin, TokenGroup.Block, "{"),
-            new TokenSymbol(Token.BlockEnd, TokenGroup.Block, "}"),
-            new TokenSymbol(Token.ClosingBegin, TokenGroup.Block, "("),
-            new TokenSymbol(Token.ClosingEnd, TokenGroup.Block, ")"),
-            new TokenSymbol(Token.BracketBegin, TokenGroup.Block, "["),
-            new TokenSymbol(Token.BracketEnd, TokenGroup.Block, "]"),
-            new TokenSymbol(Token.ShiftBegin, TokenGroup.Block, "<"),
-            new TokenSymbol(Token.ShiftEnd, TokenGroup.Block, ">"),
+            new TokenSymbol(TokenType.WhiteSpace, TokenGroup.Space, " "),
+            new TokenSymbol(TokenType.TabSpace, TokenGroup.Space, "\t"),
+            new TokenSymbol(TokenType.LineSpace, TokenGroup.Space, "\n"),
+            new TokenSymbol(TokenType.Complete, TokenGroup.Statement, ";"),
+            new TokenSymbol(TokenType.Assigment, TokenGroup.Statement, "="),
+            new TokenSymbol(TokenType.Comma, TokenGroup.Statement, ","),
+            new TokenSymbol(TokenType.Point, TokenGroup.Statement, "."),
+            new TokenSymbol(TokenType.Seperator, TokenGroup.Statement, ";"),
+            new TokenSymbol(TokenType.BlockBegin, TokenGroup.Block, "{"),
+            new TokenSymbol(TokenType.BlockEnd, TokenGroup.Block, "}"),
+            new TokenSymbol(TokenType.ClosingBegin, TokenGroup.Block, "("),
+            new TokenSymbol(TokenType.ClosingEnd, TokenGroup.Block, ")"),
+            new TokenSymbol(TokenType.BracketBegin, TokenGroup.Block, "["),
+            new TokenSymbol(TokenType.BracketEnd, TokenGroup.Block, "]"),
+            new TokenSymbol(TokenType.ShiftBegin, TokenGroup.Block, "<"),
+            new TokenSymbol(TokenType.ShiftEnd, TokenGroup.Block, ">"),
             /*
             new TokenSymbol(Token.RegionBegin, TokenGroup.Region, "#region"),
             new TokenSymbol(Token.RegionEnd, TokenGroup.Region, "#regionend"),
@@ -102,10 +107,13 @@ namespace Be.Runtime
         public static readonly NativeToken[] NativeTokenArray = null;
         public static readonly MapCollection<string, NativeToken> NativeTokenStringMap = new MapCollection<string, NativeToken>();
 
+        public static readonly AccessorToken[] AccessorTokenArray = null;
+        public static readonly MapCollection<string, AccessorToken> AccessorTokenStringMap = new MapCollection<string, AccessorToken>();
+
         static Tokens()
         {
             int idx = 0;
-            int totalLen = (StructureTokensArray.Length + Keywords.Array.Length + Natives.Array.Length);
+            int totalLen = (StructureTokensArray.Length + Keywords.Array.Length + Natives.Array.Length + Accessors.Array.Length);
             AllTokensArray = new TokenSymbol[totalLen];
             for(int i=0; i < StructureTokensArray.Length; i++)
             {
@@ -129,23 +137,34 @@ namespace Be.Runtime
                 AllTokensArray[idx++] = nativeToken;
                 NativeTokenStringMap.Add(nativeToken.String, nativeToken);
             }
+            AccessorTokenArray = new AccessorToken[Accessors.Array.Length];
+            for(int i=0; i < Accessors.Array.Length; i++)
+            {
+                AccessorToken accessorToken = new AccessorToken(Accessors.Array[i]);
+                AccessorTokenArray[i] = accessorToken;
+                AllTokensArray[idx++] = accessorToken;
+                AccessorTokenStringMap.Add(accessorToken.String, accessorToken);
+            }
         }
     }
 
+    public class TokenList : ListCollection<TokenSymbol>
+    { }
+
     public class TokenSymbol
     {
-        public readonly Token Type;
+        public readonly TokenType Type;
         public readonly TokenGroup Group;
         public readonly string String;
 
-        public TokenSymbol(Token Type, TokenGroup Group, string String)
+        public TokenSymbol(TokenType Type, TokenGroup Group, string String)
         {
             this.Type = Type;
             this.Group = Group;
             this.String = String;
         }
 
-        public virtual bool IsEqual(TokenSymbol compare)
+        public bool IsEqual(TokenSymbol compare)
         {
             return (String == compare.String);
         }
@@ -155,14 +174,9 @@ namespace Be.Runtime
     {
         public KeywordSymbol KeywordSymbol;
 
-        public KeywordToken(KeywordSymbol KeywordType) : base(Token.Keyword, TokenGroup.Keyword, KeywordType.String)
+        public KeywordToken(KeywordSymbol KeywordSymbol) : base(TokenType.Keyword, TokenGroup.Keyword, KeywordSymbol.String)
         {
-            this.KeywordSymbol = KeywordType;
-        }
-
-        public override bool IsEqual(TokenSymbol compare)
-        {
-            return (base.IsEqual(compare) && KeywordSymbol.IsEqual((compare as KeywordToken).KeywordSymbol));
+            this.KeywordSymbol = KeywordSymbol;
         }
     }
 
@@ -170,14 +184,9 @@ namespace Be.Runtime
     {
         public NativeSymbol NativeSymbol;
 
-        public NativeToken(NativeSymbol NativeType) : base(Token.Keyword, TokenGroup.Native, NativeType.String)
+        public NativeToken(NativeSymbol NativeSymbol) : base(TokenType.Keyword, TokenGroup.Native, NativeSymbol.String)
         {
-            this.NativeSymbol = NativeType;
-        }
-
-        public override bool IsEqual(TokenSymbol compare)
-        {
-            return (base.IsEqual(compare) && NativeSymbol.IsEqual((compare as NativeToken).NativeSymbol));
+            this.NativeSymbol = NativeSymbol;
         }
     }
 
@@ -185,20 +194,15 @@ namespace Be.Runtime
     {
         public LiteralSymbol LiteralSymbol;
 
-        public LiteralToken(LiteralSymbol LiteralSymbol, string TokenString) : base(Token.Literal, TokenGroup.Literal, TokenString)
+        public LiteralToken(LiteralSymbol LiteralSymbol, string TokenString) : base(TokenType.Literal, TokenGroup.Literal, TokenString)
         {
             this.LiteralSymbol = LiteralSymbol;
-        }
-
-        public override bool IsEqual(TokenSymbol compare)
-        {
-            return (base.IsEqual(compare) && LiteralSymbol.IsEqual((compare as LiteralToken).LiteralSymbol));
         }
     }
 
     public class IdentifierToken : TokenSymbol
     {
-        public IdentifierToken(string TokenString) : base(Token.Identifier, TokenGroup.Identifier, TokenString)
+        public IdentifierToken(string IdentifierString) : base(TokenType.Identifier, TokenGroup.Identifier, IdentifierString)
         { }
     }
 
@@ -206,15 +210,25 @@ namespace Be.Runtime
     {
         public string CommentData;
 
-        public CommentToken(string TokenString, string CommentData) : base(Token.Comment, TokenGroup.Comment, TokenString)
+        public CommentToken(string TokenString, string CommentData) : base(TokenType.Comment, TokenGroup.Comment, TokenString)
         {
             this.CommentData = CommentData;
         }
     }
 
+    public class AccessorToken : TokenSymbol
+    {
+        public AccessorSymbol AccessorSymbol;
+
+        public AccessorToken(AccessorSymbol AccessorSymbol) : base(TokenType.Accessor, TokenGroup.Accessor, AccessorSymbol.String)
+        {
+            this.AccessorSymbol = AccessorSymbol;
+        }
+    }
+    
     public class UnknownToken : TokenSymbol
     {
-        public UnknownToken(string TokenString) : base(Token.Unknown, TokenGroup.Unknown, TokenString)
+        public UnknownToken(string TokenString) : base(TokenType.Unknown, TokenGroup.Unknown, TokenString)
         { }
     }
 }

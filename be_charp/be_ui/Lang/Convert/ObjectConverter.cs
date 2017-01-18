@@ -64,7 +64,7 @@ namespace Be.Runtime.Convert
 
         private void WriteObject(ObjectSymbol objectType, int intendLevel, StringBuilder strBuilder)
         {
-            if(objectType.Accessor != null && objectType.Accessor.Type == AccessorTypeEnum.PRIVATE)
+            if(objectType.Accessor != null && objectType.Accessor.Type == AccessorType.PRIVATE)
             {
                 strBuilder.Append(new String('\t', intendLevel) + "private ");
             }
@@ -125,7 +125,7 @@ namespace Be.Runtime.Convert
         private void WriteMember(MemberType memberType, int intendLevel, StringBuilder strBuilder)
         {
             strBuilder.Append(new String('\t', intendLevel));
-            if(memberType.Accessor != null && memberType.Accessor.Type == AccessorTypeEnum.PRIVATE)
+            if(memberType.Accessor != null && memberType.Accessor.Type == AccessorType.PRIVATE)
             {
                 strBuilder.Append("private ");
             }
@@ -147,7 +147,7 @@ namespace Be.Runtime.Convert
         private void WriteMethod(MethodType methodType, int intendLevel, StringBuilder strBuilder)
         {
             strBuilder.Append(new String('\t', intendLevel));
-            if(methodType.Accessor != null && methodType.Accessor.Type == AccessorTypeEnum.PRIVATE)
+            if(methodType.Accessor != null && methodType.Accessor.Type == AccessorType.PRIVATE)
             {
                 strBuilder.Append("private ");
             }

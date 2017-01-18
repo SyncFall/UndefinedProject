@@ -85,7 +85,7 @@ namespace Be.Runtime.Types
         {
             return (
                 this.MemberName.Equals(targetMemberName) &&
-                (this.Accessor.Type == AccessorTypeEnum.NONE || this.Accessor.Type == AccessorTypeEnum.PUBLIC) &&
+                (this.Accessor.Type == AccessorType.NONE || this.Accessor.Type == AccessorType.PUBLIC) &&
                 this.ObjectType.IsCompilantWith(targetNativeType)
             );
         }

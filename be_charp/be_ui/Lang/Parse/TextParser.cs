@@ -362,7 +362,7 @@ namespace Be.Runtime.Parse
             if (pos > len - 1)
             {
                 _Finish(forward);
-                return new TextParseNumberResult(result, NativeType.Int, NativeNumberCategory.Signed);
+                return new TextParseNumberResult(result, NativeType.Int, NativeNumberGroup.Signed);
             }
             // check for possible floating-point
             bool isFloatingPoint = false;
@@ -400,13 +400,13 @@ namespace Be.Runtime.Parse
                 if (isFloatingPoint)
                 {
                     _Finish(forward);
-                    return new TextParseNumberResult(result, NativeType.Float, NativeNumberCategory.Signed);
+                    return new TextParseNumberResult(result, NativeType.Float, NativeNumberGroup.Signed);
                 }
                 // signed integer
                 else
                 {
                     _Finish(forward);
-                    return new TextParseNumberResult(result, NativeType.Int, NativeNumberCategory.Signed);
+                    return new TextParseNumberResult(result, NativeType.Int, NativeNumberGroup.Signed);
                 }
             }
             // check required length
@@ -416,10 +416,10 @@ namespace Be.Runtime.Parse
                 return new TextParseNumberResult(TextParseResultCode.INVALID_CONTENT_SYNTAX);
             }
             // check possible number-range type
-            NativeNumberCategory formatType = NativeUtils.GetNativeNumberTypeEnum(Text[pos]);
-            if(formatType == NativeNumberCategory.None)
+            NativeNumberGroup formatType = NativeUtils.GetNativeNumberTypeEnum(Text[pos]);
+            if(formatType == NativeNumberGroup.None)
             {
-                formatType = NativeNumberCategory.Signed;
+                formatType = NativeNumberGroup.Signed;
             }
             else
             {
@@ -508,9 +508,9 @@ namespace Be.Runtime.Parse
     public class TextParseNumberResult : TextParseResult
     {
         public NativeType NativeType;
-        public NativeNumberCategory NativeNumberType;
+        public NativeNumberGroup NativeNumberType;
 
-        public TextParseNumberResult(string Result, NativeType NativeType, NativeNumberCategory NativeNumberType) : base(Result)
+        public TextParseNumberResult(string Result, NativeType NativeType, NativeNumberGroup NativeNumberType) : base(Result)
         {
             this.NativeType = NativeType;
             this.NativeNumberType = NativeNumberType;
