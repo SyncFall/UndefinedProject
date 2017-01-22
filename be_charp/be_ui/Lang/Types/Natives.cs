@@ -1,7 +1,7 @@
-﻿using System;
-using Be.Runtime.Format;
+﻿using Bee.Library;
+using System;
 
-namespace Be.Runtime.Types
+namespace Bee.Language
 {
     public enum NativeType
     {
@@ -52,10 +52,10 @@ namespace Be.Runtime.Types
         public static readonly string False = "false";
     }
 
-    public class NativrCollection : ListCollection<NativeSymbol>
+    public class NativeCollection : ListCollection<NativeSymbol>
     { }
 
-    public class NativeSymbol : ObjectSymbol
+    public class NativeSymbol : ObjectType
     {
         public readonly string String;
         public readonly NativeType Type;

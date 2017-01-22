@@ -11,17 +11,12 @@ namespace Be.Runtime
     public enum KeywordType
     {
         // source-file
-        Using,
-        Namespace,
+        Use,
+        Scope,
         // objects
         Object,
-        Interface,
-        Enumeration,
-        Attribute,
-        Exception,
         // oop-extend
-        Extend,
-        Implement,
+        Extends,
         // accessors
         Public,
         Private,
@@ -63,15 +58,10 @@ namespace Be.Runtime
     {
         public static readonly KeywordSymbol[] Array =
         {
-            new KeywordSymbol(KeywordType.Using, "using", KeywordGroup.SourceFile),
-            new KeywordSymbol(KeywordType.Namespace, "namespace", KeywordGroup.SourceFile),
+            new KeywordSymbol(KeywordType.Use, "use", KeywordGroup.SourceFile),
+            new KeywordSymbol(KeywordType.Scope, "scope", KeywordGroup.SourceFile),
             new KeywordSymbol(KeywordType.Object, "object", KeywordGroup.ObjectType),
-            new KeywordSymbol(KeywordType.Interface, "interface", KeywordGroup.ObjectType),
-            new KeywordSymbol(KeywordType.Enumeration, "enum", KeywordGroup.ObjectType),
-            new KeywordSymbol(KeywordType.Attribute, "attribute", KeywordGroup.ObjectType),
-            new KeywordSymbol(KeywordType.Exception, "exception", KeywordGroup.ObjectType),
-            new KeywordSymbol(KeywordType.Extend, "extend", KeywordGroup.ObjectExtend),
-            new KeywordSymbol(KeywordType.Extend, "implement", KeywordGroup.ObjectExtend),
+            new KeywordSymbol(KeywordType.Extends, "extends", KeywordGroup.ObjectExtend),
             new KeywordSymbol(KeywordType.Public, "public", KeywordGroup.Accessor),
             new KeywordSymbol(KeywordType.Private, "private", KeywordGroup.Accessor),
             new KeywordSymbol(KeywordType.Protected, "protected", KeywordGroup.Accessor),

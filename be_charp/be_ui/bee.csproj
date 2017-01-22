@@ -75,7 +75,7 @@
   <ItemGroup>
     <Compile Include="Dev\CodeView\CodeScroller.cs" />
     <Compile Include="Dev\CodeView\CodeToken.cs" />
-    <Compile Include="Lang\Signatur\Signaturs.cs" />
+    <Compile Include="Lang\Signature\Signatures.cs" />
     <Compile Include="Lib\StringUtils.cs" />
     <Compile Include="Main\Const.cs" />
     <Compile Include="Main\LangMain.cs" />
@@ -104,9 +104,6 @@
     <Compile Include="UI\Cases\TrackBox.cs" />
     <Compile Include="UI\GeometryUtils.cs" />
     <Compile Include="Lang\Convert\ObjectConverter.cs" />
-    <Compile Include="Lang\Format\CharFormat.cs" />
-    <Compile Include="Lang\Format\NumberFormat.cs" />
-    <Compile Include="Lang\Format\StringFormat.cs" />
     <Compile Include="Lang\ObjectLoader.cs" />
     <Compile Include="Lang\Parse\ArrayParser.cs" />
     <Compile Include="Lang\Parse\CodeParser.cs" />
@@ -114,8 +111,8 @@
     <Compile Include="Lang\Parse\GenericsParser.cs" />
     <Compile Include="Lang\Parse\SourceParser.cs" />
     <Compile Include="Lang\Parse\TextParser.cs" />
-    <Compile Include="Lang\Signatur\SignaturContainer.cs" />
-    <Compile Include="Lang\Signatur\SignaturParser.cs" />
+    <Compile Include="Lang\Signature\SignatureContainer.cs" />
+    <Compile Include="Lang\Signature\SignatureParser.cs" />
     <Compile Include="Lang\Token\Keywords.cs" />
     <Compile Include="Lang\Token\Literals.cs" />
     <Compile Include="Lang\Token\TokenContainer.cs" />
@@ -123,7 +120,7 @@
     <Compile Include="Lang\Token\TokenParser.cs" />
     <Compile Include="Lang\Token\Tokens.cs" />
     <Compile Include="Lang\Token\TokenReader.cs" />
-    <Compile Include="Lang\Types\Accessor.cs" />
+    <Compile Include="Lang\Types\Accessors.cs" />
     <Compile Include="Lang\Types\AnonType.cs" />
     <Compile Include="Lang\Types\ArrayType.cs" />
     <Compile Include="Lang\Types\AttributeType.cs" />
@@ -142,8 +139,8 @@
     <Compile Include="Lang\Types\MemberType.cs" />
     <Compile Include="Lang\Types\MethodType.cs" />
     <Compile Include="Lang\Types\NamespaceType.cs" />
-    <Compile Include="Lang\Types\NativeType.cs" />
-    <Compile Include="Lang\Types\ObjectSymbol.cs" />
+    <Compile Include="Lang\Types\Natives.cs" />
+    <Compile Include="Lang\Types\Objects.cs" />
     <Compile Include="Lang\Types\OperandOperatorType.cs" />
     <Compile Include="Lang\Types\OperandType.cs" />
     <Compile Include="Lang\Types\OperationType.cs" />

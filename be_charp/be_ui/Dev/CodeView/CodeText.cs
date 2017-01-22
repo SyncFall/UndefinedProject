@@ -20,7 +20,7 @@ namespace Be.Integrator
         public Font SourceFont;
         public SourceFile SourceFile;
         public TokenContainer TokenContainer;
-        public SignaturContainer SignaturContainer;
+        public SignatureContainer SignaturContainer;
         public GlyphMetrics GlyphMetrics;
         public GlyphContainer GlyphContainer;
         public CodeColor CodeColor;
@@ -36,7 +36,7 @@ namespace Be.Integrator
             this.SourceFont = new Font(@"D:\dev\UndefinedProject\be-output\source-code-pro-regular.ttf", DefaultFontSize);
             this.SourceFile = SourceFile;
             this.TokenContainer = new TokenContainer();
-            this.SignaturContainer = new SignaturContainer();
+            this.SignaturContainer = new SignatureContainer();
             this.GlyphMetrics = new GlyphMetrics(SourceFont, DefaultTopSpace, DefaultLeftSpace);
             this.GlyphContainer = new GlyphContainer(SourceFont);
             this.CodeColor = new CodeColor();

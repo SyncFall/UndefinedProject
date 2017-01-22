@@ -1,0 +1,54 @@
+use fehlt.asdf;
+
+scope OneThing
+{
+	object BigOne extends BaseOne, PartTwo
+	{
+		bool = false;
+		byte[] = {0, 255, 63};
+		int = 5;
+		long = 10L;
+		float = 1.1f;
+		double = 2.0d;
+		str = "bisymtre";
+		char = '_';
+		number = 4*.0f;	
+		list = {};
+		map = {};
+		var = {item: prop, 1, "357", {2,4}, true || false}
+		object = new Container{};
+		call = call(){};
+		enum = {Test, Block, Road};	
+		
+		int length
+		{
+			get{ return; }
+			set{ value; }
+		}
+
+		object create()
+		{
+			init = true;				
+		}
+
+		bool StateGate(enum Type, int add=1, call func)
+		{
+			this.number += 1;
+			if(func){
+				func();
+			}
+			return true;
+		}
+		
+		object destroy()
+		{
+			for(int i=0; i<list.length; i++){ }
+			
+			for(list as index, entry){ }
+
+			for(map as key, value){ }
+			
+			while(true){ }
+		}
+}
+

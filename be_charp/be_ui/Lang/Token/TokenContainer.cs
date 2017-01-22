@@ -61,8 +61,6 @@ namespace Be.Runtime
 
     public class TokenContainer
     {
-        public SourceFile SourceFile;
-        public TokenParser TokenParser;
         public TokenNodeList AllTokenNodes = new TokenNodeList(4096);
         public TokenNodeList LineTokenNodes = new TokenNodeList(128);
 
@@ -87,10 +85,9 @@ namespace Be.Runtime
 
         public void SetSourceFile(SourceFile SourceFile)
         {
-            this.SourceFile = SourceFile;
             AllTokenNodes.Clear();
             LineTokenNodes.Clear();
-            TokenParser = new TokenParser(SourceFile.Source);
+            TokenParser TokenParser = new TokenParser(SourceFile.Source);
             while(!TokenParser.IsEnd())
             {
                 TokenSymbol token = TokenParser.TryToken();

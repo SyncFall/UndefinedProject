@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Be.Runtime.Types;
 using System.IO;
@@ -29,7 +28,6 @@ namespace Be.UI
             float aspect_ratio = 1;
 
             WindowType WindowType = null;
-
             LineDraw LineDraw = null;
             RectDraw RectDraw = null;
             TrackBox TrackBox = null;

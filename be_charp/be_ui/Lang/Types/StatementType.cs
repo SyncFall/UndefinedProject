@@ -18,6 +18,8 @@
         // loop-control
         CONTINUE = 40,
         BREAK = 41,
+        // sanity-check
+        SANITY = 45,
         // error-control
         THROW = 50,
         // error-processing

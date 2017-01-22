@@ -48,6 +48,8 @@ namespace Be.Runtime
         Identifier,
         // accessor
         Accessor,
+        // object
+        Object,
         // unknowns
         Unknown,
     }
@@ -65,6 +67,7 @@ namespace Be.Runtime
         Literal,
         Identifier,
         Accessor,
+        Object,
         Unknown,
     }
 

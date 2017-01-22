@@ -46,10 +46,10 @@ namespace Bee.Language
         public static readonly string Set = "set";
     }
 
-    public class ObjectCollection : ListCollection<ObjectSymbol>
+    public class ObjectCollection : ListCollection<ObjectType>
     { }
 
-    public class ObjectSymbol
+    public class ObjectType
     {
         public string AbsolutePath;
         public string ObjectPath;
@@ -77,9 +77,9 @@ namespace Bee.Language
         public MemberCollection Members = new MemberCollection();
       
         public SourceFile SourceFile;
-        public ObjectSymbol ParentObject;
+        public ObjectType ParentObject;
 
-        public ObjectSymbol(string Name, AttributeType Attribute, AccessorType Accessor, GenericType Generics, ExtendSymbol Extend, ImplementCollection Implement, bool IsVirtual)
+        public ObjectType(string Name, AttributeType Attribute, AccessorType Accessor, GenericType Generics, ExtendSymbol Extend, ImplementCollection Implement, bool IsVirtual)
         {
             this.String = Name;
             this.Attributes = Attribute;
@@ -94,7 +94,7 @@ namespace Bee.Language
             this.IsAbstract = IsVirtual;
         }
 
-        public bool IsCompilantWith(ObjectSymbol compare)
+        public bool IsCompilantWith(ObjectType compare)
         {
             // check for object and native missmatch
             if (this.IsNative != compare.IsNative)
