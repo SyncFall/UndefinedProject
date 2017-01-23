@@ -1,12 +1,11 @@
-﻿using Be.Runtime.Types;
-using Bee.Language;
+﻿using Bee.Language;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.Runtime
+namespace Bee.Runtime
 {
     public class TokenParser
     {

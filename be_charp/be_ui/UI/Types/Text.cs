@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.UI
+namespace Bee.UI
 { 
     public class TextContainer
     {

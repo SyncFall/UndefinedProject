@@ -1,5 +1,4 @@
-﻿using Be.Runtime.Types;
-using Bee.Library;
+﻿using Bee.Library;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.UI.Types
+namespace Bee.UI.Types
 {
     public class Polygon
     {

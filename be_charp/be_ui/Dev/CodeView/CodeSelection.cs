@@ -1,14 +1,14 @@
-﻿using Be.UI.Types;
+﻿using Bee.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Be.Runtime;
-using Be.UI;
+using Bee.Runtime;
+using Bee.UI;
 
-namespace Be.Integrator
+namespace Bee.Integrator
 { 
     public class CodeSelection
     {

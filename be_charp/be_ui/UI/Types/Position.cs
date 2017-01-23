@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.UI.Types
+namespace Bee.UI.Types
 {
     public struct PositionType
     {

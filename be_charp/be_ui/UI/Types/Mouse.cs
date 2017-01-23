@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Be.Runtime.Types;
 using OpenTK.Input;
 using OpenTK;
 using Bee.Library;
 
-namespace Be.UI
+namespace Bee.UI
 {
     public enum MouseType
     {

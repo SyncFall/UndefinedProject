@@ -1,5 +1,4 @@
-﻿using Be.Runtime;
-using Be.Runtime.Types;
+﻿using Bee.Runtime;
 using Bee.Library;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.Runtime
+namespace Bee.Runtime
 {
     public class SignatureNode
     {
@@ -40,7 +39,7 @@ namespace Be.Runtime
             SignatureNodes.Add(newNode);
         }
 
-        public void SetTokenContainer(TokenContainer TokenContainer)
+        public void SetContainer(TokenContainer TokenContainer)
 		{
             SignatureNodes.Clear();
             SignatureParser SignatureParser = new SignatureParser(TokenContainer);

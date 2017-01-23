@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.Lib
+namespace Bee.Lib
 {
     public static class StringUtils
     {

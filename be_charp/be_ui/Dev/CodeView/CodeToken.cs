@@ -1,12 +1,12 @@
-﻿using Be.Runtime;
+﻿using Bee.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Be.UI;
+using Bee.UI;
 
-namespace Be.Integrator
+namespace Bee.Integrator
 {
     public class CodeToken
     { 

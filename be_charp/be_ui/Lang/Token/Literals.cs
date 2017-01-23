@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.Runtime
+namespace Bee.Runtime
 {
     public enum LiteralType
     {

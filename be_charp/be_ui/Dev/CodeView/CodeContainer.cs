@@ -1,7 +1,6 @@
-﻿using Be.Runtime;
-using Be.Runtime.Types;
-using Be.UI;
-using Be.UI.Types;
+﻿using Bee.Runtime;
+using Bee.UI;
+using Bee.UI.Types;
 using Bee.Library;
 using OpenTK.Graphics.OpenGL;
 using System;
@@ -11,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.Integrator
+namespace Bee.Integrator
 {
     public class CodeContainer
     {
@@ -33,7 +32,7 @@ namespace Be.Integrator
 
         public void Save()
         {
-            StreamWriter streamWriter = new StreamWriter(CodeText.SourceFile.Filepath);
+            StreamWriter streamWriter = new StreamWriter(CodeText.SourceText.Filepath);
             TokenNode node = TokenContainer.FirstTokenNode();
             while(node != null)
             {

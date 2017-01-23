@@ -1,5 +1,4 @@
-﻿using Be.Runtime.Types;
-using Be.UI.Types;
+﻿using Bee.UI.Types;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.UI
+namespace Bee.UI
 {
     public class CurveDraw
     {

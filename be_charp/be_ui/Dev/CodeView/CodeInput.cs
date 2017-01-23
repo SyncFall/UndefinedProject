@@ -1,13 +1,13 @@
-﻿using Be.Integrator;
-using Be.UI;
-using Be.UI.Types;
+﻿using Bee.Integrator;
+using Bee.UI;
+using Bee.UI.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.Integrator
+namespace Bee.Integrator
 {
     public class CodeInput : InputListener
     {
@@ -284,7 +284,7 @@ namespace Be.Integrator
                     {
                         textChar = '[';
                     }
-                    else if(textChar == 9)
+                    else if(textChar == '9')
                     {
                         textChar = ']';
                     }

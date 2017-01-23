@@ -1,12 +1,11 @@
-﻿using Be.Runtime.Types;
-using Bee.Library;
+﻿using Bee.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.Integrator
+namespace Bee.Integrator
 {
     public class CodeAssistent
     {

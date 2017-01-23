@@ -1,23 +1,15 @@
-﻿using Be;
-using Be.Runtime;
-using Be.Runtime.Types;
+﻿using Bee.Language;
+using Bee.Runtime;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Bee.Test
+namespace Bee
 {
-    public class TestMain
+    public class MainTest
     {
         public static int Main(string[] args)
         {
-
-            SourceFile source = new SourceFile();
-            source.LoadFile(@"D:\dev\UndefinedProject\be-output\AA.be-src");
+            SourceText SourceText = SourceText.FromFile(@"D:\dev\UndefinedProject\be-output\test.bee-source");
 
             //Thread.Sleep(3000);
 
@@ -26,10 +18,10 @@ namespace Bee.Test
 
             TokenContainer tokenContainer = new TokenContainer();
             SignatureContainer signatureContainer = new SignatureContainer();
-            for (int i=0; i<1*1000; i++)
+            for (int i=0; i<20*1000; i++)
             {
-                tokenContainer.SetSourceFile(source);
-                signatureContainer.SetTokenContainer(tokenContainer);
+                tokenContainer.SetSource(SourceText);
+                signatureContainer.SetContainer(tokenContainer);
             }
             
             stopWatch.Stop();

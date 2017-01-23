@@ -1,8 +1,7 @@
-﻿using Be.Lib;
-using Be.Runtime;
-using Be.Runtime.Types;
-using Be.UI;
-using Be.UI.Types;
+﻿using Bee.Lib;
+using Bee.Runtime;
+using Bee.UI;
+using Bee.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Be.Integrator
+namespace Bee.Integrator
 {
     public class BlinkCursor
     {
@@ -85,7 +84,7 @@ namespace Be.Integrator
             CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
             if (selection.HasSelection())
             {
-                string sourceText = CodeText.SourceFile.Source;
+                string sourceText = CodeText.SourceText.Text;
                 StringBuilder strBuilder = new StringBuilder();
                 int line = 0, cursor = 0;
                 bool copy = false;
@@ -118,7 +117,7 @@ namespace Be.Integrator
             CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
             if (selection.HasSelection())
             {
-                string sourceText = CodeText.SourceFile.Source;
+                string sourceText = CodeText.SourceText.Text;
                 StringBuilder strBuilder = new StringBuilder(sourceText.Length);
                 StringBuilder strBuilderCut = new StringBuilder();
                 int line = 0, cursor = 0;
@@ -149,7 +148,7 @@ namespace Be.Integrator
                 }
                 Clipboard.SetText(strBuilderCut.ToString().Replace("\n", "\r\n"));
                 CodeText.CodeSelection.Clear();
-                CodeText.SetSourceFile(CodeText.SourceFile.SetText(strBuilder.ToString()));
+                CodeText.SetSourceText(CodeText.SourceText.SetText(strBuilder.ToString()));
                 SetPosition(selection.StartLinePosition, selection.StartCursorPosition);
             }
         }
@@ -227,7 +226,7 @@ namespace Be.Integrator
         {
             insertText = insertText.Replace("\r", "");
             CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
-            string sourceText = CodeText.SourceFile.Source;
+            string sourceText = CodeText.SourceText.Text;
             StringBuilder strBuilder = new StringBuilder(sourceText.Length);
             if (selection.HasSelection())
             {
@@ -275,7 +274,7 @@ namespace Be.Integrator
             string[] insertLines = insertText.Split('\n');
             int newLine = (insertLines.Length == 1 ? LineNumber : LineNumber + insertLines.Length);
             int newCursor = (insertLines.Length == 1 ? CursorPosition + insertLines.Length : insertLines[insertLines.Length-1].Length);
-            CodeText.SetSourceFile(CodeText.SourceFile.SetText(strBuilder.ToString()));
+            CodeText.SetSourceText(CodeText.SourceText.SetText(strBuilder.ToString()));
             CodeText.CodeSelection.Clear();
             SetPosition(newLine, newCursor);
         }
@@ -287,7 +286,7 @@ namespace Be.Integrator
                 return;
             }
             CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
-            string sourceText = CodeText.SourceFile.Source;
+            string sourceText = CodeText.SourceText.Text;
             StringBuilder strBuilder = new StringBuilder(sourceText.Length);
             if(selection.HasSelection())
             {
@@ -334,14 +333,14 @@ namespace Be.Integrator
                 }
                 CursorLeft();
             }
-            CodeText.SetSourceFile(CodeText.SourceFile.SetText(strBuilder.ToString()));
+            CodeText.SetSourceText(CodeText.SourceText.SetText(strBuilder.ToString()));
             CodeText.CodeSelection.Clear();
         }
 
         public void KeyDelete()
         {
             CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
-            string sourceText = CodeText.SourceFile.Source;
+            string sourceText = CodeText.SourceText.Text;
             StringBuilder strBuilder = new StringBuilder(sourceText.Length);
             if (selection.HasSelection())
             {
@@ -367,7 +366,7 @@ namespace Be.Integrator
                         cursor = -1;
                     }
                 }
-                CodeText.SetSourceFile(CodeText.SourceFile.SetText(strBuilder.ToString()));
+                CodeText.SetSourceText(CodeText.SourceText.SetText(strBuilder.ToString()));
                 CodeText.CodeSelection.Clear();
                 SetPosition(selection.StartLinePosition, selection.StartCursorPosition);
             }
@@ -387,7 +386,7 @@ namespace Be.Integrator
                         cursor = -1;
                     }
                 }
-                CodeText.SetSourceFile(CodeText.SourceFile.SetText(strBuilder.ToString()));
+                CodeText.SetSourceText(CodeText.SourceText.SetText(strBuilder.ToString()));
                 CodeText.CodeSelection.Clear();
             }
         }

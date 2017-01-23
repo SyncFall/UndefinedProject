@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Be.Runtime.Types;
 using OpenTK.Graphics.OpenGL;
 using System.IO;
-using Be.UI.Types;
+using Bee.UI.Types;
 
-namespace Be.UI
+namespace Bee.UI
 {
     public class FontMetric
     {

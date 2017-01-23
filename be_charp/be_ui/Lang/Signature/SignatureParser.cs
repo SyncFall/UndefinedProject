@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Be.Runtime
+namespace Bee.Runtime
 {
     public class SignatureParser
     {
@@ -39,7 +39,7 @@ namespace Be.Runtime
                (signature = TryIdentifier()) != null ||
                (signature = TryUnknown()) != null
             ){
-                Console.WriteLine(signature);
+                //Console.WriteLine(signature);
             }
             return signature;
         }
@@ -284,6 +284,16 @@ namespace Be.Runtime
                 MemberSignature member = new MemberSignature();
                 member.TypeDeclaration = typeDeclaration;
                 member.Complete = complete;
+                return member;
+            }
+            SeperatorSignature assigment = TrySeperator(TokenType.Assigment);
+            if(assigment != null)
+            {
+                MemberSignature member = new MemberSignature();
+                member.TypeDeclaration = typeDeclaration;
+                member.Assigment = assigment;
+                member.AssigmentExpression = TryExpression();
+                member.Complete = TrySeperator(TokenType.Complete);
                 return member;
             }
             SeperatorSignature enclosing = TrySeperator(TokenType.ClosingBegin);

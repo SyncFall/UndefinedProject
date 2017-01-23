@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Be.Integrator;
-using Be.Runtime.Types;
-using Be.UI.Types;
-using Be.UI;
+using Bee.Integrator;
+using Bee.UI.Types;
+using Bee.UI;
+using Bee.Language;
 
-namespace Be.Integrator
+namespace Bee.Integrator
 {
     public class CodeView
     {
         public IntegratorView IntegratorView;
-        public SourceFile SourceFile;
+        public SourceText SourceText;
         public CodeText CodeText;
         
         public CodeView(IntegratorView IntegratorView)
@@ -21,10 +21,10 @@ namespace Be.Integrator
             this.IntegratorView = IntegratorView;   
         }
 
-        public void LoadSource(SourceFile SourceFile)
+        public void LoadSource(SourceText SourceText)
         {
-            this.SourceFile = SourceFile;
-            this.CodeText = new CodeText(this.SourceFile);
+            this.SourceText = SourceText;
+            this.CodeText = new CodeText(SourceText);
         }
 
         public void Draw()

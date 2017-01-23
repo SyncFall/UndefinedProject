@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Be.Runtime.Types;
-using Be.UI;
+using Bee.UI;
+using Bee.Language;
 
-namespace Be.Integrator
+namespace Bee.Integrator
 {
     public class IntegratorView
     {
@@ -20,8 +20,7 @@ namespace Be.Integrator
             this.CodeView = new CodeView(this);
             this.FpsCounter = new FpsCounter();
 
-            SourceFile source = new SourceFile();
-            source.LoadFile(@"D:\dev\UndefinedProject\be-output\AA.be-src");
+            SourceText source = SourceText.FromFile(@"D:\dev\UndefinedProject\be-output\test.bee-source");
 
             this.CodeView.LoadSource(source);
         }

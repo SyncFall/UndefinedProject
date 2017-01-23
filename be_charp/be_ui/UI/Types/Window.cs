@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 
-namespace Be.UI
+namespace Bee.UI
 {
     public class WindowType
     {

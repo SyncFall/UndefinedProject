@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.Integrator
+namespace Bee.Integrator
 {
     public enum CodeColorType
     {

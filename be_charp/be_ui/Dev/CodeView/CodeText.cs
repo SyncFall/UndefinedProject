@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Be.UI.Types;
-using Be.Runtime;
-using Be.Runtime.Types;
+using Bee.UI.Types;
+using Bee.Runtime;
 using OpenTK.Graphics.OpenGL;
-using Be.UI;
+using Bee.UI;
+using Bee.Language;
 
-namespace Be.Integrator
+namespace Bee.Integrator
 {
     public class CodeText
     {
@@ -18,7 +18,7 @@ namespace Be.Integrator
         public static readonly int DefaultLeftSpace = 5;
 
         public Font SourceFont;
-        public SourceFile SourceFile;
+        public SourceText SourceText;
         public TokenContainer TokenContainer;
         public SignatureContainer SignaturContainer;
         public GlyphMetrics GlyphMetrics;
@@ -31,10 +31,10 @@ namespace Be.Integrator
         public CodeHistory CodeHistory;
         public CodeScroller CodeScroller;
         
-        public CodeText(SourceFile SourceFile)
+        public CodeText(SourceText SourceText)
         {
             this.SourceFont = new Font(@"D:\dev\UndefinedProject\be-output\DroidSansMono.ttf", DefaultFontSize);
-            this.SourceFile = SourceFile;
+            this.SourceText = SourceText;
             this.TokenContainer = new TokenContainer();
             this.SignaturContainer = new SignatureContainer();
             this.GlyphMetrics = new GlyphMetrics(SourceFont, DefaultTopSpace, DefaultLeftSpace);
@@ -46,15 +46,15 @@ namespace Be.Integrator
             this.CodeSelection = new CodeSelection(this);
             this.CodeHistory = new CodeHistory(this);
             this.CodeScroller = new CodeScroller(this);
-            this.SetSourceFile(SourceFile);
+            this.SetSourceText(SourceText);
         }
 
-        public void SetSourceFile(SourceFile SourceFile)
+        public void SetSourceText(SourceText Source)
         {
-            this.SourceFile = SourceFile;
-            this.TokenContainer.SetSourceFile(SourceFile);
+            this.SourceText = Source;
+            this.TokenContainer.SetSource(this.SourceText);
             this.CodeContainer.SetTokenContainer(TokenContainer);
-            this.SignaturContainer.SetTokenContainer(TokenContainer);
+            this.SignaturContainer.SetContainer(TokenContainer);
         }
        
         public void Draw()

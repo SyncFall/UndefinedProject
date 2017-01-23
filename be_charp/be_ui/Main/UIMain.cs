@@ -2,26 +2,26 @@
 using System.Drawing;
 using OpenTK;
 using OpenTK.Input;
-using Be.Runtime.Types;
 using System.IO;
-using Be.UI.Types;
+using Bee.UI.Types;
 using System.Diagnostics;
-using Be.UI.Cases;
-using Be.Integrator;
+using Bee.UI.Cases;
+using Bee.Integrator;
 using System.Threading;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using Bee.UI;
 
-namespace Be.UI
+namespace Bee
 {
-    public class Entry
+    public class MainUI
     {
         [STAThread]
         public static void Main()
         {
             Utils.PrintSourceTreeStatistics(@"..\..");
 
-            new Entry().RenderCycle();
+            new MainUI().RenderCycle();
         }
 
         public void RenderCycle()

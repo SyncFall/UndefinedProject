@@ -14,7 +14,7 @@ scope OneThing
 		char = '_';
 		number = 4*.0f;	
 		list = {};
-		map = {};
+		map<K, B> = {};
 		var = {item: prop, 1, "357", {2,4}, true || false}
 		object = new Container{};
 		call = call(){};

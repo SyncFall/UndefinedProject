@@ -36,10 +36,10 @@ namespace Bee.Language
         public readonly AccessorType Type;
         public readonly string String;
 
-        public AccessorSymbol(string String, AccessorType Type)
+        public AccessorSymbol(string SymbolString, AccessorType Type)
         {
             this.Type = Type;
-            this.String = String;
+            this.String = SymbolString;
         }
     }
 }

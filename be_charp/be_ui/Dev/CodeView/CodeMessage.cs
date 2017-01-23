@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Be.Runtime;
-using Be.UI.Types;
-using Be.Integrator;
+using Bee.Runtime;
+using Bee.UI.Types;
+using Bee.Integrator;
 using OpenTK.Graphics.OpenGL;
-using Be.UI;
+using Bee.UI;
 
-namespace Be.Integrator
+namespace Bee.Integrator
 {
     public class CodeMessage
     {

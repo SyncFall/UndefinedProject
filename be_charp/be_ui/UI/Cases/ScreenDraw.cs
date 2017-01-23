@@ -1,4 +1,4 @@
-﻿using Be.UI.Types;
+﻿using Bee.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Be.UI.Cases
+namespace Bee.UI.Cases
 {
     public class ScreenDraw
     {
