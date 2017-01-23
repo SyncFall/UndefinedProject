@@ -39,7 +39,7 @@ namespace Bee.Runtime
                (signature = TryIdentifier()) != null ||
                (signature = TryUnknown()) != null
             ){
-                //Console.WriteLine(signature);
+                Console.WriteLine(signature);
             }
             return signature;
         }
@@ -296,9 +296,11 @@ namespace Bee.Runtime
                 member.Complete = TrySeperator(TokenType.Complete);
                 return member;
             }
+            BeginStep();
             SeperatorSignature enclosing = TrySeperator(TokenType.ClosingBegin);
             if (enclosing != null)
             {
+                ResetStep();
                 MethodSignature method = new MethodSignature();
                 method.TypeDeclaration = typeDeclaration;
                 if((method.ParameterDeclaration = TryParameterDeclaration()) == null ||
@@ -348,7 +350,7 @@ namespace Bee.Runtime
             TypeDeclarationSignature typeDeclaration;
             while ((typeDeclaration = TryTypeDeclaration()) != null)
             {
-                ParameterDeclartionElementSignature parameterElement = new ParameterDeclartionElementSignature();
+                ParameterDeclartionElementSignature parameterElement = new ParameterDeclartionElementSignature(typeDeclaration);
                 signature.ParameterList.Add(parameterElement);
                 parameterElement.ParameterSeperator = TrySeperator(TokenType.Comma);
                 if (parameterElement.ParameterSeperator == null)
@@ -362,7 +364,6 @@ namespace Bee.Runtime
 
         public ExpressionSignature TryExpression()
         {
-            if (true) return null;
             TrySpace();
             ExpressionSignature signature = new ExpressionSignature();
             BlockSignature blockBegin;
@@ -377,7 +378,7 @@ namespace Bee.Runtime
             }
             else
             {
-                if((signature.Operand == TryOperand()) == null)
+                if((signature.Operand = TryOperand()) == null)
                 {
                     return signature;
                 }
@@ -402,10 +403,13 @@ namespace Bee.Runtime
         public OperandSignatur TryOperand()
         {
             OperandSignatur signature = new OperandSignatur();
-            if(TryToken(TokenGroup.Literal) != null)
+            OperandAccessSignature accessSignatur = null;
+            if (TryToken(TokenGroup.Literal) != null)
             {
-                signature.AccessSignatureList.Add(new LiteralAccessSignature(PrevToken as LiteralToken));
-                if(TrySeperator(TokenType.Point) == null)
+                LiteralAccessSignature literalAccess = new LiteralAccessSignature(PrevToken as LiteralToken);
+                accessSignatur = literalAccess;
+                signature.AccessSignatureList.Add(literalAccess);
+                if((literalAccess.Seperator = TrySeperator(TokenType.Point)) == null)
                 {
                     return signature;
                 }
@@ -420,35 +424,47 @@ namespace Bee.Runtime
             }
             while(Token != null && Token.Group == TokenGroup.Identifier)
             {
-                IdentifierPathSignature pathSignature = TryIdentifierPath();
+                IdentifierSignature identifier = TryIdentifier();
                 if (TryBlock(TokenType.ClosingBegin) != null)
                 {
-                    FunctionAccessSignature functionAccess = TryFunctionAccess();
-                    signature.AccessSignatureList.Add(functionAccess);
+                    FunctionAccessSignature functionAccess = new FunctionAccessSignature(identifier);
+                    while (true)
+                    {
+                        ExpressionSignature expression = TryExpression();
+                        if(expression == null)
+                        {
+                            break;
+                        }
+                        FunctionAccessParameterSignature parameter = new FunctionAccessParameterSignature(expression);
+                        functionAccess.ParameterList.Add(parameter);
+                        if ((parameter.Seperator = TrySeperator(TokenType.Comma)) == null)
+                        {
+                            break;
+                        }
+                    }
+                    if((functionAccess.BlockEnd = TryBlock(TokenType.ClosingEnd)) == null)
+                    {
+                        ;
+                    }
+                    accessSignatur = functionAccess;
                 }
                 else if (TryBlock(TokenType.BracketBegin) != null)
                 {
-                    ArrayAccessSignature arrayAccess = TryArrayAccess();
-                    signature.AccessSignatureList.Add(arrayAccess);
+                    ArrayAccessSignature arrayAccess = null;// todo
+                    accessSignatur = arrayAccess;
                 }
                 else
                 {
-                    VariableAccessSignature variableAccess = new VariableAccessSignature(pathSignature);
-                    signature.AccessSignatureList.Add(variableAccess);
+                    VariableAccessSignature variableAccess = new VariableAccessSignature(identifier);
+                    accessSignatur = variableAccess;
                 }
-                Next();
+                signature.AccessSignatureList.Add(accessSignatur);
+                if ((accessSignatur.Seperator = TrySeperator(TokenType.Point)) == null)
+                {
+                    return signature;
+                }
             }
             return signature;
-        }
-
-        public FunctionAccessSignature TryFunctionAccess()
-        {
-            return null;
-        }
-
-        public ArrayAccessSignature TryArrayAccess()
-        {
-            return null;
         }
 
         public OperationSignature TryOperation()

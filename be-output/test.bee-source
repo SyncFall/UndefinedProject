@@ -5,13 +5,12 @@ scope Wikipedia.Language
 {
 	object One
 	{
-		int member;
+		int member = fuck.test(1, "str").length + 0.0f;
 		float member;
 		BigOne fell;
 
 		int method(int a, int b, int c)
 		{
-			if(true ++ i - 1);
 		}
 	}
 }

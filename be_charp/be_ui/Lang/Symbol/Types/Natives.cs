@@ -64,7 +64,7 @@ namespace Bee.Language
             for(int i=0; i<Array.Length; i++)
             {
                 NativeSymbol nativeType = Array[i];
-                StringMap.Add(nativeType.String, nativeType);
+                StringMap.Put(nativeType.String, nativeType);
             }
         }
     }

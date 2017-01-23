@@ -34,6 +34,7 @@ namespace Bee.Runtime
         LiteralAccess,
         VariableAccess,
         FunctionAccess,
+        FunctionAccessParameter,
         ArrayAccess,
     }
 
@@ -213,6 +214,7 @@ namespace Bee.Runtime
         {
             string str = "object (name:" + Identifier.IdentifiereToken.String + ")\n";
             str += Members;
+            str += Methods;
             return str;
         }
     }
@@ -224,11 +226,7 @@ namespace Bee.Runtime
             string str = "";
             for(int i=0; i<Size(); i++)
             {
-                str += Get(i);
-                if(i < Size() - 1)
-                {
-                    str += "\n";
-                }
+                str += Get(i)+"\n";
             }
             return str;
         }
@@ -248,12 +246,26 @@ namespace Bee.Runtime
         {
             string str = "member (";
             str += TypeDeclaration;
+            if(Assigment != null)
+            {
+                str += ", assigment(" + AssigmentExpression + ")";
+            }
             return str  + ")";
         }
     }
 
     public class MethodSignatureList : ListCollection<MethodSignature>
-    { }
+    {
+        public override string ToString()
+        {
+            string str = "";
+            for (int i = 0; i < Size(); i++)
+            {
+                str += Get(i)+"\n";
+            }
+            return str;
+        }
+    }
 
     public class MethodSignature : SignatureSymbol
     {
@@ -265,6 +277,14 @@ namespace Bee.Runtime
 
         public MethodSignature() : base(SignatureType.Method)
         { }
+
+        public override string ToString()
+        {
+            string str = "method (";
+            str += TypeDeclaration;
+            str += ", parameters("+ParameterDeclaration+")";
+            return str + ")";
+        }
     }
 
     public class TypeDeclarationSignature : SignatureSymbol
@@ -300,6 +320,20 @@ namespace Bee.Runtime
 
         public ParameterDeclarationSignature() : base(SignatureType.ParameterDeclaration)
         { }
+
+        public override string ToString()
+        {
+            string str = "";
+            for(int i=0; i<ParameterList.Size(); i++)
+            {
+                str += ParameterList.Get(i);
+                if(i < ParameterList.Size()-1)
+                {
+                    str += ", ";
+                }
+            }
+            return str;
+        }
     }
 
     public class ParameterDeclarationElementList : ListCollection<ParameterDeclartionElementSignature>
@@ -310,8 +344,17 @@ namespace Bee.Runtime
         public TypeDeclarationSignature TypeDeclaration;
         public SeperatorSignature ParameterSeperator;
 
-        public ParameterDeclartionElementSignature() : base(SignatureType.ParameterElementDeclaration)
-        { }
+        public ParameterDeclartionElementSignature(TypeDeclarationSignature TypeDeclaration) : base(SignatureType.ParameterElementDeclaration)
+        {
+            this.TypeDeclaration = TypeDeclaration;
+        }
+
+        public override string ToString()
+        {
+            string str = "";
+            str += "parameter(" + TypeDeclaration + ")";
+            return str;
+        }
     }
 
     public class CodeSignature : SignatureSymbol
@@ -332,10 +375,25 @@ namespace Bee.Runtime
         public ExpressionSignature ChildExpression;
         public BlockSignature BlockEnd;
         public OperandSignatur Operand;
-        public ExpressionOperationList ExpressionOperationList;
+        public ExpressionOperationList ExpressionOperationList = new ExpressionOperationList();
 
         public ExpressionSignature() : base(SignatureType.Expression)
         { }
+
+        public override string ToString()
+        {
+            string str = "";
+            if(ChildExpression != null)
+            {
+                str += "child_expression(" + ChildExpression + ")";
+            }
+            else if(Operand != null)
+            {
+                str += "operand_expression("+Operand+")";
+            }
+            str += ExpressionOperationList;
+            return str;
+        }
     }
 
     public class OperationSignature : SignatureSymbol
@@ -349,7 +407,17 @@ namespace Bee.Runtime
     }
 
     public class ExpressionOperationList : ListCollection<OperationPair>
-    { }
+    {
+        public override string ToString()
+        {
+            string str = "";
+            for(int i=0; i<Size(); i++)
+            {
+                str += Get(i);
+            }
+            return str;
+        }
+    }
 
     public class OperationPair
     {
@@ -361,6 +429,12 @@ namespace Bee.Runtime
             this.Operation = Operation;
             this.ExpressionPair = ExpressionPair;
         }
+
+        public override string ToString()
+        {
+            string str = ", operation(type:"+ Operation.OperationToken.OperationSymbol.Type+", symbol:"+Operation.OperationToken.OperationSymbol.String+"), "+ExpressionPair;
+            return str;
+        }
     }
 
     public class OperandSignatur : SignatureSymbol
@@ -369,13 +443,34 @@ namespace Bee.Runtime
 
         public OperandSignatur() : base(SignatureType.Operand)
         { }
+
+        public override string ToString()
+        {
+            return AccessSignatureList+"";
+        }
     }
 
     public class OperandAccessSignatureList : ListCollection<OperandAccessSignature>
-    { }
+    {
+        public override string ToString()
+        {
+            string str = "";
+            for(int i=0; i<Size(); i++)
+            {
+                str += Get(i);
+                if(i < Size()-1)
+                {
+                    str += ", ";
+                }
+            }
+            return str;
+        }
+    }
 
     public abstract class OperandAccessSignature : SignatureSymbol
     {
+        public SeperatorSignature Seperator;
+
         public OperandAccessSignature(SignatureType accessType) : base(accessType)
         { }
     }
@@ -388,22 +483,77 @@ namespace Bee.Runtime
         {
             this.LiteralToken = LiteralToken;
         }
+
+        public override string ToString()
+        {
+            return "literal(type:"+LiteralToken.LiteralSymbol.Type+", symbol:"+ LiteralToken.LiteralSymbol.String + ")";
+        }
     }
 
     public class VariableAccessSignature : OperandAccessSignature
     {
-        public IdentifierPathSignature IdentifierPath;
+        public IdentifierSignature Identifier;
 
-        public VariableAccessSignature(IdentifierPathSignature IdentifierPath) : base(SignatureType.VariableAccess)
+        public VariableAccessSignature(IdentifierSignature Identifier) : base(SignatureType.VariableAccess)
         {
-            this.IdentifierPath = IdentifierPath;
+            this.Identifier = Identifier;
+        }
+
+        public override string ToString()
+        {
+            return "variable(name:" + Identifier.IdentifiereToken.String + ")";
         }
     }
 
     public class FunctionAccessSignature : OperandAccessSignature
     {
-        public FunctionAccessSignature() : base(SignatureType.FunctionAccess)
-        { }
+        public IdentifierSignature Identifier;
+        public BlockSignature BlockBegin;
+        public FunctionAccessParameterList ParameterList = new FunctionAccessParameterList();
+        public BlockSignature BlockEnd;
+
+        public FunctionAccessSignature(IdentifierSignature Identifier) : base(SignatureType.FunctionAccess)
+        {
+            this.Identifier = Identifier;
+        }
+
+        public override string ToString()
+        {
+            return "function(name:"+Identifier.IdentifiereToken.String + ", parameters("+ParameterList+"))";
+        }
+    }
+
+    public class FunctionAccessParameterList : ListCollection<FunctionAccessParameterSignature>
+    {
+        public override string ToString()
+        {
+            string str = "";
+            for(int i=0; i<Size(); i++)
+            {
+                str += Get(i);
+                if(i < Size()-1)
+                {
+                    str += ", ";
+                }
+            }
+            return str;
+        }
+    }
+
+    public class FunctionAccessParameterSignature : SignatureSymbol
+    {
+        public ExpressionSignature Expression;
+        public SeperatorSignature Seperator;
+
+        public FunctionAccessParameterSignature(ExpressionSignature Expression) : base(SignatureType.FunctionAccessParameter)
+        {
+            this.Expression = Expression;
+        }
+
+        public override string ToString()
+        {
+            return "parameter(" + Expression + ")";
+        }
     }
 
     public class ArrayAccessSignature : OperandAccessSignature

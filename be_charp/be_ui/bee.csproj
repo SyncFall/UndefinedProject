@@ -15,16 +15,18 @@
     </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;TRACK</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>0</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,7 +39,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Bee.MainTest</StartupObject>
+    <StartupObject>Bee.MainUI</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -58,6 +60,12 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -76,7 +84,7 @@
     <Compile Include="Dev\CodeView\CodeScroller.cs" />
     <Compile Include="Dev\CodeView\CodeToken.cs" />
     <Compile Include="Lang\Signature\Signatures.cs" />
-    <Compile Include="Lang\Types\Operations.cs" />
+    <Compile Include="Lang\Symbol\Types\Operations.cs" />
     <Compile Include="Lib\StringUtils.cs" />
     <Compile Include="Main\Constants.cs" />
     <Compile Include="Main\TestMain.cs" />
@@ -112,10 +120,10 @@
     <Compile Include="Lang\Token\TokenParser.cs" />
     <Compile Include="Lang\Token\Tokens.cs" />
     <Compile Include="Lang\Token\TokenReader.cs" />
-    <Compile Include="Lang\Types\Accessors.cs" />
+    <Compile Include="Lang\Symbol\Types\Accessors.cs" />
     <Compile Include="Lib\Collections.cs" />
-    <Compile Include="Lang\Types\Natives.cs" />
-    <Compile Include="Lang\Types\Sources.cs" />
+    <Compile Include="Lang\Symbol\Types\Natives.cs" />
+    <Compile Include="Lang\Sources.cs" />
     <Compile Include="UI\Types\Buffer.cs" />
     <Compile Include="UI\Types\Clipboard.cs" />
     <Compile Include="UI\Types\Color.cs" />
@@ -138,8 +146,9 @@
     <Compile Include="Main\UIMain.cs" />
     <Compile Include="UI\Types\Mouse.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Lang\Symbol\" />
+    <Content Include="favicon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

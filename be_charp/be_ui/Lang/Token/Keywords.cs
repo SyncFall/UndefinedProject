@@ -79,8 +79,8 @@ namespace Bee.Runtime
             for(int i=0; i<Array.Length; i++)
             {
                 KeywordSymbol keyword = Array[i];
-                EnumMap.Add(keyword.Type, keyword);
-                StringMap.Add(keyword.String, keyword);
+                EnumMap.Put(keyword.Type, keyword);
+                StringMap.Put(keyword.String, keyword);
             }
         }
     }

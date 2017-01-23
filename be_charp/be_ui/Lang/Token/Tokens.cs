@@ -127,7 +127,7 @@ namespace Bee.Runtime
             {
                 TokenSymbol structureToken = StructureTokensArray[i];
                 AllTokensArray[idx++] = structureToken;
-                StructureTokenStringMap.Add(structureToken.String, structureToken);
+                StructureTokenStringMap.Put(structureToken.String, structureToken);
             }
             KeywordTokenArray = new KeywordToken[Keywords.Array.Length];
             for(int i=0;  i < Keywords.Array.Length; i++)
@@ -135,7 +135,7 @@ namespace Bee.Runtime
                 KeywordToken keywordToken = new KeywordToken(Keywords.Array[i]);
                 KeywordTokenArray[i] = keywordToken;
                 AllTokensArray[idx++] = keywordToken;
-                KeywordTokenStringMap.Add(keywordToken.String, keywordToken);
+                KeywordTokenStringMap.Put(keywordToken.String, keywordToken);
             }
             NativeTokenArray = new NativeToken[Natives.Array.Length];
             for(int i=0; i < Natives.Array.Length; i++)
@@ -143,7 +143,7 @@ namespace Bee.Runtime
                 NativeToken nativeToken = new NativeToken(Natives.Array[i]);
                 NativeTokenArray[i] = nativeToken;
                 AllTokensArray[idx++] = nativeToken;
-                NativeTokenStringMap.Add(nativeToken.String, nativeToken);
+                NativeTokenStringMap.Put(nativeToken.String, nativeToken);
             }
             AccessorTokenArray = new AccessorToken[Accessors.Array.Length];
             for(int i=0; i < Accessors.Array.Length; i++)
@@ -151,7 +151,7 @@ namespace Bee.Runtime
                 AccessorToken accessorToken = new AccessorToken(Accessors.Array[i]);
                 AccessorTokenArray[i] = accessorToken;
                 AllTokensArray[idx++] = accessorToken;
-                AccessorTokenStringMap.Add(accessorToken.String, accessorToken);
+                AccessorTokenStringMap.Put(accessorToken.String, accessorToken);
             }
             OperationTokenArray = new OperationToken[Operations.Array.Length];
             for (int i = 0; i < Operations.Array.Length; i++)
@@ -159,7 +159,7 @@ namespace Bee.Runtime
                 OperationToken operationToken = new OperationToken(Operations.Array[i]);
                 OperationTokenArray[i] = operationToken;
                 AllTokensArray[idx++] = operationToken;
-                OperationTokenStringMap.Add(operationToken.String, operationToken);
+                OperationTokenStringMap.Put(operationToken.String, operationToken);
             }
         }
     }

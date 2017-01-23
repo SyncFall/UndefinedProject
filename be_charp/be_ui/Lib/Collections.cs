@@ -7,22 +7,19 @@ namespace Bee.Library
 {
     public class ListCollection<T>
     {
-        public List<T> list;
-        private int index;
+        private List<T> list;
 
         public ListCollection()
         {
             list = new List<T>();
-            index = -1;
         }
 
         public ListCollection(int Size)
         {
             list = new List<T>(Size);
-            index = -1;
         }
 
-        public virtual void Add(T item)
+        public void Add(T item)
         {
             if (item == null)
             {
@@ -31,7 +28,7 @@ namespace Bee.Library
             list.Add(item);
         }
 
-        public virtual void Add(ListCollection<T> items)
+        public void Add(ListCollection<T> items)
         {
             if (items == null)
             {
@@ -39,11 +36,11 @@ namespace Bee.Library
             }
             for(int i=0; i<items.Size(); i++)
             {
-                this.Add(items.Get(i));
+                Add(items.Get(i));
             }
         }
 
-        public virtual void Insert(int index, T item)
+        public void Insert(int index, T item)
         {
             if (item == null)
             {
@@ -52,116 +49,58 @@ namespace Bee.Library
             list.Insert(index, item);
         }
 
-        public virtual T Get(int index)
+        public T Get(int index)
         {
             return list[index];
         }
 
-
-        public virtual T RemoveAt(int index)
+        public T RemoveAt(int index)
         {
             T value = list[index];
             list.RemoveAt(index);
             return value;
         }
 
-        public virtual void Rewind()
+        public T First()
         {
-            index = -1;
+            if (Size() == 0)
+            {
+                throw new Exception("list is empty");
+            }
+            return list[0];
         }
-
-        public virtual int Position()
-        {
-            return index;
-        }
-
-        public virtual T First()
+        
+        public T Last()
         {
             int size = Size();
             if (size == 0)
             {
                 throw new Exception("list is empty");
             }
-            index = 0;
-            return list[index];
+            return list[size-1];
         }
 
-        public virtual bool IsFirst()
-        {
-            return (index <= 0);
-        }
-
-        public virtual T Next()
-        {
-            int size = Size();
-            if (size == 0)
-            {
-                throw new Exception("list is empty");
-            }
-            else if (index >= size - 1)
-            {
-                throw new Exception("list position overflow");
-            }
-            index++;
-            return list[index];
-        }
-
-        public virtual T Current()
-        {
-            int size = Size();
-            if (size == 0)
-            {
-                throw new Exception("list is empty");
-            }
-            if (index == -1)
-            {
-                index = 0;
-            }
-            return list[index];
-        }
-
-        public virtual T Last()
-        {
-            int size = Size();
-            if (size == 0)
-            {
-                throw new Exception("list is empty");
-            }
-            index = size - 1;
-            return list[index];
-        }
-
-        public virtual bool IsLast()
-        {
-            return (index == Size() - 1);
-        }
-
-        public virtual bool IsNotEnd()
-        {
-            return (index < Size() - 1);
-        }
-
-        public virtual int Size()
+        public int Size()
         {
             return list.Count;
         }
 
-        public virtual bool IsNotEmpty()
+        public bool IsNotEmpty()
         {
             return (list.Count > 0);
         }
 
-        public virtual bool IsEmpty()
+        public bool IsEmpty()
         {
             return (list.Count == 0);
         }
 
-        public virtual void Clear()
+        public void Clear()
         {
             list.Clear();
         }
 
-        public virtual T[] ToArray()
+        public T[] ToArray()
         {
             return list.ToArray();
         }
@@ -169,20 +108,15 @@ namespace Bee.Library
         public override string ToString()
         {
             StringBuilder strBuilder = new StringBuilder();
-            for(int i=0; i<this.Size(); i++)
+            for(int i=0; i<Size(); i++)
             {
-                strBuilder.Append(this.Get(i).ToString());
-                if(i < this.Size() - 1)
+                strBuilder.Append(Get(i));
+                if(i < Size()-1)
                 {
                     strBuilder.Append(", ");
                 }
             }
             return strBuilder.ToString();
-        }
-
-        public void Reverse()
-        {
-            list.Reverse();
         }
     }
 
@@ -195,18 +129,18 @@ namespace Bee.Library
             map = new Dictionary<K, V>();
         }
 
-        public virtual void Add(K key, V value)
+        public void Put(K key, V value)
         {
-            if (key == null || value == null)
+            if (key == null)
             {
-                throw new Exception("can not add null-reference to collection");
+                throw new Exception("can not put null key reference to collection");
             }
             map[key] = value;
         }
 
         public V GetValue(K key)
         {
-            return (V)map[key];
+            return map[key];
         }
 
         public bool KeyExist(K key)
@@ -218,7 +152,7 @@ namespace Bee.Library
         {
             K[] keys = new K[map.Keys.Count];
             map.Keys.CopyTo(keys, 0);
-            return (K[])keys;
+            return keys;
         }
 
         public void Remove(K key)

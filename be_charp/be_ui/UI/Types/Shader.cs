@@ -125,7 +125,7 @@ namespace Bee.UI.Types
             {
                 for(int i=0; i< AttributeKeys.Length; i++)
                 {
-                    this.Attributes.Add(AttributeKeys[i], new ShaderProperty(AttributeKeys[i]));
+                    this.Attributes.Put(AttributeKeys[i], new ShaderProperty(AttributeKeys[i]));
                 }
             }
         }

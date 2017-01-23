@@ -28,7 +28,7 @@ namespace Bee.UI
             else
             {
                 Glyph glyph = Font.GetGlyph(chr);
-                Glyphs.Add(chr, glyph);
+                Glyphs.Put(chr, glyph);
                 return glyph;
             }
         }

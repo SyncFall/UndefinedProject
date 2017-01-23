@@ -96,7 +96,7 @@ namespace Bee.Language
             for(int i=0; i<Array.Length; i++)
             {
                 OperationSymbol operationSymbol = Array[i];
-                StringMap.Add(operationSymbol.String, operationSymbol);
+                StringMap.Put(operationSymbol.String, operationSymbol);
             }
         }
     }

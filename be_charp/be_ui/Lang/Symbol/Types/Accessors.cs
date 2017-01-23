@@ -26,7 +26,7 @@ namespace Bee.Language
             for(int i=0; i<Array.Length; i++)
             {
                 AccessorSymbol symbol = Array[i];
-                StringMap.Add(symbol.String, symbol);
+                StringMap.Put(symbol.String, symbol);
             }
         }
     }

@@ -147,7 +147,7 @@ namespace Bee.UI.Types
                 keyState.IsClick = false;
                 keyState.IsDown = keyboardState.IsKeyDown((OpenTK.Input.Key)keys[i]);
                 keyState.IsUp = !keyState.IsDown;
-                KeyStates.Add(keys[i], keyState);
+                KeyStates.Put(keys[i], keyState);
             }
             GameWindow.KeyDown += (object sender, OpenTK.Input.KeyboardKeyEventArgs e) =>
             {
@@ -250,7 +250,7 @@ namespace Bee.UI.Types
                 MouseButtonState mouseButton = new MouseButtonState(buttons[i]);
                 mouseButton.IsDown = mouseState.IsButtonDown((OpenTK.Input.MouseButton)buttons[i]);
                 mouseButton.IsUp = !mouseButton.IsDown;
-                MouseButtonStates.Add(mouseButton.Button, mouseButton);
+                MouseButtonStates.Put(mouseButton.Button, mouseButton);
             }
             GameWindow.MouseMove += (object sender, OpenTK.Input.MouseMoveEventArgs e) =>
             {
