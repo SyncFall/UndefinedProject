@@ -11,7 +11,7 @@ namespace Bee
         {
             SourceText SourceText = SourceText.FromFile(@"D:\dev\UndefinedProject\be-output\test.bee-source");
 
-            //Thread.Sleep(3000);
+            //Thread.Sleep(2000);
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
