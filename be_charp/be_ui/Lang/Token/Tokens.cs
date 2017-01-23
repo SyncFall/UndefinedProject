@@ -46,6 +46,8 @@ namespace Be.Runtime
         Literal,
         // identfier
         Identifier,
+        // operations,
+        Operation,
         // accessor
         Accessor,
         // object
@@ -66,6 +68,7 @@ namespace Be.Runtime
         Native,
         Literal,
         Identifier,
+        Operation,
         Accessor,
         Object,
         Unknown,
@@ -113,10 +116,13 @@ namespace Be.Runtime
         public static readonly AccessorToken[] AccessorTokenArray = null;
         public static readonly MapCollection<string, AccessorToken> AccessorTokenStringMap = new MapCollection<string, AccessorToken>();
 
+        public static readonly OperationToken[] OperationTokenArray = null;
+        public static readonly MapCollection<string, OperationToken> OperationTokenStringMap = new MapCollection<string, OperationToken>();
+
         static Tokens()
         {
             int idx = 0;
-            int totalLen = (StructureTokensArray.Length + Keywords.Array.Length + Natives.Array.Length + Accessors.Array.Length);
+            int totalLen = (StructureTokensArray.Length + Keywords.Array.Length + Natives.Array.Length + Accessors.Array.Length + Operations.Array.Length);
             AllTokensArray = new TokenSymbol[totalLen];
             for(int i=0; i < StructureTokensArray.Length; i++)
             {
@@ -147,6 +153,14 @@ namespace Be.Runtime
                 AccessorTokenArray[i] = accessorToken;
                 AllTokensArray[idx++] = accessorToken;
                 AccessorTokenStringMap.Add(accessorToken.String, accessorToken);
+            }
+            OperationTokenArray = new OperationToken[Operations.Array.Length];
+            for (int i = 0; i < Operations.Array.Length; i++)
+            {
+                OperationToken operationToken = new OperationToken(Operations.Array[i]);
+                OperationTokenArray[i] = operationToken;
+                AllTokensArray[idx++] = operationToken;
+                OperationTokenStringMap.Add(operationToken.String, operationToken);
             }
         }
     }
@@ -228,7 +242,17 @@ namespace Be.Runtime
             this.AccessorSymbol = AccessorSymbol;
         }
     }
-    
+
+    public class OperationToken : TokenSymbol
+    {
+        public OperationSymbol OperationSymbol;
+
+        public OperationToken(OperationSymbol OperationSymbol) : base(TokenType.Operation, TokenGroup.Operation, OperationSymbol.String)
+        {
+            this.OperationSymbol = OperationSymbol;
+        }
+    }
+
     public class UnknownToken : TokenSymbol
     {
         public UnknownToken(string TokenString) : base(TokenType.Unknown, TokenGroup.Unknown, TokenString)

@@ -46,16 +46,7 @@ namespace Bee.Language
         Unsigned,
     }
 
-    public class NativeBools
-    {
-        public static readonly string True = "true";
-        public static readonly string False = "false";
-    }
-
-    public class NativeCollection : ListCollection<NativeSymbol>
-    { }
-
-    public class NativeSymbol : ObjectType
+    public class NativeSymbol
     {
         public readonly string String;
         public readonly NativeType Type;
@@ -63,20 +54,18 @@ namespace Bee.Language
         public readonly NativeNumberType NumberGroup;
         public readonly NativeNumberGroup NumberCategory;
 
-        public NativeSymbol(string TypeName, NativeType Type, NativeGroup Group) : base(TypeName, null, AccessorConst.NoneType, null, null, null, false)
+        public NativeSymbol(string TypeName, NativeType Type, NativeGroup Group)
         {
             this.String = TypeName;
-            this.IsNative = true;
             this.Type = Type;
             this.Group = Group;
             this.NumberGroup = NativeNumberType.None;
             this.NumberCategory = NativeNumberGroup.None;
         }
 
-        public NativeSymbol(string TypeName, NativeType Type, NativeGroup Group, NativeNumberType NumberGroup, NativeNumberGroup NumberCategory) : base(TypeName, null, AccessorConst.NoneType, null, null, null, false)
+        public NativeSymbol(string TypeName, NativeType Type, NativeGroup Group, NativeNumberType NumberGroup, NativeNumberGroup NumberCategory)
         {
             this.String = TypeName;
-            this.IsNative = true;
             this.Type = Type;
             this.Group = Group;
             this.NumberGroup = NumberGroup;
@@ -231,11 +220,5 @@ namespace Bee.Language
             // return base-result
             return result;
         }
-    }
-
-    public class NativeDeclarationType
-    {
-        public ListCollection<OperandType> ConstructorDeclarationList = new ListCollection<OperandType>();
-        public MapCollection<string, OperandType> MemberDeclarationMap = new MapCollection<string, OperandType>();
     }
 }

@@ -10,6 +10,7 @@ using Be.UI.Cases;
 using Be.Integrator;
 using System.Threading;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 
 namespace Be.UI
 {

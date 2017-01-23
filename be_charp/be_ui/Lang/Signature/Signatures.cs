@@ -10,35 +10,61 @@ namespace Be.Runtime
 {
     public enum SignatureType
     {
+        Unknown,
         Seperator,
         Block,
         Keyword,
-        Using,
-        Namespace,
+        Use,
+        Scope,
         IdentifierPath,
         IdentifierPathElement,
         Identifier,
         Object,
         Member,
         Method,
-        Property,
         TypeDeclartion,
         ParameterDeclaration,
         ParameterElementDeclaration,
         Code,
         Statement,
-        Expression,
-        
+        Expression,   
+        ExpressionOperation,
+        Operation,
+        Operand,
+        OperandOperation,
+        LiteralAccess,
+        VariableAccess,
+        FunctionAccess,
+        ArrayAccess,
     }
 
     public abstract class SignatureSymbol
-    {
+    { 
         public SignatureType Type;
-        public TokenList Tokens = new TokenList();
 
         public SignatureSymbol(SignatureType Type)
         {
             this.Type = Type;
+        }
+
+        public override string ToString()
+        {
+            return Type.ToString();
+        }
+    }
+
+    public class UnknownSignatur : SignatureSymbol
+    {
+        public TokenSymbol UnknownToken;
+
+        public UnknownSignatur(TokenSymbol UnknownToken) : base(SignatureType.Unknown)
+        {
+            this.UnknownToken = UnknownToken;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + " (group:"+UnknownToken.Group+", type:"+UnknownToken.Type+", string:'"+ UnknownToken.String+"')";
         }
     }
 
@@ -55,7 +81,7 @@ namespace Be.Runtime
     public class SeperatorSignature : SignatureSymbol
     {
         public TokenSymbol SeperatorToken;
-        
+      
         public SeperatorSignature(TokenSymbol SeperatorToken) : base(SignatureType.Seperator)
         {
             this.SeperatorToken = SeperatorToken;
@@ -78,8 +104,13 @@ namespace Be.Runtime
         public IdentifierPathSignature IdentifierPath;
         public SeperatorSignature Complete;
 
-        public UseSignature() : base(SignatureType.Using)
+        public UseSignature() : base(SignatureType.Use)
         { }
+
+        public override string ToString()
+        {
+            return base.ToString() + " (path:" + IdentifierPath + ")";
+        }
     }
 
     public class ScopeSignature : SignatureSymbol
@@ -90,15 +121,37 @@ namespace Be.Runtime
         public ObjectSignatureList ObjectList;
         public BlockSignature BlockEnd;
 
-        public ScopeSignature() : base(SignatureType.Namespace)
+        public ScopeSignature() : base(SignatureType.Scope)
         { }
+
+        public override string ToString()
+        {
+            string str = base.ToString() + " (path:" + IdentifierPath  + ")\n";
+            str += ObjectList.ToString();
+            return str;
+        }
     }
 
     public class IdentifierPathSignature : SignatureSymbol
     {
+        public IdentifierPathElemementList PathElements = new IdentifierPathElemementList();
+
         public IdentifierPathSignature() : base(SignatureType.IdentifierPath)
         { }
+
+        public override string ToString()
+        {
+            string str = "";
+            for(int i=0; i<PathElements.Size(); i++)
+            {
+                str += PathElements.Get(i);
+            }
+            return str;
+        }
     }
+
+    public class IdentifierPathElemementList : ListCollection<IdentifierPathElementSignatur>
+    { }
 
     public class IdentifierPathElementSignatur : SignatureSymbol
     {
@@ -107,6 +160,16 @@ namespace Be.Runtime
 
         public IdentifierPathElementSignatur() : base(SignatureType.IdentifierPathElement)
         { }
+
+        public override string ToString()
+        {
+            string str = Identifier.String;
+            if(PointSeperator != null)
+            {
+                str += PointSeperator.SeperatorToken.String;
+            }
+            return str;
+        }
     }
 
     public class IdentifierSignature : SignatureSymbol
@@ -115,112 +178,238 @@ namespace Be.Runtime
         
         public IdentifierSignature() : base(SignatureType.Identifier)
         { }
+
+        public override string ToString()
+        {
+            return base.ToString()+"|"+IdentifiereToken.String;
+        }
     }
 
     public class ObjectSignatureList : ListCollection<ObjectSignature>
-    { }
+    {
+        public override string ToString()
+        {
+            string str = "";
+            for(int i=0; i<Size(); i++)
+            {
+                str += Get(i);
+            }
+            return str;
+        }
+    }
 
     public class ObjectSignature : SignatureSymbol
     {
         public KeywordSignature Keyword;
         public IdentifierSignature Identifier;
         public BlockSignature BlockBegin;
-        public MemberSignaturList Members = new MemberSignaturList();
-        public MethodSignaturList Methods = new MethodSignaturList();
-        public PropertySignaturList Properties = new PropertySignaturList();
+        public MemberSignatureList Members = new MemberSignatureList();
+        public MethodSignatureList Methods = new MethodSignatureList();
         public BlockSignature BlockEnd;
 
         public ObjectSignature() : base(SignatureType.Object)
         { }
+
+        public override string ToString()
+        {
+            string str = "object (name:" + Identifier.IdentifiereToken.String + ")\n";
+            str += Members;
+            return str;
+        }
     }
 
-    public class MemberSignaturList : ListCollection<MemberSignatur>
-    { }
-
-    public class MemberSignatur : SignatureSymbol
+    public class MemberSignatureList : ListCollection<MemberSignature>
     {
-        public TypeDeclarationSignatur TypeDeclaration;
+        public override string ToString()
+        {
+            string str = "";
+            for(int i=0; i<Size(); i++)
+            {
+                str += Get(i);
+                if(i < Size() - 1)
+                {
+                    str += "\n";
+                }
+            }
+            return str;
+        }
+    }
+
+    public class MemberSignature : SignatureSymbol
+    {
+        public TypeDeclarationSignature TypeDeclaration;
         public SeperatorSignature Assigment;
-        public ExpressionSignatur AssigmentExpression;
+        public ExpressionSignature AssigmentExpression;
         public SeperatorSignature Complete;
 
-        public MemberSignatur() : base(SignatureType.Member)
+        public MemberSignature() : base(SignatureType.Member)
         { }
+
+        public override string ToString()
+        {
+            string str = "member (";
+            str += TypeDeclaration;
+            return str  + ")";
+        }
     }
 
-    public class MethodSignaturList : ListCollection<MethodSignatur>
+    public class MethodSignatureList : ListCollection<MethodSignature>
     { }
 
-    public class MethodSignatur : SignatureSymbol
+    public class MethodSignature : SignatureSymbol
     {
-        public TypeDeclarationSignatur TypeDeclaration;
-        public ParameterDeclarationSignatur ParameterDeclaration;
+        public TypeDeclarationSignature TypeDeclaration;
+        public ParameterDeclarationSignature ParameterDeclaration;
         public BlockSignature BlockBegin;
-        public CodeSignatur Code;
+        public CodeSignature Code;
         public BlockSignature BlockEnd;
 
-        public MethodSignatur() : base(SignatureType.Method)
+        public MethodSignature() : base(SignatureType.Method)
         { }
     }
 
-    public class PropertySignaturList : ListCollection<PropertySignatur>
-    { }
-
-    public class PropertySignatur : SignatureSymbol
-    {
-        public TypeDeclarationSignatur TypeDeclaration;
-
-        public PropertySignatur() : base(SignatureType.Property)
-        { }
-    }
-
-    public class TypeDeclarationSignatur : SignatureSymbol
+    public class TypeDeclarationSignature : SignatureSymbol
     {
         public NativeToken TypeNative;
         public IdentifierToken TypeIdentifier;
         public IdentifierSignature NameIdentifier;
 
-        public TypeDeclarationSignatur() : base(SignatureType.TypeDeclartion)
+        public TypeDeclarationSignature() : base(SignatureType.TypeDeclartion)
         { }
+
+        public override string ToString()
+        {
+            string str = "";
+            if(TypeNative != null)
+            {
+                str += "native:"+TypeNative.String;
+            }
+            else if(TypeIdentifier != null)
+            {
+                str += "object:"+TypeIdentifier.String;
+            }
+            str += ", name:" + NameIdentifier.IdentifiereToken.String;
+            return str;
+        }
     }
 
-    public class ParameterDeclarationSignatur : SignatureSymbol
+    public class ParameterDeclarationSignature : SignatureSymbol
     {
         public BlockSignature BlockBegin;
-        public ParameterDeclarationElementList ParameterDeclarationElementList;
+        public ParameterDeclarationElementList ParameterList = new ParameterDeclarationElementList();
         public BlockSignature BlockEnd;
 
-        public ParameterDeclarationSignatur() : base(SignatureType.ParameterDeclaration)
+        public ParameterDeclarationSignature() : base(SignatureType.ParameterDeclaration)
         { }
     }
 
-    public class ParameterDeclarationElementList : ListCollection<ParameterDeclartionElementSignatur>
+    public class ParameterDeclarationElementList : ListCollection<ParameterDeclartionElementSignature>
     { } 
 
-    public class ParameterDeclartionElementSignatur : SignatureSymbol
+    public class ParameterDeclartionElementSignature : SignatureSymbol
     {
-        public TypeDeclarationSignatur TypeDeclaration;
+        public TypeDeclarationSignature TypeDeclaration;
         public SeperatorSignature ParameterSeperator;
 
-        public ParameterDeclartionElementSignatur() : base(SignatureType.ParameterElementDeclaration)
+        public ParameterDeclartionElementSignature() : base(SignatureType.ParameterElementDeclaration)
         { }
     }
 
-    public class CodeSignatur : SignatureSymbol
+    public class CodeSignature : SignatureSymbol
     {
-        public CodeSignatur() : base(SignatureType.Code)
+        public CodeSignature() : base(SignatureType.Code)
         { }
     }
 
-    public class StatementSignatur : SignatureSymbol
+    public class StatementSignature : SignatureSymbol
     {
-        public StatementSignatur() : base(SignatureType.Statement)
+        public StatementSignature() : base(SignatureType.Statement)
         { }
     }
 
-    public class ExpressionSignatur : SignatureSymbol
+    public class ExpressionSignature : SignatureSymbol
     {
-        public ExpressionSignatur() : base(SignatureType.Expression)
+        public BlockSignature BlockBegin;
+        public ExpressionSignature ChildExpression;
+        public BlockSignature BlockEnd;
+        public OperandSignatur Operand;
+        public ExpressionOperationList ExpressionOperationList;
+
+        public ExpressionSignature() : base(SignatureType.Expression)
+        { }
+    }
+
+    public class OperationSignature : SignatureSymbol
+    {
+        public OperationToken OperationToken;
+
+        public OperationSignature(OperationToken OperationToken) : base(SignatureType.Operation)
+        {
+            this.OperationToken = OperationToken;
+        }
+    }
+
+    public class ExpressionOperationList : ListCollection<OperationPair>
+    { }
+
+    public class OperationPair
+    {
+        public OperationSignature Operation;
+        public ExpressionSignature ExpressionPair;
+
+        public OperationPair(OperationSignature Operation, ExpressionSignature ExpressionPair)
+        {
+            this.Operation = Operation;
+            this.ExpressionPair = ExpressionPair;
+        }
+    }
+
+    public class OperandSignatur : SignatureSymbol
+    {
+        public OperandAccessSignatureList AccessSignatureList = new OperandAccessSignatureList();
+
+        public OperandSignatur() : base(SignatureType.Operand)
+        { }
+    }
+
+    public class OperandAccessSignatureList : ListCollection<OperandAccessSignature>
+    { }
+
+    public abstract class OperandAccessSignature : SignatureSymbol
+    {
+        public OperandAccessSignature(SignatureType accessType) : base(accessType)
+        { }
+    }
+
+    public class LiteralAccessSignature : OperandAccessSignature
+    {
+        public LiteralToken LiteralToken;
+
+        public LiteralAccessSignature(LiteralToken LiteralToken) : base(SignatureType.LiteralAccess)
+        {
+            this.LiteralToken = LiteralToken;
+        }
+    }
+
+    public class VariableAccessSignature : OperandAccessSignature
+    {
+        public IdentifierPathSignature IdentifierPath;
+
+        public VariableAccessSignature(IdentifierPathSignature IdentifierPath) : base(SignatureType.VariableAccess)
+        {
+            this.IdentifierPath = IdentifierPath;
+        }
+    }
+
+    public class FunctionAccessSignature : OperandAccessSignature
+    {
+        public FunctionAccessSignature() : base(SignatureType.FunctionAccess)
+        { }
+    }
+
+    public class ArrayAccessSignature : OperandAccessSignature
+    {
+        public ArrayAccessSignature() : base(SignatureType.ArrayAccess)
         { }
     }
 }

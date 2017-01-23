@@ -7,8 +7,8 @@
     <ProjectGuid>{996F03D6-43AF-446C-B05F-57F86E6E7168}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Be.UI</RootNamespace>
-    <AssemblyName>Be.UI</AssemblyName>
+    <RootNamespace>Bee</RootNamespace>
+    <AssemblyName>Bee.Runtime</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
@@ -76,9 +76,9 @@
     <Compile Include="Dev\CodeView\CodeScroller.cs" />
     <Compile Include="Dev\CodeView\CodeToken.cs" />
     <Compile Include="Lang\Signature\Signatures.cs" />
+    <Compile Include="Lang\Types\Operations.cs" />
     <Compile Include="Lib\StringUtils.cs" />
     <Compile Include="Main\Const.cs" />
-    <Compile Include="Main\LangMain.cs" />
     <Compile Include="Main\TestMain.cs" />
     <Compile Include="Main\Utils.cs" />
     <Compile Include="UI\Cases\FontDraw.cs" />
@@ -103,14 +103,6 @@
     <Compile Include="UI\Cases\LineDraw.cs" />
     <Compile Include="UI\Cases\TrackBox.cs" />
     <Compile Include="UI\GeometryUtils.cs" />
-    <Compile Include="Lang\Convert\ObjectConverter.cs" />
-    <Compile Include="Lang\ObjectLoader.cs" />
-    <Compile Include="Lang\Parse\ArrayParser.cs" />
-    <Compile Include="Lang\Parse\CodeParser.cs" />
-    <Compile Include="Lang\Parse\ExpressionParser.cs" />
-    <Compile Include="Lang\Parse\GenericsParser.cs" />
-    <Compile Include="Lang\Parse\SourceParser.cs" />
-    <Compile Include="Lang\Parse\TextParser.cs" />
     <Compile Include="Lang\Signature\SignatureContainer.cs" />
     <Compile Include="Lang\Signature\SignatureParser.cs" />
     <Compile Include="Lang\Token\Keywords.cs" />
@@ -121,40 +113,9 @@
     <Compile Include="Lang\Token\Tokens.cs" />
     <Compile Include="Lang\Token\TokenReader.cs" />
     <Compile Include="Lang\Types\Accessors.cs" />
-    <Compile Include="Lang\Types\AnonType.cs" />
-    <Compile Include="Lang\Types\ArrayType.cs" />
-    <Compile Include="Lang\Types\AttributeType.cs" />
-    <Compile Include="Lang\Types\AttrType.cs" />
-    <Compile Include="Lang\Types\CodeType.cs" />
     <Compile Include="Lib\Collections.cs" />
-    <Compile Include="Lang\Types\ConstructorType.cs" />
-    <Compile Include="Lang\Types\EnumType.cs" />
-    <Compile Include="Lang\Types\ExceptionType.cs" />
-    <Compile Include="Lang\Types\ExpressionOperatorType.cs" />
-    <Compile Include="Lang\Types\ExpressionType.cs" />
-    <Compile Include="Lang\Types\Extend.cs" />
-    <Compile Include="Lang\Types\GenericType.cs" />
-    <Compile Include="Lang\Types\Implement.cs" />
-    <Compile Include="Lang\Types\InterfaceType.cs" />
-    <Compile Include="Lang\Types\MemberType.cs" />
-    <Compile Include="Lang\Types\MethodType.cs" />
-    <Compile Include="Lang\Types\NamespaceType.cs" />
     <Compile Include="Lang\Types\Natives.cs" />
-    <Compile Include="Lang\Types\Objects.cs" />
-    <Compile Include="Lang\Types\OperandOperatorType.cs" />
-    <Compile Include="Lang\Types\OperandType.cs" />
-    <Compile Include="Lang\Types\OperationType.cs" />
-    <Compile Include="Lang\Types\ParameterType.cs" />
-    <Compile Include="Lang\Types\PropertySymbol.cs" />
     <Compile Include="Lang\Types\SourceFile.cs" />
-    <Compile Include="Lang\Types\StatementType.cs" />
-    <Compile Include="Lang\Types\Using.cs" />
-    <Compile Include="Lang\Types\UtilType.cs" />
-    <Compile Include="Lang\Types\VariableType.cs" />
-    <Compile Include="Lang\Validate\CodeValidator.cs" />
-    <Compile Include="Lang\Validate\GenericsValidator.cs" />
-    <Compile Include="Lang\Validate\ImplemenationValidator.cs" />
-    <Compile Include="Lang\Validate\InterfaceValidator.cs" />
     <Compile Include="UI\Types\Buffer.cs" />
     <Compile Include="UI\Types\Clipboard.cs" />
     <Compile Include="UI\Types\Color.cs" />

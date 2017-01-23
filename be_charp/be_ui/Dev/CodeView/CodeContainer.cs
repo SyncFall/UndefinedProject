@@ -2,6 +2,7 @@
 using Be.Runtime.Types;
 using Be.UI;
 using Be.UI.Types;
+using Bee.Library;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -106,7 +107,7 @@ namespace Be.Integrator
                 }
                 else if (token.Type == TokenType.Unknown)
                 {
-                    DrawToken(token, CodeColorType.Normal);
+                    DrawToken(token, CodeColorType.Error);
                 }
                 else
                 {

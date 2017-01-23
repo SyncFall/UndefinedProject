@@ -1,5 +1,4 @@
 ﻿using Bee.Library;
-using Be.Runtime.Parse;
 using Be.Runtime.Types;
 using System;
 using System.Collections.Generic;
@@ -19,31 +18,32 @@ namespace Be.Runtime
 	{
 		public TokenNode Root;
 		public TokenNode Current;
-        public TokenNode BeginStepNode;
+        public ListCollection<TokenNode> BeginStepNode = new ListCollection<TokenNode>();
 
-		public TokenPointer(TokenNode Root)
+        public TokenPointer(TokenNode Root)
 		{
 			this.Current = this.Root = Root;
 		}
 
         public TokenNode Next()
         {
-            if(Current != null)
-            {
-                Current = Current.Next;
-                return Current;
-            }
-            return null;
+            return (Current != null ? Current = Current.Next : null);
+        }
+
+        public TokenNode Prev()
+        {
+            return (Current != null ? Current = Current.Prev : null);
         }
 
         public void StepBegin()
         {
-            BeginStepNode = Current;
+            BeginStepNode.Add(Current);
         }
 
         public void StepReset()
         {
-            Current = BeginStepNode;
+            Current = BeginStepNode.RemoveAt(BeginStepNode.Size() - 1);
+            ;
         }
 	}
 
@@ -61,7 +61,7 @@ namespace Be.Runtime
 
     public class TokenContainer
     {
-        public TokenNodeList AllTokenNodes = new TokenNodeList(4096);
+        public TokenNodeList AllTokenNodes = new TokenNodeList(2048);
         public TokenNodeList LineTokenNodes = new TokenNodeList(128);
 
         public TokenContainer()
@@ -72,7 +72,7 @@ namespace Be.Runtime
             TokenNode newNode = new TokenNode(token);
             if (AllTokenNodes.Size() > 0)
             {
-                TokenNode lastNode = AllTokenNodes.Last();
+                TokenNode lastNode = AllTokenNodes.Get(AllTokenNodes.Size()-1);
                 lastNode.Next = newNode;
                 newNode.Prev = lastNode;
             }

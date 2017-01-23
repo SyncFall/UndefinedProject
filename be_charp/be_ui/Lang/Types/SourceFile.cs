@@ -1,4 +1,4 @@
-﻿using Be.Runtime.Parse;
+﻿using Bee.Library;
 using System;
 using System.IO;
 
@@ -25,9 +25,6 @@ namespace Be.Runtime.Types
 
         public bool isParsed;
 
-        public UsingCollection Usings = new UsingCollection();
-        public NamespaceCollection Namespaces = new NamespaceCollection();
-
         public static SourceFile FromText(string text)
         {
             SourceFile sourceFile = new SourceFile();
@@ -52,18 +49,6 @@ namespace Be.Runtime.Types
         {
             this.Source = Source;
             return this;
-        }
-
-        public void Parse()
-        {
-            isParsed = false;
-            if (string.IsNullOrEmpty(this.Source))
-            {
-                throw new Exception("no source-code available");
-            }
-            SourceParser sourceParser = new SourceParser(this);
-            sourceParser.ParseSource();
-            isParsed = true;
         }
     }
 }

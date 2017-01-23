@@ -17,17 +17,19 @@ namespace Bee.Test
         {
 
             SourceFile source = new SourceFile();
-            source.LoadFile(@"D:\dev\UndefinedProject\be-output\test.be-src");
+            source.LoadFile(@"D:\dev\UndefinedProject\be-output\AA.be-src");
 
-            Thread.Sleep(3000);
+            //Thread.Sleep(3000);
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
             TokenContainer tokenContainer = new TokenContainer();
-            for(int i=0; i<10*1000; i++)
+            SignatureContainer signatureContainer = new SignatureContainer();
+            for (int i=0; i<1*1000; i++)
             {
                 tokenContainer.SetSourceFile(source);
+                signatureContainer.SetTokenContainer(tokenContainer);
             }
             
             stopWatch.Stop();

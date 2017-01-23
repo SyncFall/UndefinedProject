@@ -28,9 +28,10 @@ namespace Be.Runtime
         {
             TokenSymbol token = null;
             if((token = TryKeywordToken()) != null ||
-               (token = TryStructureToken()) != null ||
                (token = TryLiteralToken()) != null ||
                (token = TryIdentifierToken()) != null ||
+               (token = TryStructureToken()) != null ||
+               (token = TryOperationToken()) != null ||
                (token = TryCommentToken()) != null ||
                (token = TryUnknownToken()) != null
             ){
@@ -94,6 +95,19 @@ namespace Be.Runtime
             return null;
         }
 
+        public OperationToken TryOperationToken()
+        {
+            for (int i = 0; i < Tokens.OperationTokenArray.Length; i++)
+            {
+                OperationToken operationToken = Tokens.OperationTokenArray[i];
+                if (TextParser.EqualString(operationToken.String))
+                {
+                    return operationToken;
+                }
+            }
+            return null;
+        }
+
         public TokenSymbol TryLiteralToken()
         {
             LiteralSymbol literal = LiteralParser.TryLiteral();
@@ -106,10 +120,10 @@ namespace Be.Runtime
 
         public IdentifierToken TryIdentifierToken()
         {
-            string identifiere = TextParser.TryIdentifier();
-            if (identifiere != null)
+            string identifier = TextParser.TryIdentifier();
+            if (identifier != null)
             {
-                return new IdentifierToken(identifiere);
+                return new IdentifierToken(identifier);
             }
             return null;
         }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Be.Runtime.Types;
+using Bee.Library;
 
 namespace Be.UI.Types
 {

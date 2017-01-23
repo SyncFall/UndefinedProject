@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Be.Runtime
 {
     public class SignatureParser
-    { 
+    {
         public TokenPointer TokenPointer;
 
         public SignatureParser(TokenContainer TokenContainer)
@@ -21,37 +21,51 @@ namespace Be.Runtime
             return (TokenPointer.Current == null);
         }
 
+        public SignatureSymbol TrySignature()
+        {
+            if(IsEnd())
+            {
+                return null;
+            }
+            TrySpace();
+            SignatureSymbol signature = null;
+            if((signature = TryUse()) != null ||
+               (signature = TryScope()) != null ||
+               (signature = TryObject()) != null ||
+               (signature = TryObjectElement()) != null ||
+               (signature = TryTypeDeclaration()) != null ||
+               (signature = TryParameterDeclaration()) != null ||
+               (signature = TryIdentifierPath()) != null ||
+               (signature = TryIdentifier()) != null ||
+               (signature = TryUnknown()) != null
+            ){
+                Console.WriteLine(signature);
+            }
+            return signature;
+        }
+
         public TokenSymbol Token
         {
-            get
-            {
-                if (TokenPointer.Current != null)
-                {
-                    return TokenPointer.Current.Token;
-                }
-                return null;
+            get{
+                return (TokenPointer.Current != null ? TokenPointer.Current.Token : null);
             }
         }
 
         public TokenSymbol PrevToken
         {
-            get
-            {
-                if(TokenPointer.Current != null && TokenPointer.Current.Prev != null)
-                {
-                    return TokenPointer.Current.Prev.Token;
-                }
-                return null;
+            get{
+                return (TokenPointer.Current != null && TokenPointer.Current.Prev != null ? TokenPointer.Current.Prev.Token : null);
             }
         }
 
         public TokenSymbol Next()
         {
-            if (TokenPointer.Current != null && TokenPointer.Next() != null)
-            {
-                return Token;
-            }
-            return null;
+            return (TokenPointer.Current != null && TokenPointer.Next() != null ? TokenPointer.Current.Token : null);
+        }
+
+        public TokenSymbol Prev()
+        {
+            return (TokenPointer.Current != null ? TokenPointer.Prev().Token : null);
         }
 
         public void BeginStep()
@@ -82,10 +96,12 @@ namespace Be.Runtime
             {
                 return null;
             }
-            return new SeperatorSignature(PrevToken);
+            SeperatorSignature signatur = new SeperatorSignature(PrevToken);
+            TrySpace();
+            return signatur;
         }
 
-        public KeywordToken TryKeywordToken(KeywordType keywordType)
+        public KeywordToken TryKeyword(KeywordType keywordType)
         {
             if(Token != null && Token.Type == TokenType.Keyword && Token.Group == TokenGroup.Keyword && (Token as KeywordToken).KeywordSymbol.Type == keywordType)
             {
@@ -107,12 +123,24 @@ namespace Be.Runtime
             return null;
         }
 
-        public IdentifierPathSignature TryPathBreakOn(TokenType breakTokenType)
+        public TokenSymbol TryToken(TokenGroup tokenGroup)
+        {
+            if (Token != null && Token.Group == tokenGroup)
+            {
+                TokenSymbol tokenSymbol = Token;
+                Next();
+                return tokenSymbol;
+            }
+            return null;
+        }
+
+        public IdentifierPathSignature TryIdentifierPath()
         {
             IdentifierPathSignature signature = new IdentifierPathSignature();
             while(TryToken(TokenType.Identifier) != null)
             {
                 IdentifierPathElementSignatur elementSignature = new IdentifierPathElementSignatur();
+                signature.PathElements.Add(elementSignature);
                 elementSignature.Identifier = PrevToken as IdentifierToken;
                 elementSignature.PointSeperator = TrySeperator(TokenType.Point);
                 if(elementSignature.PointSeperator == null)
@@ -120,7 +148,7 @@ namespace Be.Runtime
                     break;
                 }
             }
-            return (signature.Tokens.Size() > 0 ? signature : null);
+            return (signature.PathElements.Size() > 0 ? signature : null);
         }
 
         public BlockSignature TryBlock(TokenType blockType)
@@ -130,34 +158,55 @@ namespace Be.Runtime
             {
                 return null;
             }
-            return new BlockSignature(PrevToken);
+            BlockSignature signatur = new BlockSignature(PrevToken);
+            TrySpace();
+            return signatur;
+        }
+
+        public UnknownSignatur TryUnknown()
+        {
+            if(Token != null)
+            {
+                TokenSymbol unknownToken = Token;
+                Next();
+                return new UnknownSignatur(unknownToken);
+            }
+            return null;
         }
 
         public UseSignature TryUse()
         {
-            if(TryKeywordToken(KeywordType.Use) == null)
+            if(TryKeyword(KeywordType.Use) == null)
             {
                 return null;
             }
             UseSignature signatur = new UseSignature();
             signatur.Keyword = new KeywordSignature(PrevToken as KeywordToken);
-            signatur.IdentifierPath = TryPathBreakOn(TokenType.Complete);
-            signatur.Complete = TrySeperator(TokenType.Complete);
+            if (!TrySpace() ||
+                (signatur.IdentifierPath = TryIdentifierPath()) == null ||
+                (signatur.Complete = TrySeperator(TokenType.Complete)) == null
+            ){
+                ; 
+            }
             return signatur;
         }
 
         public ScopeSignature TryScope()
         {
-            if(TryKeywordToken(KeywordType.Scope) == null)
+            if(TryKeyword(KeywordType.Scope) == null)
             {
                 return null;
             }
             ScopeSignature signatur = new ScopeSignature();
             signatur.Keyword = new KeywordSignature(PrevToken as KeywordToken);
-            signatur.IdentifierPath = TryPathBreakOn(TokenType.BlockBegin);
-            signatur.BlockBegin = TryBlock(TokenType.BlockBegin);
-            signatur.ObjectList = TryObjectList();
-            signatur.BlockEnd = TryBlock(TokenType.BlockEnd);
+            if (!TrySpace() ||
+                (signatur.IdentifierPath = TryIdentifierPath()) == null ||
+                (signatur.BlockBegin = TryBlock(TokenType.BlockBegin)) == null ||
+                (signatur.ObjectList = TryObjectList()) == null ||
+                (signatur.BlockEnd = TryBlock(TokenType.BlockEnd)) == null
+            ){
+                ;
+            }
             return signatur;
         }
 
@@ -180,98 +229,226 @@ namespace Be.Runtime
             {
                 list.Add(signatur);
             }
-            return list;
+            return (list.Size() > 0 ? list : null);
         }
 
         public ObjectSignature TryObject()
         {
             TrySpace();
-            if(TryToken(TokenType.Object) == null)
+            if(TryKeyword(KeywordType.Object) == null)
             {
                 return null;
             }
             ObjectSignature signatur = new ObjectSignature();
             signatur.Keyword = new KeywordSignature(PrevToken as KeywordToken);
-            signatur.Identifier = TryIdentifier();
-            signatur.BlockBegin = TryBlock(TokenType.BlockBegin);
-            SignatureSymbol objectElement = null;
+            if (!TrySpace() ||
+                (signatur.Identifier = TryIdentifier()) == null ||
+                (signatur.BlockBegin = TryBlock(TokenType.BlockBegin)) == null
+            ){
+                return signatur;
+            }
+            SignatureSymbol objectElement;
             while((objectElement = TryObjectElement()) != null)
             {
                 if(objectElement.Type == SignatureType.Member)
                 {
-                    signatur.Members.Add(objectElement as MemberSignatur);
+                    signatur.Members.Add(objectElement as MemberSignature);
                 }
                 else if(objectElement.Type == SignatureType.Method)
                 {
-                    signatur.Methods.Add(objectElement as MethodSignatur);
-                }
-                else if(objectElement.Type == SignatureType.Property)
-                {
-                    signatur.Properties.Add(objectElement as PropertySignatur);
+                    signatur.Methods.Add(objectElement as MethodSignature);
                 }
                 else
                 {
                     throw new Exception("invalid state");
                 }
             }
-            signatur.BlockEnd = TryBlock(TokenType.BlockEnd);
+            if((signatur.BlockEnd = TryBlock(TokenType.BlockEnd)) == null)
+            {
+                ;
+            }
             return signatur;
         }
 
         public SignatureSymbol TryObjectElement()
         {
             TrySpace();
-            TypeDeclarationSignatur typeDeclaration = TryTypeDeclaration();
-            SeperatorSignature assigment = TrySeperator(TokenType.Assigment);
-            if(assigment != null)
+            TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
+            if(typeDeclaration == null)
             {
-                ;//expression
+                return null;
             }
             SeperatorSignature complete = TrySeperator(TokenType.Complete);
-            if(assigment != null && complete != null)
+            if(complete != null)
             {
-                MemberSignatur member = new MemberSignatur();
+                MemberSignature member = new MemberSignature();
                 member.TypeDeclaration = typeDeclaration;
-                member.Assigment = assigment;
+                member.Complete = complete;
                 return member;
             }
             SeperatorSignature enclosing = TrySeperator(TokenType.ClosingBegin);
-            if(enclosing != null)
+            if (enclosing != null)
             {
-                MethodSignatur method = new MethodSignatur();
+                MethodSignature method = new MethodSignature();
                 method.TypeDeclaration = typeDeclaration;
-                method.ParameterDeclaration = TryParameterDeclaration();
+                if((method.ParameterDeclaration = TryParameterDeclaration()) == null ||
+                   (method.BlockBegin = TryBlock(TokenType.BlockBegin)) == null ||
+                   (method.BlockEnd = TryBlock(TokenType.BlockEnd)) == null
+                ){
+                    ;
+                }
                 return method;
-            }
-            BlockSignature block = TryBlock(TokenType.BlockBegin);
-            if(enclosing == null && block != null)
-            {
-                PropertySignatur property = new PropertySignatur();
-                property.TypeDeclaration = typeDeclaration;
-                return property;
             }
             return null;
         }
 
-        public TypeDeclarationSignatur TryTypeDeclaration()
+        public TypeDeclarationSignature TryTypeDeclaration()
         {
-            TypeDeclarationSignatur signatur = new TypeDeclarationSignatur();
-            if(TryKeywordToken(KeywordType.Native) != null)
+            TypeDeclarationSignature signatur = new TypeDeclarationSignature();
+            if(TryToken(TokenGroup.Native) != null)
             {
-                signatur.TypeNative = Token as NativeToken;
+                signatur.TypeNative = PrevToken as NativeToken;
             }
             else if(TryToken(TokenType.Identifier) != null)
             {
-                signatur.TypeIdentifier = Token as IdentifierToken;
+                signatur.TypeIdentifier = PrevToken as IdentifierToken;
             }
             else
             {
                 return null;
             }
-            TrySpace();
-            signatur.NameIdentifier = TryIdentifier();
+            if(!TrySpace() ||
+               (signatur.NameIdentifier = TryIdentifier()) == null
+            ){
+                ;
+            }
             return signatur;
         }
-       
+
+        public ParameterDeclarationSignature TryParameterDeclaration()
+        {
+            TrySpace();
+            BlockSignature blockBegin;
+            if ((blockBegin = TryBlock(TokenType.ClosingBegin)) == null)
+            {
+                return null;
+            }
+            ParameterDeclarationSignature signature = new ParameterDeclarationSignature();
+            signature.BlockBegin = blockBegin;
+            TypeDeclarationSignature typeDeclaration;
+            while ((typeDeclaration = TryTypeDeclaration()) != null)
+            {
+                ParameterDeclartionElementSignature parameterElement = new ParameterDeclartionElementSignature();
+                signature.ParameterList.Add(parameterElement);
+                parameterElement.ParameterSeperator = TrySeperator(TokenType.Comma);
+                if (parameterElement.ParameterSeperator == null)
+                {
+                    break;
+                }
+            }
+            signature.BlockEnd = TryBlock(TokenType.ClosingEnd);
+            return signature;
+        }
+
+        public ExpressionSignature TryExpression()
+        {
+            if (true) return null;
+            TrySpace();
+            ExpressionSignature signature = new ExpressionSignature();
+            BlockSignature blockBegin;
+            if((blockBegin = TryBlock(TokenType.ClosingBegin)) != null)
+            {
+                signature.BlockBegin = blockBegin;
+                if((signature.ChildExpression = TryExpression()) == null ||
+                   (signature.BlockEnd = TryBlock(TokenType.ClosingEnd)) == null
+                ){
+                    return signature;
+                }
+            }
+            else
+            {
+                if((signature.Operand == TryOperand()) == null)
+                {
+                    return signature;
+                }
+            }
+            while(true)
+            {
+                OperationSignature operation = TryOperation();
+                if (operation == null)
+                {
+                    break;
+                }
+                ExpressionSignature expressionPair = TryExpression();
+                if(expressionPair == null)
+                {
+                    break;
+                }
+                signature.ExpressionOperationList.Add(new OperationPair(operation, expressionPair));
+            }
+            return signature;
+        }
+
+        public OperandSignatur TryOperand()
+        {
+            OperandSignatur signature = new OperandSignatur();
+            if(TryToken(TokenGroup.Literal) != null)
+            {
+                signature.AccessSignatureList.Add(new LiteralAccessSignature(PrevToken as LiteralToken));
+                if(TrySeperator(TokenType.Point) == null)
+                {
+                    return signature;
+                }
+            }
+            else if(Token != null && Token.Group == TokenGroup.Identifier)
+            {
+                ;
+            }
+            else
+            {
+                return null;
+            }
+            while(Token != null && Token.Group == TokenGroup.Identifier)
+            {
+                IdentifierPathSignature pathSignature = TryIdentifierPath();
+                if (TryBlock(TokenType.ClosingBegin) != null)
+                {
+                    FunctionAccessSignature functionAccess = TryFunctionAccess();
+                    signature.AccessSignatureList.Add(functionAccess);
+                }
+                else if (TryBlock(TokenType.BracketBegin) != null)
+                {
+                    ArrayAccessSignature arrayAccess = TryArrayAccess();
+                    signature.AccessSignatureList.Add(arrayAccess);
+                }
+                else
+                {
+                    VariableAccessSignature variableAccess = new VariableAccessSignature(pathSignature);
+                    signature.AccessSignatureList.Add(variableAccess);
+                }
+                Next();
+            }
+            return signature;
+        }
+
+        public FunctionAccessSignature TryFunctionAccess()
+        {
+            return null;
+        }
+
+        public ArrayAccessSignature TryArrayAccess()
+        {
+            return null;
+        }
+
+        public OperationSignature TryOperation()
+        {
+            TrySpace();
+            if(TryToken(TokenGroup.Operation) != null)
+            {
+                return new OperationSignature(PrevToken as OperationToken);
+            }
+            return null;
+        }
     }
 }
