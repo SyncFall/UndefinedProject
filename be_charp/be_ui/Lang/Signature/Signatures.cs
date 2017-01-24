@@ -9,28 +9,35 @@ namespace Bee.Language
 {
     public enum SignatureType
     {
+        // common
         Unknown,
         Seperator,
         Block,
         Keyword,
+        // source-file
         Use,
         Scope,
+        // path
         IdentifierPath,
         IdentifierPathElement,
         Identifier,
+        // object, function, variable
         Object,
         Member,
         Method,
         TypeDeclartion,
         ParameterDeclaration,
         ParameterElementDeclaration,
+        // code
         Code,
         Statement,
+        // expressions
         Expression,   
         ExpressionOperation,
         Operation,
         Operand,
         OperandOperation,
+        // access
         LiteralAccess,
         VariableAccess,
         FunctionAccess,
@@ -64,15 +71,15 @@ namespace Bee.Language
 
         public override string ToString()
         {
-            return base.ToString() + " (group:"+UnknownToken.Group+", type:"+UnknownToken.Type+", string:'"+ UnknownToken.String+"')";
+            return base.ToString() + " (type:"+UnknownToken.Type+", string:'"+ UnknownToken.String+"')";
         }
     }
 
     public class KeywordSignature : SignatureSymbol
     {
-        public KeywordToken KeywordToken;
+        public TokenSymbol KeywordToken;
 
-        public KeywordSignature(KeywordToken keywordToken) : base(SignatureType.Keyword)
+        public KeywordSignature(TokenSymbol keywordToken) : base(SignatureType.Keyword)
         {
             this.KeywordToken = keywordToken;
         }
@@ -163,12 +170,16 @@ namespace Bee.Language
 
         public override string ToString()
         {
-            string str = Identifier.String;
-            if(PointSeperator != null)
+            if(Identifier != null)
             {
-                str += PointSeperator.SeperatorToken.String;
+                string str = Identifier.String;
+                if (PointSeperator != null)
+                {
+                    str += PointSeperator.SeperatorToken.String;
+                }
+                return str;
             }
-            return str;
+            return "";
         }
     }
 
@@ -181,7 +192,7 @@ namespace Bee.Language
 
         public override string ToString()
         {
-            return "name("+IdentifiereToken.String+")";
+            return "name("+ IdentifiereToken != null ? IdentifiereToken.String : ""+")";
         }
     }
 
@@ -355,10 +366,14 @@ namespace Bee.Language
         { }
     }
 
-    public class StatementSignature : SignatureSymbol
+    public abstract class StatementSignature : SignatureSymbol
     {
-        public StatementSignature() : base(SignatureType.Statement)
-        { }
+        public StatementType StatementType;
+
+        public StatementSignature(StatementType StatementType) : base(SignatureType.Statement)
+        {
+            this.StatementType = StatementType;
+        }
     }
 
     public class ExpressionSignature : SignatureSymbol

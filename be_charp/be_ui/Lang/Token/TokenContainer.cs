@@ -71,7 +71,7 @@ namespace Bee.Language
                 newNode.Prev = lastNode;
             }
             AllTokenNodes.Add(newNode);
-            if(token.Type == TokenType.LineSpace)
+            if(token.IsLineSpace())
             {
                 LineTokenNodes.Add(newNode);
             }
@@ -93,7 +93,7 @@ namespace Bee.Language
         {
             int textCount = 0;
             TokenNode node = FirstLineTokenNode(lineNumber);
-            while (node != null && node.Token.Type != TokenType.LineSpace)
+            while (node != null && !node.Token.IsLineSpace())
             {
                 textCount += node.Token.String.Length;
                 node = node.Next;
@@ -105,7 +105,7 @@ namespace Bee.Language
         {
             string lineText = "";
             TokenNode node = FirstLineTokenNode(lineNumber);
-            while (node != null && node.Token.Type != TokenType.LineSpace)
+            while (node != null && !node.Token.IsLineSpace())
             {
                 lineText += node.Token.String;
                 node = node.Next;

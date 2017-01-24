@@ -232,7 +232,7 @@ namespace Bee.Integrator
             {
                 int line=0, cursor=0;
                 bool append = true;
-                for(int i=0; i<sourceText.Length; i++, cursor++)
+                for(int i=0; i<sourceText.Length+1; i++, cursor++)
                 {
                     if(selection.StartLinePosition == line && selection.StartCursorPosition == cursor)
                     {
@@ -243,37 +243,43 @@ namespace Bee.Integrator
                     {
                         append = true;
                     }
-                    if (append)
+                    if(i < sourceText.Length)
                     {
-                        strBuilder.Append(sourceText[i]);
-                    }
-                    if (sourceText[i] == '\n')
-                    {
-                        line++;
-                        cursor = -1;
+                        if (append)
+                        {
+                            strBuilder.Append(sourceText[i]);
+                        }
+                        if (sourceText[i] == '\n')
+                        {
+                            line++;
+                            cursor = -1;
+                        }
                     }
                 }
             }
             else
             {
-                int line = 0, cursor = 0;
-                for (int i = 0; i < sourceText.Length; i++, cursor++)
+                int line=0, cursor=0;
+                for (int i = 0; i < sourceText.Length+1; i++, cursor++)
                 {
                     if(LineNumber == line && CursorPosition == cursor)
                     {
                         strBuilder.Append(insertText);
                     }
-                    if (sourceText[i] == '\n')
+                    if(i < sourceText.Length)
                     {
-                        line++;
-                        cursor = -1;
+                        if (sourceText[i] == '\n')
+                        {
+                            line++;
+                            cursor = -1;
+                        }
+                        strBuilder.Append(sourceText[i]);
                     }
-                    strBuilder.Append(sourceText[i]);
                 }
             }
             string[] insertLines = insertText.Split('\n');
-            int newLine = (insertLines.Length == 1 ? LineNumber : LineNumber + insertLines.Length);
-            int newCursor = (insertLines.Length == 1 ? CursorPosition + insertLines.Length : insertLines[insertLines.Length-1].Length);
+            int newLine = (LineNumber + insertLines.Length-1);
+            int newCursor = ((LineNumber == newLine ? CursorPosition : 0) + insertLines[insertLines.Length-1].Length);
             CodeText.SetSourceText(CodeText.SourceText.SetText(strBuilder.ToString()));
             CodeText.CodeSelection.Clear();
             SetPosition(newLine, newCursor);
@@ -292,7 +298,7 @@ namespace Bee.Integrator
             {
                 int line = 0, cursor = 0;
                 bool append = true;
-                for (int i = 0; i < sourceText.Length; i++, cursor++)
+                for (int i = 0; i < sourceText.Length+1; i++, cursor++)
                 {
                     if (selection.StartLinePosition == line && selection.StartCursorPosition == cursor)
                     {
@@ -302,34 +308,39 @@ namespace Bee.Integrator
                     {
                         append = true;
                     }
-                    if (append)
+                    if(i < sourceText.Length)
                     {
-                        strBuilder.Append(sourceText[i]);
-                    }
-                    if (sourceText[i] == '\n')
-                    {
-                        line++;
-                        cursor = -1;
+                        if (append)
+                        {
+                            strBuilder.Append(sourceText[i]);
+                        }
+                        if (sourceText[i] == '\n')
+                        {
+                            line++;
+                            cursor = -1;
+                        }
                     }
                 }
                 SetPosition(selection.StartLinePosition, selection.StartCursorPosition);
-                CursorLeft();
             }
             else
             {
-                int line = 0, cursor = 0;
-                for (int i = 0; i < sourceText.Length; i++, cursor++)
+                int line=0, cursor=0;
+                for (int i = 0; i < sourceText.Length+1; i++, cursor++)
                 {
                     if (line == LineNumber && CursorPosition == cursor)
                     {
                         strBuilder.Remove(i - 1, 1);
                     }
-                    if (sourceText[i] == '\n')
+                    if(i < sourceText.Length)
                     {
-                        line++;
-                        cursor = -1;
+                        if (sourceText[i] == '\n')
+                        {
+                            line++;
+                            cursor = -1;
+                        }
+                        strBuilder.Append(sourceText[i]);
                     }
-                    strBuilder.Append(sourceText[i]);
                 }
                 CursorLeft();
             }

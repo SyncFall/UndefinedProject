@@ -61,15 +61,19 @@ namespace Bee.Language
             }
             string str = TextParser.Text.Substring(startPosition, endPositon - startPosition);
             TokenSymbol tokenSymbol;
-            if(Keywords.StringMap.KeyExist(str))
+            if(Tokens.KeywordTokenStringMap.KeyExist(str))
             {   
                 tokenSymbol = Tokens.KeywordTokenStringMap.GetValue(str);
             }
-            else if(Natives.StringMap.KeyExist(str))
+            else if(Tokens.NativeTokenStringMap.KeyExist(str))
             {
                 tokenSymbol = Tokens.NativeTokenStringMap.GetValue(str);
             }
-            else if(Accessors.StringMap.KeyExist(str))
+            else if (Tokens.StatementTokenStringMap.KeyExist(str))
+            {
+                tokenSymbol = Tokens.StatementTokenStringMap.GetValue(str);
+            }
+            else if(Tokens.AccessorTokenStringMap.KeyExist(str))
             {
                 tokenSymbol = Tokens.AccessorTokenStringMap.GetValue(str);
             }
@@ -83,9 +87,9 @@ namespace Bee.Language
 
         public TokenSymbol TryStructureToken()
         {
-            for(int i=0; i<Tokens.StructureTokensArray.Length; i++)
+            for(int i=0; i<Tokens.StructureTokenArray.Length; i++)
             {
-                TokenSymbol structureToken = Tokens.StructureTokensArray[i];
+                TokenSymbol structureToken = Tokens.StructureTokenArray[i];
                 if(TextParser.EqualChar(structureToken.String[0]))
                 {
                     return structureToken;

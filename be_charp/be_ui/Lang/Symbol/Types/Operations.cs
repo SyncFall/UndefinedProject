@@ -89,16 +89,6 @@ namespace Bee.Language
             new OperationSymbol("as_type", OperationGroup.Type, OperationType.AsType),
             new OperationSymbol("get_type", OperationGroup.Type, OperationType.GetType)
         };
-        public static readonly MapCollection<string, OperationSymbol> StringMap = new MapCollection<string, OperationSymbol>();
-
-        static Operations()
-        {
-            for(int i=0; i<Array.Length; i++)
-            {
-                OperationSymbol operationSymbol = Array[i];
-                StringMap.Put(operationSymbol.String, operationSymbol);
-            }
-        }
     }
 
     public class OperationSymbol

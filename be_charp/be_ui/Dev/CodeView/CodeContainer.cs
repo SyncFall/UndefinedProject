@@ -62,29 +62,25 @@ namespace Bee.Integrator
             while(node != null)
             {
                 TokenSymbol token = node.Token;
-                if (token.Type == TokenType.WhiteSpace)
+                if (token.IsStructure(StructureType.WhiteSpace))
                 {
                     CurrentX += GlyphMetrics.SpaceWidth;
                 }
-                else if (token.Type == TokenType.TabSpace)
+                else if (token.IsStructure(StructureType.TabSpace))
                 {
                     CurrentX += GlyphMetrics.TabWidth;
                 }
-                else if (token.Type == TokenType.LineSpace)
+                else if (token.IsStructure(StructureType.LineSpace))
                 {
                     LineNumber++;
                     CurrentX = GlyphMetrics.LeftSpace;
                     CurrentY = GlyphMetrics.TopSpace + ((GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace) * LineNumber);
                 }
-                else if (token.Group == TokenGroup.Comment)
+                else if (token.Type == TokenType.Comment)
                 {
                     DrawToken(token, CodeColorType.Comment);
                 }
-                else if (token.Group == TokenGroup.Region || token.Group == TokenGroup.Processor)
-                {
-                    DrawToken(token, CodeColorType.Region);
-                }
-                else if (token.Type == TokenType.Keyword)
+                else if (token.Type == TokenType.Keyword || token.Type == TokenType.Native || token.Type == TokenType.Statement)
                 {
                     DrawToken(token, CodeColorType.Keyword);
                 }

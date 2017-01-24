@@ -19,16 +19,6 @@ namespace Bee.Language
             new AccessorSymbol("protected", AccessorType.Protected),
             new AccessorSymbol("internal",  AccessorType.Internal),
         };
-        public static readonly MapCollection<string, AccessorSymbol> StringMap = new MapCollection<string, AccessorSymbol>();
-
-        static Accessors()
-        {
-            for(int i=0; i<Array.Length; i++)
-            {
-                AccessorSymbol symbol = Array[i];
-                StringMap.Put(symbol.String, symbol);
-            }
-        }
     }
 
     public class AccessorSymbol

@@ -57,15 +57,5 @@ namespace Bee.Language
             new NativeSymbol("list", NativeType.List),
             new NativeSymbol("map", NativeType.Map),
         };
-        public static readonly MapCollection<string, NativeSymbol> StringMap = new MapCollection<string, NativeSymbol>();
-
-        static Natives()
-        {
-            for(int i=0; i<Array.Length; i++)
-            {
-                NativeSymbol nativeType = Array[i];
-                StringMap.Put(nativeType.String, nativeType);
-            }
-        }
     }
 }

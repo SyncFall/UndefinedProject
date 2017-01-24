@@ -10,12 +10,19 @@ namespace Bee.Language
 {
     public enum TokenType
     {
-        // spaces
-        WhiteSpace,
-        TabSpace,
-        LineSpace,
-        // comments
+        Keyword,
+        Structure,
+        Literal,
+        Identifier,
+        Operation,
+        Accessor,
+        Native,
+        Statement,
         Comment,
+        Unknown,
+    }
+
+    /*
         // regions
         RegionBegin,
         RegionEnd,
@@ -24,142 +31,48 @@ namespace Bee.Language
         ProcessorElse,
         ProcessorElseIf,
         ProcessorEndIf,
-        // statements
-        Complete,
-        Assigment,
-        Comma,
-        Point,
-        Seperator,
-        // blocks
-        BlockBegin,
-        BlockEnd,
-        ClosingBegin,
-        ClosingEnd,
-        BracketBegin,
-        BracketEnd,
-        ShiftBegin,
-        ShiftEnd,
-        // keyword
-        Keyword,
-        // literal
-        Literal,
-        // identfier
-        Identifier,
-        // operations,
-        Operation,
-        // accessor
-        Accessor,
-        // object
-        Object,
-        // unknowns
-        Unknown,
-    }
-
-    public enum TokenGroup
-    {
-        Space,
-        Comment,
-        Region,
-        Processor,
-        Statement,
-        Block,
-        Keyword,
-        Native,
-        Literal,
-        Identifier,
-        Operation,
-        Accessor,
-        Object,
-        Unknown,
-    }
-
+    */
+    
     public static class Tokens
     {
-        public static readonly TokenSymbol[] AllTokensArray = null;
-
-        public static readonly TokenSymbol[] StructureTokensArray = new TokenSymbol[]
-        {
-            new TokenSymbol(TokenType.WhiteSpace, TokenGroup.Space, " "),
-            new TokenSymbol(TokenType.TabSpace, TokenGroup.Space, "\t"),
-            new TokenSymbol(TokenType.LineSpace, TokenGroup.Space, "\n"),
-            new TokenSymbol(TokenType.Complete, TokenGroup.Statement, ";"),
-            new TokenSymbol(TokenType.Assigment, TokenGroup.Statement, "="),
-            new TokenSymbol(TokenType.Comma, TokenGroup.Statement, ","),
-            new TokenSymbol(TokenType.Point, TokenGroup.Statement, "."),
-            new TokenSymbol(TokenType.Seperator, TokenGroup.Statement, ";"),
-            new TokenSymbol(TokenType.BlockBegin, TokenGroup.Block, "{"),
-            new TokenSymbol(TokenType.BlockEnd, TokenGroup.Block, "}"),
-            new TokenSymbol(TokenType.ClosingBegin, TokenGroup.Block, "("),
-            new TokenSymbol(TokenType.ClosingEnd, TokenGroup.Block, ")"),
-            new TokenSymbol(TokenType.BracketBegin, TokenGroup.Block, "["),
-            new TokenSymbol(TokenType.BracketEnd, TokenGroup.Block, "]"),
-            new TokenSymbol(TokenType.ShiftBegin, TokenGroup.Block, "<"),
-            new TokenSymbol(TokenType.ShiftEnd, TokenGroup.Block, ">"),
-            /*
-            new TokenSymbol(Token.RegionBegin, TokenGroup.Region, "#region"),
-            new TokenSymbol(Token.RegionEnd, TokenGroup.Region, "#regionend"),
-            new TokenSymbol(Token.ProcessorIf, TokenGroup.Processor, "#if"),
-            new TokenSymbol(Token.ProcessorElseIf, TokenGroup.Processor, "#elseif"),
-            new TokenSymbol(Token.ProcessorElse, TokenGroup.Processor, "#else"),
-            new TokenSymbol(Token.ProcessorEndIf, TokenGroup.Processor, "#endif"),
-            */
-        };
-        public static readonly MapCollection<string, TokenSymbol> StructureTokenStringMap = new MapCollection<string, TokenSymbol>();
-        
-        public static readonly KeywordToken[] KeywordTokenArray = null;
+        public static readonly StructureToken[] StructureTokenArray = new StructureToken[Structures.Array.Length];
+        public static readonly OperationToken[] OperationTokenArray = new OperationToken[Operations.Array.Length];
         public static readonly MapCollection<string, KeywordToken> KeywordTokenStringMap = new MapCollection<string, KeywordToken>();
-
-        public static readonly NativeToken[] NativeTokenArray = null;
         public static readonly MapCollection<string, NativeToken> NativeTokenStringMap = new MapCollection<string, NativeToken>();
-
-        public static readonly AccessorToken[] AccessorTokenArray = null;
         public static readonly MapCollection<string, AccessorToken> AccessorTokenStringMap = new MapCollection<string, AccessorToken>();
-
-        public static readonly OperationToken[] OperationTokenArray = null;
-        public static readonly MapCollection<string, OperationToken> OperationTokenStringMap = new MapCollection<string, OperationToken>();
+        public static readonly MapCollection<string, StatementToken> StatementTokenStringMap = new MapCollection<string, StatementToken>();
 
         static Tokens()
         {
-            int idx = 0;
-            int totalLen = (StructureTokensArray.Length + Keywords.Array.Length + Natives.Array.Length + Accessors.Array.Length + Operations.Array.Length);
-            AllTokensArray = new TokenSymbol[totalLen];
-            for(int i=0; i < StructureTokensArray.Length; i++)
+            for(int i=0; i < Structures.Array.Length; i++)
             {
-                TokenSymbol structureToken = StructureTokensArray[i];
-                AllTokensArray[idx++] = structureToken;
-                StructureTokenStringMap.Put(structureToken.String, structureToken);
-            }
-            KeywordTokenArray = new KeywordToken[Keywords.Array.Length];
-            for(int i=0;  i < Keywords.Array.Length; i++)
-            {
-                KeywordToken keywordToken = new KeywordToken(Keywords.Array[i]);
-                KeywordTokenArray[i] = keywordToken;
-                AllTokensArray[idx++] = keywordToken;
-                KeywordTokenStringMap.Put(keywordToken.String, keywordToken);
-            }
-            NativeTokenArray = new NativeToken[Natives.Array.Length];
-            for(int i=0; i < Natives.Array.Length; i++)
-            {
-                NativeToken nativeToken = new NativeToken(Natives.Array[i]);
-                NativeTokenArray[i] = nativeToken;
-                AllTokensArray[idx++] = nativeToken;
-                NativeTokenStringMap.Put(nativeToken.String, nativeToken);
-            }
-            AccessorTokenArray = new AccessorToken[Accessors.Array.Length];
-            for(int i=0; i < Accessors.Array.Length; i++)
-            {
-                AccessorToken accessorToken = new AccessorToken(Accessors.Array[i]);
-                AccessorTokenArray[i] = accessorToken;
-                AllTokensArray[idx++] = accessorToken;
-                AccessorTokenStringMap.Put(accessorToken.String, accessorToken);
-            }
-            OperationTokenArray = new OperationToken[Operations.Array.Length];
-            for (int i = 0; i < Operations.Array.Length; i++)
+                StructureToken structureToken = new StructureToken(Structures.Array[i]);
+                StructureTokenArray[i] = structureToken;
+            };
+            for(int i=0; i < Operations.Array.Length; i++)
             {
                 OperationToken operationToken = new OperationToken(Operations.Array[i]);
                 OperationTokenArray[i] = operationToken;
-                AllTokensArray[idx++] = operationToken;
-                OperationTokenStringMap.Put(operationToken.String, operationToken);
+            }
+            for(int i=0; i < Keywords.Array.Length; i++)
+            {
+                KeywordToken keywordToken = new KeywordToken(Keywords.Array[i]);
+                KeywordTokenStringMap.Put(keywordToken.String, keywordToken);
+            }
+            for(int i=0; i < Natives.Array.Length; i++)
+            {
+                NativeToken nativeToken = new NativeToken(Natives.Array[i]);
+                NativeTokenStringMap.Put(nativeToken.String, nativeToken);
+            }
+            for(int i=0; i < Accessors.Array.Length; i++)
+            {
+                AccessorToken accessorToken = new AccessorToken(Accessors.Array[i]);
+                AccessorTokenStringMap.Put(accessorToken.String, accessorToken);
+            }
+            for(int i=0; i < StatementKeywords.Array.Length; i++)
+            {
+                StatementToken statementToken = new StatementToken(StatementKeywords.Array[i]);
+                StatementTokenStringMap.Put(statementToken.String, statementToken);
             }
         }
     }
@@ -167,16 +80,14 @@ namespace Bee.Language
     public class TokenList : ListCollection<TokenSymbol>
     { }
 
-    public class TokenSymbol
+    public abstract class TokenSymbol
     {
         public readonly TokenType Type;
-        public readonly TokenGroup Group;
         public readonly string String;
 
-        public TokenSymbol(TokenType Type, TokenGroup Group, string String)
+        public TokenSymbol(TokenType Type, string String)
         {
             this.Type = Type;
-            this.Group = Group;
             this.String = String;
         }
 
@@ -184,25 +95,60 @@ namespace Bee.Language
         {
             return (String == compare.String);
         }
+
+        public bool IsLineSpace()
+        {
+            return (Type == TokenType.Structure && (this as StructureToken).Symbol.Type == StructureType.LineSpace);
+        }
+
+        public bool IsSpace()
+        {
+            return (Type == TokenType.Structure && (this as StructureToken).Symbol.Group == StructureGroup.Space) || Type == TokenType.Comment;
+        }
+
+        public bool IsStructure(StructureType StructureType)
+        {
+            return (Type == TokenType.Structure && (this as StructureToken).Symbol.Type == StructureType);
+        }
+
+        public bool IsKeyword(KeywordType KeywordType)
+        {
+            return (Type == TokenType.Keyword && (this as KeywordToken).Symbol.Type == KeywordType);
+        }
+
+        public bool IsNative(NativeType NativeType)
+        {
+            return (Type == TokenType.Native && (this as NativeToken).Symbol.Type == NativeType);
+        }
+    }
+
+    public class StructureToken : TokenSymbol
+    {
+        public StructureSymbol Symbol;
+
+        public StructureToken(StructureSymbol StructureSymbol) : base(TokenType.Structure, StructureSymbol.String)
+        {
+            this.Symbol = StructureSymbol;
+        }
     }
 
     public class KeywordToken : TokenSymbol
     {
-        public KeywordSymbol KeywordSymbol;
+        public KeywordSymbol Symbol;
 
-        public KeywordToken(KeywordSymbol KeywordSymbol) : base(TokenType.Keyword, TokenGroup.Keyword, KeywordSymbol.String)
+        public KeywordToken(KeywordSymbol KeywordSymbol) : base(TokenType.Keyword, KeywordSymbol.String)
         {
-            this.KeywordSymbol = KeywordSymbol;
+            this.Symbol = KeywordSymbol;
         }
     }
 
     public class NativeToken : TokenSymbol
     {
-        public NativeSymbol NativeSymbol;
+        public NativeSymbol Symbol;
 
-        public NativeToken(NativeSymbol NativeSymbol) : base(TokenType.Keyword, TokenGroup.Native, NativeSymbol.String)
+        public NativeToken(NativeSymbol NativeSymbol) : base(TokenType.Native, NativeSymbol.String)
         {
-            this.NativeSymbol = NativeSymbol;
+            this.Symbol = NativeSymbol;
         }
     }
 
@@ -210,7 +156,7 @@ namespace Bee.Language
     {
         public LiteralSymbol LiteralSymbol;
 
-        public LiteralToken(LiteralSymbol LiteralSymbol, string TokenString) : base(TokenType.Literal, TokenGroup.Literal, TokenString)
+        public LiteralToken(LiteralSymbol LiteralSymbol, string TokenString) : base(TokenType.Literal, TokenString)
         {
             this.LiteralSymbol = LiteralSymbol;
         }
@@ -218,7 +164,7 @@ namespace Bee.Language
 
     public class IdentifierToken : TokenSymbol
     {
-        public IdentifierToken(string IdentifierString) : base(TokenType.Identifier, TokenGroup.Identifier, IdentifierString)
+        public IdentifierToken(string IdentifierString) : base(TokenType.Identifier, IdentifierString)
         { }
     }
 
@@ -226,7 +172,7 @@ namespace Bee.Language
     {
         public string CommentData;
 
-        public CommentToken(string TokenString, string CommentData) : base(TokenType.Comment, TokenGroup.Comment, TokenString)
+        public CommentToken(string TokenString, string CommentData) : base(TokenType.Comment, TokenString)
         {
             this.CommentData = CommentData;
         }
@@ -236,7 +182,7 @@ namespace Bee.Language
     {
         public AccessorSymbol AccessorSymbol;
 
-        public AccessorToken(AccessorSymbol AccessorSymbol) : base(TokenType.Accessor, TokenGroup.Accessor, AccessorSymbol.String)
+        public AccessorToken(AccessorSymbol AccessorSymbol) : base(TokenType.Accessor, AccessorSymbol.String)
         {
             this.AccessorSymbol = AccessorSymbol;
         }
@@ -246,15 +192,23 @@ namespace Bee.Language
     {
         public OperationSymbol OperationSymbol;
 
-        public OperationToken(OperationSymbol OperationSymbol) : base(TokenType.Operation, TokenGroup.Operation, OperationSymbol.String)
+        public OperationToken(OperationSymbol OperationSymbol) : base(TokenType.Operation, OperationSymbol.String)
         {
             this.OperationSymbol = OperationSymbol;
         }
     }
 
+    public class StatementToken : TokenSymbol
+    {
+        public StatementKeywordSymbol StatementKeywordSymbol;
+
+        public StatementToken(StatementKeywordSymbol Symbol) : base(TokenType.Statement, Symbol.String)
+        { }
+    }
+
     public class UnknownToken : TokenSymbol
     {
-        public UnknownToken(string TokenString) : base(TokenType.Unknown, TokenGroup.Unknown, TokenString)
+        public UnknownToken(string TokenString) : base(TokenType.Unknown, TokenString)
         { }
     }
 }

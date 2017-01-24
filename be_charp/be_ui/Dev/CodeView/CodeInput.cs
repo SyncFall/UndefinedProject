@@ -168,6 +168,15 @@ namespace Bee.Integrator
                     CodeText.CodeCursor.Copy();
                 }
             }
+            // select-all
+            else if (isClick && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.A)
+            {
+                if (isClick)
+                {
+                    CodeText.CodeSelection.Begin(0, 0);
+                    CodeText.CodeSelection.End(CodeText.TokenContainer.LineCount() - 1, CodeText.TokenContainer.TextCount(CodeText.TokenContainer.LineCount() - 1));
+                }
+            }
             // undo
             else if (isDown && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.Y /* todo: z */)
             {
