@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Runtime
+namespace Bee.Language
 {
     public enum LiteralType
     {
@@ -26,8 +26,8 @@ namespace Bee.Runtime
 
     public abstract class LiteralSymbol
     {
-        public LiteralType Type;
-        public string String;
+        public readonly LiteralType Type;
+        public readonly string String;
 
         public LiteralSymbol(LiteralType type, string LiteralString)
         {

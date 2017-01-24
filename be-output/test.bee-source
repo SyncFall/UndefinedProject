@@ -5,7 +5,7 @@ scope Wikipedia.Language
 {
 	object One
 	{
-		int member = fuck.test(1, "str").length + 0.0f;
+		int member = (1 + (2));
 		float member;
 		BigOne fell;
 
@@ -14,4 +14,5 @@ scope Wikipedia.Language
 		}
 	}
 }
+
 

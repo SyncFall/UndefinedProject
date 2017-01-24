@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bee.UI.Types;
-using Bee.Runtime;
+using Bee.Language;
 using OpenTK.Graphics.OpenGL;
 using Bee.UI;
 using Bee.Language;
@@ -13,7 +13,7 @@ namespace Bee.Integrator
 {
     public class CodeText
     {
-        public static readonly int DefaultFontSize = 10;
+        public static readonly int DefaultFontSize = 11;
         public static readonly int DefaultTopSpace = 5;
         public static readonly int DefaultLeftSpace = 5;
 

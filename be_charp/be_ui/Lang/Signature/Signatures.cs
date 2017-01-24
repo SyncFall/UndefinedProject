@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Runtime
+namespace Bee.Language
 {
     public enum SignatureType
     {
@@ -109,7 +109,7 @@ namespace Bee.Runtime
 
         public override string ToString()
         {
-            return base.ToString() + " (path:" + IdentifierPath + ")";
+            return "use(" + IdentifierPath+")";
         }
     }
 
@@ -126,8 +126,8 @@ namespace Bee.Runtime
 
         public override string ToString()
         {
-            string str = base.ToString() + " (path:" + IdentifierPath  + ")\n";
-            str += ObjectList.ToString();
+            string str = "scope(" + IdentifierPath  + ")\n";
+            str += ObjectList;
             return str;
         }
     }
@@ -141,12 +141,12 @@ namespace Bee.Runtime
 
         public override string ToString()
         {
-            string str = "";
+            string str = "path(";
             for(int i=0; i<PathElements.Size(); i++)
             {
                 str += PathElements.Get(i);
             }
-            return str;
+            return str+")";
         }
     }
 
@@ -181,7 +181,7 @@ namespace Bee.Runtime
 
         public override string ToString()
         {
-            return base.ToString()+"|"+IdentifiereToken.String;
+            return "name("+IdentifiereToken.String+")";
         }
     }
 
@@ -212,7 +212,7 @@ namespace Bee.Runtime
 
         public override string ToString()
         {
-            string str = "object (name:" + Identifier.IdentifiereToken.String + ")\n";
+            string str = "object(" + Identifier + ")\n";
             str += Members;
             str += Methods;
             return str;
@@ -244,13 +244,13 @@ namespace Bee.Runtime
 
         public override string ToString()
         {
-            string str = "member (";
+            string str = "member(";
             str += TypeDeclaration;
             if(Assigment != null)
             {
                 str += ", assigment(" + AssigmentExpression + ")";
             }
-            return str  + ")";
+            return str+")";
         }
     }
 
@@ -280,7 +280,7 @@ namespace Bee.Runtime
 
         public override string ToString()
         {
-            string str = "method (";
+            string str = "method(";
             str += TypeDeclaration;
             str += ", parameters("+ParameterDeclaration+")";
             return str + ")";
@@ -307,7 +307,10 @@ namespace Bee.Runtime
             {
                 str += "object:"+TypeIdentifier.String;
             }
-            str += ", name:" + NameIdentifier.IdentifiereToken.String;
+            if(NameIdentifier != null)
+            {
+                str += ", name:" + NameIdentifier.IdentifiereToken.String;
+            }
             return str;
         }
     }
@@ -323,16 +326,7 @@ namespace Bee.Runtime
 
         public override string ToString()
         {
-            string str = "";
-            for(int i=0; i<ParameterList.Size(); i++)
-            {
-                str += ParameterList.Get(i);
-                if(i < ParameterList.Size()-1)
-                {
-                    str += ", ";
-                }
-            }
-            return str;
+            return ParameterList.ToString();
         }
     }
 
@@ -351,9 +345,7 @@ namespace Bee.Runtime
 
         public override string ToString()
         {
-            string str = "";
-            str += "parameter(" + TypeDeclaration + ")";
-            return str;
+            return "parameter(" + TypeDeclaration + ")";
         }
     }
 
@@ -385,11 +377,11 @@ namespace Bee.Runtime
             string str = "";
             if(ChildExpression != null)
             {
-                str += "child_expression(" + ChildExpression + ")";
+                str += "child("+ChildExpression+")";
             }
             else if(Operand != null)
             {
-                str += "operand_expression("+Operand+")";
+                str += "operand("+Operand+")";
             }
             str += ExpressionOperationList;
             return str;
@@ -432,8 +424,7 @@ namespace Bee.Runtime
 
         public override string ToString()
         {
-            string str = ", operation(type:"+ Operation.OperationToken.OperationSymbol.Type+", symbol:"+Operation.OperationToken.OperationSymbol.String+"), "+ExpressionPair;
-            return str;
+            return ", operation(type:"+ Operation.OperationToken.OperationSymbol.Type+", symbol:"+Operation.OperationToken.OperationSymbol.String+"), "+ExpressionPair;
         }
     }
 
@@ -446,26 +437,12 @@ namespace Bee.Runtime
 
         public override string ToString()
         {
-            return AccessSignatureList+"";
+            return AccessSignatureList.ToString();
         }
     }
 
     public class OperandAccessSignatureList : ListCollection<OperandAccessSignature>
-    {
-        public override string ToString()
-        {
-            string str = "";
-            for(int i=0; i<Size(); i++)
-            {
-                str += Get(i);
-                if(i < Size()-1)
-                {
-                    str += ", ";
-                }
-            }
-            return str;
-        }
-    }
+    { }
 
     public abstract class OperandAccessSignature : SignatureSymbol
     {
@@ -524,21 +501,7 @@ namespace Bee.Runtime
     }
 
     public class FunctionAccessParameterList : ListCollection<FunctionAccessParameterSignature>
-    {
-        public override string ToString()
-        {
-            string str = "";
-            for(int i=0; i<Size(); i++)
-            {
-                str += Get(i);
-                if(i < Size()-1)
-                {
-                    str += ", ";
-                }
-            }
-            return str;
-        }
-    }
+    { }
 
     public class FunctionAccessParameterSignature : SignatureSymbol
     {

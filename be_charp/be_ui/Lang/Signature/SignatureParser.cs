@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Bee.Runtime
+namespace Bee.Language
 {
     public class SignatureParser
     {
@@ -61,11 +61,6 @@ namespace Bee.Runtime
         public TokenSymbol Next()
         {
             return (TokenPointer.Current != null && TokenPointer.Next() != null ? TokenPointer.Current.Token : null);
-        }
-
-        public TokenSymbol Prev()
-        {
-            return (TokenPointer.Current != null ? TokenPointer.Prev().Token : null);
         }
 
         public void BeginStep()
@@ -470,11 +465,13 @@ namespace Bee.Runtime
         public OperationSignature TryOperation()
         {
             TrySpace();
-            if(TryToken(TokenGroup.Operation) != null)
+            if (TryToken(TokenGroup.Operation) == null)
             {
-                return new OperationSignature(PrevToken as OperationToken);
+                return null;
             }
-            return null;
+            OperationSignature signature = new OperationSignature(PrevToken as OperationToken);
+            TrySpace();
+            return signature;
         }
     }
 }

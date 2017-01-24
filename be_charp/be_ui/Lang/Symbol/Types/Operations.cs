@@ -22,7 +22,7 @@ namespace Bee.Language
         MultiAssigment,
         // assigment
         Assigment,
-        // basic-math
+        // math
         Add,
         Minus,
         Multi,

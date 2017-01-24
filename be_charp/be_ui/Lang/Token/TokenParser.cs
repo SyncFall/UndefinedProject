@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Runtime
+namespace Bee.Language
 {
     public class TokenParser
     {
@@ -30,8 +30,8 @@ namespace Bee.Runtime
                (token = TryLiteralToken()) != null ||
                (token = TryIdentifierToken()) != null ||
                (token = TryStructureToken()) != null ||
-               (token = TryOperationToken()) != null ||
                (token = TryCommentToken()) != null ||
+               (token = TryOperationToken()) != null ||
                (token = TryUnknownToken()) != null
             ){
                 return token;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Runtime
+namespace Bee.Language
 {
     public enum KeywordType
     {

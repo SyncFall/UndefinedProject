@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Runtime
+namespace Bee.Language
 {
     public class TokenNodeList : ListCollection<TokenNode>
     {
@@ -30,11 +30,6 @@ namespace Bee.Runtime
             return (Current != null ? Current = Current.Next : null);
         }
 
-        public TokenNode Prev()
-        {
-            return (Current != null ? Current = Current.Prev : null);
-        }
-
         public void StepBegin()
         {
             BeginStepNode.Add(Current);
@@ -43,7 +38,6 @@ namespace Bee.Runtime
         public void StepReset()
         {
             Current = BeginStepNode.RemoveAt(BeginStepNode.Size() - 1);
-            ;
         }
 	}
 
@@ -83,11 +77,11 @@ namespace Bee.Runtime
             }
         }
 
-        public void SetSource(SourceText SourceFile)
+        public void SetSource(SourceText Source)
         {
             AllTokenNodes.Clear();
             LineTokenNodes.Clear();
-            TokenParser TokenParser = new TokenParser(SourceFile.Text);
+            TokenParser TokenParser = new TokenParser(Source.Text);
             while(!TokenParser.IsEnd())
             {
                 TokenSymbol token = TokenParser.TryToken();

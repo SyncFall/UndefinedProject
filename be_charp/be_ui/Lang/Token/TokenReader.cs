@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Runtime
+namespace Bee.Language
 {
     public class TokenReader
     {
-        public string Text;
+        public readonly string Text;
         public int Position, Length;
         public int Start;
 
@@ -23,18 +23,6 @@ namespace Bee.Runtime
             Start = Position = StartPosition;
         }
 
-        public void Finish(bool forward)
-        {
-            if (forward)
-            {
-                Start = Position;
-            }
-            else
-            {
-                Position = Start;
-            }
-        }
-
         public bool EqualChar(char chr)
         {
             if(Text[Position] == chr)
@@ -47,6 +35,10 @@ namespace Bee.Runtime
 
         public bool EqualString(string str)
         {
+            if(Position + str.Length >= Length)
+            {
+                return false;
+            }
             for (int i = 0; i < str.Length; i++, Position++)
             {
                 if (Text[Position] != str[i])
@@ -107,7 +99,7 @@ namespace Bee.Runtime
             {
                 if (Text[Position] == chr)
                 {
-                    if (Position < Length && Text[Position - 1] == '\\')
+                    if (Position > 0 && Text[Position-1] == '\\')
                     {
                         Position++;
                     }
