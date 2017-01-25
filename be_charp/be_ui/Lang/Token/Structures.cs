@@ -14,10 +14,9 @@ namespace Bee.Language
         LineSpace,
         // seperators
         Complete,
-        Assigment,
-        Comma,
-        Point,
         Seperator,
+        Point,
+        Assigment,
         // blocks
         BlockBegin,
         BlockEnd,
@@ -45,9 +44,8 @@ namespace Bee.Language
             new StructureSymbol(StructureType.LineSpace, StructureGroup.Space, "\n"),
             new StructureSymbol(StructureType.Complete, StructureGroup.Seperator, ";"),
             new StructureSymbol(StructureType.Assigment, StructureGroup.Seperator, "="),
-            new StructureSymbol(StructureType.Comma, StructureGroup.Seperator, ","),
+            new StructureSymbol(StructureType.Seperator, StructureGroup.Seperator, ","),
             new StructureSymbol(StructureType.Point, StructureGroup.Seperator, "."),
-            new StructureSymbol(StructureType.Seperator, StructureGroup.Seperator, ";"),
             new StructureSymbol(StructureType.BlockBegin, StructureGroup.Block, "{"),
             new StructureSymbol(StructureType.BlockEnd, StructureGroup.Block, "}"),
             new StructureSymbol(StructureType.ClosingBegin, StructureGroup.Block, "("),

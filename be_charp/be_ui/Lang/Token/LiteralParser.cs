@@ -8,9 +8,9 @@ namespace Bee.Language
 {
     public class LiteralParser
     {
-        public TokenReader TextParser;
+        public TokenTextReader TextParser;
 
-        public LiteralParser(TokenReader TextParser)
+        public LiteralParser(TokenTextReader TextParser)
         {
             this.TextParser = TextParser;
         }

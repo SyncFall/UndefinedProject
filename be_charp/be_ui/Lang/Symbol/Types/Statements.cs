@@ -38,6 +38,8 @@ namespace Bee.Language
         VariableDeclaration,
         // empty-statement
         NoOperation,
+        // inner-block
+        InnerBlock,
     }
 
     public enum StatementKeywordType
@@ -81,12 +83,12 @@ namespace Bee.Language
 
     public class StatementKeywordSymbol
     {
-        public readonly StatementKeywordType KeywordType;
+        public readonly StatementKeywordType Type;
         public readonly string String;
 
         public StatementKeywordSymbol(StatementKeywordType KeywordType, string SymbolString)
         {
-            this.KeywordType = KeywordType;
+            this.Type = KeywordType;
             this.String = SymbolString;
         }
     }

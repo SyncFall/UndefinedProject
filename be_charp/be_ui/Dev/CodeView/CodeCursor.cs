@@ -1,14 +1,9 @@
-﻿using Bee.Lib;
-using Bee.Language;
+﻿using Bee.Language;
 using Bee.UI;
 using Bee.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Bee.Integrator
 {

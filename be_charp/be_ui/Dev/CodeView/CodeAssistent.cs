@@ -12,11 +12,9 @@ namespace Bee.Integrator
         public CodeText CodeText;
         public AssistentEntryContainer EntryContainer = new AssistentEntryContainer();
 
-
         public CodeAssistent(CodeText CodeText)
         {
-            this.CodeText = CodeText;
-            
+            this.CodeText = CodeText;        
         }
     }
 

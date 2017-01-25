@@ -9,12 +9,12 @@ namespace Bee.Language
 {
     public class TokenParser
     {
-        public TokenReader TextParser;
+        public TokenTextReader TextParser;
         public LiteralParser LiteralParser;
 
         public TokenParser(string text)
         {
-            this.TextParser = new TokenReader(text);
+            this.TextParser = new TokenTextReader(text);
             this.LiteralParser = new LiteralParser(TextParser);
         }
 
@@ -25,12 +25,16 @@ namespace Bee.Language
 
         public TokenSymbol TryToken()
         {
+            if(IsEnd())
+            {
+                return null;
+            }
             TokenSymbol token = null;
             if((token = TryKeywordToken()) != null ||
                (token = TryLiteralToken()) != null ||
                (token = TryIdentifierToken()) != null ||
-               (token = TryStructureToken()) != null ||
                (token = TryCommentToken()) != null ||
+               (token = TryStructureToken()) != null ||
                (token = TryOperationToken()) != null ||
                (token = TryUnknownToken()) != null
             ){
@@ -85,11 +89,11 @@ namespace Bee.Language
             return tokenSymbol;
         }
 
-        public TokenSymbol TryStructureToken()
+        public StructureToken TryStructureToken()
         {
             for(int i=0; i<Tokens.StructureTokenArray.Length; i++)
             {
-                TokenSymbol structureToken = Tokens.StructureTokenArray[i];
+                StructureToken structureToken = Tokens.StructureTokenArray[i];
                 if(TextParser.EqualChar(structureToken.String[0]))
                 {
                     return structureToken;
@@ -111,7 +115,7 @@ namespace Bee.Language
             return null;
         }
 
-        public TokenSymbol TryLiteralToken()
+        public LiteralToken TryLiteralToken()
         {
             LiteralSymbol literal = LiteralParser.TryLiteral();
             if(literal != null)

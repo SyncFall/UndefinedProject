@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Bee.Language
 {
-    public class TokenReader
+    public class TokenTextReader
     {
         public readonly string Text;
         public int Position, Length;
         public int Start;
 
-        public TokenReader(string Text)
+        public TokenTextReader(string Text)
         {
             this.Text = (Text == null ? "" : Text);
             this.Length = Text.Length;
@@ -25,9 +25,9 @@ namespace Bee.Language
 
         public bool EqualChar(char chr)
         {
-            if(Text[Position] == chr)
+            if(Text[Start] == chr)
             {
-                Start = ++Position;
+                Start = Position = (Start + 1 < Length ? Start + 1 : Length);
                 return true;
             }
             return false;
@@ -35,15 +35,15 @@ namespace Bee.Language
 
         public bool EqualString(string str)
         {
-            if(Position + str.Length >= Length)
+            if(Start + str.Length > Length-1)
             {
                 return false;
             }
+            Position = Start;
             for (int i = 0; i < str.Length; i++, Position++)
             {
                 if (Text[Position] != str[i])
                 {
-                    Position = Start;
                     return false;
                 }
             }
@@ -51,50 +51,48 @@ namespace Bee.Language
             return true;
         }
 
-        public void ToLineOrFileEnd()
+        public bool ToLineOrFileEnd()
         {
+            Position = Start;
             while(Position < Length)
             {
-                if(Text[Position] != '\n')
+                if(Text[Position] == '\n')
                 {
-                    Position++;
-                }
-                else
-                {
-                    break;
+                    Start = Position;
+                    return true;
                 }
             }
             Start = Position;
+            return false;
         }
 
-        public void ToStringOrFileEnd(string str)
+        public bool ToStringOrFileEnd(string str)
         {
+            Position = Start;
             while (Position < Length)
             {
-                bool stringFound = true;
+                bool found = true;
                 for(int i=0; i<str.Length; i++)
                 {
-                    if(Text[Position] == str[i])
+                    if(Text[Position++] != str[i])
                     {
-                        Position++;
-                    }
-                    else
-                    {
-                        Position++;
-                        stringFound = false;
+                        found = false;
                         break;
                     }
                 }
-                if(stringFound)
+                if(found)
                 {
-                    break;
+                    Start = (Position < Length ? Position : Length);
+                    return true;
                 }
             }
             Start = Position;
+            return false;
         }
 
-        public void ToCharWithoutEscapeOrFileEnd(char chr)
+        public bool ToCharWithoutEscapeOrFileEnd(char chr)
         {
+            Position = Start;
             while (Position < Length)
             {
                 if (Text[Position] == chr)
@@ -105,8 +103,8 @@ namespace Bee.Language
                     }
                     else
                     {
-                        Position++;
-                        break;
+                        Start = (Position < Length ? Position : Length);
+                        return true;
                     }
                 }
                 else
@@ -115,11 +113,13 @@ namespace Bee.Language
                 }
             }
             Start = Position;
+            return false;
         }
 
         public string TryIdentifier()
         {
-            if (!Char.IsLetter(Text[Position]))
+            Position = Start;
+            if (Position == Length || !Char.IsLetter(Text[Position]))
             {
                 return null;
             }

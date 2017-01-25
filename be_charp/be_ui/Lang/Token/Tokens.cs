@@ -120,6 +120,11 @@ namespace Bee.Language
         {
             return (Type == TokenType.Native && (this as NativeToken).Symbol.Type == NativeType);
         }
+
+        public bool IsStatement(StatementKeywordType StatementKeyword)
+        {
+            return (Type == TokenType.Statement && (this as StatementToken).Symbol.Type == StatementKeyword);
+        }
     }
 
     public class StructureToken : TokenSymbol
@@ -154,11 +159,11 @@ namespace Bee.Language
 
     public class LiteralToken : TokenSymbol
     {
-        public LiteralSymbol LiteralSymbol;
+        public LiteralSymbol Symbol;
 
         public LiteralToken(LiteralSymbol LiteralSymbol, string TokenString) : base(TokenType.Literal, TokenString)
         {
-            this.LiteralSymbol = LiteralSymbol;
+            this.Symbol = LiteralSymbol;
         }
     }
 
@@ -180,30 +185,32 @@ namespace Bee.Language
 
     public class AccessorToken : TokenSymbol
     {
-        public AccessorSymbol AccessorSymbol;
+        public AccessorSymbol Symbol;
 
         public AccessorToken(AccessorSymbol AccessorSymbol) : base(TokenType.Accessor, AccessorSymbol.String)
         {
-            this.AccessorSymbol = AccessorSymbol;
+            this.Symbol = AccessorSymbol;
         }
     }
 
     public class OperationToken : TokenSymbol
     {
-        public OperationSymbol OperationSymbol;
+        public OperationSymbol Symbol;
 
         public OperationToken(OperationSymbol OperationSymbol) : base(TokenType.Operation, OperationSymbol.String)
         {
-            this.OperationSymbol = OperationSymbol;
+            this.Symbol = OperationSymbol;
         }
     }
 
     public class StatementToken : TokenSymbol
     {
-        public StatementKeywordSymbol StatementKeywordSymbol;
+        public StatementKeywordSymbol Symbol;
 
         public StatementToken(StatementKeywordSymbol Symbol) : base(TokenType.Statement, Symbol.String)
-        { }
+        {
+            this.Symbol = Symbol;
+        }
     }
 
     public class UnknownToken : TokenSymbol

@@ -1,7 +1,7 @@
 ﻿using Bee.Language;
-using Bee.Language;
 using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Bee
 {
@@ -9,9 +9,9 @@ namespace Bee
     {
         public static int Main(string[] args)
         {
-            SourceText SourceText = SourceText.FromFile(@"D:\dev\UndefinedProject\be-output\test.bee-source");
+            SourceText source = SourceText.FromFile(@"D:\dev\UndefinedProject\be-output\test.bee-source");
 
-            //Thread.Sleep(2000);
+            Thread.Sleep(2000);
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -20,7 +20,7 @@ namespace Bee
             SignatureContainer signatureContainer = new SignatureContainer();
             for (int i=0; i<20*1000; i++)
             {
-                tokenContainer.SetSource(SourceText);
+                tokenContainer.SetSource(source);
                 signatureContainer.SetContainer(tokenContainer);
             }
             
