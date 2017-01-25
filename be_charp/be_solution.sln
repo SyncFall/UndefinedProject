@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bee", "be_ui\bee.csproj", "{996F03D6-43AF-446C-B05F-57F86E6E7168}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bee", "bee\bee.csproj", "{996F03D6-43AF-446C-B05F-57F86E6E7168}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "be_font", "be_font\be_font.vcxproj", "{FDB1F7D6-C75B-4F0E-9405-5752E15D21C6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "font", "be_font\be_font.vcxproj", "{FDB1F7D6-C75B-4F0E-9405-5752E15D21C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

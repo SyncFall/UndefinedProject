@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{996F03D6-43AF-446C-B05F-57F86E6E7168}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Bee</RootNamespace>
+    <AssemblyName>Bee.Runtime</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>0</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Bee.MainUI</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="SharpFont, Version=4.0.1.200, Culture=neutral, PublicKeyToken=48add4c483071cdf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\SharpFont.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Dev\CodeView\CodeScroller.cs" />
+    <Compile Include="Lang\Signature\Parser\Code.cs" />
+    <Compile Include="Lang\Signature\Parser\Common.cs" />
+    <Compile Include="Lang\Signature\Parser\Expression.cs" />
+    <Compile Include="Lang\Signature\SignatureParser.cs" />
+    <Compile Include="Lang\Signature\Signatures.cs" />
+    <Compile Include="Lang\Signature\Parser\Object.cs" />
+    <Compile Include="Lang\Symbol\Types\Operations.cs" />
+    <Compile Include="Lang\Symbol\Types\Statements.cs" />
+    <Compile Include="Lang\Token\Structures.cs" />
+    <Compile Include="Lib\StringUtils.cs" />
+    <Compile Include="Main\Constants.cs" />
+    <Compile Include="Main\TestMain.cs" />
+    <Compile Include="Main\Utils.cs" />
+    <Compile Include="Dev\CodeView\CodeAssistent.cs" />
+    <Compile Include="Dev\CodeView\CodeColor.cs" />
+    <Compile Include="Dev\CodeView\CodeContainer.cs" />
+    <Compile Include="Dev\CodeView\CodeCursor.cs" />
+    <Compile Include="Dev\CodeView\CodeHistory.cs" />
+    <Compile Include="Dev\CodeView\CodeInput.cs" />
+    <Compile Include="Dev\CodeView\CodeSelection.cs" />
+    <Compile Include="Dev\CodeView\CodeMessage.cs" />
+    <Compile Include="Dev\CodeView\CodeText.cs" />
+    <Compile Include="Dev\CodeView\CodeView.cs" />
+    <Compile Include="Dev\FpsCounter.cs" />
+    <Compile Include="Dev\IntegratorView.cs" />
+    <Compile Include="UI\DrawUtils.cs" />
+    <Compile Include="UI\Cases\TrackBox.cs" />
+    <Compile Include="UI\GeometryUtils.cs" />
+    <Compile Include="Lang\Signature\SignatureContainer.cs" />
+    <Compile Include="Lang\Signature\Parser\Base.cs" />
+    <Compile Include="Lang\Token\Keywords.cs" />
+    <Compile Include="Lang\Token\Literals.cs" />
+    <Compile Include="Lang\Token\TokenContainer.cs" />
+    <Compile Include="Lang\Token\LiteralParser.cs" />
+    <Compile Include="Lang\Token\TokenParser.cs" />
+    <Compile Include="Lang\Token\Tokens.cs" />
+    <Compile Include="Lang\Token\TextReader.cs" />
+    <Compile Include="Lang\Symbol\Types\Accessors.cs" />
+    <Compile Include="Lib\Collections.cs" />
+    <Compile Include="Lang\Symbol\Types\Natives.cs" />
+    <Compile Include="Lang\Sources.cs" />
+    <Compile Include="UI\Types\Buffer.cs" />
+    <Compile Include="UI\Types\Clipboard.cs" />
+    <Compile Include="UI\Types\Color.cs" />
+    <Compile Include="UI\Types\Glyph.cs" />
+    <Compile Include="UI\Types\Input.cs" />
+    <Compile Include="UI\Types\LineCurve.cs" />
+    <Compile Include="UI\Types\Font.cs" />
+    <Compile Include="UI\Types\Point.cs" />
+    <Compile Include="UI\Types\Shader.cs" />
+    <Compile Include="UI\Types\SurfacePatch.cs" />
+    <Compile Include="Main\UIMain.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="favicon.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
