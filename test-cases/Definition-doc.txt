@@ -1,4 +1,0 @@
-"test %.3f ", float
-"test {0:.3f}", float
-"test \(float.string(3))"
-"test {float:.3f}"

@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{A2053837-C7DD-4EB0-9C13-F8007756994A}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>BeeRuntime</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\output\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>0</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\output\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Bee</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Bee.MainUI</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\output\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="SharpFont, Version=4.0.1.200, Culture=neutral, PublicKeyToken=48add4c483071cdf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\output\SharpFont.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Dev\CodeView\CodeAssistent.cs" />
+    <Compile Include="Dev\CodeView\CodeColor.cs" />
+    <Compile Include="Dev\CodeView\CodeContainer.cs" />
+    <Compile Include="Dev\CodeView\CodeCursor.cs" />
+    <Compile Include="Dev\CodeView\CodeHistory.cs" />
+    <Compile Include="Dev\CodeView\CodeInput.cs" />
+    <Compile Include="Dev\CodeView\CodeMessage.cs" />
+    <Compile Include="Dev\CodeView\CodeScroller.cs" />
+    <Compile Include="Dev\CodeView\CodeSelection.cs" />
+    <Compile Include="Dev\CodeView\CodeText.cs" />
+    <Compile Include="Dev\CodeView\CodeView.cs" />
+    <Compile Include="Dev\FpsCounter.cs" />
+    <Compile Include="Dev\IntegratorView.cs" />
+    <Compile Include="Lang\Signature\Parser\Base.cs" />
+    <Compile Include="Lang\Signature\Parser\Code.cs" />
+    <Compile Include="Lang\Signature\Parser\Common.cs" />
+    <Compile Include="Lang\Signature\Parser\Expression.cs" />
+    <Compile Include="Lang\Signature\Parser\Object.cs" />
+    <Compile Include="Lang\Signature\SignatureContainer.cs" />
+    <Compile Include="Lang\Signature\SignatureParser.cs" />
+    <Compile Include="Lang\Signature\Signatures.cs" />
+    <Compile Include="Lang\Sources.cs" />
+    <Compile Include="Lang\Symbol\Types\Accessors.cs" />
+    <Compile Include="Lang\Symbol\Types\Natives.cs" />
+    <Compile Include="Lang\Symbol\Types\Operations.cs" />
+    <Compile Include="Lang\Symbol\Types\Statements.cs" />
+    <Compile Include="Lang\Token\Keywords.cs" />
+    <Compile Include="Lang\Token\LiteralParser.cs" />
+    <Compile Include="Lang\Token\Literals.cs" />
+    <Compile Include="Lang\Token\Structures.cs" />
+    <Compile Include="Lang\Token\TextReader.cs" />
+    <Compile Include="Lang\Token\TokenContainer.cs" />
+    <Compile Include="Lang\Token\TokenParser.cs" />
+    <Compile Include="Lang\Token\Tokens.cs" />
+    <Compile Include="Lib\Collections.cs" />
+    <Compile Include="Lib\StringUtils.cs" />
+    <Compile Include="Main\Constants.cs" />
+    <Compile Include="Main\TestMain.cs" />
+    <Compile Include="Main\UIMain.cs" />
+    <Compile Include="Main\Utils.cs" />
+    <Compile Include="UI\Cases\TrackBox.cs" />
+    <Compile Include="UI\DrawUtils.cs" />
+    <Compile Include="UI\GeometryUtils.cs" />
+    <Compile Include="UI\Types\Buffer.cs" />
+    <Compile Include="UI\Types\Clipboard.cs" />
+    <Compile Include="UI\Types\Color.cs" />
+    <Compile Include="UI\Types\Font.cs" />
+    <Compile Include="UI\Types\Glyph.cs" />
+    <Compile Include="UI\Types\Input.cs" />
+    <Compile Include="UI\Types\LineCurve.cs" />
+    <Compile Include="UI\Types\Point.cs" />
+    <Compile Include="UI\Types\Shader.cs" />
+    <Compile Include="UI\Types\SurfacePatch.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>
