@@ -33,7 +33,7 @@ namespace Bee.Integrator
         
         public CodeText(SourceText SourceText)
         {
-            this.SourceFont = new Font(@"D:\dev\UndefinedProject\output\DroidSansMono.ttf", DefaultFontSize);
+            this.SourceFont = new Font("DroidSansMono.ttf", DefaultFontSize);
             this.SourceText = SourceText;
             this.TokenContainer = new TokenContainer();
             this.SignaturContainer = new SignatureContainer();

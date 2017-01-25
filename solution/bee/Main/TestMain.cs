@@ -9,7 +9,7 @@ namespace Bee
     {
         public static int Main(string[] args)
         {
-            SourceText source = SourceText.FromFile(@"D:\dev\UndefinedProject\output\test.bee-source");
+            SourceText source = SourceText.FromFile("test.bee-source");
 
             Thread.Sleep(2000);
 
