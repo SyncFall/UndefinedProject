@@ -75,7 +75,7 @@ namespace Bee.Language
                 return signatur;
             }
             SignatureSymbol objectElement;
-            while ((objectElement = TryObjectElement()) != null)
+            while ((objectElement = TryObjectElement(signatur)) != null)
             {
                 if (objectElement.Type == SignatureType.Member)
                 {
@@ -97,7 +97,7 @@ namespace Bee.Language
             return signatur;
         }
 
-        public SignatureSymbol TryObjectElement()
+        public SignatureSymbol TryObjectElement(ObjectSignature Object)
         {
             TrySpace();
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
@@ -114,7 +114,7 @@ namespace Bee.Language
             SeperatorSignature complete = TrySeperator(StructureType.Complete);
             if (assigment != null || complete != null)
             {
-                MemberSignature member = new MemberSignature();
+                MemberSignature member = new MemberSignature(Object);
                 member.TypeDeclaration = typeDeclaration;
                 member.Assigment = assigment;
                 member.AssigmentExpression = assigmentExpression;
@@ -130,7 +130,7 @@ namespace Bee.Language
             ResetStep();
             if (enclosing != null)
             {
-                MethodSignature method = new MethodSignature();
+                MethodSignature method = new MethodSignature(Object);
                 method.TypeDeclaration = typeDeclaration;
                 if ((method.ParameterDeclaration = TryParameterDeclaration()) == null ||
                     (method.Code = TryCode(method)) == null
@@ -226,13 +226,16 @@ namespace Bee.Language
 
     public class MemberSignature : SignatureSymbol
     {
+        public ObjectSignature Object;
         public TypeDeclarationSignature TypeDeclaration;
         public SeperatorSignature Assigment;
         public ExpressionSignature AssigmentExpression;
         public SeperatorSignature Complete;
 
-        public MemberSignature() : base(SignatureType.Member)
-        { }
+        public MemberSignature(ObjectSignature Object) : base(SignatureType.Member)
+        {
+            this.Object = Object;
+        }
 
         public override string ToString()
         {
@@ -261,12 +264,15 @@ namespace Bee.Language
 
     public class MethodSignature : SignatureSymbol
     {
+        public ObjectSignature Object;
         public TypeDeclarationSignature TypeDeclaration;
         public ParameterDeclarationSignature ParameterDeclaration;
         public CodeSignature Code;
 
-        public MethodSignature() : base(SignatureType.Method)
-        { }
+        public MethodSignature(ObjectSignature Object) : base(SignatureType.Method)
+        {
+            this.Object = Object;
+        }
 
         public override string ToString()
         {

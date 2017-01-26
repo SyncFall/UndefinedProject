@@ -11,23 +11,41 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\output\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>0</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\output\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -68,15 +86,17 @@
     <Compile Include="Dev\CodeView\CodeView.cs" />
     <Compile Include="Dev\FpsCounter.cs" />
     <Compile Include="Dev\IntegratorView.cs" />
-    <Compile Include="Lang\Signature\Parser\Base.cs" />
-    <Compile Include="Lang\Signature\Parser\Code.cs" />
-    <Compile Include="Lang\Signature\Parser\Common.cs" />
-    <Compile Include="Lang\Signature\Parser\Expression.cs" />
-    <Compile Include="Lang\Signature\Parser\Object.cs" />
+    <Compile Include="Lang\Signature\Types\Base.cs" />
+    <Compile Include="Lang\Signature\Types\Statements.cs" />
+    <Compile Include="Lang\Signature\Types\Commons.cs" />
+    <Compile Include="Lang\Signature\Types\Expressions.cs" />
+    <Compile Include="Lang\Signature\Types\Objects.cs" />
     <Compile Include="Lang\Signature\SignatureContainer.cs" />
     <Compile Include="Lang\Signature\SignatureParser.cs" />
     <Compile Include="Lang\Signature\Signatures.cs" />
     <Compile Include="Lang\Sources.cs" />
+    <Compile Include="Lang\Symbol\SymbolContainer.cs" />
+    <Compile Include="Lang\Symbol\SymbolParser.cs" />
     <Compile Include="Lang\Symbol\Types\Accessors.cs" />
     <Compile Include="Lang\Symbol\Types\Natives.cs" />
     <Compile Include="Lang\Symbol\Types\Operations.cs" />
@@ -108,6 +128,18 @@
     <Compile Include="UI\Types\Point.cs" />
     <Compile Include="UI\Types\Shader.cs" />
     <Compile Include="UI\Types\SurfacePatch.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

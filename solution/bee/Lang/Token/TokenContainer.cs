@@ -55,6 +55,7 @@ namespace Bee.Language
 
     public class TokenContainer
     {
+        public SourceText SourceText;
         public TokenNodeList AllTokenNodes = new TokenNodeList(2048);
         public TokenNodeList LineTokenNodes = new TokenNodeList(128);
 
@@ -79,6 +80,7 @@ namespace Bee.Language
 
         public void SetSource(SourceText Source)
         {
+            this.SourceText = SourceText;
             AllTokenNodes.Clear();
             LineTokenNodes.Clear();
             TokenParser TokenParser = new TokenParser(Source.Text);

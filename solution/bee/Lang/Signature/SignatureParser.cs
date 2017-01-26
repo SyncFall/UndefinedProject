@@ -15,21 +15,23 @@ namespace Bee.Language
                 return null;
             }
             TrySpace();
-            SignatureSymbol signature = null;
-            if ((signature = TryUse()) != null ||
+            SignatureSymbol signature=null;
+            if((signature = TryUse()) != null ||
                (signature = TryScope()) != null ||
                (signature = TryObject()) != null ||
-               (signature = TryObjectElement()) != null ||
+               (signature = TryObjectElement(null)) != null ||
+               (signature = TryCode(null)) != null ||
                (signature = TryStatement(null)) != null ||
+               (signature = TryExpression()) != null ||
                (signature = TryTypeDeclaration()) != null ||
                (signature = TryParameterDeclaration()) != null ||
                (signature = TryIdentifierPath()) != null ||
                (signature = TryIdentifier()) != null ||
                (signature = TryUnknown()) != null
-            )
-            {
-                //Console.WriteLine(signature);
+            ){
+                ;
             }
+            //Console.WriteLine(signature);
             return signature;
         }
     }

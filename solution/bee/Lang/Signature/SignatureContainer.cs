@@ -22,7 +22,9 @@ namespace Bee.Language
 
     public class SignatureContainer
     {
+        public SourceText SourceText;
         public ListCollection<SignatureNode> SignatureNodes = new ListCollection<SignatureNode>(64);
+
 
         public SignatureContainer()
         { }
@@ -41,6 +43,7 @@ namespace Bee.Language
 
         public void SetContainer(TokenContainer TokenContainer)
 		{
+            this.SourceText = TokenContainer.SourceText;
             SignatureNodes.Clear();
             SignatureParser SignatureParser = new SignatureParser(TokenContainer);
             while (!SignatureParser.IsEnd())

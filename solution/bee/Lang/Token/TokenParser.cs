@@ -29,7 +29,7 @@ namespace Bee.Language
             {
                 return null;
             }
-            TokenSymbol token = null;
+            TokenSymbol token=null;
             if((token = TryKeywordToken()) != null ||
                (token = TryLiteralToken()) != null ||
                (token = TryIdentifierToken()) != null ||
