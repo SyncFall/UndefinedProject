@@ -9,19 +9,23 @@ namespace Bee
     {
         public static int Main(string[] args)
         {
-            SourceText source = SourceText.FromFile("test.bee-source");
+            SourceList sourceList = new SourceList();
+            sourceList.Add(SourceText.FromFile("test1.bee-source"));
+            sourceList.Add(SourceText.FromFile("test2.bee-source"));
+            sourceList.Add(SourceText.FromFile("test3.bee-source"));
+            sourceList.Add(SourceText.FromFile("test4.bee-source"));
+            sourceList.Add(SourceText.FromFile("test5.bee-source"));
 
             Thread.Sleep(2000);
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            TokenContainer tokenContainer = new TokenContainer();
-            SignatureContainer signatureContainer = new SignatureContainer();
-            for (int i=0; i<20*1000; i++)
+            
+            for (int i=0; i<200; i++)
             {
-                tokenContainer.SetSource(source);
-                signatureContainer.SetContainer(tokenContainer);
+                Registry registry = new Registry();
+                registry.AddSourceList(sourceList);
             }
             
             stopWatch.Stop();

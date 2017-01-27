@@ -132,12 +132,12 @@ namespace Bee.Language
                 }
                 else
                 {
-                    ExpressionSignature expression = TryExpression();
-                    if(expression != null)
+                    TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
+                    if(typeDeclaration != null)
                     {
-                        ExpressionStatementSignature signature = new ExpressionStatementSignature(StatementType.ExpressionStatement, Parent);
-                        signature.ConditionExpression = expression;
-                        if((signature.Complete = TrySeperator(StructureType.Complete)) == null)
+                        TypeDeclarationStatementSignature signature = new TypeDeclarationStatementSignature(Parent);
+                        signature.TypeDeclaration = typeDeclaration;
+                        if ((signature.Complete = TrySeperator(StructureType.Complete)) == null)
                         {
                             ;
                         }
@@ -145,7 +145,21 @@ namespace Bee.Language
                     }
                     else
                     {
-                        return null;
+                        ExpressionSignature expression = TryExpression();
+                        if (expression != null)
+                        {
+                            ExpressionStatementSignature signature = new ExpressionStatementSignature(StatementType.ExpressionStatement, Parent);
+                            signature.ConditionExpression = expression;
+                            if ((signature.Complete = TrySeperator(StructureType.Complete)) == null)
+                            {
+                                ;
+                            }
+                            return signature;
+                        }
+                        else
+                        {
+                            return null;
+                        }
                     }
                 }
             }
@@ -261,6 +275,19 @@ namespace Bee.Language
         public override string ToString()
         {
             return "statement(type:"+Type+")";
+        }
+    }
+
+    public class TypeDeclarationStatementSignature : StatementSignature
+    {
+        public TypeDeclarationSignature TypeDeclaration;
+
+        public TypeDeclarationStatementSignature(StatementSignature Parent) : base(StatementType.TypeDeclaration, false, Parent)
+        { }
+
+        public override string ToString()
+        {
+            return "type_declaration_statement(" + TypeDeclaration + ")";
         }
     }
 

@@ -35,7 +35,7 @@ namespace Bee.Language
         // expression-statement
         ExpressionStatement,
         // variable declaration/definition
-        VariableDeclaration,
+        TypeDeclaration,
         // empty-statement
         NoOperation,
         // inner-block

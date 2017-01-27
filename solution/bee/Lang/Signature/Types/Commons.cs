@@ -54,8 +54,7 @@ namespace Bee.Language
             }
             if (!TrySpace() ||
                (signatur.NameIdentifier = TryIdentifier()) == null
-            )
-            {
+            ){
                 ;
             }
             return signatur;
@@ -92,7 +91,7 @@ namespace Bee.Language
         public NativeToken TypeNative;
         public IdentifierToken TypeIdentifier;
         public IdentifierSignature NameIdentifier;
-
+     
         public TypeDeclarationSignature() : base(SignatureType.TypeDeclartion)
         { }
 

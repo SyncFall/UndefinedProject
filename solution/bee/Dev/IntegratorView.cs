@@ -17,10 +17,6 @@ namespace Bee.Integrator
         {
             this.CodeView = new CodeView(this);
             this.FpsCounter = new FpsCounter();
-
-            SourceText source = SourceText.FromFile(@"D:\dev\UndefinedProject\output\test.bee-source");
-
-            this.CodeView.LoadSource(source);
         }
 
         public void Draw()

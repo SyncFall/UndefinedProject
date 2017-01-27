@@ -18,13 +18,8 @@ namespace Bee.Integrator
         
         public CodeView(IntegratorView IntegratorView)
         {
-            this.IntegratorView = IntegratorView;   
-        }
-
-        public void LoadSource(SourceText SourceText)
-        {
-            this.SourceText = SourceText;
-            this.CodeText = new CodeText(SourceText);
+            this.IntegratorView = IntegratorView;
+            this.CodeText = new CodeText();
         }
 
         public void Draw()

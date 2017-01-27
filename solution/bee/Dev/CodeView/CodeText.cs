@@ -19,8 +19,7 @@ namespace Bee.Integrator
 
         public Font SourceFont;
         public SourceText SourceText;
-        public TokenContainer TokenContainer;
-        public SignatureContainer SignaturContainer;
+        public Registry Registry;
         public GlyphMetrics GlyphMetrics;
         public GlyphContainer GlyphContainer;
         public CodeColor CodeColor;
@@ -30,13 +29,17 @@ namespace Bee.Integrator
         public CodeSelection CodeSelection;
         public CodeHistory CodeHistory;
         public CodeScroller CodeScroller;
+        public TokenContainer TokenContainer;
         
-        public CodeText(SourceText SourceText)
+        public CodeText()
         {
             this.SourceFont = new Font("DroidSansMono.ttf", DefaultFontSize);
-            this.SourceText = SourceText;
-            this.TokenContainer = new TokenContainer();
-            this.SignaturContainer = new SignatureContainer();
+            this.SourceText = SourceText.FromFile("test1.bee-source");
+            SourceList list = new SourceList();
+            list.Add(this.SourceText);
+            this.Registry = new Registry();
+            this.Registry.AddSourceList(list);
+            this.TokenContainer = Registry.EntryList.GetExist(SourceText).TokenContainer;
             this.GlyphMetrics = new GlyphMetrics(SourceFont, DefaultTopSpace, DefaultLeftSpace);
             this.GlyphContainer = new GlyphContainer(SourceFont);
             this.CodeColor = new CodeColor();
@@ -52,9 +55,7 @@ namespace Bee.Integrator
         public void SetSourceText(SourceText Source)
         {
             this.SourceText = Source;
-            this.TokenContainer.SetSource(SourceText);
-            this.SignaturContainer.SetContainer(TokenContainer);
-            this.CodeContainer.SetContainer(TokenContainer);
+            this.Registry.UpdateSource(SourceText);
         }
        
         public void Draw()

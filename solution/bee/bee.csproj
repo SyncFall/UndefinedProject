@@ -38,7 +38,7 @@
     <WarningLevel>0</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
@@ -86,6 +86,7 @@
     <Compile Include="Dev\CodeView\CodeView.cs" />
     <Compile Include="Dev\FpsCounter.cs" />
     <Compile Include="Dev\IntegratorView.cs" />
+    <Compile Include="Lang\Registry\Registry.cs" />
     <Compile Include="Lang\Signature\Types\Base.cs" />
     <Compile Include="Lang\Signature\Types\Statements.cs" />
     <Compile Include="Lang\Signature\Types\Commons.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Lang\Sources.cs" />
     <Compile Include="Lang\Symbol\SymbolContainer.cs" />
     <Compile Include="Lang\Symbol\SymbolParser.cs" />
+    <Compile Include="Lang\Symbol\Symbols.cs" />
     <Compile Include="Lang\Symbol\Types\Accessors.cs" />
     <Compile Include="Lang\Symbol\Types\Natives.cs" />
     <Compile Include="Lang\Symbol\Types\Operations.cs" />
@@ -109,6 +111,10 @@
     <Compile Include="Lang\Token\TokenContainer.cs" />
     <Compile Include="Lang\Token\TokenParser.cs" />
     <Compile Include="Lang\Token\Tokens.cs" />
+    <Compile Include="Lang\Validate\Types\Expressions.cs" />
+    <Compile Include="Lang\Validate\Types\Objects.cs" />
+    <Compile Include="Lang\Validate\Types\Statements.cs" />
+    <Compile Include="Lang\Validate\Validator.cs" />
     <Compile Include="Lib\Collections.cs" />
     <Compile Include="Lib\StringUtils.cs" />
     <Compile Include="Main\Constants.cs" />
@@ -141,6 +147,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

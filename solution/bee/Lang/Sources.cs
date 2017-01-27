@@ -20,16 +20,11 @@ namespace Bee.Language
     public class SourceText
     {
         public string Text;
-        public string Filepath;
-
-        private SourceText()
-        { }
-
-        public static SourceText FromText(string text)
+        public readonly string Filepath;
+        
+        private SourceText(string Filepath)
         {
-            SourceText sourceFile = new SourceText();
-            sourceFile.SetText(text);
-            return sourceFile;
+            this.Filepath = Filepath;
         }
 
         public static SourceText FromFile(string Filepath)
@@ -38,8 +33,7 @@ namespace Bee.Language
             {
                 throw new Exception("source-filepath not exist");
             }
-            SourceText sourceFile = new SourceText();
-            sourceFile.Filepath = Filepath;
+            SourceText sourceFile = new SourceText(Filepath);
             sourceFile.SetText(File.ReadAllText(Filepath));
             return sourceFile;
         }
@@ -52,7 +46,7 @@ namespace Bee.Language
             }
             File.WriteAllText((Filepath != null ? Filepath : this.Filepath), Text);
         }
-
+        
         public SourceText SetText(string SourceText)
         {
             if(SourceText == null)
@@ -61,6 +55,11 @@ namespace Bee.Language
             }
             this.Text = SourceText.Replace("\r", "");
             return this;
+        }
+
+        public bool IsEqualFile(SourceText Compare)
+        {
+            return (Filepath == Compare.Filepath);
         }
     }
 }
