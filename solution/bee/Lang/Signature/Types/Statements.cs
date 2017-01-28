@@ -9,16 +9,16 @@ namespace Bee.Language
 {
     public partial class SignatureParser
     {
-        public CodeSignature TryCode(MethodSignature Method)
+        public CodeSignature TryCode()
         {
             BlockSignature blockBegin = TryBlock(StructureType.BlockBegin);
             if (blockBegin == null)
             {
                 return null;
             }
-            CodeSignature signature = new CodeSignature(Method);
+            CodeSignature signature = new CodeSignature();
             signature.BlockBegin = blockBegin;
-            if((signature.Statements = TryStatementList(null, signature)) == null ||
+            if((signature.Statements = TryStatementList()) == null ||
               ((signature.BlockEnd = TryBlock(StructureType.BlockEnd)) == null)
             ){
                 ;
@@ -26,18 +26,18 @@ namespace Bee.Language
             return signature;
         }
 
-        public StatementSignatureList TryStatementList(StatementSignature Parent, CodeSignature Code=null)
+        public StatementSignatureList TryStatementList()
         {
             StatementSignatureList list = new StatementSignatureList();
             StatementSignature signatur;
-            while ((signatur = TryStatement(Parent)) != null)
+            while ((signatur = TryStatement()) != null)
             {
                 list.Add(signatur);
             }
             return list;
         }
 
-        public StatementSignature TryStatement(StatementSignature Parent)
+        public StatementSignature TryStatement()
         {
             TrySpace();
             StatementToken first=null, second=null;
@@ -112,7 +112,7 @@ namespace Bee.Language
             }
             else if(TryToken(StructureType.Complete) != null)
             {
-                StatementSignature signature = new StatementSignature(StatementType.NoOperation, false, Parent);
+                StatementSignature signature = new StatementSignature(StatementType.NoOperation, false);
                 signature.Keyword = new KeywordSignature(PrevToken);
                 return signature;
             }
@@ -121,9 +121,9 @@ namespace Bee.Language
                 BlockSignature beginBlock = TryBlock(StructureType.BlockBegin);
                 if(beginBlock != null)
                 {
-                    BlockStatementSignature signature = new BlockStatementSignature(StatementType.InnerBlock, Parent);
+                    BlockStatementSignature signature = new BlockStatementSignature(StatementType.InnerBlock);
                     signature.BlockBegin = beginBlock;
-                    if((signature.ChildStatements = TryStatementList(Parent)) == null ||
+                    if((signature.ChildStatements = TryStatementList()) == null ||
                        (signature.BlockEnd = TryBlock(StructureType.BlockEnd)) == null
                     ){
                         ;
@@ -135,7 +135,7 @@ namespace Bee.Language
                     TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
                     if(typeDeclaration != null)
                     {
-                        TypeDeclarationStatementSignature signature = new TypeDeclarationStatementSignature(Parent);
+                        TypeDeclarationStatementSignature signature = new TypeDeclarationStatementSignature();
                         signature.TypeDeclaration = typeDeclaration;
                         if ((signature.Complete = TrySeperator(StructureType.Complete)) == null)
                         {
@@ -148,7 +148,7 @@ namespace Bee.Language
                         ExpressionSignature expression = TryExpression();
                         if (expression != null)
                         {
-                            ExpressionStatementSignature signature = new ExpressionStatementSignature(StatementType.ExpressionStatement, Parent);
+                            ExpressionStatementSignature signature = new ExpressionStatementSignature(StatementType.ExpressionStatement);
                             signature.ConditionExpression = expression;
                             if ((signature.Complete = TrySeperator(StructureType.Complete)) == null)
                             {
@@ -166,11 +166,11 @@ namespace Bee.Language
 
             if (conditionBlock)
             {
-                ConditionBlockStatementSignature signature = new ConditionBlockStatementSignature(statementType, Parent);
+                ConditionBlockStatementSignature signature = new ConditionBlockStatementSignature(statementType);
                 signature.Keyword = new KeywordSignature(first);
                 if((signature.ConditionExpression = TryExpression()) == null ||
                    (signature.BlockBegin = TryBlock(StructureType.BlockBegin)) == null ||
-                   (signature.ChildStatements = TryStatementList(signature)) == null ||
+                   (signature.ChildStatements = TryStatementList()) == null ||
                    (signature.BlockEnd = TryBlock(StructureType.BlockEnd)) == null
                 ){
                     ;
@@ -179,7 +179,7 @@ namespace Bee.Language
             }
             else if(keywordStatement)
             {
-                StatementSignature signature = new StatementSignature(statementType, false, Parent);
+                StatementSignature signature = new StatementSignature(statementType, false);
                 signature.Keyword = new KeywordSignature(first);
                 if((signature.Complete = TrySeperator(StructureType.Complete)) == null)
                 {
@@ -189,7 +189,7 @@ namespace Bee.Language
             }
             else if(expressionStatement)
             {
-                ExpressionStatementSignature signature = new ExpressionStatementSignature(statementType, Parent);
+                ExpressionStatementSignature signature = new ExpressionStatementSignature(statementType);
                 signature.Keyword = new KeywordSignature(first);
                 if((signature.ConditionExpression = TryExpression()) == null ||
                    (signature.Complete = TrySeperator(StructureType.Complete)) == null
@@ -200,10 +200,10 @@ namespace Bee.Language
             }
             else if(blockStatement)
             {
-                BlockStatementSignature signature = new BlockStatementSignature(statementType, Parent);
+                BlockStatementSignature signature = new BlockStatementSignature(statementType);
                 signature.Keyword = new KeywordSignature(first);
                 if((signature.BlockBegin = TryBlock(StructureType.BlockBegin)) == null ||
-                   (signature.ChildStatements = TryStatementList(signature)) == null ||
+                   (signature.ChildStatements = TryStatementList()) == null ||
                    (signature.BlockEnd = TryBlock(StructureType.BlockEnd)) == null
                 ){
                     ;
@@ -219,15 +219,12 @@ namespace Bee.Language
 
     public class CodeSignature : SignatureSymbol
     {
-        public MethodSignature Method;
         public BlockSignature BlockBegin;
         public StatementSignatureList Statements = new StatementSignatureList();
         public BlockSignature BlockEnd;
 
-        public CodeSignature(MethodSignature Method) : base(SignatureType.Code)
-        {
-            this.Method = Method;
-        }
+        public CodeSignature() : base(SignatureType.Code)
+        { }
 
         public override string ToString()
         {
@@ -261,11 +258,9 @@ namespace Bee.Language
         public StatementSignature Parent;
         public StatementSignatureList ChildStatements;
 
-        public StatementSignature(StatementType StatementType, bool HasChildStatements, StatementSignature Parent) : base(SignatureType.Statement)
+        public StatementSignature(StatementType StatementType, bool HasChildStatements) : base(SignatureType.Statement)
         {
             this.Type = StatementType;
-            this.Code = (Parent != null ? Parent.Code : null);
-            this.Parent = Parent;
             if (HasChildStatements)
             {
                 this.ChildStatements = new StatementSignatureList();
@@ -282,7 +277,7 @@ namespace Bee.Language
     {
         public TypeDeclarationSignature TypeDeclaration;
 
-        public TypeDeclarationStatementSignature(StatementSignature Parent) : base(StatementType.TypeDeclaration, false, Parent)
+        public TypeDeclarationStatementSignature() : base(StatementType.TypeDeclaration, false)
         { }
 
         public override string ToString()
@@ -295,7 +290,7 @@ namespace Bee.Language
     {
         public ExpressionSignature ConditionExpression;
 
-        public ExpressionStatementSignature(StatementType StatementType, StatementSignature Parent) : base(StatementType, false, Parent)
+        public ExpressionStatementSignature(StatementType StatementType) : base(StatementType, false)
         { }
 
         public override string ToString()
@@ -309,7 +304,7 @@ namespace Bee.Language
         public BlockSignature BlockBegin;
         public BlockSignature BlockEnd;
 
-        public BlockStatementSignature(StatementType StatementType, StatementSignature Parent) : base(StatementType, true, Parent)
+        public BlockStatementSignature(StatementType StatementType) : base(StatementType, true)
         { }
 
         public override string ToString()
@@ -324,7 +319,7 @@ namespace Bee.Language
     {
         public ExpressionSignature ConditionExpression;
 
-        public ConditionBlockStatementSignature(StatementType StatementType, StatementSignature Parent) : base(StatementType, Parent)
+        public ConditionBlockStatementSignature(StatementType StatementType) : base(StatementType)
         { }
 
         public override string ToString()

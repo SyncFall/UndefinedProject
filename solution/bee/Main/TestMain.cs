@@ -21,7 +21,7 @@ namespace Bee
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            for (int i=0; i<200*100; i++)
+            for (int i=0; i<200; i++)
             {
                 Registry registry = new Registry();
                 registry.AddSourceList(sourceList);

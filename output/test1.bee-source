@@ -1,21 +1,27 @@
-
 use World.One.Backend;
 use TinyWorld.TestRoadTrack;
 
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
+scope Wikipedia.Language;
 
-		int method(int a, int b, int c)
+object Little
+{
+	int basis = 400;
+	str text = "sym";
+
+	object create()
+	{
+		basis = 1;
+	}
+
+	void update()
+	{
+		if(basis < 1.0f)
 		{
-			if(1 + (2) || true){
-				return (1 + (2 + 3));
-			}			
+			text = "invalid";
+		}
+		else
+		{
+			text = (i + " valid");
 		}
 	}
 }
-

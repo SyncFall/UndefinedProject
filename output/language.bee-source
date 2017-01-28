@@ -1,0 +1,94 @@
+use Scope.Path;
+use Scope.Base.Module;
+
+scope Thing.One;
+
+object Wonder extends Basic, Node
+{
+	bool validState;
+	byte[] byteArray = { 14, 12, 45 };
+	char seperator = ',';
+	string text;
+	number anyNumber;
+	int integer;
+	float floating;
+	long bigint;
+	double highPrecision;
+	list<object> objectList = new list<object>{ null };
+	object[2] anotherObjectList = { null, "" };
+	map<string, number> stringMap;
+	call changeCall = ChangeState;
+	var dynamicObject = { test: "string", meter: {1, 2, 3}, types: {'a' => 1, 'b' => 3}, func: stateChangeCall}
+	type objectType = get_type(this);
+
+	private object create(string text)
+	{ 
+		this.text = text;
+	}
+
+	static Wonder FromThing(string text="")
+	{
+		return new Wonder(text);
+	}
+
+	void ChangeState(float a, string numberString, State state = State.Default)
+	{
+		integer = int(a);
+		anyNumber = numberString;
+		if(state ==  State.One)
+		{
+			objectList.add(integer);
+			objectList[0] = 0.0f;
+			stringMap["state"] = anyNumber;
+		}
+		else if(state == State.Two)
+		{
+			changeCall(a, numberString, State.Three);
+			for(i in byteArray)
+			{
+				printLine(byteArray[0]);
+			}
+		}
+		else
+		{
+			return;
+		}
+	}
+
+	override void Build()
+	{
+		return;
+	}
+
+	object destroy()
+	{ }
+}
+
+bool visibility=false;
+void SetVisible()
+{
+	visibility = true;
+}
+
+object Basic 
+{
+	abstract void Build();
+}
+
+object Node
+{
+	Node Next;
+}
+
+enum State
+{
+	One, Two, Three, Default
+}
+
+partial object string
+{
+	int CountString()
+	{ 
+		return data.length;
+	}
+}

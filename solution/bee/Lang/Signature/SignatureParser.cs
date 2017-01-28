@@ -19,9 +19,9 @@ namespace Bee.Language
             if((signature = TryUse()) != null ||
                (signature = TryScope()) != null ||
                (signature = TryObject()) != null ||
-               (signature = TryObjectElement(null)) != null ||
-               (signature = TryCode(null)) != null ||
-               (signature = TryStatement(null)) != null ||
+               (signature = TryObjectElement()) != null ||
+               (signature = TryCode()) != null ||
+               (signature = TryStatement()) != null ||
                (signature = TryExpression()) != null ||
                (signature = TryTypeDeclaration()) != null ||
                (signature = TryParameterDeclaration()) != null ||
@@ -31,7 +31,7 @@ namespace Bee.Language
             ){
                 ;
             }
-            //Console.WriteLine(signature);
+            Console.WriteLine(signature);
             return signature;
         }
     }

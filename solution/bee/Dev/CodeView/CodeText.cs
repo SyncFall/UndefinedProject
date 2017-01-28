@@ -34,7 +34,7 @@ namespace Bee.Integrator
         public CodeText()
         {
             this.SourceFont = new Font("DroidSansMono.ttf", DefaultFontSize);
-            this.SourceText = SourceText.FromFile("test1.bee-source");
+            this.SourceText = SourceText.FromFile("language.bee-source");
             SourceList list = new SourceList();
             list.Add(this.SourceText);
             this.Registry = new Registry();

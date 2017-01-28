@@ -70,7 +70,7 @@ namespace Bee.Language
             {
                 tokenSymbol = Tokens.NativeTokenStringMap.GetValue(str);
             }
-            else if (Tokens.StatementTokenStringMap.KeyExist(str))
+            else if(Tokens.StatementTokenStringMap.KeyExist(str))
             {
                 tokenSymbol = Tokens.StatementTokenStringMap.GetValue(str);
             }
