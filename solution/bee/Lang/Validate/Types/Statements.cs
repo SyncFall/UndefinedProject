@@ -8,7 +8,6 @@ namespace Bee.Language
 {
     public partial class Validator
     {
-
         public void ValidateStatementBlock(StatementSignatureList StatementList)
         {
             for (int i = 0; i < StatementList.Size(); i++)

@@ -43,7 +43,7 @@ namespace Bee.Language
                 {
                     break;
                 }
-                signature.ExpressionOperationList.Add(new OperationPair(operation, expressionPair));
+                signature.OperationList.Add(new ExpressionOperationPair(operation, expressionPair));
             }
             return signature;
         }
@@ -51,7 +51,7 @@ namespace Bee.Language
         public OperandSignatur TryOperand()
         {
             OperandSignatur signature = new OperandSignatur();
-            OperandAccessSignature accessSignatur = null;
+            AccessSignature accessSignatur = null;
             if (TryToken(TokenType.Literal) != null)
             {
                 LiteralAccessSignature literalAccess = new LiteralAccessSignature(PrevToken as LiteralToken);
@@ -135,7 +135,7 @@ namespace Bee.Language
         public ExpressionSignature ChildExpression;
         public BlockSignature BlockEnd;
         public OperandSignatur Operand;
-        public ExpressionOperationList ExpressionOperationList = new ExpressionOperationList();
+        public ExpressionOperationList OperationList = new ExpressionOperationList();
 
         public ExpressionSignature() : base(SignatureType.Expression)
         { }
@@ -151,7 +151,7 @@ namespace Bee.Language
             {
                 str += "operand(" + Operand + ")";
             }
-            str += ExpressionOperationList;
+            str += OperationList;
             return str;
         }
     }
@@ -166,7 +166,7 @@ namespace Bee.Language
         }
     }
 
-    public class ExpressionOperationList : ListCollection<OperationPair>
+    public class ExpressionOperationList : ListCollection<ExpressionOperationPair>
     {
         public override string ToString()
         {
@@ -179,12 +179,12 @@ namespace Bee.Language
         }
     }
 
-    public class OperationPair
+    public class ExpressionOperationPair
     {
         public OperationSignature Operation;
         public ExpressionSignature ExpressionPair;
 
-        public OperationPair(OperationSignature Operation, ExpressionSignature ExpressionPair)
+        public ExpressionOperationPair(OperationSignature Operation, ExpressionSignature ExpressionPair)
         {
             this.Operation = Operation;
             this.ExpressionPair = ExpressionPair;
@@ -198,7 +198,7 @@ namespace Bee.Language
 
     public class OperandSignatur : SignatureSymbol
     {
-        public OperandAccessSignatureList AccessSignatureList = new OperandAccessSignatureList();
+        public AccessSignatureList AccessSignatureList = new AccessSignatureList();
 
         public OperandSignatur() : base(SignatureType.Operand)
         { }
@@ -208,19 +208,19 @@ namespace Bee.Language
             return AccessSignatureList.ToString();
         }
     }
-
-    public class OperandAccessSignatureList : ListCollection<OperandAccessSignature>
+    
+    public class AccessSignatureList : ListCollection<AccessSignature>
     { }
 
-    public abstract class OperandAccessSignature : SignatureSymbol
+    public abstract class AccessSignature : SignatureSymbol
     {
         public SeperatorSignature Seperator;
 
-        public OperandAccessSignature(SignatureType accessType) : base(accessType)
+        public AccessSignature(SignatureType accessType) : base(accessType)
         { }
     }
 
-    public class LiteralAccessSignature : OperandAccessSignature
+    public class LiteralAccessSignature : AccessSignature
     {
         public LiteralToken LiteralToken;
 
@@ -235,7 +235,7 @@ namespace Bee.Language
         }
     }
 
-    public class VariableAccessSignature : OperandAccessSignature
+    public class VariableAccessSignature : AccessSignature
     {
         public IdentifierSignature Identifier;
 
@@ -250,7 +250,7 @@ namespace Bee.Language
         }
     }
 
-    public class FunctionAccessSignature : OperandAccessSignature
+    public class FunctionAccessSignature : AccessSignature
     {
         public IdentifierSignature Identifier;
         public BlockSignature BlockBegin;
@@ -287,7 +287,7 @@ namespace Bee.Language
         }
     }
 
-    public class ArrayAccessSignature : OperandAccessSignature
+    public class ArrayAccessSignature : AccessSignature
     {
         public ArrayAccessSignature() : base(SignatureType.ArrayAccess)
         { }

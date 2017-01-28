@@ -12,9 +12,10 @@ scope Wikipedia.Language
 
 		int method(int a, int b, int c)
 		{
-			if(true){
+			if(1 + (2) || true){
 				return (1 + (2 + 3));
 			}			
 		}
 	}
 }
+
