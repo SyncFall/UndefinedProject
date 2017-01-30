@@ -16,7 +16,7 @@ namespace Bee.Integrator
     {
         public CodeText CodeText;
         public ListCollection<CodeHistoryStep> History = new ListCollection<CodeHistoryStep>();
-        public int HistoryPointer;
+        public int HistoryPosition;
 
         public CodeHistory(CodeText CodeText)
         {
@@ -27,34 +27,34 @@ namespace Bee.Integrator
         public void Clear()
         {
             History.Clear();
-            HistoryPointer = -1;
+            HistoryPosition = -1;
         }
 
         public void AddStep(CodeHistoryStep StepEntry)
         {
             History.Add(StepEntry);
-            HistoryPointer++;
+            HistoryPosition++;
         }
 
         public bool UndoStep()
         {
-            if(HistoryPointer < 0)
+            if(HistoryPosition < 0)
             {
                 return false;
             }
-            History.Get(HistoryPointer).DoUndo();
-            HistoryPointer--;
+            History.Get(HistoryPosition).DoUndo();
+            HistoryPosition--;
             return true;
         }
 
         public bool RedoStep()
         {
-            if(HistoryPointer >= History.Size()-1)
+            if(HistoryPosition >= History.Size()-1)
             {
                 return false;
             }
-            HistoryPointer++;
-            History.Get(HistoryPointer).DoRedo();
+            HistoryPosition++;
+            History.Get(HistoryPosition).DoRedo();
             return true;
         }
     }

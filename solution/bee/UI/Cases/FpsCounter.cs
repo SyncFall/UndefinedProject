@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Integrator
+namespace Bee.UI
 {
     public class FpsCounter
     {

@@ -50,7 +50,7 @@ namespace Bee.Language
             for(int i=startPosition; i < TextParser.Length; i++)
             {
                 char chr = TextParser.Text[i];
-                if(!Char.IsLetter(chr) || !Char.IsLower(chr))
+                if(!Char.IsLetter(chr))
                 {
                     endPositon = i;
                     break;

@@ -84,7 +84,7 @@
     <Compile Include="Dev\CodeView\CodeSelection.cs" />
     <Compile Include="Dev\CodeView\CodeText.cs" />
     <Compile Include="Dev\CodeView\CodeView.cs" />
-    <Compile Include="Dev\FpsCounter.cs" />
+    <Compile Include="UI\Cases\FpsCounter.cs" />
     <Compile Include="Dev\IntegratorView.cs" />
     <Compile Include="Lang\Registry\Registry.cs" />
     <Compile Include="Lang\Signature\Types\Base.cs" />
@@ -121,6 +121,7 @@
     <Compile Include="Main\TestMain.cs" />
     <Compile Include="Main\UIMain.cs" />
     <Compile Include="Main\Utils.cs" />
+    <Compile Include="UI\Cases\CurveDraw.cs" />
     <Compile Include="UI\Cases\TrackBox.cs" />
     <Compile Include="UI\DrawUtils.cs" />
     <Compile Include="UI\GeometryUtils.cs" />

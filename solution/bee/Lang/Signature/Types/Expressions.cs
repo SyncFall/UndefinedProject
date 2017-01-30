@@ -98,7 +98,7 @@ namespace Bee.Language
                 }
                 else if (TryBlock(StructureType.BracketBegin) != null)
                 {
-                    ArrayAccessSignature arrayAccess = null;// todo
+                    ArrayAccessSignature arrayAccess = new ArrayAccessSignature();
                     accessSignatur = arrayAccess;
                 }
                 else

@@ -19,7 +19,7 @@ namespace Bee.UI.Types
     // two-point line, quadratic one control point bezier line, and two control point cubic bezier line
     public class LineCurve
     {
-        public static readonly int DefaultDetailIterations = 25;
+        public static readonly int DefaultDetailIterations = 50;
 
         public BeeLineCurveType Type;
         public BeePoint[] Points = new BeePoint[4];
@@ -31,7 +31,7 @@ namespace Bee.UI.Types
 
         public void Draw()
         {
-            GL.LineWidth(1.0f);
+            GL.LineWidth(2.5f);
             GL.Color3(System.Drawing.Color.White);
             GL.Begin(PrimitiveType.Lines);
 
