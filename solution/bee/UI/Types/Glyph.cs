@@ -74,7 +74,7 @@ namespace Bee.UI
         public byte[] BitmapAlpha;
         public int BitmapBufferId;
 
-        public ListCollection<LineCurve> Outlines = new ListCollection<LineCurve>();
+        public ListCollection<Curve> Outlines = new ListCollection<Curve>();
 
         public Glyph(Font Font, char CharCode)
         {

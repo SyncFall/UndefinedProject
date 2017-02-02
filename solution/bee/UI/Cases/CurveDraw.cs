@@ -11,50 +11,27 @@ namespace Bee.UI
     public class CurveDraw
     {
         public FpsCounter FpsCounter;
-        public LineCurve Segement1;
-        public LineCurve Segement2;
-        public LineCurve Segement3;
-        public LineCurve Segement4;
+        public Curve Curve = new Curve();
 
         public CurveDraw()
         {
             FpsCounter = new FpsCounter();
-            this.Segement1 = new LineCurve(BeeLineCurveType.Cubic);
-            this.Segement1.Anchor1 = new BeePoint(100, 400);
-            this.Segement1.Anchor2 = new BeePoint(400, 400);
-            this.Segement1.Control1 = new BeePoint(125, 250);
-            this.Segement1.Control2 = new BeePoint(275, 250);
-
-            this.Segement2 = new LineCurve(BeeLineCurveType.Cubic);
-            this.Segement2.Anchor1 = new BeePoint(400, 400);
-            this.Segement2.Anchor2 = new BeePoint(600, 200);
-            this.Segement2.Control1 = new BeePoint(450, 500);
-            this.Segement2.Control2 = new BeePoint(550, 150);
-
-            this.Segement3 = new LineCurve(BeeLineCurveType.Linear);
-            this.Segement3.Anchor1 = new BeePoint(50, 50);
-            this.Segement3.Anchor2 = new BeePoint(250, 60);
-
-            this.Segement4 = new LineCurve(BeeLineCurveType.Conic);
-            this.Segement4.Anchor1 = new BeePoint(200, 200);
-            this.Segement4.Control1 = new BeePoint(300, 25);
-            this.Segement4.Anchor2 = new BeePoint(400, 200);
+            /*
+            Curve.Points.Add(new Vec3(150, 50));
+            Curve.Points.Add(new Vec3(50, 120));
+            Curve.Points.Add(new Vec3(80, 150));
+            Curve.Points.Add(new Vec3(100, 120));
+            Curve.Points.Add(new Vec3(120, 150));
+            Curve.Points.Add(new Vec3(150, 120));
+            Curve.Points.Add(new Vec3(50, 50));
+            */
         }
 
         public void Draw()
         {
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadIdentity();
-            GL.Ortho(0, 800, 600, 0, 0, 1);
-
-            /*
-            Segement1.Draw();
-            Segement2.Draw();
-            Segement3.Draw();
-            Segement4.Draw();
-            */
-
+            Curve.Draw();
             FpsCounter.Draw();
+            //DrawUtils.DrawTriangleCycle(500, 300, 250, 60);
         }
     }
 }

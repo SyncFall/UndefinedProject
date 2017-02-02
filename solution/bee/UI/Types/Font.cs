@@ -101,9 +101,9 @@ namespace Bee.UI
             }
         }
   
-        private BeePoint GetOutlinePoint(Glyph glyph, int index)
+        private Vec3 GetOutlinePoint(Glyph glyph, int index)
         {
-            return new BeePoint(
+            return new Vec3(
                 FTPoints[index].X.Value / (float)65536 * PointSize * Scale, 
                 glyph.Height - FTPoints[index].Y.Value / (float)65536 * PointSize * Scale
             );
@@ -124,6 +124,7 @@ namespace Bee.UI
 
         private void SetSegements(Glyph glyph, int start, int end)
         {
+            /*
             int idx = start;
             while (idx < end)
             {
@@ -131,7 +132,7 @@ namespace Bee.UI
                 if( idx+1 <= end &&
                     IsTag(idx, OnTag) && IsTag(idx+1, OnTag)
                 ){
-                    LineCurve lineCurve = new LineCurve(BeeLineCurveType.Linear);
+                    Curve lineCurve = new Curve(BeeLineCurveType.Linear);
                     lineCurve.Anchor1 = GetOutlinePoint(glyph, idx);
                     lineCurve.Anchor2 = GetOutlinePoint(glyph, idx + 1);
                     glyph.Outlines.Add(lineCurve);
@@ -142,7 +143,7 @@ namespace Bee.UI
                     idx+2 <= end &&
                     IsTag(idx, OnTag) && IsTag(idx+1, ConicTag) && IsTag(idx+2, OnTag)
                 ){
-                    LineCurve lineCurve = new LineCurve(BeeLineCurveType.Conic);
+                    Curve lineCurve = new Curve(BeeLineCurveType.Conic);
                     lineCurve.Anchor1 = GetOutlinePoint(glyph, idx);
                     lineCurve.Control1 = GetOutlinePoint(glyph, idx + 1);
                     lineCurve.Anchor2 = GetOutlinePoint(glyph, idx + 2);
@@ -154,15 +155,15 @@ namespace Bee.UI
                     idx+3 <= end &&
                     IsTag(idx, OnTag) && IsTag(idx+1, ConicTag) && IsTag(idx+2, ConicTag) && IsTag(idx+3, OnTag)
                 ){
-                    LineCurve lineCurveA = new LineCurve(BeeLineCurveType.Conic);
+                    Curve lineCurveA = new Curve(BeeLineCurveType.Conic);
                     lineCurveA.Anchor1 = GetOutlinePoint(glyph, idx);
                     lineCurveA.Control1 = GetOutlinePoint(glyph, idx + 1);
 
-                    LineCurve lineCurveB = new LineCurve(BeeLineCurveType.Conic);
+                    Curve lineCurveB = new Curve(BeeLineCurveType.Conic);
                     lineCurveB.Control1 = GetOutlinePoint(glyph, idx + 2);
                     lineCurveB.Anchor2 = GetOutlinePoint(glyph, idx + 3);
 
-                    BeePoint middlePoint = new BeePoint();
+                    Vec3 middlePoint = new Vec3();
                     middlePoint.x = (lineCurveA.Control1.x + lineCurveB.Control1.x) / (float)2;
                     middlePoint.y = (lineCurveA.Control1.y + lineCurveB.Control1.y) / (float)2;
 
@@ -178,7 +179,7 @@ namespace Bee.UI
                     idx+3 <= end &&
                     IsTag(idx, OnTag) && IsTag(idx+1, CubicTag) && IsTag(idx+2, CubicTag) && IsTag(idx+3, OnTag))
                 {
-                    LineCurve lineCurve = new LineCurve(BeeLineCurveType.Cubic);
+                    Curve lineCurve = new Curve(BeeLineCurveType.Cubic);
                     lineCurve.Anchor1 = GetOutlinePoint(glyph, idx);
                     lineCurve.Control1 = GetOutlinePoint(glyph, idx + 1);
                     lineCurve.Control2 = GetOutlinePoint(glyph, idx + 2);
@@ -191,6 +192,7 @@ namespace Bee.UI
                     throw new Exception("invalid state");
                 }
             }
+            */
         }
 
         public Glyph GetGlyph(char charCode)

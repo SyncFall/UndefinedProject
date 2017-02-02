@@ -1,15 +1,10 @@
-﻿using System;
-using System.Drawing;
-using OpenTK;
-using OpenTK.Input;
-using System.IO;
-using Bee.UI.Types;
-using System.Diagnostics;
-using Bee.Integrator;
-using System.Threading;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
+﻿using Bee.Integrator;
 using Bee.UI;
+using Bee.UI.Types;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
+using System;
 
 namespace Bee
 {
@@ -31,14 +26,14 @@ namespace Bee
             CurveDraw CurveDraw = null;
 
             GameWindow gameWindow = null;
-            using (gameWindow = new GameWindow(1250, 750, new OpenTK.Graphics.GraphicsMode(32, 24, 0, 0)))
+            using (gameWindow = new GameWindow(1250, 750, new OpenTK.Graphics.GraphicsMode(32, 24, 0, 4)))
             {
                 gameWindow.Load += (sender, e) =>
                 {
                     gameWindow.VSync = VSyncMode.On;
                     Input.Inititialize(gameWindow);
-                    IntegratorView = new IntegratorView();
-                    //CurveDraw = new CurveDraw();
+                    //IntegratorView = new IntegratorView();
+                    CurveDraw = new CurveDraw();
                 };
 
                 gameWindow.Resize += (sender, e) =>
@@ -51,10 +46,7 @@ namespace Bee
                     GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
                 };
 
-                gameWindow.Keyboard.KeyDown += (object sender, KeyboardKeyEventArgs e) =>
-                {
-                };
-
+               
                 gameWindow.UpdateFrame += (sender, e) =>
                 {
                 };
@@ -91,6 +83,7 @@ namespace Bee
                 gameWindow.Run(60.0);
 
             };
+            Environment.Exit(1);
         }
     }
 }

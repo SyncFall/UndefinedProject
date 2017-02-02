@@ -33,10 +33,6 @@ namespace Bee.UI.Types
             for (int i = 0; i < InputListeners.Size(); i++)
             {
                 InputListener inputListener = InputListeners.Get(i);
-                if (!inputListener.Enabled)
-                {
-                    continue;
-                }
                 inputListener.InputEvent(InputEvent);
             }
         }
@@ -47,44 +43,19 @@ namespace Bee.UI.Types
             InputListener.Keyboard = Keyboard;
             InputListeners.Add(InputListener);
         }
-
-        public static void Remove(InputListener InputListener)
-        {
-            for (int i = 0; i < InputListeners.Size(); i++)
-            {
-                if (InputListeners.Get(i).Id == InputListener.Id)
-                {
-                    InputListeners.RemoveAt(i);
-                    break;
-                }
-            }
-        }
     }
 
     public abstract class InputListener
     {
-        private static int IdInstance = 0;
-   
-        public readonly int Id;
-        public bool Enabled;
-
         public MouseState Mouse;
         public KeyboardState Keyboard;
 
         public InputListener()
         {
-            Id = ++IdInstance;
-            Enabled = true;
             Input.Add(this);
         }
 
-        public void Remove()
-        {
-            Enabled = false;
-            Input.Add(this);
-        }
-
-        public abstract void InputEvent(InputEvent InputEvent);
+        public abstract void InputEvent(InputEvent Event);
     }
 
     public abstract class InputEvent
@@ -271,6 +242,7 @@ namespace Bee.UI.Types
                 MouseButtonState mouseButton = MouseButtonStates.GetValue((MouseButton)e.Button);
                 mouseButton.IsDown = false;
                 mouseButton.IsUp = true;
+                mouseButton.IsClick = false;
                 Input.FireListeners(new MouseButtonEvent(mouseButton));
             };
         }

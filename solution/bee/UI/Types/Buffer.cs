@@ -16,10 +16,10 @@ namespace Bee.UI.Types
     {
         public int VertexId;
         public int ColorId;
-        public BeePoint[] Points;
-        public BeePoint[] Colors;
+        public Vec3[] Points;
+        public Vec3[] Colors;
 
-        public BeeBuffer(BeePoint[] Points, BeePoint[] Colors)
+        public BeeBuffer(Vec3[] Points, Vec3[] Colors)
         {
             this.Points = Points;
             this.Colors = Colors;
@@ -29,12 +29,12 @@ namespace Bee.UI.Types
         {
             VertexId = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexId);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Points.Length * BeePoint.SizeInBytes), Points, BufferUsageHint.StaticDraw);
+            //GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Points.Length * 12), Points, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             ColorId = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, ColorId);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Colors.Length * BeePoint.SizeInBytes), Colors, BufferUsageHint.StaticDraw);
+            //GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Colors.Length * 12), Colors, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
@@ -42,11 +42,11 @@ namespace Bee.UI.Types
         {
             GL.EnableClientState(ArrayCap.VertexArray);
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexId);
-            GL.VertexPointer(3, VertexPointerType.Float, BeePoint.SizeInBytes, IntPtr.Zero);
+            GL.VertexPointer(3, VertexPointerType.Float, 12, IntPtr.Zero);
 
             GL.EnableClientState(ArrayCap.ColorArray);
             GL.BindBuffer(BufferTarget.ArrayBuffer, ColorId);
-            GL.ColorPointer(3, ColorPointerType.Float, BeePoint.SizeInBytes, IntPtr.Zero);
+            GL.ColorPointer(3, ColorPointerType.Float, 12, IntPtr.Zero);
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, Points.Length);
 

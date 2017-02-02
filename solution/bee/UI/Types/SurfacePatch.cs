@@ -16,10 +16,10 @@ namespace Bee.UI.Types
     public class BeeSurfacePatch
     {
         public BeeSurfacePatchType Type;
-        public BeePoint[,] Points;
+        public Vec3[,] Points;
 
-        public BeePoint[] VertexArray;
-        public BeePoint[] ColorArray;
+        public Vec3[] VertexArray;
+        public Vec3[] ColorArray;
 
         public BeeBuffer Buffer;
 
@@ -28,17 +28,17 @@ namespace Bee.UI.Types
             this.Type = Type;
             if(Type == BeeSurfacePatchType.BiCubic)
             {
-                Points = new BeePoint[4, 4];
+                Points = new Vec3[4, 4];
             }
             else if(Type == BeeSurfacePatchType.TriCubic)
             {
-                Points = new BeePoint[3, 4];
+                Points = new Vec3[3, 4];
             }
         }
 
         public void Build()
         {
-            VertexArray = new BeePoint[54];
+            VertexArray = new Vec3[54];
             int idx = 0;
             // from top-down segment
             for(int i = 0; i < 3; i++)
@@ -59,10 +59,10 @@ namespace Bee.UI.Types
             }
 
             Random random = new Random(255);
-            ColorArray = new BeePoint[9 * 2 * 3];
+            ColorArray = new Vec3[9 * 2 * 3];
             for(int i = 0; i < ColorArray.Length; i++)
             {
-                ColorArray[i] = new BeePoint((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
+                ColorArray[i] = new Vec3((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
             }
 
             Buffer = new BeeBuffer(VertexArray, ColorArray);
