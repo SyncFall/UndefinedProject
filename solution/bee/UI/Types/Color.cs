@@ -31,7 +31,7 @@ namespace Bee.UI
 
         public GlColor(Color color)
         {
-            this.Rgb = new float[] { 1f/color.R, 1f/color.G, 1f/color.B };
+            this.Rgb = new float[] { color.R/255f, color.G/255f, color.B/255f };
         }
 
         public GlColor(float r, float g, float b)

@@ -12,7 +12,7 @@ namespace Bee.UI
     public class GlyphContainer
     {
         public Font Font;
-        public MapCollection<char, Glyph> Glyphs = new MapCollection<char, Glyph>();
+        public MapCollection<char, Glyph> Map = new MapCollection<char, Glyph>();
 
         public GlyphContainer(Font font)
         {
@@ -21,14 +21,14 @@ namespace Bee.UI
 
         public Glyph GetGlyph(char chr)
         {
-            if (Glyphs.KeyExist(chr))
+            if (Map.KeyExist(chr))
             {
-                return Glyphs.GetValue(chr);
+                return Map.GetValue(chr);
             }
             else
             {
                 Glyph glyph = Font.GetGlyph(chr);
-                Glyphs.Put(chr, glyph);
+                Map.Put(chr, glyph);
                 return glyph;
             }
         }

@@ -128,13 +128,14 @@
     <Compile Include="UI\Types\Buffer.cs" />
     <Compile Include="UI\Types\Clipboard.cs" />
     <Compile Include="UI\Types\Color.cs" />
+    <Compile Include="UI\Types\Compose.cs" />
     <Compile Include="UI\Types\Font.cs" />
     <Compile Include="UI\Types\Glyph.cs" />
     <Compile Include="UI\Types\Input.cs" />
     <Compile Include="UI\Types\Curve.cs" />
+    <Compile Include="UI\Types\Interact.cs" />
     <Compile Include="UI\Types\Point.cs" />
     <Compile Include="UI\Types\Shader.cs" />
-    <Compile Include="UI\Types\SurfacePatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6">

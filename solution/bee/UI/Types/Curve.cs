@@ -9,23 +9,29 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Bee.UI
-{
+{ 
     public class Curve
     {
         public static readonly int DefaultDetailIteration = 100;
-        public Vec3List Points = new Vec3List();
+        public PointList Points = new PointList();
         public ListCollection<float> Knots = new ListCollection<float>();
-        public int Degree = 2;
+        public int Degree;
         public int Order;
         public CurveInput Input;
 
-        public Curve()
+        public Curve(int Degree=2)
         {
-            Order = Degree + 1;
-            Input = new CurveInput(this);
+            this.Degree = Degree;
+            this.Order = Degree + 1;
+            //this.Input = new CurveInput(this);
         }
 
-        public void BuildKnotes()
+        public void Add(float X, float Y, float Z=0)
+        {
+            this.Points.Add(new Point(X, Y, Z));
+        }
+
+        private void BuildKnotes()
         {
             Knots.Clear();
             int knotCount = (Points.Size() + Degree + 1);
@@ -38,7 +44,7 @@ namespace Bee.UI
             }
         }
 
-        public Vec3 GetPoint(float t)
+        public Point GetPoint(float t)
         {
             float u = (1 - t) * Knots.Get(Order - 1) + t * Knots.Get(Points.Size());
 
@@ -46,7 +52,7 @@ namespace Bee.UI
             for (; Knots.Get(i_plus_1) <= u; i_plus_1++) { }
             int i_plus_1_minus_k = i_plus_1 - Order;
 
-            Vec3 point = new Vec3();
+            Point point = new Point();
             for (int i = i_plus_1_minus_k; i < i_plus_1; i++)
             {
                 float n = Blend(i, Order, u);
@@ -82,7 +88,7 @@ namespace Bee.UI
             return s1 + s2;
         }
 
-        public void Draw()
+        public void Draw(bool Withpoints=false)
         {
             if(Points.Size() < Degree + 1)
             {
@@ -94,11 +100,14 @@ namespace Bee.UI
             GL.Begin(PrimitiveType.LineStrip);
             for(float t=0; t<=1f; t += (1/(float)DefaultDetailIteration))
             {
-                Vec3 point = GetPoint(t);
+                Point point = GetPoint(t);
                 GL.Vertex2(point.x, point.y);
             }
             GL.End();
-            DrawPoints();
+            if(Withpoints)
+            {
+                DrawPoints();
+            }
         }
 
         public void DrawPoints()
@@ -108,7 +117,7 @@ namespace Bee.UI
             GL.Begin(PrimitiveType.Points);
             for(int i=0; i<Points.Size(); i++)
             {
-                Vec3 point = Points.Get(i);
+                Point point = Points.Get(i);
                 GL.Vertex2(point.x, point.y);
             }
             GL.End();
@@ -118,23 +127,23 @@ namespace Bee.UI
     public class CurveInput : InputListener
     {
         public Curve Curve;
-        public Vec3 MovePoint;
+        public Point MovePoint;
 
         public CurveInput(Curve Curve)
         {
             this.Curve = Curve;
         }
 
-        public override void InputEvent(InputEvent InputEvent)
+        public override void Input(InputEvent Event)
         {
-            if(InputEvent.IsMouseButton())
+            if(Event.Is(InputType.Button))
             {
-                MouseButtonState buttonState = InputEvent.GetMouseButtonEvent().State;
-                if(buttonState.Button == MouseButton.Left && buttonState.IsClick)
+                ButtonState buttonState = Event.Button;
+                if(buttonState.Type == Button.Left && buttonState.IsClick)
                 {
-                    for(int i=0; i<Curve.Points.Size(); i++)
+                    for(int i=0; i< Curve.Points.Size(); i++)
                     {
-                        if (GeometryUtils.IntersectPositionWithMargin((int)Curve.Points.Get(i).x, (int)Curve.Points.Get(i).y, Mouse.GetCursorState().X, Mouse.GetCursorState().Y, 25, 25))
+                        if (GeometryUtils.IntersectPositionWithMargin((int)Curve.Points.Get(i).x, (int)Curve.Points.Get(i).y, Mouse.Cursor.X, Mouse.Cursor.Y, 25, 25))
                         {
                             MovePoint = Curve.Points.Get(i);
                             break;
@@ -142,27 +151,27 @@ namespace Bee.UI
                     }
                     if(MovePoint == null)
                     {
-                        Vec3 point = new Vec3(Mouse.GetCursorState().X, Mouse.GetCursorState().Y);
+                        Point point = new Point(Mouse.Cursor.X, Mouse.Cursor.Y);
                         Curve.Points.Add(point);
                     }
                 }
-                if(buttonState.Button == MouseButton.Left && buttonState.IsUp)
+                if(buttonState.Type == Button.Left && buttonState.IsUp)
                 {
                     MovePoint = null;
                 }
             }
-            if(InputEvent.IsMouseCursor())
+            if(Event.Is(InputType.Cursor))
             {
-                MouseCursorState cursorState = InputEvent.GetMouseCursorEvent().State;
+                CursorState cursorState = Event.Cursor;
                 if(MovePoint != null)
                 {
                     MovePoint.x = cursorState.X;
                     MovePoint.y = cursorState.Y;
                 }
             }
-            if(InputEvent.IsKeyboard())
+            if(Event.Is(InputType.Key))
             {
-                KeyState keyState = InputEvent.GetKeyboardEvent().State;
+                KeyState keyState = Event.Key;
                 if(keyState.Key == Key.X && keyState.IsClick)
                 {
                     Curve.Points.Clear();
@@ -180,7 +189,7 @@ namespace Bee.UI
                     int detailIteration = 150;
                     for(float t=0; t<=1; t += 1/(float)detailIteration)
                     {
-                        Vec3 point = Curve.GetPoint(t);
+                        Point point = Curve.GetPoint(t);
                         strBuilder.AppendLine((point.x + ":" + point.y + ":" + point.z).Replace(',', '.'));
                     }
                     File.WriteAllText("C:\\out\\points.txt", strBuilder.ToString());

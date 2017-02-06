@@ -5,20 +5,63 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.UI.Types
+namespace Bee.UI
 {
     public enum InputType
     {
-        Keyboard,
-        MouseCursor,
-        MouseButton,
-        MouseScroll,
+        Key,
+        Cursor,
+        Button,
+        Scroll,
     }
 
-    public class Input
+    public abstract class InputState
+    { }
+
+    public class InputEvent
+    {
+        public InputType Type;
+        public InputState State;
+
+        public InputEvent(InputType Type, InputState State)
+        {
+            this.Type = Type;
+            this.State = State;
+        }
+
+        public bool Is(InputType Type)
+        {
+            return (this.Type == Type);
+        }
+
+        public KeyState Key
+        {
+            get
+            {
+                return (State as KeyState);
+            }
+        }
+
+        public CursorState Cursor
+        {
+            get
+            {
+                return (State as CursorState);
+            }
+        }
+
+        public ButtonState Button
+        {
+            get
+            {
+                return (State as ButtonState);
+            }
+        }
+    }
+
+    public class InputSystem
     {
         public static ListCollection<InputListener> InputListeners = new ListCollection<InputListener>();
-
         public static MouseState Mouse;
         public static KeyboardState Keyboard;
 
@@ -33,7 +76,7 @@ namespace Bee.UI.Types
             for (int i = 0; i < InputListeners.Size(); i++)
             {
                 InputListener inputListener = InputListeners.Get(i);
-                inputListener.InputEvent(InputEvent);
+                inputListener.ProcessInputEvent(InputEvent);
             }
         }
 
@@ -47,65 +90,43 @@ namespace Bee.UI.Types
 
     public abstract class InputListener
     {
+        public object Sender;
         public MouseState Mouse;
         public KeyboardState Keyboard;
 
         public InputListener()
         {
-            Input.Add(this);
+            InputSystem.Add(this);
         }
 
-        public abstract void InputEvent(InputEvent Event);
-    }
-
-    public abstract class InputEvent
-    {
-        public InputType InputType;
-        
-        public InputEvent(InputType InputType)
-        {
-            this.InputType = InputType;
+        public void ProcessInputEvent(InputEvent Event)
+        {   
+            if (Sender != null && Sender is Compose)
+            {
+                Compose compose = (Sender as Compose);
+                if (Event.Is(InputType.Button) && Event.Button.Type == Button.Left && Event.Button.IsClick)
+                {
+                    CursorState cursor = Mouse.Cursor;
+                    Size size = compose.Size;
+                    if(cursor.X >= 0 && cursor.X <= size.Width && 
+                       cursor.Y >= 0 && cursor.X <= size.Height
+                    ){
+                        this.Input(Event);
+                    }
+                }
+            }
+            else
+            {
+                this.Input(Event);
+            }    
         }
 
-        public bool IsKeyboard()
-        {
-            return InputType == InputType.Keyboard;
-        }
-
-        public KeyEvent GetKeyboardEvent()
-        {
-            return this as KeyEvent;
-        }
-
-        public bool IsMouse()
-        {
-            return (IsMouseButton() || IsMouseCursor());
-        }
-
-        public bool IsMouseCursor()
-        {
-            return InputType == InputType.MouseCursor;
-        }
-
-        public MouseCursorEvent GetMouseCursorEvent()
-        {
-            return this as MouseCursorEvent;
-        }
-
-        public bool IsMouseButton()
-        {
-            return InputType == InputType.MouseButton;
-        }
-
-        public MouseButtonEvent GetMouseButtonEvent()
-        {
-            return this as MouseButtonEvent;
-        }
+        public abstract void Input(InputEvent Event);
     }
 
     public class KeyboardState
     {
-        private MapCollection<Key, KeyState> KeyStates = new MapCollection<Key, KeyState>();
+        public KeyStateCollection Keys = new KeyStateCollection();
 
         public KeyboardState(OpenTK.GameWindow GameWindow)
         {
@@ -118,61 +139,42 @@ namespace Bee.UI.Types
                 keyState.IsClick = false;
                 keyState.IsDown = keyboardState.IsKeyDown((OpenTK.Input.Key)keys[i]);
                 keyState.IsUp = !keyState.IsDown;
-                KeyStates.Put(keys[i], keyState);
+                Keys.Put(keys[i], keyState);
             }
             GameWindow.KeyDown += (object sender, OpenTK.Input.KeyboardKeyEventArgs e) =>
             {
-                KeyState keyState = KeyStates.GetValue((Key)e.Key);
+                KeyState keyState = Keys.GetValue((Key)e.Key);
                 keyState.IsClick = (!keyState.IsDown ? true : false);
                 keyState.IsDown = true;
                 keyState.IsUp = false;
-                Input.FireListeners(new KeyEvent(keyState));
+                InputSystem.FireListeners(new InputEvent(InputType.Key, keyState));
             };
             GameWindow.KeyUp += (object sender, OpenTK.Input.KeyboardKeyEventArgs e) =>
             {
-                KeyState keyState = KeyStates.GetValue((Key)e.Key);
+                KeyState keyState = Keys.GetValue((Key)e.Key);
                 keyState.IsUp = true;
                 keyState.IsDown = false;
                 keyState.IsClick = false;
-                Input.FireListeners(new KeyEvent(keyState));
+                InputSystem.FireListeners(new InputEvent(InputType.Key, keyState));
             };
         }
+    }
 
-        public KeyState GetKeyState(Key key)
+    public class KeyStateCollection : MapCollection<Key, KeyState>
+    {
+        public KeyState this[Key key]
         {
-            return KeyStates.GetValue(key);
-        }
-
-        public bool IsKeyClicked(Key key)
-        {
-            return KeyStates.GetValue(key).IsClick;
-        }
-
-        public bool IsKeyDown(Key key)
-        {
-            return KeyStates.GetValue(key).IsDown;
-        }
-
-        public bool IsKeyUp(Key key)
-        {
-            return KeyStates.GetValue(key).IsUp;
+            get
+            {
+                return base.GetValue(key);
+            }
         }
     }
 
-    public class KeyEvent : InputEvent
+    public class KeyState : InputState
     {
-        public KeyState State;
-
-        public KeyEvent(KeyState State) : base(InputType.Keyboard)
-        {
-            this.State = State;
-        }
-    }
-
-    public class KeyState
-    {
-        public static readonly string Alphabet = "abcdefghijklmnopqrstuvwxyz";
-        public static readonly string Numbers = "0123456789";
+        private static readonly string Alphabet = "abcdefghijklmnopqrstuvwxyz";
+        private static readonly string Numbers = "0123456789";
 
         public Key Key;
         public bool IsClick;
@@ -207,99 +209,91 @@ namespace Bee.UI.Types
 
     public class MouseState
     {
-        private MouseCursorState Cursor = new MouseCursorState();
-        private MapCollection<MouseButton, MouseButtonState> MouseButtonStates = new MapCollection<MouseButton, MouseButtonState>();
+        private CursorState CursorState = new CursorState();
+        private ButtonStateCollection ButtonStateCollection = new ButtonStateCollection();
 
         public MouseState(OpenTK.GameWindow GameWindow)
         {
             OpenTK.Input.MouseState mouseState = OpenTK.Input.Mouse.GetCursorState();
             Cursor.X = mouseState.X;
             Cursor.Y = mouseState.Y;
-            MouseButton[] buttons = typeof(MouseButton).GetEnumValues().Cast<MouseButton>().ToArray();
+            Button[] buttons = typeof(Button).GetEnumValues().Cast<Button>().ToArray();
             for(int i=0; i<buttons.Length; i++)
             {
-                MouseButtonState mouseButton = new MouseButtonState(buttons[i]);
-                mouseButton.IsDown = mouseState.IsButtonDown((OpenTK.Input.MouseButton)buttons[i]);
-                mouseButton.IsUp = !mouseButton.IsDown;
-                MouseButtonStates.Put(mouseButton.Button, mouseButton);
+                ButtonState button = new ButtonState(buttons[i]);
+                button.IsDown = mouseState.IsButtonDown((OpenTK.Input.MouseButton)buttons[i]);
+                button.IsUp = !button.IsDown;
+                ButtonStateCollection.Put(button.Type, button);
             }
             GameWindow.MouseMove += (object sender, OpenTK.Input.MouseMoveEventArgs e) =>
             {
                 Cursor.X = e.X;
                 Cursor.Y = e.Y;
-                Input.FireListeners(new MouseCursorEvent(Cursor));
+                InputSystem.FireListeners(new InputEvent(InputType.Cursor, Cursor));
             };
             GameWindow.MouseDown += (object sender, OpenTK.Input.MouseButtonEventArgs e) =>
             {
-                MouseButtonState mouseButton = MouseButtonStates.GetValue((MouseButton)e.Button);
+                ButtonState mouseButton = ButtonStateCollection.GetValue((Button)e.Button);
                 mouseButton.IsClick = (!mouseButton.IsDown ? true : false);
                 mouseButton.IsDown = true;
                 mouseButton.IsUp = false;
-                Input.FireListeners(new MouseButtonEvent(mouseButton));
+                InputSystem.FireListeners(new InputEvent(InputType.Button, mouseButton));
             };
             GameWindow.MouseUp += (object sender, OpenTK.Input.MouseButtonEventArgs e) =>
             {
-                MouseButtonState mouseButton = MouseButtonStates.GetValue((MouseButton)e.Button);
+                ButtonState mouseButton = ButtonStateCollection.GetValue((Button)e.Button);
+                mouseButton.IsClick = false;
                 mouseButton.IsDown = false;
                 mouseButton.IsUp = true;
-                mouseButton.IsClick = false;
-                Input.FireListeners(new MouseButtonEvent(mouseButton));
+                InputSystem.FireListeners(new InputEvent(InputType.Button, mouseButton));
             };
         }
 
-        public MouseCursorState GetCursorState()
+        public CursorState Cursor
         {
-            return Cursor;
+            get
+            {
+                return CursorState;
+            }
         }
 
-        public bool IsButtonDown(MouseButton Button)
+        public ButtonStateCollection Buttons
         {
-            return MouseButtonStates.GetValue(Button).IsDown;
-        }
-
-        public bool IsButtonUp(MouseButton Button)
-        {
-            return MouseButtonStates.GetValue(Button).IsUp;
+            get
+            {
+                return ButtonStateCollection;
+            }
         }
     }
 
-    public class MouseCursorState
+    public class ButtonStateCollection : MapCollection<Button, ButtonState>
+    {
+        public ButtonState this[Button button]
+        {
+            get
+            {
+                return base.GetValue(button);
+            }
+        }
+    }
+
+    public class CursorState : InputState
     {
         public int X;
         public int Y;
     }
 
-    public class MouseCursorEvent : InputEvent
+    public class ButtonState : InputState
     {
-        public MouseCursorState State;
-
-        public MouseCursorEvent(MouseCursorState State) : base(InputType.MouseCursor)
-        {
-            this.State = State;
-        }
-    }
-
-    public class MouseButtonEvent : InputEvent
-    {
-        public MouseButtonState State;
-
-        public MouseButtonEvent(MouseButtonState State) : base(InputType.MouseButton)
-        {
-            this.State = State;
-        }
-    }
-
-    public class MouseButtonState
-    {
-        public MouseButton Button;
+        public Button Type;
         public bool IsClick;
         public bool IsDoubleClick;
         public bool IsDown;
         public bool IsUp;
 
-        public MouseButtonState(MouseButton Button)
+        public ButtonState(Button Button)
         {
-            this.Button = Button;
+            this.Type = Button;
         }
     }
 
@@ -454,7 +448,7 @@ namespace Bee.UI.Types
         LastKey = 131,
     }
 
-    public enum MouseButton
+    public enum Button
     {
         Left = 0,
         Middle = 1,

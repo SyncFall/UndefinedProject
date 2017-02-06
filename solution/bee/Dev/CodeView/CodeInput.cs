@@ -18,7 +18,7 @@ namespace Bee.Integrator
             this.CodeText = CodeText;
         }
 
-        public override void InputEvent(InputEvent InputEvent)
+        public override void Input(InputEvent InputEvent)
         {
             if( MouseInputs(InputEvent) ||
                 CursorInputs(InputEvent) ||
@@ -29,24 +29,24 @@ namespace Bee.Integrator
             }
         }
 
-        public bool MouseInputs(InputEvent InputEvent)
+        public bool MouseInputs(InputEvent Event)
         {
-            if(InputEvent.IsMouseButton())
+            if(Event.Is(InputType.Button))
             {
-                MouseButtonState buttonState = InputEvent.GetMouseButtonEvent().State;
-                if(buttonState.IsDown && buttonState.Button == MouseButton.Left)
+                ButtonState buttonState = Event.Button;
+                if(buttonState.IsDown && buttonState.Type == Button.Left)
                 {
-                    MouseCursorState cursorState = Mouse.GetCursorState();
+                    CursorState cursorState = Mouse.Cursor;
                     CodeText.CodeCursor.SetCursor(cursorState.X, cursorState.Y);
                     CodeText.CodeSelection.Begin(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
                     CodeText.CodeCursor.CursorBlink.Reset();
                     return true;
                 }
             }
-            else if(InputEvent.IsMouseCursor())
+            else if(Event.Is(InputType.Cursor))
             {
-                MouseCursorState cursorState = InputEvent.GetMouseCursorEvent().State;
-                if (Input.Mouse.IsButtonDown(MouseButton.Left))
+                CursorState cursorState = Event.Cursor;
+                if (Mouse.Buttons[Button.Left].IsDown)
                 {
                     CodeText.CodeCursor.SetCursor(cursorState.X, cursorState.Y);
                     CodeText.CodeSelection.End(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
@@ -57,11 +57,11 @@ namespace Bee.Integrator
             return false;
         }
 
-        public bool CursorInputs(InputEvent InputEvent)
+        public bool CursorInputs(InputEvent Event)
         {
-            if (InputEvent.IsKeyboard())
+            if (Event.Is(InputType.Key))
             {
-                KeyState keyState = InputEvent.GetKeyboardEvent().State;
+                KeyState keyState = Event.Key;
                 Key key = keyState.Key;
                 bool isDown = keyState.IsDown;
                 bool isClick = keyState.IsClick;
@@ -90,11 +90,11 @@ namespace Bee.Integrator
                 }
 
                 // code-selection
-                if (keyState.IsClick && (keyState.Key == Key.ShiftLeft || keyState.Key == Key.ShiftRight))
+                if (keyState.IsClick && keyState.Key == Key.ShiftLeft)
                 {
                     CodeText.CodeSelection.Begin(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
                 }
-                else if(cursorNavigation && (Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight)))
+                else if(cursorNavigation && keyState.Key == Key.ShiftLeft)
                 {
                     CodeText.CodeSelection.End(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
                 }
@@ -111,12 +111,12 @@ namespace Bee.Integrator
 
         public bool KeyInputs(InputEvent InputEvent)
         {
-            if (!InputEvent.IsKeyboard())
+            if (!InputEvent.Is(InputType.Key))
             {
                 return false;
             }
 
-            KeyState keyState = InputEvent.GetKeyboardEvent().State;
+            KeyState keyState = InputEvent.Key;
             Key key = keyState.Key;
             bool isDown = keyState.IsDown;
             bool isClick = keyState.IsClick;
@@ -137,7 +137,7 @@ namespace Bee.Integrator
                 CodeText.CodeCursor.KeyEnter();
             }
             // save
-            else if (isDown && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.S)
+            else if (isDown && Keyboard.Keys[Key.ControlLeft].IsDown && key == Key.S)
             {
                 if (isClick)
                 {
@@ -145,7 +145,7 @@ namespace Bee.Integrator
                 }
             }
             // paste
-            else if (isClick && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.V)
+            else if (isClick && Keyboard.Keys[Key.ControlLeft].IsDown && key == Key.V)
             {
                 if (isClick)
                 {
@@ -153,7 +153,7 @@ namespace Bee.Integrator
                 }
             }
             // cut
-            else if(isClick && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.X)
+            else if(isClick && Keyboard.Keys[Key.ControlLeft].IsDown && key == Key.X)
             {
                 if(isClick)
                 {
@@ -161,7 +161,7 @@ namespace Bee.Integrator
                 }
             }
             // copy
-            else if (isClick && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.C)
+            else if (isClick && Keyboard.Keys[Key.ControlLeft].IsDown && key == Key.C)
             {
                 if (isClick)
                 {
@@ -169,7 +169,7 @@ namespace Bee.Integrator
                 }
             }
             // select-all
-            else if (isClick && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.A)
+            else if (isClick && Keyboard.Keys[Key.ControlLeft].IsDown && key == Key.A)
             {
                 if (isClick)
                 {
@@ -178,12 +178,12 @@ namespace Bee.Integrator
                 }
             }
             // undo
-            else if (isDown && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.Y /* todo: z */)
+            else if (isDown && Keyboard.Keys[Key.ControlLeft].IsDown && key == Key.Y /* todo: z */)
             {
                 CodeText.CodeHistory.UndoStep();
             }
             // redo
-            else if (isDown && (Keyboard.IsKeyDown(Key.ControlLeft) || Keyboard.IsKeyDown(Key.ControlRight)) && key == Key.Z /* todo: y */)
+            else if (isDown && Keyboard.Keys[Key.ControlLeft].IsDown && key == Key.Z /* todo: y */)
             {
                 CodeText.CodeHistory.RedoStep();    
             }
@@ -199,12 +199,12 @@ namespace Bee.Integrator
 
         public bool TextInputs(InputEvent InputEvent)
         {
-            if (!InputEvent.IsKeyboard())
+            if (!InputEvent.Is(InputType.Key))
             {
                 return false;
             }
 
-            KeyState keyState = InputEvent.GetKeyboardEvent().State;
+            KeyState keyState = InputEvent.Key;
             Key key = keyState.Key;
 
             if (!keyState.IsDown)
@@ -227,11 +227,11 @@ namespace Bee.Integrator
                 {
                     textChar = 'z';
                 }
-                if (Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight))
+                if (Keyboard.Keys[Key.ControlLeft].IsDown)
                 {
                     textChar = Char.ToUpper(textChar);
                 }
-                else if (Keyboard.IsKeyDown(Key.AltRight))
+                else if (Keyboard.Keys[Key.AltRight].IsDown)
                 {
                     textChar = '@';
                 }
@@ -240,7 +240,7 @@ namespace Bee.Integrator
             else if (keyState.IsNumberChar())
             {
                 textChar = keyState.GetNumberChar();
-                if(Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight))
+                if(Keyboard.Keys[Key.ControlLeft].IsDown)
                 {
                     if(textChar == '0')
                     {
@@ -283,7 +283,7 @@ namespace Bee.Integrator
                         textChar = ')';
                     }
                 }
-                else if(Keyboard.IsKeyDown(Key.AltLeft) || Keyboard.IsKeyDown(Key.AltRight))
+                else if(Keyboard.Keys[Key.AltLeft].IsDown || Keyboard.Keys[Key.AltRight].IsDown)
                 {
                     if(textChar == '7')
                     {
@@ -316,11 +316,11 @@ namespace Bee.Integrator
             // ß
             else if(key == Key.Minus)
             {
-                if(Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight))
+                if(Keyboard.Keys[Key.ControlLeft].IsDown)
                 {
                     textChar = '?';
                 }
-                else if(Keyboard.IsKeyDown(Key.AltLeft) || Keyboard.IsKeyDown(Key.AltRight))
+                else if(Keyboard.Keys[Key.AltRight].IsDown || Keyboard.Keys[Key.AltRight].IsDown)
                 {
                     textChar = '\\';
                 }
@@ -332,11 +332,11 @@ namespace Bee.Integrator
             // +
             else if(key == Key.BracketRight)
             {
-                if (Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight))
+                if (Keyboard.Keys[Key.ControlLeft].IsDown)
                 {
                     textChar = '*';
                 }
-                else if (Keyboard.IsKeyDown(Key.AltLeft) || Keyboard.IsKeyDown(Key.AltRight))
+                else if (Keyboard.Keys[Key.AltLeft].IsDown || Keyboard.Keys[Key.AltRight].IsDown)
                 {
                     textChar = '~';
                 }
@@ -348,7 +348,7 @@ namespace Bee.Integrator
             // -
             else if (key == Key.Slash)
             {
-                if (Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight))
+                if (Keyboard.Keys[Key.ControlLeft].IsDown)
                 {
                     textChar = '_';
                 }
@@ -360,7 +360,7 @@ namespace Bee.Integrator
             // #
             else if (key == Key.BackSlash)
             {
-                if (Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight))
+                if (Keyboard.Keys[Key.ControlLeft].IsDown)
                 {
                     textChar = '\'';
                 }
@@ -372,7 +372,7 @@ namespace Bee.Integrator
             // .
             else if (key == Key.Period)
             {
-                if (Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight))
+                if (Keyboard.Keys[Key.ControlLeft].IsDown)
                 {
                     textChar = ':';
                 }
@@ -384,7 +384,7 @@ namespace Bee.Integrator
             // ,
             else if (key == Key.Comma)
             {
-                if (Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight))
+                if (Keyboard.Keys[Key.ControlLeft].IsDown)
                 {
                     textChar = ';';
                 }
@@ -396,11 +396,11 @@ namespace Bee.Integrator
             // <
             else if(key == Key.NonUSBackSlash)
             {
-                if (Keyboard.IsKeyDown(Key.ShiftLeft) || Keyboard.IsKeyDown(Key.ShiftRight))
+                if (Keyboard.Keys[Key.ControlLeft].IsDown)
                 {
                     textChar = '>';
                 }
-                else if (Keyboard.IsKeyDown(Key.AltLeft) || Keyboard.IsKeyDown(Key.AltRight))
+                else if (Keyboard.Keys[Key.AltLeft].IsDown || Keyboard.Keys[Key.AltRight].IsDown)
                 {
                     textChar = '|';
                 }

@@ -16,10 +16,10 @@ namespace Bee.UI.Types
     {
         public int VertexId;
         public int ColorId;
-        public Vec3[] Points;
-        public Vec3[] Colors;
+        public Point[] Points;
+        public Point[] Colors;
 
-        public BeeBuffer(Vec3[] Points, Vec3[] Colors)
+        public BeeBuffer(Point[] Points, Point[] Colors)
         {
             this.Points = Points;
             this.Colors = Colors;

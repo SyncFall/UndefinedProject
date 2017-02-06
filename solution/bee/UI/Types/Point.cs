@@ -7,23 +7,23 @@ using System.Threading.Tasks;
 
 namespace Bee.UI
 {
-    public class Vec3
+    public class Point
     {
         public float x;
         public float y;
         public float z;
 
-        public Vec3()
+        public Point()
         { }
 
-        public Vec3(float x, float y)
+        public Point(float x, float y)
         {
             this.x = x;
             this.y = y;
             this.z = 0;
         }
 
-        public Vec3(float x, float y, float z)
+        public Point(float x, float y, float z)
         {
             this.x = x;
             this.y = y;
@@ -31,6 +31,22 @@ namespace Bee.UI
         }
     }
 
-    public class Vec3List : ListCollection<Vec3>
+    public class PointList : ListCollection<Point>
     { }
+
+    public class Size
+    {
+        public float Width;
+        public float Height;
+        public float Depth;
+
+        public Size()
+        { }
+
+        public Size(float width, float height)
+        {
+            this.Width = width;
+            this.Height = height;
+        }
+    }
 }

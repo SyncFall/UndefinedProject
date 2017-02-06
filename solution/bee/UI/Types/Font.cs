@@ -101,9 +101,9 @@ namespace Bee.UI
             }
         }
   
-        private Vec3 GetOutlinePoint(Glyph glyph, int index)
+        private Point GetOutlinePoint(Glyph glyph, int index)
         {
-            return new Vec3(
+            return new Point(
                 FTPoints[index].X.Value / (float)65536 * PointSize * Scale, 
                 glyph.Height - FTPoints[index].Y.Value / (float)65536 * PointSize * Scale
             );

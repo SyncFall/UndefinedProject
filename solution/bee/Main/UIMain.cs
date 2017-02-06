@@ -31,7 +31,7 @@ namespace Bee
                 gameWindow.Load += (sender, e) =>
                 {
                     gameWindow.VSync = VSyncMode.On;
-                    Input.Inititialize(gameWindow);
+                    InputSystem.Inititialize(gameWindow);
                     //IntegratorView = new IntegratorView();
                     CurveDraw = new CurveDraw();
                 };
