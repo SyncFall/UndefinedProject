@@ -46,30 +46,54 @@ namespace Bee.UI
         public abstract void Draw();
     }
 
-    public enum SurfaceType
+    public enum PathType
     {
-        Rect,
-        Shape,
-        Volume,
+        Line,
+        Curve,
     }
 
     public class Surface : Compose
     {
-        public SurfaceType SurfaceType;
-        public Curve Curve;
+        public float OffsetX = 50;
+        public PathType SurfaceType;
+        public CurvePath CurvePath = new CurvePath();
         private SurfaceTransform SurfaceTransform;
 
-        public Surface(SurfaceType Type) : base(ComposeType.Surface)
+        public Surface(PathType Type) : base(ComposeType.Surface)
         {
             this.SurfaceType = Type;
-            if(Type == SurfaceType.Rect)
+            AddPath(Type);
+        }
+
+        public void AddPath(PathType Type)
+        {
+            Curve Curve=null;
+            if (Type == PathType.Line)
             {
-                Curve = new Curve(1);
-                Curve.Add(10, 10);
-                Curve.Add(100, 10);
-                Curve.Add(100, 50);
-                Curve.Add(10, 50);
-                Curve.Add(10, 10);
+                Curve = new Curve(1);           
+                Curve.Add(OffsetX, 50);
+                Curve.Add(OffsetX+100, 50);
+                Curve.Add(OffsetX+100, 100);
+                Curve.Add(OffsetX, 100);
+                Curve.Add(OffsetX, 50);
+            }
+            else if(Type == PathType.Curve)
+            {
+                Curve = new Curve(2);
+                Curve.Add(OffsetX, 50);
+                Curve.Add(OffsetX + 100, 50);
+                Curve.Add(OffsetX + 100, 100);
+                Curve.Add(OffsetX, 100);
+                Curve.Add(OffsetX, 50);
+            }
+            OffsetX += 150;
+            if(CurvePath.CurveNode == null)
+            {
+                CurvePath.CurveNode = Curve;
+            }
+            else
+            {
+                CurvePath.CurveNode.Next = Curve;
             }
         }
 
@@ -83,7 +107,12 @@ namespace Bee.UI
 
         public override void Draw()
         {
-            Curve.Draw(false);
+            Curve curveNode = CurvePath.CurveNode;
+            while(curveNode != null)
+            {
+                curveNode.Draw(false);
+                curveNode = curveNode.Next;
+            }
             if(SurfaceTransform != null)
             {
                 SurfaceTransform.Draw();
@@ -114,10 +143,6 @@ namespace Bee.UI
             this.Surface = Surface;
             this.InputListener = new TransformInput(this);
             this.TransformPointers = new TransformPointerCollection();
-            this.TransformPointers.Add(new TransformPointer(Surface.Curve.Points.Get(0)));
-            this.TransformPointers.Add(new TransformPointer(Surface.Curve.Points.Get(1)));
-            this.TransformPointers.Add(new TransformPointer(Surface.Curve.Points.Get(2)));
-            this.TransformPointers.Add(new TransformPointer(Surface.Curve.Points.Get(3)));
         }
 
         public class TransformInput : InputListener

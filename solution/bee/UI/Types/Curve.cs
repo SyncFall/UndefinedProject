@@ -10,14 +10,31 @@ using System.Threading.Tasks;
 
 namespace Bee.UI
 { 
+    public class CurveSurface
+    {
+        public CurvePath PathNode;
+    }
+
+    public class CurvePath
+    {
+        public Curve CurveNode;
+        public CurvePath Next;
+        public CurvePath Prev;
+
+        public CurvePath()
+        { }
+    }
+
     public class Curve
     {
-        public static readonly int DefaultDetailIteration = 100;
+        public static readonly int DetailSteps = 100;
         public PointList Points = new PointList();
         public ListCollection<float> Knots = new ListCollection<float>();
         public int Degree;
         public int Order;
         public CurveInput Input;
+        public Curve Next;
+        public Curve Prev;
 
         public Curve(int Degree=2)
         {
@@ -31,7 +48,7 @@ namespace Bee.UI
             this.Points.Add(new Point(X, Y, Z));
         }
 
-        private void BuildKnotes()
+        public void BuildKnotes()
         {
             Knots.Clear();
             int knotCount = (Points.Size() + Degree + 1);
@@ -95,13 +112,19 @@ namespace Bee.UI
                 return;
             }
             BuildKnotes();
-            GL.Color3(System.Drawing.Color.White);
+            GL.Color3(1f, 1f, 1f);
             GL.LineWidth(2.5f);
             GL.Begin(PrimitiveType.LineStrip);
-            for(float t=0; t<=1f; t += (1/(float)DefaultDetailIteration))
+            int i = 0;
+            float step = (1/(float)DetailSteps);
+            for(float t=0; t<=1f; t += step, i++)
             {
+                if(i == DetailSteps - 1)
+                {
+                    t = 0.999999f;
+                }
                 Point point = GetPoint(t);
-                GL.Vertex2(point.x, point.y);
+                GL.Vertex3(point.x, point.y, point.z);
             }
             GL.End();
             if(Withpoints)
