@@ -38,63 +38,76 @@ namespace Bee.UI
             }
             set
             {
-                value.Sender = this;
-                this.InputListener = value;
+                if(value != null)
+                {
+                    value.Sender = this;
+                    this.InputListener = value;
+                }
+                else
+                {
+                    value.Dispose();
+                    this.InputListener = null;
+                }
             }
         }
 
         public abstract void Draw();
     }
 
-    public enum PathType
-    {
-        Line,
-        Curve,
-    }
-
     public class Surface : Compose
     {
-        public float OffsetX = 50;
+        public float OffsetX = 100;
         public PathType SurfaceType;
         public CurvePath CurvePath = new CurvePath();
-        private SurfaceTransform SurfaceTransform;
 
-        public Surface(PathType Type) : base(ComposeType.Surface)
-        {
-            this.SurfaceType = Type;
-            AddPath(Type);
-        }
+        public Surface() : base(ComposeType.Surface)
+        { }
 
-        public void AddPath(PathType Type)
+        public Curve AddPath(PathType Type, int Detail=25)
         {
             Curve Curve=null;
             if (Type == PathType.Line)
             {
-                Curve = new Curve(1);           
-                Curve.Add(OffsetX, 50);
-                Curve.Add(OffsetX+100, 50);
-                Curve.Add(OffsetX+100, 100);
-                Curve.Add(OffsetX, 100);
-                Curve.Add(OffsetX, 50);
+                Curve = new Curve(Type, 1, 2);           
             }
-            else if(Type == PathType.Curve)
+            else if(Type == PathType.Quadratic)
             {
-                Curve = new Curve(2);
-                Curve.Add(OffsetX, 50);
-                Curve.Add(OffsetX + 100, 50);
-                Curve.Add(OffsetX + 100, 100);
-                Curve.Add(OffsetX, 100);
-                Curve.Add(OffsetX, 50);
+                Curve = new Curve(Type, 2, Detail);
             }
-            OffsetX += 150;
-            if(CurvePath.CurveNode == null)
+            else if (Type == PathType.Cubic)
             {
-                CurvePath.CurveNode = Curve;
+                Curve = new Curve(Type, 3, Detail);
+            }
+            else if(Type == PathType.Nurbs)
+            {
+                Curve = new Curve(Type, 2, Detail);
             }
             else
             {
-                CurvePath.CurveNode.Next = Curve;
+                throw new Exception("invalid state");
             }
+            Curve.BuildKnots();
+            if(CurvePath.CurveNodeBegin == null)
+            {
+                CurvePath.CurveNodeBegin = Curve;
+            }
+            else
+            {
+                Curve node = CurvePath.CurveNodeBegin;
+                while(true)
+                {
+                    if(node.Next != null)
+                    {
+                        node = node.Next;
+                    }
+                    else
+                    {
+                        node.Next = Curve;
+                        break;
+                    }
+                }
+            }
+            return Curve;
         }
 
         public override Size Size
@@ -107,88 +120,15 @@ namespace Bee.UI
 
         public override void Draw()
         {
-            Curve curveNode = CurvePath.CurveNode;
+            Curve curveNode = CurvePath.CurveNodeBegin;
             while(curveNode != null)
             {
-                curveNode.Draw(false);
+                curveNode.Draw();
                 curveNode = curveNode.Next;
             }
-            if(SurfaceTransform != null)
-            {
-                SurfaceTransform.Draw();
-            }
-        }
-
-        public bool Transform
-        {
-            get
-            {
-                return (SurfaceTransform != null); 
-            }
-            set
-            {
-                SurfaceTransform = new SurfaceTransform(this);
-            }
         }
     }
-
-    public class SurfaceTransform 
-    {
-        public Surface Surface;
-        public InputListener InputListener;
-        public TransformPointerCollection TransformPointers;
-
-        public SurfaceTransform(Surface Surface)
-        {
-            this.Surface = Surface;
-            this.InputListener = new TransformInput(this);
-            this.TransformPointers = new TransformPointerCollection();
-        }
-
-        public class TransformInput : InputListener
-        {
-            public SurfaceTransform SurfaceTransform;
-
-            public TransformInput(SurfaceTransform SurfaceTransform)
-            {
-                this.SurfaceTransform = SurfaceTransform;
-            }
-
-            public override void Input(InputEvent Event)
-            {
-               
-            }
-        }
-
-        public void Draw()
-        {
-            GL.PointSize(15f);
-            GL.Color3(System.Drawing.Color.Green);
-            GL.Begin(PrimitiveType.Points);
-            for (int i = 0; i < TransformPointers.Size(); i++)
-            {
-                Point point = TransformPointers.Get(i).Point;
-                GL.Vertex2(point.x, point.y);
-            }
-            GL.End();
-        }
-    }
-
-    public class TransformPointerCollection : ListCollection<TransformPointer>
-    { }
-
-    public class TransformPointer
-    {
-        public static readonly int IntersectionMargin = 25;
-        public Point Point;
-        public bool IsPicked;
-
-        public TransformPointer(Point Point)
-        {
-            this.Point = Point;
-        }
-    }
-
+    
     public class Text : Compose
     {
         public string String;

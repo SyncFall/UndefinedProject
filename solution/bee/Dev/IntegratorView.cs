@@ -11,17 +11,20 @@ namespace Bee.Integrator
     public class IntegratorView
     {
         public CodeView CodeView;
+        public VisualView VisualView;
         public FpsCounter FpsCounter;
 
         public IntegratorView()
         {
-            this.CodeView = new CodeView(this);
+            //this.CodeView = new CodeView(this);
+            this.VisualView = new VisualView();
             this.FpsCounter = new FpsCounter();
         }
 
         public void Draw()
         {
-            CodeView.Draw();
+            //CodeView.Draw();
+            VisualView.Draw();
             FpsCounter.Draw();
         }
     }

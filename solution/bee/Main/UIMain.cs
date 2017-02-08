@@ -23,7 +23,7 @@ namespace Bee
             float aspect_ratio = 1;
 
             IntegratorView IntegratorView = null;
-            CurveDraw CurveDraw = null;
+            SurfaceDraw SurfaceDraw = null;
 
             GameWindow gameWindow = null;
             using (gameWindow = new GameWindow(1250, 750, new OpenTK.Graphics.GraphicsMode(32, 24, 0, 4)))
@@ -31,9 +31,9 @@ namespace Bee
                 gameWindow.Load += (sender, e) =>
                 {
                     gameWindow.VSync = VSyncMode.On;
-                    InputSystem.Inititialize(gameWindow);
-                    //IntegratorView = new IntegratorView();
-                    CurveDraw = new CurveDraw();
+                    Input.Inititialize(gameWindow);
+                    IntegratorView = new IntegratorView();
+                    //SurfaceDraw = new SurfaceDraw();
                 };
 
                 gameWindow.Resize += (sender, e) =>
@@ -72,8 +72,8 @@ namespace Bee
                     if (IntegratorView != null)
                         IntegratorView.Draw();
 
-                    if (CurveDraw != null)
-                        CurveDraw.Draw();
+                    if (SurfaceDraw != null)
+                        SurfaceDraw.Draw();
 
                     // frame
                     gameWindow.SwapBuffers();

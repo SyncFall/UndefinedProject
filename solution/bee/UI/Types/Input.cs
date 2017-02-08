@@ -1,4 +1,5 @@
-﻿using Bee.Library;
+﻿using Bee.Lib;
+using Bee.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +30,29 @@ namespace Bee.UI
             this.State = State;
         }
 
-        public bool Is(InputType Type)
+        public bool IsKey
         {
-            return (this.Type == Type);
+            get
+            {
+                return (this.Type == InputType.Key);
+            }
+        }
+
+        public bool IsCursor
+        {
+            get
+            {
+                return (this.Type == InputType.Cursor);
+            }
+        }
+
+        public bool IsButton
+        {
+            get
+            {
+                return (this.Type == InputType.Button);
+            }
+
         }
 
         public KeyState Key
@@ -59,7 +80,7 @@ namespace Bee.UI
         }
     }
 
-    public class InputSystem
+    public class Input
     {
         public static ListCollection<InputListener> InputListeners = new ListCollection<InputListener>();
         public static MouseState Mouse;
@@ -86,17 +107,32 @@ namespace Bee.UI
             InputListener.Keyboard = Keyboard;
             InputListeners.Add(InputListener);
         }
+
+        public static void Remove(InputListener InputListener)
+        {
+            for(int i=0; i<InputListeners.Size(); i++)
+            {
+                if(InputListeners.Get(i).Id == InputListener.Id)
+                {
+                    InputListeners.RemoveAt(i);
+                    break;
+                }
+            }
+        }
     }
 
     public abstract class InputListener
     {
+        private static int IdCounter = 0;
+        public readonly int Id;
         public object Sender;
         public MouseState Mouse;
         public KeyboardState Keyboard;
 
         public InputListener()
         {
-            InputSystem.Add(this);
+            this.Id = (++IdCounter);
+            UI.Input.Add(this);
         }
 
         public void ProcessInputEvent(InputEvent Event)
@@ -104,7 +140,7 @@ namespace Bee.UI
             if (Sender != null && Sender is Compose)
             {
                 Compose compose = (Sender as Compose);
-                if (Event.Is(InputType.Button) && Event.Button.Type == Button.Left && Event.Button.IsClick)
+                if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick)
                 {
                     CursorState cursor = Mouse.Cursor;
                     Size size = compose.Size;
@@ -119,6 +155,11 @@ namespace Bee.UI
             {
                 this.Input(Event);
             }    
+        }
+
+        public void Dispose()
+        {
+            UI.Input.Remove(this);
         }
 
         public abstract void Input(InputEvent Event);
@@ -146,16 +187,27 @@ namespace Bee.UI
                 KeyState keyState = Keys.GetValue((Key)e.Key);
                 keyState.IsClick = (!keyState.IsDown ? true : false);
                 keyState.IsDown = true;
+                if (keyState.IsDownStart == 0)
+                {
+                    keyState.IsDownStart = TimeUtils.CurrentMilliseconds;
+                    keyState.IsDownMilliseconds = 0;
+                }
+                else
+                {
+                    keyState.IsDownMilliseconds = (TimeUtils.CurrentMilliseconds - keyState.IsDownStart);
+                }
                 keyState.IsUp = false;
-                InputSystem.FireListeners(new InputEvent(InputType.Key, keyState));
+                Input.FireListeners(new InputEvent(InputType.Key, keyState));
             };
             GameWindow.KeyUp += (object sender, OpenTK.Input.KeyboardKeyEventArgs e) =>
             {
                 KeyState keyState = Keys.GetValue((Key)e.Key);
                 keyState.IsUp = true;
                 keyState.IsDown = false;
+                keyState.IsDownStart = 0;
+                keyState.IsDownMilliseconds = 0;
                 keyState.IsClick = false;
-                InputSystem.FireListeners(new InputEvent(InputType.Key, keyState));
+                Input.FireListeners(new InputEvent(InputType.Key, keyState));
             };
         }
     }
@@ -176,34 +228,36 @@ namespace Bee.UI
         private static readonly string Alphabet = "abcdefghijklmnopqrstuvwxyz";
         private static readonly string Numbers = "0123456789";
 
-        public Key Key;
+        public Key Type;
         public bool IsClick;
         public bool IsDown;
+        public long IsDownStart;
+        public long IsDownMilliseconds;
         public bool IsUp;
 
         public KeyState(Key key)
         {
-            this.Key = key;
+            this.Type = key;
         }
 
         public bool IsAlphabetChar()
         {
-            return (Key >= Key.A && Key <= Key.Z);
+            return (Type >= Key.A && Type <= Key.Z);
         }
 
         public char GetAlphabetChar()
         {
-            return Alphabet[(int)Key - 83];
+            return Alphabet[(int)Type - 83];
         }
 
         public bool IsNumberChar()
         {
-            return (Key >= Key.Number0 && Key <= Key.Number9);
+            return (Type >= Key.Number0 && Type <= Key.Number9);
         }
 
         public char GetNumberChar()
         {
-            return Numbers[(int)Key - 109];
+            return Numbers[(int)Type - 109];
         }
     }
 
@@ -229,23 +283,34 @@ namespace Bee.UI
             {
                 Cursor.X = e.X;
                 Cursor.Y = e.Y;
-                InputSystem.FireListeners(new InputEvent(InputType.Cursor, Cursor));
+                Input.FireListeners(new InputEvent(InputType.Cursor, Cursor));
             };
             GameWindow.MouseDown += (object sender, OpenTK.Input.MouseButtonEventArgs e) =>
             {
                 ButtonState mouseButton = ButtonStateCollection.GetValue((Button)e.Button);
                 mouseButton.IsClick = (!mouseButton.IsDown ? true : false);
                 mouseButton.IsDown = true;
+                if(mouseButton.IsDownStart == 0)
+                {
+                    mouseButton.IsDownStart = TimeUtils.CurrentMilliseconds;
+                    mouseButton.IsDownMilliseconds = 0;
+                }
+                else
+                {
+                    mouseButton.IsDownMilliseconds = (TimeUtils.CurrentMilliseconds - mouseButton.IsDownStart);
+                }
                 mouseButton.IsUp = false;
-                InputSystem.FireListeners(new InputEvent(InputType.Button, mouseButton));
+                Input.FireListeners(new InputEvent(InputType.Button, mouseButton));
             };
             GameWindow.MouseUp += (object sender, OpenTK.Input.MouseButtonEventArgs e) =>
             {
                 ButtonState mouseButton = ButtonStateCollection.GetValue((Button)e.Button);
                 mouseButton.IsClick = false;
                 mouseButton.IsDown = false;
+                mouseButton.IsDownStart = 0;
+                mouseButton.IsDownMilliseconds = 0;
                 mouseButton.IsUp = true;
-                InputSystem.FireListeners(new InputEvent(InputType.Button, mouseButton));
+                Input.FireListeners(new InputEvent(InputType.Button, mouseButton));
             };
         }
 
@@ -289,6 +354,8 @@ namespace Bee.UI
         public bool IsClick;
         public bool IsDoubleClick;
         public bool IsDown;
+        public long IsDownStart;
+        public long IsDownMilliseconds;
         public bool IsUp;
 
         public ButtonState(Button Button)

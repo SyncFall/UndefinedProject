@@ -12,32 +12,40 @@ namespace Bee.UI
 { 
     public class CurveSurface
     {
-        public CurvePath PathNode;
+        public CurvePath PathNodeBegin;
     }
 
     public class CurvePath
     {
-        public Curve CurveNode;
+        public Curve CurveNodeBegin;
         public CurvePath Next;
         public CurvePath Prev;
+    }
 
-        public CurvePath()
-        { }
+    public enum PathType
+    {
+        Line,
+        Quadratic,
+        Cubic,
+        Nurbs,
     }
 
     public class Curve
     {
-        public static readonly int DetailSteps = 100;
+        public PathType Type;
         public PointList Points = new PointList();
         public ListCollection<float> Knots = new ListCollection<float>();
+        public int Detail;
         public int Degree;
         public int Order;
         public CurveInput Input;
         public Curve Next;
         public Curve Prev;
 
-        public Curve(int Degree=2)
+        public Curve(PathType Type, int Degree =2, int Detail=50)
         {
+            this.Type = Type;
+            this.Detail = Detail;
             this.Degree = Degree;
             this.Order = Degree + 1;
             //this.Input = new CurveInput(this);
@@ -48,16 +56,33 @@ namespace Bee.UI
             this.Points.Add(new Point(X, Y, Z));
         }
 
-        public void BuildKnotes()
+        public void BuildKnots()
         {
             Knots.Clear();
             int knotCount = (Points.Size() + Degree + 1);
-            float uniformVal = (1 / (float)knotCount);
-            float uniformSum = 0;
-            for(int i=0; i<knotCount; i++)
+            if (Type == PathType.Nurbs)
             {
-                Knots.Add(uniformSum);
-                uniformSum += uniformVal;
+                float uniformVal = (1 / (float)knotCount);
+                float uniformSum = 0;
+                for (int i = 0; i < knotCount; i++)
+                {
+                    Knots.Add(uniformSum);
+                    uniformSum += uniformVal;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < knotCount; i++)
+                {
+                    if (i < knotCount / 2)
+                    {
+                        Knots.Add(0);
+                    }
+                    else
+                    {
+                        Knots.Add(1);
+                    }
+                }
             }
         }
 
@@ -105,21 +130,21 @@ namespace Bee.UI
             return s1 + s2;
         }
 
-        public void Draw(bool Withpoints=false)
+        public void Draw()
         {
-            if(Points.Size() < Degree + 1)
+            if (Points.Size() < Degree + 1)
             {
                 return;
             }
-            BuildKnotes();
+            BuildKnots();
             GL.Color3(1f, 1f, 1f);
             GL.LineWidth(2.5f);
             GL.Begin(PrimitiveType.LineStrip);
             int i = 0;
-            float step = (1/(float)DetailSteps);
+            float step = (1/(float)Detail);
             for(float t=0; t<=1f; t += step, i++)
             {
-                if(i == DetailSteps - 1)
+                if(i == Detail - 1)
                 {
                     t = 0.999999f;
                 }
@@ -127,7 +152,7 @@ namespace Bee.UI
                 GL.Vertex3(point.x, point.y, point.z);
             }
             GL.End();
-            if(Withpoints)
+            //if(Input != null)
             {
                 DrawPoints();
             }
@@ -135,8 +160,8 @@ namespace Bee.UI
 
         public void DrawPoints()
         {
-            GL.PointSize(15f);
-            GL.Color3(System.Drawing.Color.Green);
+            GL.PointSize(10f);
+            GL.Color3(0f, 150f, 100f);
             GL.Begin(PrimitiveType.Points);
             for(int i=0; i<Points.Size(); i++)
             {
@@ -159,7 +184,7 @@ namespace Bee.UI
 
         public override void Input(InputEvent Event)
         {
-            if(Event.Is(InputType.Button))
+            if(Event.IsButton)
             {
                 ButtonState buttonState = Event.Button;
                 if(buttonState.Type == Button.Left && buttonState.IsClick)
@@ -169,6 +194,7 @@ namespace Bee.UI
                         if (GeometryUtils.IntersectPositionWithMargin((int)Curve.Points.Get(i).x, (int)Curve.Points.Get(i).y, Mouse.Cursor.X, Mouse.Cursor.Y, 25, 25))
                         {
                             MovePoint = Curve.Points.Get(i);
+                            Console.WriteLine(MovePoint.x + "|" + MovePoint.y);
                             break;
                         }
                     }
@@ -176,6 +202,7 @@ namespace Bee.UI
                     {
                         Point point = new Point(Mouse.Cursor.X, Mouse.Cursor.Y);
                         Curve.Points.Add(point);
+                        Curve.BuildKnots();
                     }
                 }
                 if(buttonState.Type == Button.Left && buttonState.IsUp)
@@ -183,7 +210,7 @@ namespace Bee.UI
                     MovePoint = null;
                 }
             }
-            if(Event.Is(InputType.Cursor))
+            if(Event.IsCursor)
             {
                 CursorState cursorState = Event.Cursor;
                 if(MovePoint != null)
@@ -192,30 +219,32 @@ namespace Bee.UI
                     MovePoint.y = cursorState.Y;
                 }
             }
-            if(Event.Is(InputType.Key))
+            if(Event.IsKey)
             {
                 KeyState keyState = Event.Key;
-                if(keyState.Key == Key.X && keyState.IsClick)
+                if(keyState.Type == Key.X && keyState.IsClick)
                 {
                     Curve.Points.Clear();
                 }
-                if (keyState.Key == Key.C && keyState.IsClick)
+                if (keyState.Type == Key.C && keyState.IsClick)
                 {
                     if(Curve.Points.Size()>0)
                     {
                         Curve.Points.RemoveAt(Curve.Points.Size()-1);
                     }
                 }
-                if(keyState.Key == Key.S && keyState.IsClick)
+                if(keyState.Type == Key.S && keyState.IsClick)
                 {
+                    /*
                     StringBuilder strBuilder = new StringBuilder();
-                    int detailIteration = 150;
+                    int detailIteration = 25;
                     for(float t=0; t<=1; t += 1/(float)detailIteration)
                     {
                         Point point = Curve.GetPoint(t);
                         strBuilder.AppendLine((point.x + ":" + point.y + ":" + point.z).Replace(',', '.'));
                     }
-                    File.WriteAllText("C:\\out\\points.txt", strBuilder.ToString());
+                    File.WriteAllText("D:\\dev\\EclipseJavaWorkspace2\\tri\\bin\\points.txt", strBuilder.ToString());
+                    */
                 }
             }
         }

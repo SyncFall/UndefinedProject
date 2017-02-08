@@ -31,7 +31,7 @@ namespace Bee.Integrator
 
         public bool MouseInputs(InputEvent Event)
         {
-            if(Event.Is(InputType.Button))
+            if(Event.IsButton)
             {
                 ButtonState buttonState = Event.Button;
                 if(buttonState.IsDown && buttonState.Type == Button.Left)
@@ -43,7 +43,7 @@ namespace Bee.Integrator
                     return true;
                 }
             }
-            else if(Event.Is(InputType.Cursor))
+            else if(Event.IsCursor)
             {
                 CursorState cursorState = Event.Cursor;
                 if (Mouse.Buttons[Button.Left].IsDown)
@@ -59,10 +59,10 @@ namespace Bee.Integrator
 
         public bool CursorInputs(InputEvent Event)
         {
-            if (Event.Is(InputType.Key))
+            if (Event.IsKey)
             {
                 KeyState keyState = Event.Key;
-                Key key = keyState.Key;
+                Key key = keyState.Type;
                 bool isDown = keyState.IsDown;
                 bool isClick = keyState.IsClick;
 
@@ -90,11 +90,11 @@ namespace Bee.Integrator
                 }
 
                 // code-selection
-                if (keyState.IsClick && keyState.Key == Key.ShiftLeft)
+                if (keyState.IsClick && keyState.Type == Key.ShiftLeft)
                 {
                     CodeText.CodeSelection.Begin(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
                 }
-                else if(cursorNavigation && keyState.Key == Key.ShiftLeft)
+                else if(cursorNavigation && keyState.Type == Key.ShiftLeft)
                 {
                     CodeText.CodeSelection.End(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
                 }
@@ -111,13 +111,13 @@ namespace Bee.Integrator
 
         public bool KeyInputs(InputEvent InputEvent)
         {
-            if (!InputEvent.Is(InputType.Key))
+            if (!InputEvent.IsKey)
             {
                 return false;
             }
 
             KeyState keyState = InputEvent.Key;
-            Key key = keyState.Key;
+            Key key = keyState.Type;
             bool isDown = keyState.IsDown;
             bool isClick = keyState.IsClick;
 
@@ -199,13 +199,13 @@ namespace Bee.Integrator
 
         public bool TextInputs(InputEvent InputEvent)
         {
-            if (!InputEvent.Is(InputType.Key))
+            if (!InputEvent.IsKey)
             {
                 return false;
             }
 
             KeyState keyState = InputEvent.Key;
-            Key key = keyState.Key;
+            Key key = keyState.Type;
 
             if (!keyState.IsDown)
             {
