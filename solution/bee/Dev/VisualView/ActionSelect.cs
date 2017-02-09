@@ -22,12 +22,14 @@ namespace Bee.Integrator
     {
         public VisualView VisualView;
         public Point Point;
+        public Point StartPosition;
         public Dictionary<ActionButtonType, ActionButton> ActionButtons = new Dictionary<ActionButtonType, ActionButton>();
 
         public ActionSelect(VisualView VisualView, Point Point)
         {
             this.VisualView = VisualView;
             this.Point = Point;
+            this.StartPosition = new Point(Input.Mouse.Cursor.x, Input.Mouse.Cursor.y);
             this.ActionButtons[ActionButtonType.LinePath] = new ActionButton(ActionButtonType.LinePath, this, new Image("line_path.png"));
             this.ActionButtons[ActionButtonType.QuadraticPath] = new ActionButton(ActionButtonType.QuadraticPath, this, new Image("quadratic_path.png"));
             this.ActionButtons[ActionButtonType.CubicPath] = new ActionButton(ActionButtonType.CubicPath, this, new Image("cubic_path.png"));
@@ -36,8 +38,8 @@ namespace Bee.Integrator
 
         public void Draw()
         {
-            int x = (int)Point.x;
-            int y = (int)Point.y;
+            int x = (int)StartPosition.x;
+            int y = (int)StartPosition.y;
             int padding = (ActionButton.Size / 4);
             int width = (padding + ActionButton.Size + padding);
             int height = (padding + ((ActionButton.Size + padding) * ActionButtons.Count));

@@ -14,7 +14,7 @@ namespace Bee.UI
         public static void Draw(Surface Surface)
         {
             ListCollection<Point3f> Points = new ListCollection<Point3f>();
-            Curve curveNode = Surface.CurvePath.CurveNodeBegin;
+            Curve curveNode = Surface.CurveRoot;
             while (curveNode != null)
             {
 
@@ -31,7 +31,7 @@ namespace Bee.UI
                 }
                 curveNode = curveNode.Next;
             }
-            if (Points.Size() == 0)
+            if (Points.Size() < 3)
             {
                 return;
             }

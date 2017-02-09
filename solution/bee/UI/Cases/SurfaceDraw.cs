@@ -27,10 +27,10 @@ namespace Bee.UI
 
             Surface = new Surface();
             //Surface.AddPath(PathType.Quadratic, 10);
-            Surface.AddPath(PathType.Cubic, 5);
+            Surface.AddCurve(CurveType.Cubic, 5);
 
             StringBuilder strBuilder = new StringBuilder();
-            Curve curveNode = Surface.CurvePath.CurveNodeBegin;
+            Curve curveNode = Surface.CurveRoot;
             while(true)
             {
 
@@ -83,7 +83,7 @@ namespace Bee.UI
             FpsCounter.Draw();
 
             Points.Clear();
-            Curve curveNode = Surface.CurvePath.CurveNodeBegin;
+            Curve curveNode = Surface.CurveRoot.Next;
             while (true)
             {
 

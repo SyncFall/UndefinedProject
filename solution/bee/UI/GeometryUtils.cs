@@ -8,7 +8,7 @@ namespace Bee.UI
 {
     public class GeometryUtils
     {
-        public static bool IntersectPositionWithMargin(int X, int Y, int MouseX, int MouseY, int MarginX, int MarginY)
+        public static bool IntersectMargin(int X, int Y, int MouseX, int MouseY, int MarginX, int MarginY)
         {
             int minX = X - MarginX;
             int maxX = X + MarginX;

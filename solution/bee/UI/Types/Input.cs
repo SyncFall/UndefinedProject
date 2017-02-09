@@ -171,7 +171,7 @@ namespace Bee.UI
 
         public KeyboardState(OpenTK.GameWindow GameWindow)
         {
-            GameWindow.Keyboard.KeyRepeat = true;
+            GameWindow.Keyboard.KeyRepeat = false;
             OpenTK.Input.KeyboardState keyboardState = OpenTK.Input.Keyboard.GetState();
             Key[] keys = typeof(Key).GetEnumValues().Cast<Key>().ToArray();
             for(int i=0; i<keys.Length; i++)

@@ -168,6 +168,7 @@
     <Compile Include="UI\Types\Interact.cs" />
     <Compile Include="UI\Types\Point.cs" />
     <Compile Include="UI\Types\Shader.cs" />
+    <Compile Include="UI\Types\Surface.cs" />
     <Compile Include="UI\Types\Triangulate.cs" />
   </ItemGroup>
   <ItemGroup>
