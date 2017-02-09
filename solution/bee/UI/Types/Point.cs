@@ -32,7 +32,12 @@ namespace Bee.UI
     }
 
     public class PointList : ListCollection<Point>
-    { }
+    {
+        public void Add(float x, float y, float z=0)
+        {
+            base.Add(new Point(x, y, z));
+        }
+    }
 
     public class Size
     {

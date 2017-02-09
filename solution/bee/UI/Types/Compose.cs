@@ -59,6 +59,7 @@ namespace Bee.UI
         public float OffsetX = 100;
         public PathType SurfaceType;
         public CurvePath CurvePath = new CurvePath();
+        public ListCollection<Curve> CurvesIntersected = new ListCollection<Curve>();
 
         public Surface() : base(ComposeType.Surface)
         { }
@@ -86,28 +87,35 @@ namespace Bee.UI
             {
                 throw new Exception("invalid state");
             }
-            Curve.BuildKnots();
             if(CurvePath.CurveNodeBegin == null)
             {
                 CurvePath.CurveNodeBegin = Curve;
             }
             else
             {
-                Curve node = CurvePath.CurveNodeBegin;
-                while(true)
+                Curve curveNode = CurvePath.CurveNodeBegin;
+                while(curveNode.Next != null)
                 {
-                    if(node.Next != null)
-                    {
-                        node = node.Next;
-                    }
-                    else
-                    {
-                        node.Next = Curve;
-                        break;
-                    }
+                    curveNode = curveNode.Next;
                 }
+                curveNode.Next = Curve;
             }
             return Curve;
+        }
+
+        public bool UpdateIntersectState(int x, int y)
+        {
+            CurvesIntersected.Clear();
+            Curve curveNode = CurvePath.CurveNodeBegin;
+            while (curveNode != null)
+            {
+                if(curveNode.UpdateIntersectState(x, y))
+                {
+                    CurvesIntersected.Add(curveNode);
+                }
+                curveNode = curveNode.Next;
+            }
+            return (CurvesIntersected.Size() > 0);
         }
 
         public override Size Size

@@ -43,69 +43,97 @@ namespace Bee.Integrator
             {
                 if(Event.IsCursor)
                 {
-                    CurrentCurve.Points.Get(1).x = Input.Mouse.Cursor.X;
-                    CurrentCurve.Points.Get(1).y = Input.Mouse.Cursor.Y;
+                    CurrentCurve.Points.Get(1).x = Input.Mouse.Cursor.x;
+                    CurrentCurve.Points.Get(1).y = Input.Mouse.Cursor.y;
                 }
                 if(Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick)
                 {
                     InProgress = false;
-                    ActionSelect = new ActionSelect(this, new Point(Input.Mouse.Cursor.X, Input.Mouse.Cursor.Y));
+                    ActionSelect = new ActionSelect(this, new Point(Input.Mouse.Cursor.x, Input.Mouse.Cursor.y));
                 }
                 CurrentCurve.BuildKnots();
             }
-            if (InProgress && CurrentCurve.Type == PathType.Quadratic)
+            else if (InProgress && CurrentCurve.Type == PathType.Quadratic)
             {
                 if (Event.IsCursor)
                 {
-                    CurrentCurve.Points.Get(1).x = Input.Mouse.Cursor.X;
+                    CurrentCurve.Points.Get(1).x = Input.Mouse.Cursor.x;
                     CurrentCurve.Points.Get(1).y = CurrentCurve.Points.Get(0).y;
-                    CurrentCurve.Points.Get(2).x = Input.Mouse.Cursor.X;
-                    CurrentCurve.Points.Get(2).y = Input.Mouse.Cursor.Y;
+                    CurrentCurve.Points.Get(2).x = Input.Mouse.Cursor.x;
+                    CurrentCurve.Points.Get(2).y = Input.Mouse.Cursor.y;
                 }
                 if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick)
                 {
                     InProgress = false;
-                    ActionSelect = new ActionSelect(this, new Point(Input.Mouse.Cursor.X, Input.Mouse.Cursor.Y));
+                    ActionSelect = new ActionSelect(this, new Point(Input.Mouse.Cursor.x, Input.Mouse.Cursor.y));
                 }
                 CurrentCurve.BuildKnots();
             }
-            if (InProgress && CurrentCurve.Type == PathType.Cubic)
+            else if (InProgress && CurrentCurve.Type == PathType.Cubic)
             {
                 if (Event.IsCursor)
                 {
-                    int xSpan = ((Input.Mouse.Cursor.X + (int)CurrentCurve.Points.Get(0).x) / 2);
-                    if(Input.Mouse.Cursor.X < CurrentCurve.Points.Get(0).x)
+                    CurrentCurve.Points.Get(1).x = ((CurrentCurve.Points.Get(0).x + Input.Mouse.Cursor.x) / 2);
+                    CurrentCurve.Points.Get(1).y = CurrentCurve.Points.Get(0).y;
+                    CurrentCurve.Points.Get(2).x = Input.Mouse.Cursor.x;
+                    CurrentCurve.Points.Get(2).y = ((CurrentCurve.Points.Get(0).y + Input.Mouse.Cursor.y) / 2);
+                    CurrentCurve.Points.Get(3).x = Input.Mouse.Cursor.x;
+                    CurrentCurve.Points.Get(3).y = Input.Mouse.Cursor.y;
+                }
+                if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick)
+                {
+                    InProgress = false;
+                    ActionSelect = new ActionSelect(this, new Point(Input.Mouse.Cursor.x, Input.Mouse.Cursor.y));
+                }
+                CurrentCurve.BuildKnots();
+            }
+            else
+            {
+                if (Event.IsCursor)
+                {
+                    Surface.UpdateIntersectState(Event.Cursor.x, Event.Cursor.y);
+                }
+                if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick)
+                {
+                    if (Surface.UpdateIntersectState(Input.Mouse.Cursor.x, Input.Mouse.Cursor.y))
                     {
-                        xSpan = -xSpan;
+                        for(int i=0; i<Surface.CurvesIntersected.Size(); i++)
+                        {
+                            MovePoints.Add(Surface.CurvesIntersected.Get(i).PointsIntersected);
+                        }
+                        MovePoints.SetSelected(true);
                     }
-                    CurrentCurve.Points.Get(1).x = ((CurrentCurve.Points.Get(0).x + Input.Mouse.Cursor.X) / 2);
-                    CurrentCurve.Points.Get(1).y = CurrentCurve.Points.Get(0).y;
-                    CurrentCurve.Points.Get(2).x = Input.Mouse.Cursor.X;
-                    CurrentCurve.Points.Get(2).y = ((CurrentCurve.Points.Get(0).y + Input.Mouse.Cursor.Y) / 2);
-                    CurrentCurve.Points.Get(3).x = Input.Mouse.Cursor.X;
-                    CurrentCurve.Points.Get(3).y = Input.Mouse.Cursor.Y;
                 }
-                if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick)
+                if(MovePoints != null && Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsUp)
                 {
-                    InProgress = false;
-                    ActionSelect = new ActionSelect(this, new Point(Input.Mouse.Cursor.X, Input.Mouse.Cursor.Y));
+                    MovePoints.SetSelected(false);
+                    MovePoints.Clear(); ;
                 }
-                CurrentCurve.BuildKnots();
+                if(MovePoints != null && Event.IsCursor)
+                {
+                    for (int i=0; i<MovePoints.Size(); i++)
+                    {
+                        CurvePoint point = MovePoints.Get(i);
+                        point.x = Event.Cursor.x;
+                        point.y = Event.Cursor.y;
+                    }
+                }
+
             }
+
         }
 
         public bool InProgress = false;
         public Curve CurrentCurve = null;
+        public CurvePointList MovePoints = new CurvePointList(null);
 
         public void ActionEvent(ActionButton ActionButton)
         {
-            Console.WriteLine(ActionButton.Image.Filepath);
             if(!InProgress && ActionButton.Type == ActionButtonType.LinePath)
             {
                 Curve Curve = Surface.AddPath(PathType.Line);
                 Curve.Add(ActionSelect.Point.x, ActionSelect.Point.y);
-                Curve.Add(Input.Mouse.Cursor.X, Input.Mouse.Cursor.Y);
-                Curve.BuildKnots();
+                Curve.Add(Input.Mouse.Cursor.x, Input.Mouse.Cursor.y);
                 CurrentCurve = Curve;
                 InProgress = true;
             }
@@ -113,9 +141,8 @@ namespace Bee.Integrator
             {
                 Curve Curve = Surface.AddPath(PathType.Quadratic);
                 Curve.Add(ActionSelect.Point.x, ActionSelect.Point.y);
-                Curve.Add(Input.Mouse.Cursor.X, Input.Mouse.Cursor.Y);
-                Curve.Add(Input.Mouse.Cursor.X, Input.Mouse.Cursor.Y);
-                Curve.BuildKnots();
+                Curve.Add(Input.Mouse.Cursor.x, Input.Mouse.Cursor.y);
+                Curve.Add(Input.Mouse.Cursor.x, Input.Mouse.Cursor.y);
                 CurrentCurve = Curve;
                 InProgress = true;
             }
@@ -123,10 +150,9 @@ namespace Bee.Integrator
             {
                 Curve Curve = Surface.AddPath(PathType.Cubic);
                 Curve.Add(ActionSelect.Point.x, ActionSelect.Point.y);
-                Curve.Add(Input.Mouse.Cursor.X, Input.Mouse.Cursor.Y);
-                Curve.Add(Input.Mouse.Cursor.X, Input.Mouse.Cursor.Y);
-                Curve.Add(Input.Mouse.Cursor.X, Input.Mouse.Cursor.Y);
-                Curve.BuildKnots();
+                Curve.Add(Input.Mouse.Cursor.x, Input.Mouse.Cursor.y);
+                Curve.Add(Input.Mouse.Cursor.x, Input.Mouse.Cursor.y);
+                Curve.Add(Input.Mouse.Cursor.x, Input.Mouse.Cursor.y);
                 CurrentCurve = Curve;
                 InProgress = true;
             }
@@ -150,7 +176,7 @@ namespace Bee.Integrator
             {
                 if(VisualView.ActionSelect == null)
                 {
-                    VisualView.ActionSelect = new Integrator.ActionSelect(VisualView, new Point(Mouse.Cursor.X, Mouse.Cursor.Y));
+                    VisualView.ActionSelect = new Integrator.ActionSelect(VisualView, new Point(Mouse.Cursor.x, Mouse.Cursor.y));
                 }
                 else
                 {
@@ -162,9 +188,8 @@ namespace Bee.Integrator
             {
                 StringBuilder strBuilder = new StringBuilder();
                 Curve curveNode = VisualView.Surface.CurvePath.CurveNodeBegin;
-                while (true)
+                while(curveNode != null)
                 {
-
                     int detail = curveNode.Detail;
                     int i = 0;
                     for (float t = 0, step = (1 / (float)detail); t <= 1; t += step, i++)

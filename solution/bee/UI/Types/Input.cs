@@ -144,8 +144,8 @@ namespace Bee.UI
                 {
                     CursorState cursor = Mouse.Cursor;
                     Size size = compose.Size;
-                    if(cursor.X >= 0 && cursor.X <= size.Width && 
-                       cursor.Y >= 0 && cursor.X <= size.Height
+                    if(cursor.x >= 0 && cursor.x <= size.Width && 
+                       cursor.y >= 0 && cursor.x <= size.Height
                     ){
                         this.Input(Event);
                     }
@@ -269,8 +269,8 @@ namespace Bee.UI
         public MouseState(OpenTK.GameWindow GameWindow)
         {
             OpenTK.Input.MouseState mouseState = OpenTK.Input.Mouse.GetCursorState();
-            Cursor.X = mouseState.X;
-            Cursor.Y = mouseState.Y;
+            Cursor.x = mouseState.X;
+            Cursor.y = mouseState.Y;
             Button[] buttons = typeof(Button).GetEnumValues().Cast<Button>().ToArray();
             for(int i=0; i<buttons.Length; i++)
             {
@@ -281,8 +281,8 @@ namespace Bee.UI
             }
             GameWindow.MouseMove += (object sender, OpenTK.Input.MouseMoveEventArgs e) =>
             {
-                Cursor.X = e.X;
-                Cursor.Y = e.Y;
+                Cursor.x = e.X;
+                Cursor.y = e.Y;
                 Input.FireListeners(new InputEvent(InputType.Cursor, Cursor));
             };
             GameWindow.MouseDown += (object sender, OpenTK.Input.MouseButtonEventArgs e) =>
@@ -344,8 +344,8 @@ namespace Bee.UI
 
     public class CursorState : InputState
     {
-        public int X;
-        public int Y;
+        public int x;
+        public int y;
     }
 
     public class ButtonState : InputState

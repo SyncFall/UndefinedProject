@@ -137,9 +137,9 @@ namespace Bee.Integrator
                 }
                 if (Event.IsCursor)
                 {
-                    ActionButton.Hover = GeometryUtils.IntersectPositionWithBound(ActionButton.X, Size, ActionButton.Y, Size, Mouse.Cursor.X, Mouse.Cursor.Y);
+                    ActionButton.Hover = GeometryUtils.IntersectPositionWithBound(ActionButton.X, Size, ActionButton.Y, Size, Mouse.Cursor.x, Mouse.Cursor.y);
                 }
-                if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick && GeometryUtils.IntersectPositionWithBound(ActionButton.X, Size, ActionButton.Y, Size, Mouse.Cursor.X, Mouse.Cursor.Y))
+                if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick && GeometryUtils.IntersectPositionWithBound(ActionButton.X, Size, ActionButton.Y, Size, Mouse.Cursor.x, Mouse.Cursor.y))
                 {
                     ActionButton.ActionSelect.ActionEvent(ActionButton);
                 }

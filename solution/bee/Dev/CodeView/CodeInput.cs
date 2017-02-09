@@ -37,7 +37,7 @@ namespace Bee.Integrator
                 if(buttonState.IsDown && buttonState.Type == Button.Left)
                 {
                     CursorState cursorState = Mouse.Cursor;
-                    CodeText.CodeCursor.SetCursor(cursorState.X, cursorState.Y);
+                    CodeText.CodeCursor.SetCursor(cursorState.x, cursorState.y);
                     CodeText.CodeSelection.Begin(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
                     CodeText.CodeCursor.CursorBlink.Reset();
                     return true;
@@ -48,7 +48,7 @@ namespace Bee.Integrator
                 CursorState cursorState = Event.Cursor;
                 if (Mouse.Buttons[Button.Left].IsDown)
                 {
-                    CodeText.CodeCursor.SetCursor(cursorState.X, cursorState.Y);
+                    CodeText.CodeCursor.SetCursor(cursorState.x, cursorState.y);
                     CodeText.CodeSelection.End(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
                     CodeText.CodeCursor.CursorBlink.Reset();
                     return true;
