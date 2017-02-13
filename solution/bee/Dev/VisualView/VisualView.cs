@@ -1,7 +1,7 @@
 ﻿using Bee.Lib;
 using Bee.Library;
 using Bee.UI;
-using Bee.UI.Triangulation;
+using DelaunayTriangulator;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -28,17 +28,59 @@ namespace Bee.Integrator
 
         public void Draw()
         {
-            Triangulate.Draw(Surface);
-            lock(LockObject)
+            if(Surface.CurveRoot != null)
             {
-                if (Surface != null)
+                List<Vertex> Points = new List<Vertex>();
+                Curve curveNode = Surface.CurveRoot;
+                int curveCount = 0;
+                while (curveNode != null)
                 {
-                    Surface.Draw();
+                    curveCount++;
+                    int detail = curveNode.Detail;
+                    int i = 0;
+                    for (float t = 0, step = (1 / (float)detail); t <= 1; t += step, i++)
+                    {
+                        if (i == detail - 1)
+                        {
+                            t = .999999f;
+                        }
+                        Point point = curveNode.GetPoint(t);
+                        Vertex vertex = new Vertex((int)point.x, (int)point.y);
+                        if (!Points.Contains(vertex))
+                        {
+                            Points.Add(vertex);
+                        }
+                    }
+                    curveNode = curveNode.Next;
                 }
-                if (ActionSelect != null)
+
+                if(curveCount > 1)
                 {
-                    ActionSelect.Draw();
+                    Triangulator angulator = new Triangulator();
+                    List<Triad> triangles = angulator.Triangulation(Points, true);
+
+                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+                    GL.LineWidth(2f);
+                    GL.Color3(0f, 100 / 255f, 150 / 255f);
+                    GL.Begin(PrimitiveType.Triangles);
+                    for (int i = 0; i < triangles.Count; i++)
+                    {
+                        Triad triad = triangles[i];
+                        GL.Vertex3(Points[triad.a].x, Points[triad.a].y, 0);
+                        GL.Vertex3(Points[triad.b].x, Points[triad.b].y, 0);
+                        GL.Vertex3(Points[triad.c].x, Points[triad.c].y, 0);
+                    }
+                    GL.End();
+                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
                 }
+            }
+            if (Surface != null)
+            {
+                Surface.Draw();
+            }
+            if (ActionSelect != null)
+            {
+                ActionSelect.Draw();
             }
         }
 
@@ -126,6 +168,7 @@ namespace Bee.Integrator
                     Surface.UpdateIntersectStatus(Event.Cursor.x, Event.Cursor.y);
                     if (Input.Mouse.Buttons[Button.Left].IsDown)
                     {
+                        CurvePoint selectedCurvePoint = null;
                         Curve curveNode = Surface.CurveRoot;
                         while (curveNode != null)
                         {
@@ -136,9 +179,27 @@ namespace Bee.Integrator
                                 {
                                     curvePoint.x = Event.Cursor.x;
                                     curvePoint.y = Event.Cursor.y;
+                                    selectedCurvePoint = curvePoint;
                                 }
                             }
                             curveNode = curveNode.Next;
+                        }
+                        if(selectedCurvePoint != null)
+                        {
+                            curveNode = Surface.CurveRoot;
+                            while (curveNode != null)
+                            {
+                                for (int i = 0; i < curveNode.Points.Size(); i++)
+                                {
+                                    CurvePoint curvePoint = curveNode.Points.Get(i);
+                                    if (curvePoint.Intersect)
+                                    {
+                                        selectedCurvePoint.x = curvePoint.x;
+                                        selectedCurvePoint.y = curvePoint.y;
+                                    }
+                                }
+                                curveNode = curveNode.Next;
+                            }
                         }
                     }
                 }
@@ -166,20 +227,20 @@ namespace Bee.Integrator
             float y = ActionSelect.Point.y;
             if (!InProgress && ActionButton.Type == ActionButtonType.LinePath)
             {
-                ActionCurve = Surface.AddCurve(CurveType.Line);
+                ActionCurve = Surface.AddCurve(CurveType.Line, 2);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);
             }
             else if(!InProgress && ActionButton.Type == ActionButtonType.QuadraticPath)
             {
-                ActionCurve = Surface.AddCurve(CurveType.Quadratic);
+                ActionCurve = Surface.AddCurve(CurveType.Quadratic, 20);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);
             }
             else if(!InProgress && ActionButton.Type == ActionButtonType.CubicPath)
             {
-                ActionCurve = Surface.AddCurve(CurveType.Cubic);
+                ActionCurve = Surface.AddCurve(CurveType.Cubic, 28);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);
@@ -243,6 +304,7 @@ namespace Bee.Integrator
             }
             if(Event.IsKey && Event.Key.Type == Key.S && Event.Key.IsClick && Keyboard.Keys[Key.ControlLeft].IsDown)
             {
+                /*
                 StringBuilder strBuilder = new StringBuilder();
                 Curve curveNode = VisualView.Surface.CurveRoot;
                 while(curveNode != null)
@@ -264,12 +326,18 @@ namespace Bee.Integrator
                     }
                     curveNode = curveNode.Next;
                 }
+                */
+               
+                StringBuilder strBuilder = new StringBuilder();
+                Curve curveNode = VisualView.Surface.CurveRoot;
+                while (curveNode != null)
+                {
+                    strBuilder.AppendLine((int)curveNode.AnchorBegin.x+","+ (int)curveNode.AnchorBegin.y+"|"+ (int)curveNode.AnchorEnd.x+","+(int)curveNode.AnchorEnd.y);
+                    curveNode = curveNode.Next;
+                }
                 File.WriteAllText("D:\\dev\\EclipseJavaWorkspace2\\tri\\bin\\points.txt", strBuilder.ToString());
             }
-            lock(VisualView.LockObject)
-            {
-                VisualView.InputEvent(Event);
-            }   
+            VisualView.InputEvent(Event);   
         }
     }
 

@@ -32,18 +32,6 @@ namespace Bee.UI
         {
             base.Add(new CurvePoint(Curve, x, y, z));
         }
-
-        public bool IntersectAll
-        {
-            set
-            {
-                Intersect = value;
-                for (int i = 0; i < Size(); i++)
-                {
-                    this.Get(i).Intersect = value;
-                }
-            }
-        }
     }
 
     public class CurvePoint : Point
@@ -77,6 +65,18 @@ namespace Bee.UI
         public void AddPoint(float X, float Y, float Z=0)
         {
             this.Points.Add(X, Y, Z);
+        }
+
+        public Curve Copy()
+        {
+            Curve copy = new Curve(this.Type, this.Degree, this.Detail);
+            for(int i=0; i<this.Points.Size(); i++)
+            {
+                Point point = this.Points.Get(i);
+                copy.Points.Add(point.x, point.y, point.z);
+            }
+            copy.BuildKnots();
+            return copy;
         }
 
         public bool UpdateIntersectStatus(float X, float Y)
@@ -262,6 +262,22 @@ namespace Bee.UI
                 s2 = n2 * Blend(i + 1, k - 1, u) / d2;
 
             return s1 + s2;
+        }
+
+        public Point AnchorBegin
+        {
+            get
+            {
+                return Points[0];
+            }
+        }
+
+        public Point AnchorEnd
+        {
+            get
+            {
+                return Points.Last();
+            }
         }
     }
 }

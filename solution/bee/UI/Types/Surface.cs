@@ -14,13 +14,12 @@ namespace Bee.UI
 
         public Surface() : base(ComposeType.Surface)
         { }
-
         public Curve AddCurve(CurveType Type, int Detail = 25)
         {
             Curve Curve = null;
             if (Type == CurveType.Line)
             {
-                Curve = new Curve(Type, 1, 2);
+                Curve = new Curve(Type, 1, Detail);
             }
             else if (Type == CurveType.Quadratic)
             {
@@ -38,9 +37,16 @@ namespace Bee.UI
             {
                 throw new Exception("invalid state");
             }
+            return this.AddCurve(Curve);
+        }
+
+
+        public Curve AddCurve(Curve Curve)
+        {
             if (CurveRoot == null)
             {
                 CurveRoot = Curve;
+                Curve.Prev = null;
             }
             else
             {
@@ -54,7 +60,6 @@ namespace Bee.UI
             }
             return Curve;
         }
-
 
         public void RemoveCurve(Curve Curve)
         {

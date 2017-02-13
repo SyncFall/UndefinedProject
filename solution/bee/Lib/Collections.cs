@@ -7,7 +7,7 @@ namespace Bee.Library
 {
     public class ListCollection<T>
     {
-        private List<T> list;
+        protected List<T> list;
 
         public ListCollection()
         {
@@ -19,6 +19,24 @@ namespace Bee.Library
             list = new List<T>(Size);
         }
 
+        public ListCollection(ListCollection<T> Exist)
+        {
+            list = new List<T>();
+            this.AddAll(Exist);
+        }
+
+        public T this[int index]
+        {
+            get
+            {
+                return list[index];
+            }
+            set
+            {
+                list[index] = value;
+            }
+        }
+
         public void Add(T item)
         {
             if (item == null)
@@ -28,15 +46,39 @@ namespace Bee.Library
             list.Add(item);
         }
 
-        public void Add(ListCollection<T> items)
+        public void AddAll(ListCollection<T> Items)
         {
-            if (items == null)
+            if (Items == null)
             {
                 throw new Exception("can not add null-reference to collection");
             }
-            for(int i=0; i<items.Size(); i++)
+            for(int i=0; i<Items.Size(); i++)
             {
-                Add(items.Get(i));
+                Add(Items.Get(i));
+            }
+        }
+
+        public void Remove(T Item)
+        {
+            for(int i=0; i<Size(); i++)
+            {
+                if(Get(i).Equals(Item))
+                {
+                    RemoveAt(i);
+                    i++;
+                }
+            }
+        }
+
+        public void RemoveAll(ListCollection<T> Items)
+        {
+            if (Items == null)
+            {
+                throw new Exception("can not remove null-reference from collection");
+            }
+            for (int i = 0; i < Items.Size(); i++)
+            {
+                Remove(Items.Get(i));
             }
         }
 
@@ -56,9 +98,14 @@ namespace Bee.Library
 
         public T RemoveAt(int index)
         {
-            T value = list[index];
+            T item = list[index];
             list.RemoveAt(index);
-            return value;
+            return item;
+        }
+
+        public int IndexOf(T Item)
+        {
+            return list.IndexOf(Item);
         }
 
         public T First()
@@ -95,6 +142,18 @@ namespace Bee.Library
             return (list.Count == 0);
         }
 
+        public bool Contains(T Item)
+        {
+            for(int i=0; i<list.Count; i++)
+            {
+                if(list[i].Equals(Item))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void Clear()
         {
             list.Clear();
@@ -127,6 +186,23 @@ namespace Bee.Library
         public MapCollection()
         {
             map = new Dictionary<K, V>();
+        }
+
+        public MapCollection(int Size)
+        {
+            map = new Dictionary<K, V>(Size);
+        }
+
+        public V this[K Key]
+        {
+            get
+            {
+                return map[Key];
+            }
+            set
+            {
+                map[Key] = value;
+            }
         }
 
         public void Put(K key, V value)
@@ -165,9 +241,36 @@ namespace Bee.Library
             return map.Count;
         }
 
+        public bool IsEmpty()
+        {
+            return (map.Count == 0);
+        }
+
+        public bool IsNotEmpty()
+        {
+            return (map.Count > 0);
+        }
+
         public void Clear()
         {
             map.Clear();
+        }
+    }
+
+    public class SetCollection<T> : ListCollection<T>
+    {
+        public SetCollection() : base()
+        { }
+
+        public SetCollection(int Size) : base(Size)
+        { }
+       
+        public void Add(T Item)
+        {
+            if (!list.Contains(Item))
+            {
+                list.Add(Item);
+            }
         }
     }
 }

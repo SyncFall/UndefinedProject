@@ -29,6 +29,11 @@ namespace Bee.UI
             this.y = y;
             this.z = z;
         }
+
+        public Point Copy()
+        {
+            return new Point(x, y, z);
+        }
     }
 
     public class PointList : ListCollection<Point>

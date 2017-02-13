@@ -126,36 +126,13 @@
     <Compile Include="Main\Utils.cs" />
     <Compile Include="UI\Cases\SurfaceDraw.cs" />
     <Compile Include="UI\Cases\TrackBox.cs" />
+    <Compile Include="UI\DelaunayTriangulator\Hull.cs" />
+    <Compile Include="UI\DelaunayTriangulator\Set.cs" />
+    <Compile Include="UI\DelaunayTriangulator\Triad.cs" />
+    <Compile Include="UI\DelaunayTriangulator\Triangulator.cs" />
+    <Compile Include="UI\DelaunayTriangulator\Vertex.cs" />
     <Compile Include="UI\DrawUtils.cs" />
     <Compile Include="UI\GeometryUtils.cs" />
-    <Compile Include="UI\Triangulation\Basic.cs" />
-    <Compile Include="UI\Triangulation\BBox.cs" />
-    <Compile Include="UI\Triangulation\BottleNeck.cs" />
-    <Compile Include="UI\Triangulation\Bridge.cs" />
-    <Compile Include="UI\Triangulation\Clean.cs" />
-    <Compile Include="UI\Triangulation\Degenerate.cs" />
-    <Compile Include="UI\Triangulation\Desperate.cs" />
-    <Compile Include="UI\Triangulation\Distance.cs" />
-    <Compile Include="UI\Triangulation\EarClip.cs" />
-    <Compile Include="UI\Triangulation\Heap.cs" />
-    <Compile Include="UI\Triangulation\HeapNode.cs" />
-    <Compile Include="UI\Triangulation\Left.cs" />
-    <Compile Include="UI\Triangulation\ListNode.cs" />
-    <Compile Include="UI\Triangulation\Matrix4f.cs" />
-    <Compile Include="UI\Triangulation\NoHash.cs" />
-    <Compile Include="UI\Triangulation\Numerics.cs" />
-    <Compile Include="UI\Triangulation\Orientation.cs" />
-    <Compile Include="UI\Triangulation\Point2f.cs" />
-    <Compile Include="UI\Triangulation\Point3f.cs" />
-    <Compile Include="UI\Triangulation\Project.cs" />
-    <Compile Include="UI\Triangulation\PtnNode.cs" />
-    <Compile Include="UI\Triangulation\Simple.cs" />
-    <Compile Include="UI\Triangulation\Triangle.cs" />
-    <Compile Include="UI\Triangulation\Triangulator.cs" />
-    <Compile Include="UI\Triangulation\Tuble2f.cs" />
-    <Compile Include="UI\Triangulation\Tuble3f.cs" />
-    <Compile Include="UI\Triangulation\Util.cs" />
-    <Compile Include="UI\Triangulation\Vector3f.cs" />
     <Compile Include="UI\Types\Buffer.cs" />
     <Compile Include="UI\Types\Clipboard.cs" />
     <Compile Include="UI\Types\Color.cs" />
@@ -169,7 +146,6 @@
     <Compile Include="UI\Types\Point.cs" />
     <Compile Include="UI\Types\Shader.cs" />
     <Compile Include="UI\Types\Surface.cs" />
-    <Compile Include="UI\Types\Triangulate.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6">
