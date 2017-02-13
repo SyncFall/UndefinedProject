@@ -304,38 +304,7 @@ namespace Bee.Integrator
             }
             if(Event.IsKey && Event.Key.Type == Key.S && Event.Key.IsClick && Keyboard.Keys[Key.ControlLeft].IsDown)
             {
-                /*
-                StringBuilder strBuilder = new StringBuilder();
-                Curve curveNode = VisualView.Surface.CurveRoot;
-                while(curveNode != null)
-                {
-                    int detail = curveNode.Detail;
-                    int i = 0;
-                    for (float t = 0, step = (1 / (float)detail); t <= 1; t += step, i++)
-                    {
-                        if (i == detail - 1)
-                        {
-                            t = .999999f;
-                        }
-                        Point point = curveNode.GetPoint(t);
-                        strBuilder.AppendLine((point.x + ":" + point.y + ":" + point.z).Replace(',', '.'));
-                    }
-                    if (curveNode.Next == null)
-                    {
-                        break;
-                    }
-                    curveNode = curveNode.Next;
-                }
-                */
-               
-                StringBuilder strBuilder = new StringBuilder();
-                Curve curveNode = VisualView.Surface.CurveRoot;
-                while (curveNode != null)
-                {
-                    strBuilder.AppendLine((int)curveNode.AnchorBegin.x+","+ (int)curveNode.AnchorBegin.y+"|"+ (int)curveNode.AnchorEnd.x+","+(int)curveNode.AnchorEnd.y);
-                    curveNode = curveNode.Next;
-                }
-                File.WriteAllText("D:\\dev\\EclipseJavaWorkspace2\\tri\\bin\\points.txt", strBuilder.ToString());
+                ;
             }
             VisualView.InputEvent(Event);   
         }
