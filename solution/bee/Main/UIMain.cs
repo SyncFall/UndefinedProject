@@ -15,7 +15,6 @@ namespace Bee
         public static void Main()
         {
             Utils.PrintSourceTreeStatistics(@"..\solution\bee\");
-
             /*
             Graph g = new Graph();
             g.AddBidirectionalEdge(new Vertex(2, 1), new Vertex(2, 5));

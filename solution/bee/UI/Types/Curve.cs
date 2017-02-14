@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using verb.geom;
+using verb.core;
 
 namespace Bee.UI
 { 
@@ -118,6 +120,7 @@ namespace Bee.UI
 
         public void Draw()
         {
+            BuildKnots();
             if (Points.Size() < Degree + 1)
             {
                 return;
@@ -186,6 +189,7 @@ namespace Bee.UI
         public ListCollection<float> Knots;
         public int Degree;
         public int Order;
+        public NurbsCurve VerbNurb;
 
         public CurveBase(CurveType Type, int Degree)
         {
@@ -194,6 +198,38 @@ namespace Bee.UI
             this.Knots = new ListCollection<float>();
             this.Degree = Degree;
             this.Order = (Degree + 1);
+        }
+
+        public void BuildVerbNurb()
+        {
+            double[] haxeKnots = new double[Knots.Size()];
+            for (int i = 0; i < Knots.Size(); i++)
+            {
+                haxeKnots[i] = Knots[i];
+            }
+            List<object> list = new List<object>();
+            for (int i = 0; i < Points.Size(); i++)
+            {
+                list.Add(new haxe.root.Array<double>(new double[3] { Points[i].x, Points[i].y, Points[i].z }));
+            }
+            double[] haxeWeights = new double[Points.Size()];
+            for (int i = 0; i < Points.Size(); i++)
+            {
+                haxeWeights[i] = 1;
+            }
+            this.VerbNurb = NurbsCurve.byKnotsControlPointsWeights(this.Degree, new haxe.root.Array<double>(haxeKnots), new haxe.root.Array<object>(list.ToArray()), new haxe.root.Array<double>(haxeWeights));
+        }
+
+        public CurvePointList IntersectCurve(CurveBase Other)
+        {
+            haxe.root.Array<object> result = Intersect.curves(this.VerbNurb, Other.VerbNurb, 1e-2);
+            CurvePointList points = new CurvePointList();
+            for (int i = 0; i < result.length; i++)
+            {
+                CurveCurveIntersection intersect = (CurveCurveIntersection)result[i];
+                points.Add((float)(intersect.point0 as haxe.root.Array<double>)[0], (float)(intersect.point0 as haxe.root.Array<double>)[1]);
+            }
+            return points;
         }
 
         public void BuildKnots()
@@ -217,6 +253,7 @@ namespace Bee.UI
                     Knots.Add((i < knotCount / 2 ? 0 : 1));
                 }
             }
+            BuildVerbNurb();
         }
 
         public Point GetPoint(float t)

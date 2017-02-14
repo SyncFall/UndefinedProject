@@ -46,12 +46,14 @@ namespace Bee.Integrator
                         }
                         Point point = curveNode.GetPoint(t);
                         Vertex vertex = new Vertex((int)point.x, (int)point.y);
-                        if (!Points.Contains(vertex))
-                        {
-                            Points.Add(vertex);
-                        }
+                        Points.Add(vertex);
+                    }
+                    if(curveNode.Next != null)
+                    {
+                        
                     }
                     curveNode = curveNode.Next;
+
                 }
 
                 if(curveCount > 1)
@@ -74,10 +76,38 @@ namespace Bee.Integrator
                     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
                 }
             }
+
+            CurvePointList intersectPoints = new CurvePointList();
+            for (int i = 0; i < Surface.Curves.Size(); i++)
+            {
+                for (int j = 0; j < Surface.Curves.Size(); j++)
+                {
+                    if (i == j)
+                    {
+                        continue;
+                    }
+                    intersectPoints.AddAll(Surface.Curves[i].IntersectCurve(Surface.Curves[j]));
+                }
+            }
+
             if (Surface != null)
             {
                 Surface.Draw();
             }
+
+            if (intersectPoints.Size() > 0)
+            {
+                GL.PointSize(10f);
+                GL.Color3(1f, 0f, 0f);
+                GL.Begin(PrimitiveType.Points);
+                for (int x = 0; x < intersectPoints.Size(); x++)
+                {
+                    Point point = intersectPoints[x];
+                    GL.Vertex2(point.x, point.y);
+                }
+                GL.End();
+            }
+
             if (ActionSelect != null)
             {
                 ActionSelect.Draw();

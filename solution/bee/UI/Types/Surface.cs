@@ -10,6 +10,7 @@ namespace Bee.UI
     {
         public CurveType CurveType;
         public Curve CurveRoot;
+        public CurveList Curves = new CurveList();
         public bool Intersect;
 
         public Surface() : base(ComposeType.Surface)
@@ -43,10 +44,10 @@ namespace Bee.UI
 
         public Curve AddCurve(Curve Curve)
         {
+            Curves.Add(Curve);
             if (CurveRoot == null)
             {
                 CurveRoot = Curve;
-                Curve.Prev = null;
             }
             else
             {
