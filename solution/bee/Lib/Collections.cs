@@ -52,22 +52,15 @@ namespace Bee.Library
             {
                 throw new Exception("can not add null-reference to collection");
             }
-            for(int i=0; i<Items.Size(); i++)
+            for(int i=0; i<Items.Size; i++)
             {
-                Add(Items.Get(i));
+                Add(Items[i]);
             }
         }
 
         public void Remove(T Item)
         {
-            for(int i=0; i<Size(); i++)
-            {
-                if(Get(i).Equals(Item))
-                {
-                    RemoveAt(i);
-                    i++;
-                }
-            }
+            list.Remove(Item);
         }
 
         public void RemoveAll(ListCollection<T> Items)
@@ -76,7 +69,7 @@ namespace Bee.Library
             {
                 throw new Exception("can not remove null-reference from collection");
             }
-            for (int i = 0; i < Items.Size(); i++)
+            for (int i = 0; i < Items.Size; i++)
             {
                 Remove(Items.Get(i));
             }
@@ -110,7 +103,7 @@ namespace Bee.Library
 
         public T First()
         {
-            if (Size() == 0)
+            if (list.Count == 0)
             {
                 throw new Exception("list is empty");
             }
@@ -119,27 +112,19 @@ namespace Bee.Library
         
         public T Last()
         {
-            int size = Size();
-            if (size == 0)
+            if (list.Count == 0)
             {
                 throw new Exception("list is empty");
             }
-            return list[size-1];
+            return list[list.Count-1];
         }
 
-        public int Size()
+        public int Size
         {
-            return list.Count;
-        }
-
-        public bool IsNotEmpty()
-        {
-            return (list.Count > 0);
-        }
-
-        public bool IsEmpty()
-        {
-            return (list.Count == 0);
+            get
+            {
+                return list.Count;
+            }
         }
 
         public bool Contains(T Item)
@@ -167,10 +152,10 @@ namespace Bee.Library
         public override string ToString()
         {
             StringBuilder strBuilder = new StringBuilder();
-            for(int i=0; i<Size(); i++)
+            for(int i=0; i<Size; i++)
             {
                 strBuilder.Append(Get(i));
-                if(i < Size()-1)
+                if(i < Size-1)
                 {
                     strBuilder.Append(", ");
                 }

@@ -49,7 +49,7 @@ namespace Bee.Integrator
 
         public bool RedoStep()
         {
-            if(HistoryPosition >= History.Size()-1)
+            if(HistoryPosition >= History.Size-1)
             {
                 return false;
             }

@@ -9,12 +9,12 @@ namespace Bee.UI
     public class Surface : Compose
     {
         public CurveType CurveType;
-        public Curve CurveRoot;
         public CurveList Curves = new CurveList();
         public bool Intersect;
 
         public Surface() : base(ComposeType.Surface)
         { }
+
         public Curve AddCurve(CurveType Type, int Detail = 25)
         {
             Curve Curve = null;
@@ -38,82 +38,32 @@ namespace Bee.UI
             {
                 throw new Exception("invalid state");
             }
-            return this.AddCurve(Curve);
-        }
-
-
-        public Curve AddCurve(Curve Curve)
-        {
             Curves.Add(Curve);
-            if (CurveRoot == null)
-            {
-                CurveRoot = Curve;
-            }
-            else
-            {
-                Curve curveNode = CurveRoot;
-                while (curveNode.Next != null)
-                {
-                    curveNode = curveNode.Next;
-                }
-                curveNode.Next = Curve;
-                Curve.Prev = curveNode;
-            }
             return Curve;
-        }
-
-        public void RemoveCurve(Curve Curve)
-        {
-            if (Curve.Prev == null)
-            {
-                if (Curve.Next != null)
-                {
-                    CurveRoot = Curve.Next;
-                    CurveRoot.Prev = null;
-                }
-                else
-                {
-                    CurveRoot = null;
-                }
-            }
-            else
-            {
-                Curve.Prev.Next = Curve.Next;
-                if (Curve.Next != null)
-                {
-                    Curve.Next.Prev = Curve.Prev;
-                }
-            }
         }
 
         public bool UpdateIntersectStatus(int X, int Y)
         {
             Intersect = false;
-            Curve curveNode = CurveRoot;
-            while (curveNode != null)
+            for(int i=0; i<Curves.Size; i++)
             {
-                if (curveNode.UpdateIntersectStatus(X, Y))
+                if (Curves[i].UpdateIntersectStatus(X, Y))
                 {
                     Intersect = true;
                 }
-                curveNode = curveNode.Next;
             }
             return Intersect;
         }
 
         public override void Draw()
         {
-            Curve curveNode = CurveRoot;
-            while (curveNode != null)
+            for(int i=0; i<Curves.Size; i++)
             {
-                curveNode.Draw();
-                curveNode = curveNode.Next;
+                Curves[i].Draw();
             }
-            curveNode = CurveRoot;
-            while (curveNode != null)
+            for(int i=0; i<Curves.Size; i++)
             {
-                curveNode.DrawPoints();
-                curveNode = curveNode.Next;
+                Curves[i].DrawPoints();
             }
         }
 

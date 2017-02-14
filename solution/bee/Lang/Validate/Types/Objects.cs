@@ -10,7 +10,7 @@ namespace Bee.Language
     {
         public void ValidateObject(ObjectSymbol ObjectSymbol)
         {
-            for (int i = 0; i < ObjectSymbol.MemberList.Size(); i++)
+            for (int i = 0; i < ObjectSymbol.MemberList.Size; i++)
             {
                 MemberSymbol memberSymbol = ObjectSymbol.MemberList.Get(i);
                 TypeDeclarationSignature typeDeclaration = memberSymbol.Signature.TypeDeclaration;
@@ -26,7 +26,7 @@ namespace Bee.Language
                     }
                 }
             }
-            for (int i = 0; i < ObjectSymbol.MethodList.Size(); i++)
+            for (int i = 0; i < ObjectSymbol.MethodList.Size; i++)
             {
                 MethodSymbol methodSymbol = ObjectSymbol.MethodList.Get(i);
                 TypeDeclarationSignature typeDeclaration = methodSymbol.Signature.TypeDeclaration;
@@ -40,7 +40,7 @@ namespace Bee.Language
                 ParameterDeclarationSignature parameterDeclaration = methodSymbol.Signature.ParameterDeclaration;
                 if (parameterDeclaration != null)
                 {
-                    for (int j = 0; j < parameterDeclaration.ParameterList.Size(); j++)
+                    for (int j = 0; j < parameterDeclaration.ParameterList.Size; j++)
                     {
                         ParameterDeclartionElementSignature parameterElement = parameterDeclaration.ParameterList.Get(j);
                         TypeDeclarationSignature parameterTypeDeclaration = parameterElement.TypeDeclaration;

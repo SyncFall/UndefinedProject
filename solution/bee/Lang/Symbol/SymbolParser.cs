@@ -14,7 +14,7 @@ namespace Bee.Language
         public SourceSymbol TrySymbol(SignatureContainer SignatureContainer)
         {
             SourceSymbol sourceSymbol = new SourceSymbol(SignatureContainer.SourceText);
-            for (int i = 0; i < SignatureContainer.SignatureNodes.Size(); i++)
+            for (int i = 0; i < SignatureContainer.SignatureNodes.Size; i++)
             {
                 SignatureSymbol signature = SignatureContainer.SignatureNodes.Get(i).Signature;
                 if (signature.Type == SignatureType.Use)
@@ -63,7 +63,7 @@ namespace Bee.Language
                     scopeSymbol = new ScopeSymbol(Source, Signature);
                     Source.ScopeList.Add(scopeSymbol);
                 }
-                for (int i = 0; i < Signature.ObjectList.Size(); i++)
+                for (int i = 0; i < Signature.ObjectList.Size; i++)
                 {
                     ObjectSignature objectSignatur = Signature.ObjectList.Get(i);
                     TryObject(scopeSymbol, objectSignatur);
@@ -89,12 +89,12 @@ namespace Bee.Language
                 {
                     ;
                 }
-                for (int i = 0; i < Signature.Members.Size(); i++)
+                for (int i = 0; i < Signature.Members.Size; i++)
                 {
                     MemberSignature memberSignature = Signature.Members.Get(i);
                     TryMember(objectSymbol, memberSignature);
                 }
-                for (int i = 0; i < Signature.Methods.Size(); i++)
+                for (int i = 0; i < Signature.Methods.Size; i++)
                 {
                     MethodSignature methodSignature = Signature.Methods.Get(i);
                     TryMethod(objectSymbol, methodSignature);

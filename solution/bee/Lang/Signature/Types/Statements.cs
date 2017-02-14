@@ -237,10 +237,10 @@ namespace Bee.Language
         public override string ToString()
         {
             string str = "";
-            for(int i=0; i<Size(); i++)
+            for(int i=0; i<Size; i++)
             {
                 str += Get(i);
-                if(i < Size()-1)
+                if(i < Size-1)
                 {
                     str += "\n";
                 }

@@ -16,7 +16,7 @@ namespace Bee.Language
 
         public void AddSourceList(SourceList SourceList)
         {
-            for (int i = 0; i < SourceList.Size(); i++)
+            for (int i = 0; i < SourceList.Size; i++)
             {
                 SourceText source = SourceList.Get(i);
                 Entry entry = new Entry(source);
@@ -36,22 +36,22 @@ namespace Bee.Language
         public void Validate()
         {
             Validator validator = new Validator(this);
-            for (int i=0; i<EntryList.Size(); i++)
+            for (int i=0; i<EntryList.Size; i++)
             {
-                Entry entry = EntryList.Get(i);
+                Entry entry = EntryList[i];
                 validator.ValidateSource(entry.SourceSymbol);
             }
         }
 
         public ObjectSymbol GetObjectSymbol(string ObjectName)
         {
-            for(int i=0; i<EntryList.Size(); i++)
+            for(int i=0; i<EntryList.Size; i++)
             {
                 SourceSymbol sourceSymbol = EntryList.Get(i).SourceSymbol;
-                for(int j=0; j<sourceSymbol.ScopeList.Size(); j++)
+                for(int j=0; j<sourceSymbol.ScopeList.Size; j++)
                 {
                     ScopeSymbol scopeSymbol = sourceSymbol.ScopeList.Get(j);
-                    for(int k=0; k<scopeSymbol.ObjectList.Size(); k++)
+                    for(int k=0; k<scopeSymbol.ObjectList.Size; k++)
                     {
                         ObjectSymbol objectSymbol = scopeSymbol.ObjectList.Get(k);
                         if(objectSymbol.Signature.Identifier.IdentifiereToken.String == ObjectName)
@@ -69,7 +69,7 @@ namespace Bee.Language
     {
         public Entry GetExist(SourceText SourceText)
         {
-            for(int i=0; i<Size(); i++)
+            for(int i=0; i<Size; i++)
             {
                 if(Get(i).SourceText.IsEqualFile(SourceText))
                 {

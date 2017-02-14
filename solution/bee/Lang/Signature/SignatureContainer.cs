@@ -32,9 +32,9 @@ namespace Bee.Language
         public void AddSignature(SignatureSymbol signature)
         {
             SignatureNode newNode = new SignatureNode(signature);
-            if(SignatureNodes.Size() > 0)
+            if(SignatureNodes.Size > 0)
             {
-                SignatureNode lastNode = SignatureNodes.Get(SignatureNodes.Size()-1);
+                SignatureNode lastNode = SignatureNodes.Get(SignatureNodes.Size-1);
                 lastNode.Next = newNode;
                 newNode.Prev = lastNode;
             }

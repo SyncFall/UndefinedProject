@@ -28,59 +28,46 @@ namespace Bee.Integrator
 
         public void Draw()
         {
-            if(Surface.CurveRoot != null)
+            List<Vertex> Points = new List<Vertex>();
+            for(int i=0; i<Surface.Curves.Size; i++)
             {
-                List<Vertex> Points = new List<Vertex>();
-                Curve curveNode = Surface.CurveRoot;
-                int curveCount = 0;
-                while (curveNode != null)
+                Curve curve = Surface.Curves[i];
+                int x = 0;
+                for (float t = 0, step = (1 / (float)curve.Detail); t <= 1; t += step, x++)
                 {
-                    curveCount++;
-                    int detail = curveNode.Detail;
-                    int i = 0;
-                    for (float t = 0, step = (1 / (float)detail); t <= 1; t += step, i++)
+                    if (x == curve.Detail-1)
                     {
-                        if (i == detail - 1)
-                        {
-                            t = .999999f;
-                        }
-                        Point point = curveNode.GetPoint(t);
-                        Vertex vertex = new Vertex((int)point.x, (int)point.y);
-                        Points.Add(vertex);
+                        t = .999999f;
                     }
-                    if(curveNode.Next != null)
-                    {
-                        
-                    }
-                    curveNode = curveNode.Next;
-
-                }
-
-                if(curveCount > 1)
-                {
-                    Triangulator angulator = new Triangulator();
-                    List<Triad> triangles = angulator.Triangulation(Points, true);
-
-                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-                    GL.LineWidth(2f);
-                    GL.Color3(0f, 100 / 255f, 150 / 255f);
-                    GL.Begin(PrimitiveType.Triangles);
-                    for (int i = 0; i < triangles.Count; i++)
-                    {
-                        Triad triad = triangles[i];
-                        GL.Vertex3(Points[triad.a].x, Points[triad.a].y, 0);
-                        GL.Vertex3(Points[triad.b].x, Points[triad.b].y, 0);
-                        GL.Vertex3(Points[triad.c].x, Points[triad.c].y, 0);
-                    }
-                    GL.End();
-                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+                    Point point = curve.GetPoint(t);
+                    Points.Add(new Vertex((int)point.x, (int)point.y));
                 }
             }
 
-            CurvePointList intersectPoints = new CurvePointList();
-            for (int i = 0; i < Surface.Curves.Size(); i++)
+            if(Points.Count >= 3)
             {
-                for (int j = 0; j < Surface.Curves.Size(); j++)
+                Triangulator angulator = new Triangulator();
+                List<Triad> triangles = angulator.Triangulation(Points, true);
+
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+                GL.LineWidth(2f);
+                GL.Color3(0f, 100 / 255f, 150 / 255f);
+                GL.Begin(PrimitiveType.Triangles);
+                for (int i = 0; i < triangles.Count; i++)
+                {
+                    Triad triad = triangles[i];
+                    GL.Vertex2(Points[triad.a].x, Points[triad.a].y);
+                    GL.Vertex2(Points[triad.b].x, Points[triad.b].y);
+                    GL.Vertex2(Points[triad.c].x, Points[triad.c].y);
+                }
+                GL.End();
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            }
+         
+            CurvePointList intersectPoints = new CurvePointList();
+            for (int i = 0; i < Surface.Curves.Size; i++)
+            {
+                for (int j = 0; j < Surface.Curves.Size; j++)
                 {
                     if (i == j)
                     {
@@ -95,12 +82,12 @@ namespace Bee.Integrator
                 Surface.Draw();
             }
 
-            if (intersectPoints.Size() > 0)
+            if (intersectPoints.Size > 0)
             {
                 GL.PointSize(10f);
                 GL.Color3(1f, 0f, 0f);
                 GL.Begin(PrimitiveType.Points);
-                for (int x = 0; x < intersectPoints.Size(); x++)
+                for (int x = 0; x < intersectPoints.Size; x++)
                 {
                     Point point = intersectPoints[x];
                     GL.Vertex2(point.x, point.y);
@@ -154,26 +141,25 @@ namespace Bee.Integrator
                 {
                     Surface.UpdateIntersectStatus(Event.Cursor.x, Event.Cursor.y);
                     SelectPoint = null;
-                    Curve curveNode = Surface.CurveRoot;
-                    while (curveNode != null)
+                    for(int i=0; i<Surface.Curves.Size; i++)
                     {
-                        curveNode.Intersect = false;
-                        for (int i = 0; i < curveNode.Points.Size(); i++)
+                        Curve curve = Surface.Curves[i];
+                        curve.Intersect = false;
+                        for (int j = 0; j < curve.Points.Size; j++)
                         {
-                            CurvePoint curvePoint = curveNode.Points.Get(i);
-                            if(curvePoint.Intersect)
+                            CurvePoint curvePoint = curve.Points.Get(j);
+                            if (curvePoint.Intersect)
                             {
                                 SelectPoint = curvePoint;
                                 break;
                             }
                         }
-                        curveNode = curveNode.Next;
                     }
                     Surface.UpdateIntersectStatus(-1, -1);
                 }
                 if (Event.IsKey && Event.Key.Type == Key.Escape && Event.Key.IsClick)
                 {
-                    Surface.RemoveCurve(ActionCurve);
+                    Surface.Curves.Remove(ActionCurve);
                     InProgress = false;
                 }
             }
@@ -181,16 +167,15 @@ namespace Bee.Integrator
             {
                 if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick)
                 {
-                    Curve curveNode = Surface.CurveRoot;
-                    while (curveNode != null)
+                    for(int i=0; i<Surface.Curves.Size; i++)
                     {
-                        curveNode.Selected = (curveNode.Intersect || curveNode.Points.Intersect);
-                        for (int i = 0; i < curveNode.Points.Size(); i++)
+                        Curve curve = Surface.Curves[i];
+                        curve.Selected = (curve.Intersect || curve.Points.Intersect);
+                        for (int j = 0; j < curve.Points.Size; j++)
                         {
-                            CurvePoint curvePoint = curveNode.Points.Get(i);
-                            curvePoint.Selected = (curvePoint.Intersect);
+                            CurvePoint point = curve.Points[j];
+                            point.Selected = (point.Intersect);
                         }
-                        curveNode = curveNode.Next;
                     }
                 }
                 if (Event.IsCursor)
@@ -198,51 +183,48 @@ namespace Bee.Integrator
                     Surface.UpdateIntersectStatus(Event.Cursor.x, Event.Cursor.y);
                     if (Input.Mouse.Buttons[Button.Left].IsDown)
                     {
-                        CurvePoint selectedCurvePoint = null;
-                        Curve curveNode = Surface.CurveRoot;
-                        while (curveNode != null)
+                        CurvePoint selectedPoint = null;
+                        for(int i=0; i<Surface.Curves.Size; i++)
                         {
-                            for (int i = 0; i < curveNode.Points.Size(); i++)
+                            Curve curve = Surface.Curves[i];
+                            for (int j = 0; j < curve.Points.Size; j++)
                             {
-                                CurvePoint curvePoint = curveNode.Points.Get(i);
-                                if (curvePoint.Selected)
+                                CurvePoint point = curve.Points[j];
+                                if (point.Selected)
                                 {
-                                    curvePoint.x = Event.Cursor.x;
-                                    curvePoint.y = Event.Cursor.y;
-                                    selectedCurvePoint = curvePoint;
+                                    point.x = Event.Cursor.x;
+                                    point.y = Event.Cursor.y;
+                                    selectedPoint = point;
                                 }
                             }
-                            curveNode = curveNode.Next;
                         }
-                        if(selectedCurvePoint != null)
+                        if(selectedPoint != null)
                         {
-                            curveNode = Surface.CurveRoot;
-                            while (curveNode != null)
+                            for (int i = 0; i < Surface.Curves.Size; i++)
                             {
-                                for (int i = 0; i < curveNode.Points.Size(); i++)
+                                Curve curve = Surface.Curves[i];
+                                for (int j = 0; j < curve.Points.Size; j++)
                                 {
-                                    CurvePoint curvePoint = curveNode.Points.Get(i);
-                                    if (curvePoint.Intersect)
+                                    CurvePoint point = curve.Points[j];
+                                    if (point.Selected)
                                     {
-                                        selectedCurvePoint.x = curvePoint.x;
-                                        selectedCurvePoint.y = curvePoint.y;
+                                        selectedPoint.x = point.x;
+                                        selectedPoint.y = point.y;
                                     }
                                 }
-                                curveNode = curveNode.Next;
                             }
                         }
                     }
                 }
                 if (Event.IsKey && Event.Key.Type == Key.Delete && Event.Key.IsClick)
                 {
-                    Curve curveNode = Surface.CurveRoot;
-                    while (curveNode != null)
+                    for (int i = 0; i < Surface.Curves.Size; i++)
                     {
-                        if (curveNode.Selected)
+                        Curve curve = Surface.Curves[i];
+                        if (curve.Selected)
                         {
-                            Surface.RemoveCurve(curveNode);
+                            Surface.Curves.RemoveAt(i);
                         }
-                        curveNode = curveNode.Next;
                     }
                 }
             }
@@ -306,23 +288,22 @@ namespace Bee.Integrator
                 }
                 else if(VisualView.ActionSelect == null)
                 {             
-                    CurvePoint selectedCurvePoint = null;
-                    Curve curveNode = VisualView.Surface.CurveRoot;
-                    while (curveNode != null)
+                    CurvePoint selectedPoint = null;
+                    for(int i=0; i<VisualView.Surface.Curves.Size; i++)
                     {
-                        for (int i = 0; i < curveNode.Points.Size(); i++)
+                        Curve curve = VisualView.Surface.Curves[i];
+                        for (int j = 0; j < curve.Points.Size; j++)
                         {
-                            CurvePoint curvePoint = curveNode.Points.Get(i);
-                            if (curvePoint.Selected)
+                            CurvePoint point = curve.Points[j];
+                            if (point.Selected)
                             {
-                                selectedCurvePoint = curvePoint;
+                                selectedPoint = point;
                                 break;
                             }
                         }
-                        curveNode = curveNode.Next;
                     }
-                    float x = (selectedCurvePoint != null ? selectedCurvePoint.x : Mouse.Cursor.x);
-                    float y = (selectedCurvePoint != null ? selectedCurvePoint.y : Mouse.Cursor.y);
+                    float x = (selectedPoint != null ? selectedPoint.x : Mouse.Cursor.x);
+                    float y = (selectedPoint != null ? selectedPoint.y : Mouse.Cursor.y);
                     VisualView.ActionSelect = new ActionSelect(VisualView, new Point(x, y));
                 }
                 else

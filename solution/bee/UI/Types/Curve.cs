@@ -52,7 +52,9 @@ namespace Bee.UI
     { }
 
     public class Curve : CurveBase
-    {        
+    {
+        private static int IdCounterInstance = 0;
+        public readonly int Id;
         public int Detail;
         public Curve Next;
         public Curve Prev;
@@ -61,6 +63,7 @@ namespace Bee.UI
 
         public Curve(CurveType Type, int Degree=2, int Detail=50) : base(Type, Degree)
         {
+            this.Id = (++IdCounterInstance);
             this.Detail = Detail;
         }
 
@@ -72,7 +75,7 @@ namespace Bee.UI
         public Curve Copy()
         {
             Curve copy = new Curve(this.Type, this.Degree, this.Detail);
-            for(int i=0; i<this.Points.Size(); i++)
+            for(int i=0; i<this.Points.Size; i++)
             {
                 Point point = this.Points.Get(i);
                 copy.Points.Add(point.x, point.y, point.z);
@@ -81,11 +84,16 @@ namespace Bee.UI
             return copy;
         }
 
+        public override bool Equals(object obj)
+        {
+            return (this.Id == (obj as Curve).Id);
+        }
+
         public bool UpdateIntersectStatus(float X, float Y)
         {
             Intersect = false;
             Points.Intersect = false;
-            for (int i = 0; i < Points.Size(); i++)
+            for (int i = 0; i < Points.Size; i++)
             {
                 CurvePoint point = Points.Get(i);
                 point.Intersect = GeometryUtils.IntersectMargin((int)point.x, (int)point.y, (int)X, (int)Y, 10, 10);
@@ -121,7 +129,7 @@ namespace Bee.UI
         public void Draw()
         {
             BuildKnots();
-            if (Points.Size() < Degree + 1)
+            if (Points.Size < Degree + 1)
             {
                 return;
             }
@@ -161,7 +169,7 @@ namespace Bee.UI
             }
             GL.PointSize(10f);
             GL.Begin(PrimitiveType.Points);
-            for(int i=0; i<Points.Size(); i++)
+            for(int i=0; i<Points.Size; i++)
             {
                 CurvePoint point = Points.Get(i);
                 if(point.Selected)
@@ -202,18 +210,18 @@ namespace Bee.UI
 
         public void BuildVerbNurb()
         {
-            double[] haxeKnots = new double[Knots.Size()];
-            for (int i = 0; i < Knots.Size(); i++)
+            double[] haxeKnots = new double[Knots.Size];
+            for (int i = 0; i < Knots.Size; i++)
             {
                 haxeKnots[i] = Knots[i];
             }
             List<object> list = new List<object>();
-            for (int i = 0; i < Points.Size(); i++)
+            for (int i = 0; i < Points.Size; i++)
             {
                 list.Add(new haxe.root.Array<double>(new double[3] { Points[i].x, Points[i].y, Points[i].z }));
             }
-            double[] haxeWeights = new double[Points.Size()];
-            for (int i = 0; i < Points.Size(); i++)
+            double[] haxeWeights = new double[Points.Size];
+            for (int i = 0; i < Points.Size; i++)
             {
                 haxeWeights[i] = 1;
             }
@@ -235,7 +243,7 @@ namespace Bee.UI
         public void BuildKnots()
         {
             Knots.Clear();
-            int knotCount = (Points.Size() + Degree + 1);
+            int knotCount = (Points.Size + Degree + 1);
             if (Type == CurveType.Nurbs)
             {
                 float uniformVal = (1 / (float)knotCount);
@@ -258,7 +266,7 @@ namespace Bee.UI
 
         public Point GetPoint(float t)
         {
-            float u = (1 - t) * Knots.Get(Order - 1) + t * Knots.Get(Points.Size());
+            float u = (1 - t) * Knots.Get(Order - 1) + t * Knots.Get(Points.Size);
 
             int i_plus_1 = 0;
             for (; Knots.Get(i_plus_1) <= u; i_plus_1++) { }
@@ -299,22 +307,6 @@ namespace Bee.UI
                 s2 = n2 * Blend(i + 1, k - 1, u) / d2;
 
             return s1 + s2;
-        }
-
-        public Point AnchorBegin
-        {
-            get
-            {
-                return Points[0];
-            }
-        }
-
-        public Point AnchorEnd
-        {
-            get
-            {
-                return Points.Last();
-            }
         }
     }
 }

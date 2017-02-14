@@ -23,7 +23,7 @@ namespace Bee.Language
                     break;
                 }
             }
-            return (signature.PathElements.Size() > 0 ? signature : null);
+            return (signature.PathElements.Size > 0 ? signature : null);
         }
 
         public IdentifierSignature TryIdentifier()
@@ -158,7 +158,7 @@ namespace Bee.Language
         public override string ToString()
         {
             string str = "path(";
-            for (int i = 0; i < PathElements.Size(); i++)
+            for (int i = 0; i < PathElements.Size; i++)
             {
                 str += PathElements.Get(i);
             }

@@ -45,14 +45,14 @@ namespace Bee.Language
             {
                 first = ValidateOperand(Expression.Operand);
             }
-            if(Expression.OperationList.Size() == 0)
+            if(Expression.OperationList.Size == 0)
             {
                 return first;
             }
 
             ExpressionResultType result = null;
             bool hasResult = false;
-            for (int i=0; i<Expression.OperationList.Size(); i++)
+            for (int i=0; i<Expression.OperationList.Size; i++)
             {
                 ExpressionOperationPair operationPair = Expression.OperationList.Get(i);
                 OperationSymbol operation = operationPair.Operation.OperationToken.Symbol;
@@ -114,7 +114,7 @@ namespace Bee.Language
         {
             ExpressionResultType result = null;
 
-            for(int i=0; i<Operand.AccessSignatureList.Size(); i++)
+            for(int i=0; i<Operand.AccessSignatureList.Size; i++)
             {
                 AccessSignature accessSignature = Operand.AccessSignatureList.Get(i);
                 if(accessSignature.Type == SignatureType.LiteralAccess)

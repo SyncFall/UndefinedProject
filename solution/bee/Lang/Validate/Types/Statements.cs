@@ -10,7 +10,7 @@ namespace Bee.Language
     {
         public void ValidateStatementBlock(StatementSignatureList StatementList)
         {
-            for (int i = 0; i < StatementList.Size(); i++)
+            for (int i = 0; i < StatementList.Size; i++)
             {
                 StatementSignature statement = StatementList.Get(i);
                 if (statement.Type == StatementType.If)

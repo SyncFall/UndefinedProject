@@ -17,10 +17,10 @@ namespace Bee.Language
 
         public void ValidateSource(SourceSymbol SourceSymbol)
         {
-            for (int i = 0; i < SourceSymbol.ScopeList.Size(); i++)
+            for (int i = 0; i < SourceSymbol.ScopeList.Size; i++)
             {
                 ScopeSymbol scopeSymbol = SourceSymbol.ScopeList.Get(i);
-                for (int j = 0; j < scopeSymbol.ObjectList.Size(); j++)
+                for (int j = 0; j < scopeSymbol.ObjectList.Size; j++)
                 {
                     ObjectSymbol objectSymbol = scopeSymbol.ObjectList.Get(j);
                     ValidateObject(objectSymbol);

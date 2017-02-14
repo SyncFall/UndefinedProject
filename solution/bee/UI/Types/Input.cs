@@ -94,7 +94,7 @@ namespace Bee.UI
 
         public static void FireListeners(InputEvent InputEvent)
         {
-            for (int i = 0; i < InputListeners.Size(); i++)
+            for (int i = 0; i < InputListeners.Size; i++)
             {
                 InputListener inputListener = InputListeners.Get(i);
                 inputListener.ProcessInputEvent(InputEvent);
@@ -110,7 +110,7 @@ namespace Bee.UI
 
         public static void Remove(InputListener InputListener)
         {
-            for(int i=0; i<InputListeners.Size(); i++)
+            for(int i=0; i<InputListeners.Size; i++)
             {
                 if(InputListeners.Get(i).Id == InputListener.Id)
                 {

@@ -11,7 +11,7 @@ namespace Bee.Language
     {
         public SourceSymbol GetEqual(SourceText Source)
         {
-            for (int i = 0; i < Size(); i++)
+            for (int i = 0; i < Size; i++)
             {
                 if (Get(i).IsEqualFile(Source))
                 {
@@ -49,7 +49,7 @@ namespace Bee.Language
     {
         public bool ContainsEqual(UseSignature signature)
         {
-            for (int i = 0; i < Size(); i++)
+            for (int i = 0; i < Size; i++)
             {
                 if (Get(i).IsEqual(signature))
                 {
@@ -81,7 +81,7 @@ namespace Bee.Language
     {
         public ScopeSymbol GetEqual(ScopeSignature signature)
         {
-            for (int i = 0; i < Size(); i++)
+            for (int i = 0; i < Size; i++)
             {
                 if (Get(i).IsEqual(signature))
                 {
@@ -114,7 +114,7 @@ namespace Bee.Language
     {
         public ObjectSymbol GetEqualByIdentifier(ObjectSignature Signature)
         {
-            for (int i = 0; i < Size(); i++)
+            for (int i = 0; i < Size; i++)
             {
                 if (Get(i).IsEqualIdentifier(Signature))
                 {
@@ -148,9 +148,9 @@ namespace Bee.Language
     {
         public MemberSymbol GetEqualByIdentifier(MemberSignature Signature)
         {
-            for (int i = 0; i < Size(); i++)
+            for (int i = 0; i < Size; i++)
             {
-                if (Get(i).IsEqualIdentifier(Signature))
+                if (this[i].IsEqualIdentifier(Signature))
                 {
                     return Get(i);
                 }
@@ -180,7 +180,7 @@ namespace Bee.Language
     {
         public MethodSymbol GetEqualByIdentifier(MethodSignature Signature)
         {
-            for (int i = 0; i < Size(); i++)
+            for (int i = 0; i < Size; i++)
             {
                 if (Get(i).IsEqualIdentifier(Signature))
                 {

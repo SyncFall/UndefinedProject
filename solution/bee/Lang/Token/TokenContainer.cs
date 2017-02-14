@@ -37,7 +37,7 @@ namespace Bee.Language
 
         public void StepReset()
         {
-            Current = BeginStepNode.RemoveAt(BeginStepNode.Size() - 1);
+            Current = BeginStepNode.RemoveAt(BeginStepNode.Size - 1);
         }
 	}
 
@@ -65,9 +65,9 @@ namespace Bee.Language
         private void AddToken(TokenSymbol token)
         {
             TokenNode newNode = new TokenNode(token);
-            if (AllTokenNodes.Size() > 0)
+            if (AllTokenNodes.Size > 0)
             {
-                TokenNode lastNode = AllTokenNodes.Get(AllTokenNodes.Size()-1);
+                TokenNode lastNode = AllTokenNodes.Get(AllTokenNodes.Size-1);
                 lastNode.Next = newNode;
                 newNode.Prev = lastNode;
             }
@@ -117,12 +117,12 @@ namespace Bee.Language
 
         public int LineCount()
         {
-            return (LineTokenNodes.Size() + 1);
+            return (LineTokenNodes.Size + 1);
         }
 
         public TokenNode FirstTokenNode()
         {
-            if(AllTokenNodes.Size()==0)
+            if(AllTokenNodes.Size==0)
             {
                 return null;
             }
@@ -134,7 +134,7 @@ namespace Bee.Language
 
         public TokenNode FirstLineTokenNode(int lineNumber)
         {
-            if(AllTokenNodes.Size()==0)
+            if(AllTokenNodes.Size==0)
             {
                 return null;
             }

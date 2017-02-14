@@ -123,11 +123,11 @@ namespace Bee.UI
                 GL.BindTexture(TextureTarget.Texture2D, 0);
             }
             // outline
-            else if (Outlines.Size() > 0)
+            else if (Outlines.Size > 0)
             {
-                for (int i = 0; i < Outlines.Size(); i++)
+                for (int i = 0; i < Outlines.Size; i++)
                 {
-                    Outlines.Get(i).Draw();
+                    Outlines[i].Draw();
                 }
             }
             /*
