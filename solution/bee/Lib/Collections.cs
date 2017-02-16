@@ -101,22 +101,28 @@ namespace Bee.Library
             return list.IndexOf(Item);
         }
 
-        public T First()
+        public T First
         {
-            if (list.Count == 0)
+            get
             {
-                throw new Exception("list is empty");
+                if (list.Count == 0)
+                {
+                    throw new Exception("list is empty");
+                }
+                return list[0];
             }
-            return list[0];
         }
         
-        public T Last()
+        public T Last
         {
-            if (list.Count == 0)
+            get
             {
-                throw new Exception("list is empty");
+                if (list.Count == 0)
+                {
+                    throw new Exception("list is empty");
+                }
+                return list[list.Count - 1];
             }
-            return list[list.Count-1];
         }
 
         public int Size

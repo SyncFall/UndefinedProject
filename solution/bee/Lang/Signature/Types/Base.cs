@@ -9,7 +9,7 @@ namespace Bee.Language
 
         public SignatureParser(TokenContainer TokenContainer)
         {
-            this.TokenPointer = new TokenPointer(TokenContainer.FirstTokenNode());
+            this.TokenPointer = new TokenPointer(TokenContainer.FirstTokenNode);
         }
 
         public bool IsEnd()

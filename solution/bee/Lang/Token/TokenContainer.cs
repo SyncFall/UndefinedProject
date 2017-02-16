@@ -120,15 +120,18 @@ namespace Bee.Language
             return (LineTokenNodes.Size + 1);
         }
 
-        public TokenNode FirstTokenNode()
+        public TokenNode FirstTokenNode
         {
-            if(AllTokenNodes.Size==0)
+            get
             {
-                return null;
-            }
-            else
-            {
-                return AllTokenNodes.First();
+                if (AllTokenNodes.Size == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return AllTokenNodes.First;
+                }
             }
         }
 
@@ -140,7 +143,7 @@ namespace Bee.Language
             }
             else if(lineNumber==0)
             {
-                return AllTokenNodes.First();
+                return AllTokenNodes.First;
             }
             else
             {

@@ -116,17 +116,17 @@ namespace Bee.Integrator
                 if (ActionCurve.Type == CurveType.Quadratic && Event.IsCursor)
                 {
                     ActionCurve.Points.Get(1).x = x;
-                    ActionCurve.Points.Get(1).y = ActionCurve.Points.Get(0).y;
+                    ActionCurve.Points.Get(1).y = ActionCurve.Points.First.y;
                     ActionCurve.Points.Get(2).x = x;
                     ActionCurve.Points.Get(2).y = y;
                     ActionCurve.BuildKnots();
                 }
                 if (ActionCurve.Type == CurveType.Cubic && Event.IsCursor)
                 {
-                    ActionCurve.Points.Get(1).x = ((ActionCurve.Points.Get(0).x + x) / 2);
+                    ActionCurve.Points.Get(1).x = ((ActionCurve.Points.First.x + x) / 2);
                     ActionCurve.Points.Get(1).y = ActionCurve.Points.Get(0).y;
                     ActionCurve.Points.Get(2).x = x;
-                    ActionCurve.Points.Get(2).y = ((ActionCurve.Points.Get(0).y + y) / 2);
+                    ActionCurve.Points.Get(2).y = ((ActionCurve.Points.First.y + y) / 2);
                     ActionCurve.Points.Get(3).x = x;
                     ActionCurve.Points.Get(3).y = y;
                     ActionCurve.BuildKnots();
@@ -135,7 +135,7 @@ namespace Bee.Integrator
                 {
                     InProgress = false;
                     ActionCurve.Selected = true;
-                    ActionCurve.Points.Last().Selected = true;
+                    ActionCurve.Points.Last.Selected = true;
                 }
                 if (Event.IsCursor)
                 {
@@ -147,7 +147,7 @@ namespace Bee.Integrator
                         curve.Intersect = false;
                         for (int j = 0; j < curve.Points.Size; j++)
                         {
-                            CurvePoint curvePoint = curve.Points.Get(j);
+                            CurvePoint curvePoint = curve.Points[j];
                             if (curvePoint.Intersect)
                             {
                                 SelectPoint = curvePoint;

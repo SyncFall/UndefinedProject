@@ -32,7 +32,7 @@ namespace Bee.Integrator
         public void Save()
         {
             StreamWriter streamWriter = new StreamWriter(CodeText.SourceText.Filepath);
-            TokenNode node = TokenContainer.FirstTokenNode();
+            TokenNode node = TokenContainer.FirstTokenNode;
             while(node != null)
             {
                 streamWriter.Write(node.Token.String);

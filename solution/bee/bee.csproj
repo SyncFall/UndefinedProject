@@ -146,7 +146,6 @@
     <Compile Include="UI\Types\Image.cs" />
     <Compile Include="UI\Types\Input.cs" />
     <Compile Include="UI\Types\Curve.cs" />
-    <Compile Include="UI\Types\Interact.cs" />
     <Compile Include="UI\Types\Point.cs" />
     <Compile Include="UI\Types\Shader.cs" />
     <Compile Include="UI\Types\Surface.cs" />
