@@ -85,7 +85,7 @@ namespace Bee.Integrator
                 }
                 else if (token.Type == TokenType.Literal)
                 {
-                    LiteralSymbol literal = (token as LiteralToken).Symbol;
+                    LiteralSymbol literal = token.Symbol as LiteralSymbol;
                     if (literal.Type == LiteralType.String || literal.Type == LiteralType.Char)
                     {
                         DrawToken(token, CodeColor.String);

@@ -9,7 +9,7 @@ namespace Bee.Language
 {
     public enum StatementType
     {
-        // condition-blocks
+        // condition-block
         If,
         ElseIf,
         Else,
@@ -34,7 +34,7 @@ namespace Bee.Language
         Sync,
         // expression-statement
         ExpressionStatement,
-        // variable declaration/definition
+        // declaration/definition
         TypeDeclaration,
         // empty-statement
         NoOperation,
@@ -44,19 +44,24 @@ namespace Bee.Language
 
     public enum StatementKeywordType
     {
+        // condition
         If,
         Else,
+        // loop
         For,
         While,
         Do,
+        // flow
         Continue,
         Break,
         Return,
+        // error
         Sanity,
         Throw,
         Try,
         Catch,
         Finally,
+        // thread
         Sync,
     }
 

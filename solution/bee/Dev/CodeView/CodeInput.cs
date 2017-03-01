@@ -227,7 +227,7 @@ namespace Bee.Integrator
                 {
                     textChar = 'z';
                 }
-                if (Keyboard.Keys[Key.ControlLeft].IsDown)
+                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
                 {
                     textChar = Char.ToUpper(textChar);
                 }
@@ -240,7 +240,7 @@ namespace Bee.Integrator
             else if (keyState.IsNumberChar())
             {
                 textChar = keyState.GetNumberChar();
-                if(Keyboard.Keys[Key.ControlLeft].IsDown)
+                if(Keyboard.Keys[Key.ShiftLeft].IsDown)
                 {
                     if(textChar == '0')
                     {
@@ -316,7 +316,7 @@ namespace Bee.Integrator
             // ß
             else if(key == Key.Minus)
             {
-                if(Keyboard.Keys[Key.ControlLeft].IsDown)
+                if(Keyboard.Keys[Key.ShiftLeft].IsDown)
                 {
                     textChar = '?';
                 }
@@ -332,7 +332,7 @@ namespace Bee.Integrator
             // +
             else if(key == Key.BracketRight)
             {
-                if (Keyboard.Keys[Key.ControlLeft].IsDown)
+                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
                 {
                     textChar = '*';
                 }
@@ -348,7 +348,7 @@ namespace Bee.Integrator
             // -
             else if (key == Key.Slash)
             {
-                if (Keyboard.Keys[Key.ControlLeft].IsDown)
+                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
                 {
                     textChar = '_';
                 }
@@ -360,7 +360,7 @@ namespace Bee.Integrator
             // #
             else if (key == Key.BackSlash)
             {
-                if (Keyboard.Keys[Key.ControlLeft].IsDown)
+                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
                 {
                     textChar = '\'';
                 }
@@ -372,7 +372,7 @@ namespace Bee.Integrator
             // .
             else if (key == Key.Period)
             {
-                if (Keyboard.Keys[Key.ControlLeft].IsDown)
+                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
                 {
                     textChar = ':';
                 }
@@ -384,7 +384,7 @@ namespace Bee.Integrator
             // ,
             else if (key == Key.Comma)
             {
-                if (Keyboard.Keys[Key.ControlLeft].IsDown)
+                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
                 {
                     textChar = ';';
                 }
@@ -396,7 +396,7 @@ namespace Bee.Integrator
             // <
             else if(key == Key.NonUSBackSlash)
             {
-                if (Keyboard.Keys[Key.ControlLeft].IsDown)
+                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
                 {
                     textChar = '>';
                 }

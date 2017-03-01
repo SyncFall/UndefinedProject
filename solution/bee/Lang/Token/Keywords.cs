@@ -14,9 +14,10 @@ namespace Bee.Language
         Scope,
         // objects
         Partial,
-        Extends,
+        Part,
         // methods
         Abstract,
+        Implement,
         Override,
         // access
         Static,
@@ -24,7 +25,11 @@ namespace Bee.Language
         // other
         This,
         Base,
+        Parent,
         New,
+        Get,
+        Set,
+        End,
     }
 
     public static class Keywords
@@ -33,15 +38,19 @@ namespace Bee.Language
         {
             new KeywordSymbol(KeywordType.Use, "use"),
             new KeywordSymbol(KeywordType.Scope, "scope"),
-            new KeywordSymbol(KeywordType.Extends, "partial"),
-            new KeywordSymbol(KeywordType.Extends, "extends"),
+            new KeywordSymbol(KeywordType.Part, "part"),
             new KeywordSymbol(KeywordType.Abstract, "abstract"),
+            new KeywordSymbol(KeywordType.Implement, "implement"),
             new KeywordSymbol(KeywordType.Override, "override"),
             new KeywordSymbol(KeywordType.Static, "static"),
             new KeywordSymbol(KeywordType.Const, "const"),
             new KeywordSymbol(KeywordType.This, "this"),
             new KeywordSymbol(KeywordType.Base, "base"),
+            new KeywordSymbol(KeywordType.Parent, "parent"),
             new KeywordSymbol(KeywordType.New, "new"),
+            new KeywordSymbol(KeywordType.Get, "get"),
+            new KeywordSymbol(KeywordType.Set, "set"),
+            new KeywordSymbol(KeywordType.End, "end"),
         };
     }
     

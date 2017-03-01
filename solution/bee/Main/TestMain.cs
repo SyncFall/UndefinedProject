@@ -10,18 +10,18 @@ namespace Bee
         public static int Main(string[] args)
         {
             SourceList sourceList = new SourceList();
-            sourceList.Add(SourceText.FromFile("test1.bee-source"));
+            //.Add(SourceText.FromFile("test1.bee-source"));
             sourceList.Add(SourceText.FromFile("test2.bee-source"));
-            sourceList.Add(SourceText.FromFile("test3.bee-source"));
-            sourceList.Add(SourceText.FromFile("test4.bee-source"));
-            sourceList.Add(SourceText.FromFile("test5.bee-source"));
+            //sourceList.Add(SourceText.FromFile("test3.bee-source"));
+            //sourceList.Add(SourceText.FromFile("test4.bee-source"));
+            //sourceList.Add(SourceText.FromFile("test5.bee-source"));
 
-            Thread.Sleep(2000);
+            Thread.Sleep(2500);
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            for (int i=0; i<200; i++)
+            for (int i=0; i<10000; i++)
             {
                 Registry registry = new Registry();
                 registry.AddSourceList(sourceList);

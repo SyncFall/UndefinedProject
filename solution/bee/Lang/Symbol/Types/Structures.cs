@@ -16,6 +16,7 @@ namespace Bee.Language
         Complete,
         Seperator,
         Point,
+        PointDouble,
         Assigment,
         // blocks
         BlockBegin,
@@ -46,6 +47,7 @@ namespace Bee.Language
             new StructureSymbol(StructureType.Assigment, StructureGroup.Seperator, "="),
             new StructureSymbol(StructureType.Seperator, StructureGroup.Seperator, ","),
             new StructureSymbol(StructureType.Point, StructureGroup.Seperator, "."),
+            new StructureSymbol(StructureType.PointDouble, StructureGroup.Seperator, ":"),
             new StructureSymbol(StructureType.BlockBegin, StructureGroup.Block, "{"),
             new StructureSymbol(StructureType.BlockEnd, StructureGroup.Block, "}"),
             new StructureSymbol(StructureType.ClosingBegin, StructureGroup.Block, "("),

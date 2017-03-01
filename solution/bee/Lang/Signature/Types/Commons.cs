@@ -16,7 +16,7 @@ namespace Bee.Language
             {
                 IdentifierPathElementSignatur elementSignature = new IdentifierPathElementSignatur();
                 signature.PathElements.Add(elementSignature);
-                elementSignature.Identifier = PrevToken as IdentifierToken;
+                elementSignature.Identifier = PrevToken;
                 elementSignature.PointSeperator = TrySeperator(StructureType.Point);
                 if (elementSignature.PointSeperator == null)
                 {
@@ -33,7 +33,7 @@ namespace Bee.Language
                 return null;
             }
             IdentifierSignature signatur = new IdentifierSignature();
-            signatur.IdentifiereToken = PrevToken as IdentifierToken;
+            signatur.IdentifiereToken = PrevToken;
             return signatur;
         }
 
@@ -42,11 +42,11 @@ namespace Bee.Language
             TypeDeclarationSignature signatur = new TypeDeclarationSignature();
             if (TryToken(TokenType.Native) != null)
             {
-                signatur.TypeNative = PrevToken as NativeToken;
+                signatur.TypeNative = PrevToken;
             }
             else if (TryToken(TokenType.Identifier) != null)
             {
-                signatur.TypeIdentifier = PrevToken as IdentifierToken;
+                signatur.TypeIdentifier = PrevToken;
             }
             else
             {
@@ -88,8 +88,8 @@ namespace Bee.Language
 
     public class TypeDeclarationSignature : SignatureSymbol
     {
-        public NativeToken TypeNative;
-        public IdentifierToken TypeIdentifier;
+        public TokenSymbol TypeNative;
+        public TokenSymbol TypeIdentifier;
         public IdentifierSignature NameIdentifier;
      
         public TypeDeclarationSignature() : base(SignatureType.TypeDeclartion)
@@ -171,7 +171,7 @@ namespace Bee.Language
 
     public class IdentifierPathElementSignatur : SignatureSymbol
     {
-        public IdentifierToken Identifier;
+        public TokenSymbol Identifier;
         public SeperatorSignature PointSeperator;
 
         public IdentifierPathElementSignatur() : base(SignatureType.IdentifierPathElement)
@@ -194,7 +194,7 @@ namespace Bee.Language
 
     public class IdentifierSignature : SignatureSymbol
     {
-        public IdentifierToken IdentifiereToken;
+        public TokenSymbol IdentifiereToken;
 
         public IdentifierSignature() : base(SignatureType.Identifier)
         { }

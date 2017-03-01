@@ -137,8 +137,9 @@ namespace Bee.UI
 
         public void ProcessInputEvent(InputEvent Event)
         {   
-            if (Sender != null && Sender is Compose)
+            if (Sender != null /*&& Sender is Compose*/)
             {
+                /*
                 Compose compose = (Sender as Compose);
                 if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick)
                 {
@@ -150,6 +151,7 @@ namespace Bee.UI
                         this.Input(Event);
                     }
                 }
+                */
             }
             else
             {

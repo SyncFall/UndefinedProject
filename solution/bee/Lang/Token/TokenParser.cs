@@ -10,12 +10,10 @@ namespace Bee.Language
     public class TokenParser
     {
         public TokenTextReader TextParser;
-        public LiteralParser LiteralParser;
 
         public TokenParser(string text)
         {
             this.TextParser = new TokenTextReader(text);
-            this.LiteralParser = new LiteralParser(TextParser);
         }
 
         public bool IsEnd()
@@ -30,9 +28,9 @@ namespace Bee.Language
                 return null;
             }
             TokenSymbol token=null;
-            if((token = TryKeywordToken()) != null ||
-               (token = TryLiteralToken()) != null ||
-               (token = TryIdentifierToken()) != null ||
+            if((token = TryKeywordOrIdentifierToken()) != null ||
+               (token = TryCharOrStringToken()) != null ||
+               (token = TryNumberToken()) != null ||
                (token = TryCommentToken()) != null ||
                (token = TryStructureToken()) != null ||
                (token = TryOperationToken()) != null ||
@@ -43,121 +41,187 @@ namespace Bee.Language
             return token;
         }
 
-        public TokenSymbol TryKeywordToken()
+        public TokenSymbol TryKeywordOrIdentifierToken()
         {
-            int startPosition = TextParser.Position;
-            int endPositon = startPosition;
-            for(int i=startPosition; i < TextParser.Length; i++)
+            int idx;
+            char _char;
+            // check for lower alpha chars
+            for (idx = TextParser.Position; idx < TextParser.Length; idx++)
             {
-                char chr = TextParser.Text[i];
-                if(!Char.IsLetter(chr))
+                _char = TextParser.Text[idx];
+                if(_char < 'a' || _char > 'z')
                 {
-                    endPositon = i;
                     break;
                 }
             }
-            if(startPosition == endPositon)
-            {
-                return null;
+            string alphaLower = null;
+            if (idx > TextParser.Position)
+            { 
+                alphaLower = new string(TextParser.Text, TextParser.Position, idx - TextParser.Position);
+                TextParser.Finish(idx);
             }
-            string str = TextParser.Text.Substring(startPosition, endPositon - startPosition);
-            TokenSymbol tokenSymbol;
-            if(Tokens.KeywordTokenStringMap.KeyExist(str))
-            {   
-                tokenSymbol = Tokens.KeywordTokenStringMap.GetValue(str);
-            }
-            else if(Tokens.NativeTokenStringMap.KeyExist(str))
+            // check for alpha numeric chars
+            bool hasAlpha = (alphaLower != null);
+            for(; idx < TextParser.Length; idx++)
             {
-                tokenSymbol = Tokens.NativeTokenStringMap.GetValue(str);
-            }
-            else if(Tokens.StatementTokenStringMap.KeyExist(str))
-            {
-                tokenSymbol = Tokens.StatementTokenStringMap.GetValue(str);
-            }
-            else if(Tokens.AccessorTokenStringMap.KeyExist(str))
-            {
-                tokenSymbol = Tokens.AccessorTokenStringMap.GetValue(str);
-            }
-            else
-            {
-                return null;
-            }
-            TextParser.Finish(endPositon);
-            return tokenSymbol;
-        }
-
-        public StructureToken TryStructureToken()
-        {
-            for(int i=0; i<Tokens.StructureTokenArray.Length; i++)
-            {
-                StructureToken structureToken = Tokens.StructureTokenArray[i];
-                if(TextParser.EqualChar(structureToken.String[0]))
+                _char = TextParser.Text[idx];
+                if (!((_char >= 'a' && _char <= 'z' && (hasAlpha=true)) || (_char >= 'A' && _char <= 'Z' && (hasAlpha=true)) || (hasAlpha && _char >= '0' && _char <= '9')))
                 {
-                    return structureToken;
+                    break;
                 }
             }
-            return null;
-        }
-
-        public OperationToken TryOperationToken()
-        {
-            for (int i = 0; i < Tokens.OperationTokenArray.Length; i++)
+            string alphaNumeric = null;
+            if (idx > TextParser.Position)
             {
-                OperationToken operationToken = Tokens.OperationTokenArray[i];
-                if (TextParser.EqualString(operationToken.String))
+                alphaNumeric = new string(TextParser.Text, TextParser.Position, idx - TextParser.Position);
+                TextParser.Finish(idx);
+            }
+            // check for keyword
+            if(alphaLower != null && alphaNumeric == null)
+            {
+                if (Tokens.KeywordMap.KeyExist(alphaLower))
                 {
-                    return operationToken;
+                    return Tokens.KeywordMap[alphaLower];
                 }
             }
-            return null;
-        }
-
-        public LiteralToken TryLiteralToken()
-        {
-            LiteralSymbol literal = LiteralParser.TryLiteral();
-            if(literal != null)
+            // check for identifier
+            if(alphaLower != null || alphaNumeric != null)
             {
-                return new LiteralToken(literal, literal.String);
+                TokenSymbol identifierSymbol = new TokenSymbol(TokenType.Identifier, (alphaLower != null ? alphaLower : "") + (alphaNumeric != null ? alphaNumeric : ""), null);
+                return identifierSymbol;
             }
+            // none here
             return null;
         }
 
-        public IdentifierToken TryIdentifierToken()
+        public TokenSymbol TryCharOrStringToken()
         {
-            string identifier = TextParser.TryIdentifier();
-            if (identifier != null)
+            int start = TextParser.Start;
+            // check for string
+            if (TextParser.EqualChar('"'))
             {
-                return new IdentifierToken(identifier);
+                TextParser.ToCharWithoutEscapeOrFileEnd('"');
+                int end = TextParser.Start;
+                string stringData = new string(TextParser.Text, start, end - start);
+                return new TokenSymbol(TokenType.Literal, stringData, new LiteralSymbol(LiteralType.String, stringData));
             }
+            // check for char
+            if (TextParser.EqualChar('\''))
+            {
+                TextParser.ToCharWithoutEscapeOrFileEnd('\'');
+                int end = TextParser.Start;
+                string charData = new string(TextParser.Text, start, end - start);
+                return new TokenSymbol(TokenType.Literal, charData, new LiteralSymbol(LiteralType.Char, charData));
+            }
+            // none here
             return null;
         }
 
-        public CommentToken TryCommentToken()
+        public TokenSymbol TryNumberToken()
         {
+            int start = TextParser.Start;
+            int idx;
+            char _char;
+            bool hasNumber = false;
+            // check for begining numbers
+            for (idx = TextParser.Start; idx < TextParser.Length; idx++)
+            {
+                _char = TextParser.Text[idx];
+                if (_char < '0' || _char > '9')
+                {
+                    break;
+                }
+                TextParser.Finish(idx+1);
+                hasNumber = true;
+            }
+            // check for point
+            if(TextParser.EqualChar('.'))
+            {
+                // check for floating numbers
+                for (idx = TextParser.Start; idx < TextParser.Length; idx++)
+                {
+                    _char = TextParser.Text[idx];
+                    if (_char < '0' || _char > '9')
+                    {
+                        break;
+                    }
+                    TextParser.Finish(idx+1);
+                    hasNumber = true;
+                }
+            }
+            // check for number
+            if (hasNumber)
+            {
+                // check for formating
+                if (idx < TextParser.Length)
+                {
+                    _char = TextParser.Text[idx];
+                    if (_char == 'f' || _char == 'd' || _char == 'i' || _char == 'l')
+                    {
+                        TextParser.Finish(++idx);
+                    }
+                }
+                string numberData = new string(TextParser.Text, start, idx - start);
+                return new TokenSymbol(TokenType.Literal, numberData, new LiteralSymbol(LiteralType.Number, numberData));
+            }
+            // none here
+            TextParser.Finish(start);
+            return null;
+        }
+
+        public TokenSymbol TryCommentToken()
+        {
+            int start = TextParser.Start;
+            // check for line comment
             if (TextParser.EqualString("//"))
             {
-                int commentStartPosition = TextParser.Position;
                 TextParser.ToLineOrFileEnd();
-                int commentEndPosition = TextParser.Position;
-                string commentData = TextParser.Text.Substring(commentStartPosition, commentEndPosition - commentStartPosition);
-                return new CommentToken("//"+commentData, commentData);
+                int end = TextParser.Start;
+                string commentData = new string(TextParser.Text, start, end - start);
+                return new TokenSymbol(TokenType.Comment, commentData, null);
             }
+            // check for block comment
             else if (TextParser.EqualString("/*"))
             {
-                int commentStartPosition = TextParser.Position;
                 TextParser.ToStringOrFileEnd("*/");
-                int commendEndPosition = TextParser.Position;
-                string commentData = TextParser.Text.Substring(commentStartPosition, ((commendEndPosition - commentStartPosition) - 2));
-                return new CommentToken("/*"+commentData+"*/", commentData);
+                int end = TextParser.Start;
+                string commentData = new string(TextParser.Text, start, end - start);
+                return new TokenSymbol(TokenType.Comment, commentData, null);
+            }
+            // none here
+            return null;
+        }
+
+
+        public TokenSymbol TryStructureToken()
+        {
+            for (int i = 0; i < Tokens.StructureArray.Length; i++)
+            {
+                if (TextParser.EqualChar(Tokens.StructureArray[i].String[0]))
+                {
+                    return Tokens.StructureArray[i];
+                }
             }
             return null;
         }
 
-        public UnknownToken TryUnknownToken()
+        public TokenSymbol TryOperationToken()
         {
-            UnknownToken token = new UnknownToken(TextParser.Text[TextParser.Position] + "");
-            TextParser.Finish(TextParser.Position + 1);
-            return token;
+            for (int i = 0; i < Tokens.OperationArray.Length; i++)
+            {
+                if (TextParser.EqualString(Tokens.OperationArray[i].String))
+                {
+                    return Tokens.OperationArray[i];
+                }
+            }
+            return null;
+        }
+
+        public TokenSymbol TryUnknownToken()
+        {
+            string unknown = TextParser.Text[TextParser.Start]+"";
+            TextParser.Finish(TextParser.Start + 1);
+            return new TokenSymbol(TokenType.Unknown, unknown, null);
         }
     }
 }

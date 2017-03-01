@@ -18,7 +18,7 @@ namespace Bee.Language
         Enum,
         Type,
         Var,
-        Call,
+        Func,
         List,
         Map,
     }
@@ -53,7 +53,7 @@ namespace Bee.Language
             new NativeSymbol("enum", NativeType.Enum),
             new NativeSymbol("type", NativeType.Type),
             new NativeSymbol("var", NativeType.Var),
-            new NativeSymbol("call", NativeType.Call),
+            new NativeSymbol("func", NativeType.Func),
             new NativeSymbol("list", NativeType.List),
             new NativeSymbol("map", NativeType.Map),
         };

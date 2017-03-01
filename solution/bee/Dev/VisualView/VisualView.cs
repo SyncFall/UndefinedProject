@@ -14,7 +14,7 @@ namespace Bee.Integrator
 {
     public class VisualView
     {
-        public Surface Surface;
+        public LineCurve Surface;
         public ActionSelect ActionSelect;
         public VisualInput VisualInput;
         public Point SelectPoint;
@@ -23,7 +23,7 @@ namespace Bee.Integrator
         public VisualView()
         {
             this.VisualInput = new VisualInput(this);
-            this.Surface = new Surface();
+            this.Surface = new LineCurve();
         }
 
         public void Draw()
@@ -40,14 +40,18 @@ namespace Bee.Integrator
                         t = .999999f;
                     }
                     Point point = curve.GetPoint(t);
-                    Points.Add(new Vertex((int)point.x, (int)point.y));
+                    Vertex pointVertex = new Vertex((int)point.x, (int)point.y);
+                    if(!Points.Contains(pointVertex))
+                    { 
+                        Points.Add(pointVertex);
+                    }
                 }
             }
 
             if(Points.Count >= 3)
             {
                 Triangulator angulator = new Triangulator();
-                List<Triad> triangles = angulator.Triangulation(Points, true);
+                List<Triad> triangles = angulator.Triangulation(Points, false);
 
                 GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
                 GL.LineWidth(2f);
@@ -73,7 +77,8 @@ namespace Bee.Integrator
                     {
                         continue;
                     }
-                    intersectPoints.AddAll(Surface.Curves[i].IntersectCurve(Surface.Curves[j]));
+                    CurvePointList curveIntersecPoints = Surface.Curves[i].IntersectCurve(Surface.Curves[j]);
+                    intersectPoints.AddAll(curveIntersecPoints);
                 }
             }
 
@@ -87,9 +92,9 @@ namespace Bee.Integrator
                 GL.PointSize(10f);
                 GL.Color3(1f, 0f, 0f);
                 GL.Begin(PrimitiveType.Points);
-                for (int x = 0; x < intersectPoints.Size; x++)
+                for (int i = 0; i < intersectPoints.Size; i++)
                 {
-                    Point point = intersectPoints[x];
+                    Point point = intersectPoints[i];
                     GL.Vertex2(point.x, point.y);
                 }
                 GL.End();
@@ -109,26 +114,26 @@ namespace Bee.Integrator
                 float y = (SelectPoint != null ? SelectPoint.y : Input.Mouse.Cursor.y);
                 if (ActionCurve.Type == CurveType.Line && Event.IsCursor)
                 {
-                    ActionCurve.Points.Get(1).x = x;
-                    ActionCurve.Points.Get(1).y = y;
+                    ActionCurve.Points[1].x = x;
+                    ActionCurve.Points[1].y = y;
                     ActionCurve.BuildKnots();
                 }
                 if (ActionCurve.Type == CurveType.Quadratic && Event.IsCursor)
                 {
-                    ActionCurve.Points.Get(1).x = x;
-                    ActionCurve.Points.Get(1).y = ActionCurve.Points.First.y;
-                    ActionCurve.Points.Get(2).x = x;
-                    ActionCurve.Points.Get(2).y = y;
+                    ActionCurve.Points[1].x = x;
+                    ActionCurve.Points[1].y = ActionCurve.Points.First.y;
+                    ActionCurve.Points[2].x = x;
+                    ActionCurve.Points[2].y = y;
                     ActionCurve.BuildKnots();
                 }
                 if (ActionCurve.Type == CurveType.Cubic && Event.IsCursor)
                 {
-                    ActionCurve.Points.Get(1).x = ((ActionCurve.Points.First.x + x) / 2);
-                    ActionCurve.Points.Get(1).y = ActionCurve.Points.Get(0).y;
-                    ActionCurve.Points.Get(2).x = x;
-                    ActionCurve.Points.Get(2).y = ((ActionCurve.Points.First.y + y) / 2);
-                    ActionCurve.Points.Get(3).x = x;
-                    ActionCurve.Points.Get(3).y = y;
+                    ActionCurve.Points[1].x = ((ActionCurve.Points.First.x + x) / 2);
+                    ActionCurve.Points[1].y = ActionCurve.Points.Get(0).y;
+                    ActionCurve.Points[2].x = x;
+                    ActionCurve.Points[2].y = ((ActionCurve.Points.First.y + y) / 2);
+                    ActionCurve.Points[3].x = x;
+                    ActionCurve.Points[3].y = y;
                     ActionCurve.BuildKnots();
                 }
                 if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick)
@@ -239,20 +244,20 @@ namespace Bee.Integrator
             float y = ActionSelect.Point.y;
             if (!InProgress && ActionButton.Type == ActionButtonType.LinePath)
             {
-                ActionCurve = Surface.AddCurve(CurveType.Line, 2);
+                ActionCurve = Surface.AddSegment(CurveType.Line, 2);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);
             }
             else if(!InProgress && ActionButton.Type == ActionButtonType.QuadraticPath)
             {
-                ActionCurve = Surface.AddCurve(CurveType.Quadratic, 20);
+                ActionCurve = Surface.AddSegment(CurveType.Quadratic, 20);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);
             }
             else if(!InProgress && ActionButton.Type == ActionButtonType.CubicPath)
             {
-                ActionCurve = Surface.AddCurve(CurveType.Cubic, 28);
+                ActionCurve = Surface.AddSegment(CurveType.Cubic, 28);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);

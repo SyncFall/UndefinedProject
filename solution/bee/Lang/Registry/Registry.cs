@@ -19,9 +19,13 @@ namespace Bee.Language
             for (int i = 0; i < SourceList.Size; i++)
             {
                 SourceText source = SourceList.Get(i);
-                Entry entry = new Entry(source);
+                Entry entry = EntryList.GetExist(source);
+                if(entry == null)
+                {
+                    entry = new Entry(source);
+                    EntryList.Add(entry);
+                }
                 entry.ParseSource();
-                EntryList.Add(entry);
             }
             Validate();
         }

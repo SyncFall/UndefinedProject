@@ -90,6 +90,8 @@
     <Compile Include="Dev\CodeView\CodeView.cs" />
     <Compile Include="Dev\VisualView\ActionSelect.cs" />
     <Compile Include="Dev\VisualView\VisualView.cs" />
+    <Compile Include="Lang\Symbol\Types\Sources.cs" />
+    <Compile Include="Lib\SortUtils.cs" />
     <Compile Include="Lib\TimeUtils.cs" />
     <Compile Include="UI\Cases\FpsCounter.cs" />
     <Compile Include="Dev\IntegratorView.cs" />
@@ -111,9 +113,8 @@
     <Compile Include="Lang\Symbol\Types\Operations.cs" />
     <Compile Include="Lang\Symbol\Types\Statements.cs" />
     <Compile Include="Lang\Token\Keywords.cs" />
-    <Compile Include="Lang\Token\LiteralParser.cs" />
-    <Compile Include="Lang\Token\Literals.cs" />
-    <Compile Include="Lang\Token\Structures.cs" />
+    <Compile Include="Lang\Symbol\Types\Literals.cs" />
+    <Compile Include="Lang\Symbol\Types\Structures.cs" />
     <Compile Include="Lang\Token\TextReader.cs" />
     <Compile Include="Lang\Token\TokenContainer.cs" />
     <Compile Include="Lang\Token\TokenParser.cs" />
@@ -140,7 +141,10 @@
     <Compile Include="UI\Types\Buffer.cs" />
     <Compile Include="UI\Types\Clipboard.cs" />
     <Compile Include="UI\Types\Color.cs" />
-    <Compile Include="UI\Types\Compose.cs" />
+    <Compile Include="UI\Types\Design.cs" />
+    <Compile Include="UI\Types\Layout.cs" />
+    <Compile Include="UI\Types\LineCurve.cs" />
+    <Compile Include="UI\Types\Text.cs" />
     <Compile Include="UI\Types\Font.cs" />
     <Compile Include="UI\Types\Glyph.cs" />
     <Compile Include="UI\Types\Image.cs" />
@@ -149,6 +153,8 @@
     <Compile Include="UI\Types\Point.cs" />
     <Compile Include="UI\Types\Shader.cs" />
     <Compile Include="UI\Types\Surface.cs" />
+    <Compile Include="UI\Types\Template.cs" />
+    <Compile Include="UI\Types\Transform.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6">

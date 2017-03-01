@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK.Graphics.OpenGL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,73 +7,63 @@ using System.Threading.Tasks;
 
 namespace Bee.UI
 {
-    public class Surface : Compose
+    public enum SurfaceType
     {
-        public CurveType CurveType;
-        public CurveList Curves = new CurveList();
-        public bool Intersect;
+//        Point,
+        Rect,
+        LineCurve,
+ //       FreeHand,
+    }
 
-        public Surface() : base(ComposeType.Surface)
+    public abstract class Surface
+    {
+        public SurfaceType Type;
+        public Layout Layout;
+        public LineCurve LineCurve = new LineCurve();
+
+        public Surface(SurfaceType Type)
+        {
+            this.Type = Type;
+        }
+
+        public void Draw(float X, float Y)
+        {
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+            GL.Translate(X, Y, 0);
+            LineCurve.Draw();
+            GL.LoadIdentity();
+        }
+    }
+
+    
+    public class RectSurface : Surface
+    {
+        public float Width;
+        public float Height;
+
+        public RectSurface(float width, float height) : base(SurfaceType.Rect)
+        {
+            this.Width = width;
+            this.Height = height;
+            this.LineCurve.AddSegment(CurveType.Line);
+            this.LineCurve.Curves[0].Points.Add(0, 0);
+            this.LineCurve.Curves[0].Points.Add(width, 0);
+            this.LineCurve.AddSegment(CurveType.Line);
+            this.LineCurve.Curves[1].Points.Add(width, 0);
+            this.LineCurve.Curves[1].Points.Add(width, height);
+            this.LineCurve.AddSegment(CurveType.Line);
+            this.LineCurve.Curves[2].Points.Add(width, height);
+            this.LineCurve.Curves[2].Points.Add(0, height);
+            this.LineCurve.AddSegment(CurveType.Line);
+            this.LineCurve.Curves[3].Points.Add(0, height);
+            this.LineCurve.Curves[3].Points.Add(0, 0);
+        }
+    }
+
+    public class LineCurveSurface : Surface
+    {
+        public LineCurveSurface() : base(SurfaceType.LineCurve)
         { }
-
-        public Curve AddCurve(CurveType Type, int Detail = 25)
-        {
-            Curve Curve = null;
-            if (Type == CurveType.Line)
-            {
-                Curve = new Curve(Type, 1, Detail);
-            }
-            else if (Type == CurveType.Quadratic)
-            {
-                Curve = new Curve(Type, 2, Detail);
-            }
-            else if (Type == CurveType.Cubic)
-            {
-                Curve = new Curve(Type, 3, Detail);
-            }
-            else if (Type == CurveType.Nurbs)
-            {
-                Curve = new Curve(Type, 2, Detail);
-            }
-            else
-            {
-                throw new Exception("invalid state");
-            }
-            Curves.Add(Curve);
-            return Curve;
-        }
-
-        public bool UpdateIntersectStatus(int X, int Y)
-        {
-            Intersect = false;
-            for(int i=0; i<Curves.Size; i++)
-            {
-                if (Curves[i].UpdateIntersectStatus(X, Y))
-                {
-                    Intersect = true;
-                }
-            }
-            return Intersect;
-        }
-
-        public override void Draw()
-        {
-            for(int i=0; i<Curves.Size; i++)
-            {
-                Curves[i].Draw();
-            }
-            for(int i=0; i<Curves.Size; i++)
-            {
-                Curves[i].DrawPoints();
-            }
-        }
-
-        public override Size Size
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
     }
 }

@@ -13,21 +13,17 @@ namespace Bee.UI
     public class SurfaceDraw
     {
         public FpsCounter FpsCounter;
-        public Text Text;
         public Surface Surface;
 
         public SurfaceDraw()
         {
             FpsCounter = new FpsCounter();
-            Text = new Text("fuckyou\nTOO!", new TextFormat());
-            Text.Input = new TextInputListener();
-
+            Surface = new RectSurface(200, 50);
         }
 
         public void Draw()
         {
-            //Text.Draw();
-            
+            Surface.Draw(50, 50);
             FpsCounter.Draw();
 
         }

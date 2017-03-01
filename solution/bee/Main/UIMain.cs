@@ -15,37 +15,6 @@ namespace Bee
         public static void Main()
         {
             Utils.PrintSourceTreeStatistics(@"..\solution\bee\");
-            /*
-            Graph g = new Graph();
-            g.AddBidirectionalEdge(new Vertex(2, 1), new Vertex(2, 5));
-            g.AddBidirectionalEdge(new Vertex(2, 1), new Vertex(3, 1));
-            g.AddBidirectionalEdge(new Vertex(2, 5), new Vertex(4, 5));
-            g.AddBidirectionalEdge(new Vertex(3, 1), new Vertex(6, 1));
-            g.AddBidirectionalEdge(new Vertex(3, 1), new Vertex(4, 5));
-            g.AddBidirectionalEdge(new Vertex(4, 5), new Vertex(7, 5));
-            g.AddBidirectionalEdge(new Vertex(7, 5), new Vertex(7, 2));
-            g.AddBidirectionalEdge(new Vertex(7, 5), new Vertex(9, 5));
-            g.AddBidirectionalEdge(new Vertex(9, 5), new Vertex(9, 4));
-            g.AddBidirectionalEdge(new Vertex(9, 4), new Vertex(7, 2));
-            g.AddBidirectionalEdge(new Vertex(9, 4), new Vertex(9, 1));
-            g.AddBidirectionalEdge(new Vertex(9, 1), new Vertex(7, 1));
-            g.AddBidirectionalEdge(new Vertex(7, 1), new Vertex(7, 2));
-            g.AddBidirectionalEdge(new Vertex(7, 1), new Vertex(6, 1));
-            g.AddBidirectionalEdge(new Vertex(7, 2), new Vertex(6, 1));
-
-            ListCollection<ListCollection<Vertex>> list = new GraphCycles().ComputeCycleBasisOfGraph(g);
-            for (int i = 0; i < list.Size(); i++)
-            {
-                ListCollection<Vertex> circle = list[i];
-                for (int j = 0; j < circle.Size(); j++)
-                {
-                    Console.Write(circle[j]);
-                }
-                Console.WriteLine();
-            }
-
-            Console.ReadKey();
-            */
 
             new MainUI().RenderCycle();
         }

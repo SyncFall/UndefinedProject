@@ -56,44 +56,44 @@ namespace Bee.Language
             return PrevToken;
         }
 
-        public KeywordToken TryToken(KeywordType keywordType)
+        public TokenSymbol TryToken(KeywordType keywordType)
         {
             if (Token == null || !Token.IsKeyword(keywordType))
             {
                 return null;
             }
             Next();
-            return (PrevToken as KeywordToken);
+            return PrevToken;
         }
 
-        public StructureToken TryToken(StructureType structureType)
+        public TokenSymbol TryToken(StructureType structureType)
         {
             if (Token == null || !Token.IsStructure(structureType))
             {
                 return null;
             }
             Next();
-            return (PrevToken as StructureToken);
+            return PrevToken;
         }
 
-        public NativeToken TryToken(NativeType nativeType)
+        public TokenSymbol TryToken(NativeType nativeType)
         {
             if (Token == null || !Token.IsNative(nativeType))
             {
                 return null;
             }
             Next();
-            return (PrevToken as NativeToken);
+            return PrevToken;
         }
 
-        public StatementToken TryToken(StatementKeywordType statementType)
+        public TokenSymbol TryToken(StatementKeywordType statementType)
         {
             if (Token == null || !Token.IsStatement(statementType))
             {
                 return null;
             }
             Next();
-            return (PrevToken as StatementToken);
+            return PrevToken;
         }
 
         public bool TrySpace()

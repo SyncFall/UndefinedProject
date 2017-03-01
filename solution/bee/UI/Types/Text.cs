@@ -9,65 +9,20 @@ using System.Threading.Tasks;
 
 namespace Bee.UI
 {
-    public enum ComposeType
-    {
-        Text,
-        Surface,
-    }
-
-    public abstract class Compose
-    {
-        public ComposeType ComposeType;
-        private InputListener InputListener;
-
-        public Compose(ComposeType Type)
-        {
-            this.ComposeType = Type;
-        }
-
-        public abstract Size Size
-        {
-            get;
-        }
-
-        public InputListener Input
-        {
-            get
-            {
-                return InputListener;
-            }
-            set
-            {
-                if(value != null)
-                {
-                    value.Sender = this;
-                    this.InputListener = value;
-                }
-                else
-                {
-                    value.Dispose();
-                    this.InputListener = null;
-                }
-            }
-        }
-
-        public abstract void Draw();
-    }
-
-    public class Text : Compose
+    public class Text
     {
         public string String;
         public GlyphContainer GlyphContainer;
         public TextFormat Format;
 
-        public Text(string String, TextFormat Format) : base(ComposeType.Text)
+        public Text(string String, TextFormat Format)
         {
             this.String = String;
             this.Format = Format;
             this.GlyphContainer = new GlyphContainer(Format.Font);
         }
 
-        public override Size Size
+        public Size Size
         {
             get
             {
@@ -107,7 +62,7 @@ namespace Bee.UI
             }
         }
        
-        public override void Draw()
+        public void Draw()
         {
             float currentX = 0;
             float currentY = 0;

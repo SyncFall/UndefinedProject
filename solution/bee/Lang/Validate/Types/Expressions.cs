@@ -55,7 +55,7 @@ namespace Bee.Language
             for (int i=0; i<Expression.OperationList.Size; i++)
             {
                 ExpressionOperationPair operationPair = Expression.OperationList.Get(i);
-                OperationSymbol operation = operationPair.Operation.OperationToken.Symbol;
+                OperationSymbol operation = operationPair.Operation.Symbol;
 
                 ExpressionResultType second = ValidateExpression(operationPair.ExpressionPair);
 
@@ -119,7 +119,7 @@ namespace Bee.Language
                 AccessSignature accessSignature = Operand.AccessSignatureList.Get(i);
                 if(accessSignature.Type == SignatureType.LiteralAccess)
                 {
-                    LiteralSymbol literalSymbol = (accessSignature as LiteralAccessSignature).LiteralToken.Symbol;
+                    LiteralSymbol literalSymbol = (accessSignature as LiteralAccessSignature).LiteralSymbol;
                     result = new ExpressionResultType(Natives.EnumMap.GetValue(NativeType.Number));
                 }
                 else if(accessSignature.Type == SignatureType.VariableAccess)

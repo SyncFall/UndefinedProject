@@ -20,59 +20,62 @@ namespace Bee.Language
         Statement,
         Comment,
         Unknown,
+        Region,
+        Processor,
     }
-
-    /*
-        // regions
-        RegionBegin,
-        RegionEnd,
-        // pre-processor
-        ProcessorIf,
-        ProcessorElse,
-        ProcessorElseIf,
-        ProcessorEndIf,
-    */
     
     public static class Tokens
     {
-        public static readonly StructureToken[] StructureTokenArray = new StructureToken[Structures.Array.Length];
-        public static readonly OperationToken[] OperationTokenArray = new OperationToken[Operations.Array.Length];
-        public static readonly MapCollection<string, KeywordToken> KeywordTokenStringMap = new MapCollection<string, KeywordToken>();
-        public static readonly MapCollection<string, NativeToken> NativeTokenStringMap = new MapCollection<string, NativeToken>();
-        public static readonly MapCollection<string, AccessorToken> AccessorTokenStringMap = new MapCollection<string, AccessorToken>();
-        public static readonly MapCollection<string, StatementToken> StatementTokenStringMap = new MapCollection<string, StatementToken>();
+        public static MapCollection<string, TokenSymbol> KeywordMap = new MapCollection<string, TokenSymbol>();
+        public static TokenSymbol[] StructureArray;
+        public static TokenSymbol[] OperationArray;
 
         static Tokens()
         {
-            for(int i=0; i < Structures.Array.Length; i++)
+            ListCollection<TokenSymbol> KeywordList = new ListCollection<TokenSymbol>();
+            for (int i=0; i < Keywords.Array.Length; i++)
             {
-                StructureToken structureToken = new StructureToken(Structures.Array[i]);
-                StructureTokenArray[i] = structureToken;
-            };
-            for(int i=0; i < Operations.Array.Length; i++)
-            {
-                OperationToken operationToken = new OperationToken(Operations.Array[i]);
-                OperationTokenArray[i] = operationToken;
+                KeywordList.Add(new TokenSymbol(TokenType.Keyword, Keywords.Array[i].String, Keywords.Array[i]));
             }
-            for(int i=0; i < Keywords.Array.Length; i++)
+            for (int i = 0; i < LiteralKeywords.Array.Length; i++)
             {
-                KeywordToken keywordToken = new KeywordToken(Keywords.Array[i]);
-                KeywordTokenStringMap.Put(keywordToken.String, keywordToken);
+                KeywordList.Add(new TokenSymbol(TokenType.Literal, LiteralKeywords.Array[i].String, LiteralKeywords.Array[i]));
             }
-            for(int i=0; i < Natives.Array.Length; i++)
+            for (int i=0; i < Natives.Array.Length; i++)
             {
-                NativeToken nativeToken = new NativeToken(Natives.Array[i]);
-                NativeTokenStringMap.Put(nativeToken.String, nativeToken);
+                KeywordList.Add(new TokenSymbol(TokenType.Native, Natives.Array[i].String, Natives.Array[i]));
             }
             for(int i=0; i < Accessors.Array.Length; i++)
             {
-                AccessorToken accessorToken = new AccessorToken(Accessors.Array[i]);
-                AccessorTokenStringMap.Put(accessorToken.String, accessorToken);
+                KeywordList.Add(new TokenSymbol(TokenType.Accessor, Accessors.Array[i].String, Accessors.Array[i]));
             }
             for(int i=0; i < StatementKeywords.Array.Length; i++)
             {
-                StatementToken statementToken = new StatementToken(StatementKeywords.Array[i]);
-                StatementTokenStringMap.Put(statementToken.String, statementToken);
+                KeywordList.Add(new TokenSymbol(TokenType.Statement, StatementKeywords.Array[i].String, StatementKeywords.Array[i]));
+            }
+            for(int i=0; i<KeywordList.Size; i++)
+            {
+                KeywordMap[KeywordList[i].String] = KeywordList[i];
+            }
+
+            StructureArray = new TokenSymbol[Structures.Array.Length];
+            for(int i=0; i<Structures.Array.Length; i++)
+            {
+                StructureArray[i] = new TokenSymbol(TokenType.Structure, Structures.Array[i].String, Structures.Array[i]);
+            }
+
+            OperationArray = new TokenSymbol[Operations.Array.Length];
+            for(int i=0; i<Operations.Array.Length; i++)
+            {
+                OperationArray[i] = new TokenSymbol(TokenType.Operation, Operations.Array[i].String, Operations.Array[i]);
+            }
+        }
+
+        public class TokenSymbolCompare : IComparer<TokenSymbol>
+        {
+            public int Compare(TokenSymbol a, TokenSymbol b)
+            {
+                return (a.String.CompareTo(b.String));
             }
         }
     }
@@ -80,142 +83,47 @@ namespace Bee.Language
     public class TokenList : ListCollection<TokenSymbol>
     { }
 
-    public abstract class TokenSymbol
+    public class TokenSymbol
     {
         public readonly TokenType Type;
         public readonly string String;
+        public readonly object Symbol;
 
-        public TokenSymbol(TokenType Type, string String)
+        public TokenSymbol(TokenType Type, string String, object Symbol)
         {
             this.Type = Type;
             this.String = String;
-        }
-
-        public bool IsEqual(TokenSymbol compare)
-        {
-            return (String == compare.String);
+            this.Symbol = Symbol;
         }
 
         public bool IsLineSpace()
         {
-            return (Type == TokenType.Structure && (this as StructureToken).Symbol.Type == StructureType.LineSpace);
+            return (Type == TokenType.Structure && (this.Symbol as StructureSymbol).Type == StructureType.LineSpace);
         }
 
         public bool IsSpace()
         {
-            return (Type == TokenType.Structure && (this as StructureToken).Symbol.Group == StructureGroup.Space) || Type == TokenType.Comment;
+            return (Type == TokenType.Structure && (this.Symbol as StructureSymbol).Group == StructureGroup.Space) || Type == TokenType.Comment;
         }
 
         public bool IsStructure(StructureType StructureType)
         {
-            return (Type == TokenType.Structure && (this as StructureToken).Symbol.Type == StructureType);
+            return (Type == TokenType.Structure && (this.Symbol as StructureSymbol).Type == StructureType);
         }
 
         public bool IsKeyword(KeywordType KeywordType)
         {
-            return (Type == TokenType.Keyword && (this as KeywordToken).Symbol.Type == KeywordType);
+            return (Type == TokenType.Keyword && (this.Symbol as KeywordSymbol).Type == KeywordType);
         }
 
         public bool IsNative(NativeType NativeType)
         {
-            return (Type == TokenType.Native && (this as NativeToken).Symbol.Type == NativeType);
+            return (Type == TokenType.Native && (this.Symbol as NativeSymbol).Type == NativeType);
         }
 
         public bool IsStatement(StatementKeywordType StatementKeyword)
         {
-            return (Type == TokenType.Statement && (this as StatementToken).Symbol.Type == StatementKeyword);
+            return (Type == TokenType.Statement && (this.Symbol as StatementKeywordSymbol).Type == StatementKeyword);
         }
-    }
-
-    public class StructureToken : TokenSymbol
-    {
-        public StructureSymbol Symbol;
-
-        public StructureToken(StructureSymbol StructureSymbol) : base(TokenType.Structure, StructureSymbol.String)
-        {
-            this.Symbol = StructureSymbol;
-        }
-    }
-
-    public class KeywordToken : TokenSymbol
-    {
-        public KeywordSymbol Symbol;
-
-        public KeywordToken(KeywordSymbol KeywordSymbol) : base(TokenType.Keyword, KeywordSymbol.String)
-        {
-            this.Symbol = KeywordSymbol;
-        }
-    }
-
-    public class NativeToken : TokenSymbol
-    {
-        public NativeSymbol Symbol;
-
-        public NativeToken(NativeSymbol NativeSymbol) : base(TokenType.Native, NativeSymbol.String)
-        {
-            this.Symbol = NativeSymbol;
-        }
-    }
-
-    public class LiteralToken : TokenSymbol
-    {
-        public LiteralSymbol Symbol;
-
-        public LiteralToken(LiteralSymbol LiteralSymbol, string TokenString) : base(TokenType.Literal, TokenString)
-        {
-            this.Symbol = LiteralSymbol;
-        }
-    }
-
-    public class IdentifierToken : TokenSymbol
-    {
-        public IdentifierToken(string IdentifierString) : base(TokenType.Identifier, IdentifierString)
-        { }
-    }
-
-    public class CommentToken : TokenSymbol
-    {
-        public string CommentData;
-
-        public CommentToken(string TokenString, string CommentData) : base(TokenType.Comment, TokenString)
-        {
-            this.CommentData = CommentData;
-        }
-    }
-
-    public class AccessorToken : TokenSymbol
-    {
-        public AccessorSymbol Symbol;
-
-        public AccessorToken(AccessorSymbol AccessorSymbol) : base(TokenType.Accessor, AccessorSymbol.String)
-        {
-            this.Symbol = AccessorSymbol;
-        }
-    }
-
-    public class OperationToken : TokenSymbol
-    {
-        public OperationSymbol Symbol;
-
-        public OperationToken(OperationSymbol OperationSymbol) : base(TokenType.Operation, OperationSymbol.String)
-        {
-            this.Symbol = OperationSymbol;
-        }
-    }
-
-    public class StatementToken : TokenSymbol
-    {
-        public StatementKeywordSymbol Symbol;
-
-        public StatementToken(StatementKeywordSymbol Symbol) : base(TokenType.Statement, Symbol.String)
-        {
-            this.Symbol = Symbol;
-        }
-    }
-
-    public class UnknownToken : TokenSymbol
-    {
-        public UnknownToken(string TokenString) : base(TokenType.Unknown, TokenString)
-        { }
     }
 }

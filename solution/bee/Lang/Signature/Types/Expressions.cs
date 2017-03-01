@@ -54,7 +54,7 @@ namespace Bee.Language
             AccessSignature accessSignatur = null;
             if (TryToken(TokenType.Literal) != null)
             {
-                LiteralAccessSignature literalAccess = new LiteralAccessSignature(PrevToken as LiteralToken);
+                LiteralAccessSignature literalAccess = new LiteralAccessSignature(PrevToken.Symbol as LiteralSymbol);
                 accessSignatur = literalAccess;
                 signature.AccessSignatureList.Add(literalAccess);
                 if ((literalAccess.Seperator = TrySeperator(StructureType.Point)) == null)
@@ -122,7 +122,7 @@ namespace Bee.Language
             {
                 return null;
             }
-            OperationSignature signature = new OperationSignature(PrevToken as OperationToken);
+            OperationSignature signature = new OperationSignature(PrevToken.Symbol as OperationSymbol);
             TrySpace();
             return signature;
         }
@@ -158,11 +158,11 @@ namespace Bee.Language
 
     public class OperationSignature : SignatureSymbol
     {
-        public OperationToken OperationToken;
+        public OperationSymbol Symbol;
 
-        public OperationSignature(OperationToken OperationToken) : base(SignatureType.Operation)
+        public OperationSignature(OperationSymbol OperationSymbol) : base(SignatureType.Operation)
         {
-            this.OperationToken = OperationToken;
+            this.Symbol = OperationSymbol;
         }
     }
 
@@ -192,7 +192,7 @@ namespace Bee.Language
 
         public override string ToString()
         {
-            return ", operation(type:" + Operation.OperationToken.Symbol.Type + ", symbol:" + Operation.OperationToken.Symbol.String + "), " + ExpressionPair;
+            return ", operation(type:" + Operation.Symbol.Type + ", symbol:" + Operation.Symbol.String + "), " + ExpressionPair;
         }
     }
 
@@ -222,16 +222,16 @@ namespace Bee.Language
 
     public class LiteralAccessSignature : AccessSignature
     {
-        public LiteralToken LiteralToken;
+        public LiteralSymbol LiteralSymbol;
 
-        public LiteralAccessSignature(LiteralToken LiteralToken) : base(SignatureType.LiteralAccess)
+        public LiteralAccessSignature(LiteralSymbol LiteralSymbol) : base(SignatureType.LiteralAccess)
         {
-            this.LiteralToken = LiteralToken;
+            this.LiteralSymbol = LiteralSymbol;
         }
 
         public override string ToString()
         {
-            return "literal(type:" + LiteralToken.Symbol.Type + ", symbol:" + LiteralToken.Symbol.String + ")";
+            return "literal(type:" + LiteralSymbol.Type + ", symbol:" + LiteralSymbol.String + ")";
         }
     }
 

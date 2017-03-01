@@ -124,14 +124,7 @@ namespace Bee.Language
         {
             get
             {
-                if (AllTokenNodes.Size == 0)
-                {
-                    return null;
-                }
-                else
-                {
-                    return AllTokenNodes.First;
-                }
+                return FirstLineTokenNode(0);
             }
         }
 

@@ -16,18 +16,11 @@ namespace Bee.UI
         public Point()
         { }
 
-        public Point(float x, float y)
+        public Point(float x, float y, float z=0)
         {
             this.x = x;
             this.y = y;
             this.z = 0;
-        }
-
-        public Point(float x, float y, float z)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
         }
 
         public Point Copy()
@@ -41,22 +34,6 @@ namespace Bee.UI
         public void Add(float x, float y, float z=0)
         {
             base.Add(new Point(x, y, z));
-        }
-    }
-
-    public class Size
-    {
-        public float Width;
-        public float Height;
-        public float Depth;
-
-        public Size()
-        { }
-
-        public Size(float width, float height)
-        {
-            this.Width = width;
-            this.Height = height;
         }
     }
 }

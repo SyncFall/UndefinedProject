@@ -40,7 +40,7 @@ namespace Bee.Language
         public StatementSignature TryStatement()
         {
             TrySpace();
-            StatementToken first=null, second=null;
+            TokenSymbol first=null, second=null;
             StatementType statementType;
             bool conditionBlock = false;
             bool keywordStatement = false;

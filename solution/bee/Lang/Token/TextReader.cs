@@ -8,13 +8,13 @@ namespace Bee.Language
 {
     public class TokenTextReader
     {
-        public readonly string Text;
+        public char[] Text;
         public int Position, Length;
         public int Start;
 
         public TokenTextReader(string Text)
         {
-            this.Text = (Text == null ? "" : Text);
+            this.Text = Text.ToArray();
             this.Length = Text.Length;
         }
 
@@ -116,30 +116,6 @@ namespace Bee.Language
             }
             Start = Position;
             return false;
-        }
-
-        public string TryIdentifier()
-        {
-            Position = Start;
-            if (Position == Length || !Char.IsLetter(Text[Position]))
-            {
-                return null;
-            }
-            Position++;
-            while (Position < Length)
-            {
-                if (Char.IsLetter(Text[Position]) || Char.IsDigit(Text[Position]) || Text[Position] == '_')
-                {
-                    Position++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            string result = Text.Substring(Start, Position - Start);
-            Start = Position;
-            return result;
         }
     }
 }
