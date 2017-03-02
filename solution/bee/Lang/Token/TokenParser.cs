@@ -81,7 +81,7 @@ namespace Bee.Language
                 TextParser.Finish(idx);
             }
             // check for keyword
-            if(alphaLowerStart != -1 && alphaNumericStart == -1)
+            if(alphaLowerLen > 0 && alphaNumericLen == 0)
             {
                 TokenSymbol tokenSymbol = Tokens.KeywordMap.Find(TextParser.Text, alphaLowerStart, alphaLowerStart + alphaLowerLen);
                 if(tokenSymbol != null)
@@ -90,7 +90,7 @@ namespace Bee.Language
                 }
             }
             // check for identifier
-            if(alphaLowerStart != -1 || alphaNumericStart != -1)
+            if(alphaLowerLen > 0 || alphaNumericLen > 0)
             {
                 char[] charArray = new char[alphaLowerLen + alphaNumericLen];
                 int i,x=0;

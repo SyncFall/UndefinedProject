@@ -1,4 +1,4 @@
-BasicObject : object
+object BasicObject
 
 bool boolean;
 char character;

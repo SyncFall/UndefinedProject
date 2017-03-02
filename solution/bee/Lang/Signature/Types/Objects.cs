@@ -112,7 +112,7 @@ namespace Bee.Language
                 assigmentExpression = TryExpression();
             }
             SeperatorSignature complete = TrySeperator(StructureType.Complete);
-            if (assigment != null || complete != null)
+            if (assigment != null)
             {
                 MemberSignature member = new MemberSignature();
                 member.TypeDeclaration = typeDeclaration;

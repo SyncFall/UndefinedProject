@@ -10,15 +10,31 @@ using Bee.UI;
 
 namespace Bee.Integrator
 { 
+    public class CodeSelectionPart
+    {
+        public int LinePosition;
+        public int CursorPosition;
+
+        public CodeSelectionPart(int LinePosition, int CursorPosition)
+        {
+            this.LinePosition = LinePosition;
+            this.CursorPosition = CursorPosition;
+        }
+
+        public CodeSelectionPart Clone()
+        {
+            return new CodeSelectionPart(LinePosition, CursorPosition);
+        }
+    }
+
     public class CodeSelection
     {
         public CodeText CodeText;
-        public int StartLinePosition;
-        public int StartCursorPosition;
-        public int EndLinePosition;
-        public int EndCursorPosition;
-        public bool HasSelectionBegin;
-        public bool HasSelectionEnd;
+        public CodeSelectionPart BeginPart;
+        public CodeSelectionPart EndPart;
+
+        private CodeSelection()
+        { }
 
         public CodeSelection(CodeText CodeText)
         {
@@ -26,63 +42,69 @@ namespace Bee.Integrator
             Begin(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
         }
 
+        public CodeSelection Clone()
+        {
+            CodeSelection clone = new CodeSelection();
+            clone.BeginPart = (BeginPart != null ? BeginPart.Clone() : null);
+            clone.EndPart = (EndPart != null ? EndPart.Clone() : null);
+            return clone;
+        }
+
+        public void Bind(CodeSelection Bind)
+        {
+            BeginPart = Bind.BeginPart;
+            EndPart = Bind.EndPart;
+        }
+
         public void Begin(int LinePosition, int CursorPosition)
         {
-            Clear();
-            StartLinePosition = LinePosition;
-            StartCursorPosition = CursorPosition;
-            HasSelectionBegin = true;
+            BeginPart = new CodeSelectionPart(LinePosition, CursorPosition);
+            EndPart = null;
         }
 
         public void End(int LinePosition, int CursorPosition)
         {
-            EndLinePosition = LinePosition;
-            EndCursorPosition = CursorPosition;
-            HasSelectionEnd = true;
+            EndPart = new CodeSelectionPart(LinePosition, CursorPosition);
         }
 
         public bool HasSelection()
         {
-            return (HasSelectionBegin && HasSelectionEnd);
+            return (BeginPart != null && EndPart != null);
         }
 
         public void Clear()
         {
-            HasSelectionBegin = false;
-            HasSelectionEnd = false;
-            StartLinePosition = -1;
-            StartCursorPosition = -1;
-            EndLinePosition = -1;
-            EndCursorPosition = -1;
+            BeginPart = null;
+            EndPart = null;
         }
 
-        public CodeSelection GetOrderedSelection()
+        public CodeSelection GetOrdered()
         {
-            CodeSelection orderedSelection = new CodeSelection(CodeText);
-            if(EndLinePosition < StartLinePosition)
+            CodeSelection ordered = new CodeSelection(CodeText);
+            if(BeginPart == null || EndPart == null)
             {
-                orderedSelection.StartLinePosition = EndLinePosition;
-                orderedSelection.StartCursorPosition = EndCursorPosition;
-                orderedSelection.EndLinePosition = StartLinePosition;
-                orderedSelection.EndCursorPosition = StartCursorPosition;
+                ordered.BeginPart = BeginPart;
+                ordered.EndPart = EndPart;
+                return ordered;
             }
-            else if(EndLinePosition == StartLinePosition && EndCursorPosition < StartCursorPosition)
+            if(EndPart.LinePosition < BeginPart.LinePosition)
             {
-                orderedSelection.StartLinePosition = StartLinePosition;
-                orderedSelection.StartCursorPosition = EndCursorPosition;
-                orderedSelection.EndLinePosition = EndLinePosition;
-                orderedSelection.EndCursorPosition = StartCursorPosition;
+                ordered.BeginPart = EndPart;
+                ordered.EndPart = BeginPart;
+            }
+            else if(BeginPart.LinePosition == EndPart.LinePosition && EndPart.CursorPosition < BeginPart.CursorPosition)
+            {
+                ordered.BeginPart = BeginPart;
+                ordered.BeginPart.CursorPosition = EndPart.CursorPosition;
+                ordered.EndPart = EndPart;
+                ordered.EndPart.CursorPosition = BeginPart.CursorPosition;
             }
             else
             {
-                orderedSelection.StartLinePosition = StartLinePosition;
-                orderedSelection.StartCursorPosition = StartCursorPosition;
-                orderedSelection.EndLinePosition = EndLinePosition;
-                orderedSelection.EndCursorPosition = EndCursorPosition;
+                ordered.BeginPart = BeginPart;
+                ordered.EndPart = EndPart;
             }
-            orderedSelection.HasSelectionBegin = HasSelectionBegin;
-            orderedSelection.HasSelectionEnd = HasSelectionEnd;
-            return orderedSelection;
+            return ordered;
         }
 
         public void Draw()
@@ -96,12 +118,12 @@ namespace Bee.Integrator
             GL.LoadIdentity();
             GL.Color3(38 / 255f, 79 / 255f, 120 / 255f);
 
-            CodeSelection CodeSelection = GetOrderedSelection();
+            CodeSelection CodeSelection = GetOrdered();
             GlyphMetrics GlyphMetrics = CodeText.GlyphMetrics;
             GlyphContainer GlyphContainer = CodeText.GlyphContainer;
             TokenContainer TokenContainer = CodeText.TokenContainer;
 
-            for(int line=CodeSelection.StartLinePosition; line <= CodeSelection.EndLinePosition; line++)
+            for(int line=CodeSelection.BeginPart.LinePosition; line <= CodeSelection.EndPart.LinePosition; line++)
             {
                 float yOffset = GlyphMetrics.TopSpace + ((GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace) * line);
                 float xOffset = GlyphMetrics.LeftSpace;
@@ -118,11 +140,11 @@ namespace Bee.Integrator
                 for (int cursor=0; cursor<lineText.Length; cursor++)
                 {
                     // start
-                    if(line == CodeSelection.StartLinePosition && cursor == CodeSelection.StartCursorPosition)
+                    if(line == CodeSelection.BeginPart.LinePosition && cursor == CodeSelection.BeginPart.CursorPosition)
                     {
                         xBegin = xOffset;
                     }
-                    else if(line > CodeSelection.StartLinePosition && cursor == 0)
+                    else if(line > CodeSelection.BeginPart.CursorPosition && cursor == 0)
                     {
                         xBegin = xOffset;
                     }
@@ -144,11 +166,11 @@ namespace Bee.Integrator
                     }
 
                     // end
-                    if (line < CodeSelection.EndLinePosition && cursor == lineText.Length-1)
+                    if (line < CodeSelection.EndPart.LinePosition && cursor == lineText.Length-1)
                     {
                         xEnd = xOffset;
                     }
-                    else if (line == CodeSelection.EndLinePosition && cursor == CodeSelection.EndCursorPosition-1)
+                    else if (line == CodeSelection.EndPart.LinePosition && cursor == CodeSelection.EndPart.CursorPosition-1)
                     {
                         xEnd = xOffset;
                     }

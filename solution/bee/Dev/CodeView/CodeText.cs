@@ -88,7 +88,7 @@ namespace Bee.Integrator
             this.SpaceWidth = (int)SpaceGlyph.HoriziontalAdvance;
             this.TabWidth = (SpaceWidth * 2);
             this.VerticalAdvance = (int)SpaceGlyph.VerticalAdvance;
-            this.LineSpace = (int)(DelimeterGlyph.Height - DelimeterGlyph.VerticalAdvance);
+            this.LineSpace = (int)(DelimeterGlyph.VerticalAdvance * 0.25);// (int)((DelimeterGlyph.Height - DelimeterGlyph.VerticalAdvance));
         }
     }
 }

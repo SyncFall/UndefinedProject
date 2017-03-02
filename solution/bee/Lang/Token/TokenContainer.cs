@@ -37,7 +37,7 @@ namespace Bee.Language
 
         public void StepReset()
         {
-            Current = BeginStepNode.RemoveAt(BeginStepNode.Size - 1);
+            Current = BeginStepNode.RemoveAt(BeginStepNode.Size-1);
         }
 	}
 

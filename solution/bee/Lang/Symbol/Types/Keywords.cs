@@ -9,26 +9,28 @@ namespace Bee.Language
 {
     public enum KeywordType
     {
-        // sources
+        // source-directive
         Use,
         Scope,
-        // objects
-        Partial,
+        // object-hierachie
+        Extend,
         Part,
-        // methods
+        // method-polyphormie
         Abstract,
         Implement,
         Override,
-        // access
+        // variable-access
         Static,
         Const,
-        // other
+        // object-code
         This,
         Base,
         Parent,
         New,
+        // property
         Get,
         Set,
+        // block
         End,
     }
 
@@ -38,6 +40,7 @@ namespace Bee.Language
         {
             new KeywordSymbol(KeywordType.Use, "use"),
             new KeywordSymbol(KeywordType.Scope, "scope"),
+            new KeywordSymbol(KeywordType.Extend, "extend"),
             new KeywordSymbol(KeywordType.Part, "part"),
             new KeywordSymbol(KeywordType.Abstract, "abstract"),
             new KeywordSymbol(KeywordType.Implement, "implement"),

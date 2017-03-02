@@ -49,12 +49,31 @@ namespace Bee.Integrator
         public int CursorPosition;
         public int CursorPreferedPosition;
 
+        private CodeCursor()
+        { }
+
         public CodeCursor(CodeText CodeText)
         {
             this.CodeText = CodeText;
             this.TokenContainer = CodeText.TokenContainer;
             this.CodeContainer = CodeText.CodeContainer;
             this.CursorBlink = new BlinkCursor();
+        }
+
+        public CodeCursor Clone()
+        {
+            CodeCursor clone = new CodeCursor();
+            clone.LineNumber = LineNumber;
+            clone.CursorPosition = CursorPosition;
+            clone.CursorPreferedPosition = CursorPreferedPosition;
+            return clone;
+        }
+
+        public void Bind(CodeCursor Bind)
+        {
+            LineNumber = Bind.LineNumber;
+            CursorPosition = Bind.CursorPosition;
+            CursorPreferedPosition = Bind.CursorPreferedPosition;
         }
 
         public void SetPosition(int lineNumber, int cursorPosition)
@@ -76,7 +95,7 @@ namespace Bee.Integrator
 
         public void Copy()
         {
-            CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
+            CodeSelection selection = CodeText.CodeSelection.GetOrdered();
             if (selection.HasSelection())
             {
                 string sourceText = CodeText.SourceText.Text;
@@ -85,11 +104,11 @@ namespace Bee.Integrator
                 bool copy = false;
                 for (int i = 0; i < sourceText.Length; i++, cursor++)
                 {
-                    if (line == selection.StartLinePosition && cursor == selection.StartCursorPosition)
+                    if (line == selection.BeginPart.LinePosition && cursor == selection.BeginPart.CursorPosition)
                     {
                         copy = true;
                     }
-                    else if(line == selection.EndLinePosition && cursor == selection.EndCursorPosition)
+                    else if(line == selection.EndPart.LinePosition && cursor == selection.EndPart.CursorPosition)
                     {
                         copy = false;
                     }
@@ -109,7 +128,7 @@ namespace Bee.Integrator
 
         public void Cut()
         {
-            CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
+            CodeSelection selection = CodeText.CodeSelection.GetOrdered();
             if (selection.HasSelection())
             {
                 string sourceText = CodeText.SourceText.Text;
@@ -119,11 +138,11 @@ namespace Bee.Integrator
                 bool cut = false;
                 for (int i = 0; i < sourceText.Length; i++, cursor++)
                 {
-                    if (line == selection.StartLinePosition && cursor == selection.StartCursorPosition)
+                    if (line == selection.BeginPart.LinePosition && cursor == selection.BeginPart.CursorPosition)
                     {
                         cut = true;
                     }
-                    else if (line == selection.EndLinePosition && cursor == selection.EndCursorPosition)
+                    else if (line == selection.EndPart.LinePosition && cursor == selection.EndPart.CursorPosition)
                     {
                         cut = false;
                     }
@@ -144,7 +163,7 @@ namespace Bee.Integrator
                 Clipboard.SetText(strBuilderCut.ToString().Replace("\n", "\r\n"));
                 CodeText.CodeSelection.Clear();
                 CodeText.SetSourceText(CodeText.SourceText.SetText(strBuilder.ToString()));
-                SetPosition(selection.StartLinePosition, selection.StartCursorPosition);
+                SetPosition(selection.BeginPart.LinePosition, selection.BeginPart.CursorPosition);
             }
         }
 
@@ -220,7 +239,7 @@ namespace Bee.Integrator
         public void TextInsert(string insertText)
         {
             insertText = insertText.Replace("\r", "");
-            CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
+            CodeSelection selection = CodeText.CodeSelection.GetOrdered();
             string sourceText = CodeText.SourceText.Text;
             StringBuilder strBuilder = new StringBuilder(sourceText.Length);
             if (selection.HasSelection())
@@ -229,12 +248,12 @@ namespace Bee.Integrator
                 bool append = true;
                 for(int i=0; i<sourceText.Length+1; i++, cursor++)
                 {
-                    if(selection.StartLinePosition == line && selection.StartCursorPosition == cursor)
+                    if(selection.BeginPart.LinePosition == line && selection.BeginPart.CursorPosition == cursor)
                     {
                         strBuilder.Append(insertText);
                         append = false;
                     }
-                    else if(selection.EndLinePosition == line && selection.EndCursorPosition == cursor)
+                    else if(selection.EndPart.LinePosition == line && selection.EndPart.CursorPosition == cursor)
                     {
                         append = true;
                     }
@@ -286,7 +305,7 @@ namespace Bee.Integrator
             {
                 return;
             }
-            CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
+            CodeSelection selection = CodeText.CodeSelection.GetOrdered();
             string sourceText = CodeText.SourceText.Text;
             StringBuilder strBuilder = new StringBuilder(sourceText.Length);
             if(selection.HasSelection())
@@ -295,11 +314,11 @@ namespace Bee.Integrator
                 bool append = true;
                 for (int i = 0; i < sourceText.Length+1; i++, cursor++)
                 {
-                    if (selection.StartLinePosition == line && selection.StartCursorPosition == cursor)
+                    if (selection.BeginPart.LinePosition == line && selection.BeginPart.CursorPosition == cursor)
                     {
                         append = false;
                     }
-                    else if (selection.EndLinePosition == line && selection.EndCursorPosition == cursor)
+                    else if (selection.EndPart.LinePosition == line && selection.EndPart.CursorPosition == cursor)
                     {
                         append = true;
                     }
@@ -316,7 +335,7 @@ namespace Bee.Integrator
                         }
                     }
                 }
-                SetPosition(selection.StartLinePosition, selection.StartCursorPosition);
+                SetPosition(selection.BeginPart.LinePosition, selection.BeginPart.CursorPosition);
             }
             else
             {
@@ -345,7 +364,7 @@ namespace Bee.Integrator
 
         public void KeyDelete()
         {
-            CodeSelection selection = CodeText.CodeSelection.GetOrderedSelection();
+            CodeSelection selection = CodeText.CodeSelection.GetOrdered();
             string sourceText = CodeText.SourceText.Text;
             StringBuilder strBuilder = new StringBuilder(sourceText.Length);
             if (selection.HasSelection())
@@ -354,11 +373,11 @@ namespace Bee.Integrator
                 bool append = true;
                 for (int i = 0; i < sourceText.Length; i++, cursor++)
                 {
-                    if (selection.StartLinePosition == line && selection.StartCursorPosition == cursor)
+                    if (selection.BeginPart.LinePosition == line && selection.BeginPart.CursorPosition == cursor)
                     {
                         append = false;
                     }
-                    else if (selection.EndLinePosition == line && selection.EndCursorPosition == cursor)
+                    else if (selection.EndPart.LinePosition == line && selection.EndPart.CursorPosition == cursor)
                     {
                         append = true;
                     }
@@ -374,7 +393,7 @@ namespace Bee.Integrator
                 }
                 CodeText.SetSourceText(CodeText.SourceText.SetText(strBuilder.ToString()));
                 CodeText.CodeSelection.Clear();
-                SetPosition(selection.StartLinePosition, selection.StartCursorPosition);
+                SetPosition(selection.BeginPart.LinePosition, selection.BeginPart.CursorPosition);
             }
             else
             {

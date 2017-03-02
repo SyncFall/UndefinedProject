@@ -66,29 +66,41 @@ namespace Bee.Language
             }
         }
 
-        private TokenSymbol FindSymbolNode(char[] Chars, int start, int end, int index, Node Node)
+        private TokenSymbol FindSymbolNode(char[] Chars, int start, int end, int index, Node node)
         {
-            int Char = Chars[index];
             /*
             if (Char > 127)
             {
                 throw new Exception("invalid char");
             }
             */
-            Node child = Node.Childrens[Char];
-            if(child == null)
+            Node child;
+            while(true)
             {
-                return null;
+                child = node.Childrens[Chars[index]];
+                // no-node
+                if (child == null)
+                {
+                    return null;
+                }
+                // go-depth
+                else if (index+1 < end)
+                {
+                    index++;
+                    node = child;
+                    continue;
+                }
+                // exact-node
+                else if (child.Symbol != null)
+                {
+                    return child.Symbol;
+                }
+                // no-exact-node
+                else
+                {
+                    return null;
+                }
             }
-            if(index+1 < end)
-            {
-                return FindSymbolNode(Chars, start, end, index+1, child);
-            }
-            else if(child.Symbol != null)
-            {
-                return child.Symbol;
-            }
-            return null;
         }
 
         class Node

@@ -15,8 +15,8 @@ namespace Bee.Integrator
     public class CodeHistory
     {
         public CodeText CodeText;
-        public ListCollection<CodeHistoryStep> History = new ListCollection<CodeHistoryStep>();
-        public int HistoryPosition;
+        public ListCollection<CodeHistoryEntry> History = new ListCollection<CodeHistoryEntry>();
+        public int Position;
 
         public CodeHistory(CodeText CodeText)
         {
@@ -27,48 +27,52 @@ namespace Bee.Integrator
         public void Clear()
         {
             History.Clear();
-            HistoryPosition = -1;
+            Position = -1;
         }
 
-        public void AddStep(CodeHistoryStep StepEntry)
+        public void AddHistory(CodeHistoryEntry Entry)
         {
-            History.Add(StepEntry);
-            HistoryPosition++;
-        }
-
-        public bool UndoStep()
-        {
-            if(HistoryPosition < 0)
+            if(Position != -1)
             {
-                return false;
+                while(Position+1 < History.Size)
+                {
+                    History.RemoveAt(Position+1);
+                }
             }
-            History.Get(HistoryPosition).DoUndo();
-            HistoryPosition--;
-            return true;
+            History.Add(Entry);
+            Position = (History.Size-1);
         }
 
-        public bool RedoStep()
+        public CodeHistoryEntry UndoHistory()
         {
-            if(HistoryPosition >= History.Size-1)
+            if(History.Size==0 || Position < 1)
             {
-                return false;
+                return null;
             }
-            HistoryPosition++;
-            History.Get(HistoryPosition).DoRedo();
-            return true;
+            return History.Get(--Position);
+        }
+
+        public CodeHistoryEntry RedoHistory()
+        {
+            if (History.Size==0 || Position >= History.Size-1)
+            {
+                return null;
+            }
+            return History.Get(++Position);
         }
     }
 
-    public abstract class CodeHistoryStep
+    public class CodeHistoryEntry
     {
-        public CodeHistoryType Type;
+        public string CodeString;
+        public CodeCursor CodeCursor;
+        public CodeSelection CodeSelection;
 
-        public CodeHistoryStep(CodeHistoryType Type)
+        public CodeHistoryEntry(string CodeString, CodeCursor CodeCursor, CodeSelection CodeSelection)
         {
-            this.Type = Type;
+            this.CodeString = CodeString;
+            this.CodeCursor = CodeCursor.Clone();
+            this.CodeSelection = CodeSelection.Clone();
         }
-
-        public abstract void DoUndo();
-        public abstract void DoRedo();
     }
 }

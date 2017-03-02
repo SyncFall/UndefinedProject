@@ -19,10 +19,10 @@ namespace Bee.Language
             for (int i = 0; i < SourceList.Size; i++)
             {
                 SourceText source = SourceList.Get(i);
-                Entry entry = EntryList.GetExist(source);
+                RegistryEntry entry = EntryList.GetExist(source);
                 if(entry == null)
                 {
-                    entry = new Entry(source);
+                    entry = new RegistryEntry(source);
                     EntryList.Add(entry);
                 }
                 entry.ParseSource();
@@ -32,7 +32,7 @@ namespace Bee.Language
 
         public void UpdateSource(SourceText SourceText)
         {
-            Entry entry = EntryList.GetExist(SourceText);
+            RegistryEntry entry = EntryList.GetExist(SourceText);
             entry.ParseSource();
             Validate();
         }
@@ -42,7 +42,7 @@ namespace Bee.Language
             Validator validator = new Validator(this);
             for (int i=0; i<EntryList.Size; i++)
             {
-                Entry entry = EntryList[i];
+                RegistryEntry entry = EntryList[i];
                 validator.ValidateSource(entry.SourceSymbol);
             }
         }
@@ -69,9 +69,9 @@ namespace Bee.Language
         }
     }
 
-    public class EntryList : ListCollection<Entry>
+    public class EntryList : ListCollection<RegistryEntry>
     {
-        public Entry GetExist(SourceText SourceText)
+        public RegistryEntry GetExist(SourceText SourceText)
         {
             for(int i=0; i<Size; i++)
             {
@@ -84,7 +84,7 @@ namespace Bee.Language
         }
     }
 
-    public class Entry
+    public class RegistryEntry
     {
         public SourceSymbol SourceSymbol;
         public SourceText SourceText;
@@ -92,7 +92,7 @@ namespace Bee.Language
         public SignatureContainer SignatureContainer;
         public SymbolContainer SymbolContainer;
         
-        public Entry(SourceText SourceText)
+        public RegistryEntry(SourceText SourceText)
         {
             this.SourceText = SourceText;
             this.TokenContainer = new TokenContainer();

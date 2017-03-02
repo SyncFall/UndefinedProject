@@ -31,7 +31,7 @@ namespace Bee.Language
             }
         }
 
-        public TokenSymbol Next()
+        public TokenSymbol NextToken()
         {
             return (TokenPointer.Current != null && TokenPointer.Next() != null ? TokenPointer.Current.Token : null);
         }
@@ -52,7 +52,7 @@ namespace Bee.Language
             {
                 return null;
             }
-            Next();
+            NextToken();
             return PrevToken;
         }
 
@@ -62,7 +62,7 @@ namespace Bee.Language
             {
                 return null;
             }
-            Next();
+            NextToken();
             return PrevToken;
         }
 
@@ -72,7 +72,7 @@ namespace Bee.Language
             {
                 return null;
             }
-            Next();
+            NextToken();
             return PrevToken;
         }
 
@@ -82,7 +82,7 @@ namespace Bee.Language
             {
                 return null;
             }
-            Next();
+            NextToken();
             return PrevToken;
         }
 
@@ -92,7 +92,7 @@ namespace Bee.Language
             {
                 return null;
             }
-            Next();
+            NextToken();
             return PrevToken;
         }
 
@@ -102,7 +102,7 @@ namespace Bee.Language
             while(Token != null && Token.IsSpace())
             {
                 hasSpace = true;
-                Next();
+                NextToken();
             }
             return hasSpace;
         }
@@ -115,7 +115,7 @@ namespace Bee.Language
                 return null;
             }
             SeperatorSignature signatur = new SeperatorSignature(Token);
-            Next();
+            NextToken();
             TrySpace();
             return signatur;
         }
@@ -128,7 +128,7 @@ namespace Bee.Language
                 return null;
             }
             BlockSignature signatur = new BlockSignature(Token);
-            Next();
+            NextToken();
             TrySpace();
             return signatur;
         }
@@ -140,7 +140,7 @@ namespace Bee.Language
                 return null;
             }
             TokenSymbol unknownToken = Token;
-            Next();
+            NextToken();
             return new UnknownSignatur(unknownToken);
         }
     }

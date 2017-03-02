@@ -31,7 +31,7 @@ namespace Bee.Language
             ){
                 ;
             }
-            //Console.WriteLine(signature);
+            Console.WriteLine(signature);
             return signature;
         }
     }

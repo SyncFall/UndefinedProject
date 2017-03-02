@@ -25,6 +25,7 @@ namespace Bee.Language
         Object,
         Member,
         Method,
+        Property,
         TypeDeclartion,
         ParameterDeclaration,
         ParameterElementDeclaration,

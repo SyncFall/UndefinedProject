@@ -94,7 +94,7 @@ namespace Bee.Integrator
                 {
                     CodeText.CodeSelection.Begin(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
                 }
-                else if(cursorNavigation && keyState.Type == Key.ShiftLeft)
+                else if(cursorNavigation && Keyboard.Keys[Key.ShiftLeft].IsDown)
                 {
                     CodeText.CodeSelection.End(CodeText.CodeCursor.LineNumber, CodeText.CodeCursor.CursorPosition);
                 }
@@ -120,6 +120,8 @@ namespace Bee.Integrator
             Key key = keyState.Type;
             bool isDown = keyState.IsDown;
             bool isClick = keyState.IsClick;
+
+            CodeHistoryEntry historyEntry = new CodeHistoryEntry(CodeText.SourceText.Text, CodeText.CodeCursor, CodeText.CodeSelection);
 
             // backspace
             if (isDown && key == Key.BackSpace)
@@ -178,14 +180,30 @@ namespace Bee.Integrator
                 }
             }
             // undo
-            else if (isDown && Keyboard.Keys[Key.ControlLeft].IsDown && key == Key.Y /* todo: z */)
+            else if (isClick && Keyboard.Keys[Key.ControlLeft].IsDown && key == Key.Y /* todo: z */)
             {
-                CodeText.CodeHistory.UndoStep();
+                CodeHistoryEntry undoHistory = CodeText.CodeHistory.UndoHistory();
+                if(undoHistory != null)
+                {
+                    CodeText.SetSourceText(CodeText.SourceText.SetText(undoHistory.CodeString));
+                    CodeText.CodeCursor.Bind(undoHistory.CodeCursor);
+                    CodeText.CodeSelection.Bind(undoHistory.CodeSelection);
+                }
+                CodeText.CodeCursor.CursorBlink.Reset();
+                return true;
             }
             // redo
-            else if (isDown && Keyboard.Keys[Key.ControlLeft].IsDown && key == Key.Z /* todo: y */)
+            else if (isClick && Keyboard.Keys[Key.ControlLeft].IsDown && key == Key.Z /* todo: y */)
             {
-                CodeText.CodeHistory.RedoStep();    
+                CodeHistoryEntry redoHistory = CodeText.CodeHistory.RedoHistory();
+                if(redoHistory != null)
+                {
+                    CodeText.SetSourceText(CodeText.SourceText.SetText(redoHistory.CodeString));
+                    CodeText.CodeCursor.Bind(redoHistory.CodeCursor);
+                    CodeText.CodeSelection.Bind(redoHistory.CodeSelection);
+                }
+                CodeText.CodeCursor.CursorBlink.Reset();
+                return true;
             }
             // none
             else
@@ -193,6 +211,7 @@ namespace Bee.Integrator
                 return false;
             }
 
+            CodeText.CodeHistory.AddHistory(historyEntry);
             CodeText.CodeCursor.CursorBlink.Reset();
             return true;
         }
@@ -416,6 +435,7 @@ namespace Bee.Integrator
             }
 
             // insert
+            CodeText.CodeHistory.AddHistory(new CodeHistoryEntry(CodeText.SourceText.Text, CodeText.CodeCursor, CodeText.CodeSelection));
             CodeText.CodeCursor.TextInsert(textChar + "");
             CodeText.CodeCursor.CursorBlink.Reset();
             return true;
