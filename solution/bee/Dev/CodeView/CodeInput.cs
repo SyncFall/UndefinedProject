@@ -111,7 +111,7 @@ namespace Bee.Integrator
 
         public bool KeyInputs(InputEvent InputEvent)
         {
-            if (!InputEvent.IsKey)
+            if(!InputEvent.IsKey)
             {
                 return false;
             }

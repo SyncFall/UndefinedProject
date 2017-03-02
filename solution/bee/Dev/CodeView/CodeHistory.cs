@@ -40,7 +40,7 @@ namespace Bee.Integrator
                 }
             }
             History.Add(Entry);
-            Position = (History.Size-1);
+            Position = (History.Size);
         }
 
         public CodeHistoryEntry UndoHistory()
@@ -54,7 +54,7 @@ namespace Bee.Integrator
 
         public CodeHistoryEntry RedoHistory()
         {
-            if (History.Size==0 || Position >= History.Size-1)
+            if (History.Size==0 || Position+1 >= History.Size)
             {
                 return null;
             }

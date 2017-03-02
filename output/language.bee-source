@@ -1,31 +1,31 @@
 object BasicObject
 
-bool boolean;
-char character;
-byte[] bytes;
-int integer;
-float floating;
-long bigInteger;
-double highPrecesion;
-number number;
-string text;
-list<Item> list;
-map<Key, Value> map;
-func functionVariable;
-var variableType;
-type typeVariable;
-object objectVariable;
-enum enumVariable;
-
-get int Number
-	return this.number;
-set int Number
-	this.number = value;
+	bool boolean;
+	char character;
+	byte[] bytes;
+	int integer;
+	float floating;
+	long bigInteger;
+	double highPrecesion;
+	number number;
+	string text;
+	list<Item> list;
+	map<Key, Value> map;
+	func functionVariable;
+	var variableType;
+	type typeVariable;
+	object objectVariable;
+	enum enumVariable;
+	
+	get int Number
+		return this.number;
+	set int Number
+		this.number = value;
 
 get byte Byte[int i]
 {
 	if(i > 0)
-		return this.bytes[i];
+		return this.byteArray;
 	return null;
 }
 

@@ -242,21 +242,28 @@ namespace Bee.Integrator
             CodeSelection selection = CodeText.CodeSelection.GetOrdered();
             string sourceText = CodeText.SourceText.Text;
             StringBuilder strBuilder = new StringBuilder(sourceText.Length);
+            bool isTab = (insertText == "\t");
             if (selection.HasSelection())
             {
                 int line=0, cursor=0;
                 bool append = true;
-                for(int i=0; i<sourceText.Length+1; i++, cursor++)
+                for (int i=0; i<sourceText.Length+1; i++, cursor++)
                 {
-                    if(selection.BeginPart.LinePosition == line && selection.BeginPart.CursorPosition == cursor)
+                    if(isTab && line >= selection.BeginPart.LinePosition && line <= selection.EndPart.LinePosition && cursor == 0)
+                    {
+                        strBuilder.Append("\t");
+                        append = true;
+                    }
+                    else if(!isTab && selection.BeginPart.LinePosition == line && selection.BeginPart.CursorPosition == cursor)
                     {
                         strBuilder.Append(insertText);
                         append = false;
                     }
-                    else if(selection.EndPart.LinePosition == line && selection.EndPart.CursorPosition == cursor)
+                    else if (!isTab && selection.EndPart.LinePosition == line && selection.EndPart.CursorPosition == cursor)
                     {
                         append = true;
                     }
+     
                     if(i < sourceText.Length)
                     {
                         if (append)
