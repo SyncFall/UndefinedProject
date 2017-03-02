@@ -26,56 +26,46 @@ namespace Bee.Language
     
     public static class Tokens
     {
-        public static MapCollection<string, TokenSymbol> KeywordMap = new MapCollection<string, TokenSymbol>();
+        //public static MapCollection<string, TokenSymbol> KeywordMap = new MapCollection<string, TokenSymbol>();
+        public static TokenTrie KeywordMap = new TokenTrie();
+        public static TokenTrie StructureMap = new TokenTrie();
         public static TokenSymbol[] StructureArray;
         public static TokenSymbol[] OperationArray;
 
         static Tokens()
         {
-            ListCollection<TokenSymbol> KeywordList = new ListCollection<TokenSymbol>();
             for (int i=0; i < Keywords.Array.Length; i++)
             {
-                KeywordList.Add(new TokenSymbol(TokenType.Keyword, Keywords.Array[i].String, Keywords.Array[i]));
+                KeywordMap.Add(new TokenSymbol(TokenType.Keyword, Keywords.Array[i].String, Keywords.Array[i]));
             }
             for (int i = 0; i < LiteralKeywords.Array.Length; i++)
             {
-                KeywordList.Add(new TokenSymbol(TokenType.Literal, LiteralKeywords.Array[i].String, LiteralKeywords.Array[i]));
+                KeywordMap.Add(new TokenSymbol(TokenType.Literal, LiteralKeywords.Array[i].String, LiteralKeywords.Array[i]));
             }
             for (int i=0; i < Natives.Array.Length; i++)
             {
-                KeywordList.Add(new TokenSymbol(TokenType.Native, Natives.Array[i].String, Natives.Array[i]));
+                KeywordMap.Add(new TokenSymbol(TokenType.Native, Natives.Array[i].String, Natives.Array[i]));
             }
             for(int i=0; i < Accessors.Array.Length; i++)
             {
-                KeywordList.Add(new TokenSymbol(TokenType.Accessor, Accessors.Array[i].String, Accessors.Array[i]));
+                KeywordMap.Add(new TokenSymbol(TokenType.Accessor, Accessors.Array[i].String, Accessors.Array[i]));
             }
             for(int i=0; i < StatementKeywords.Array.Length; i++)
             {
-                KeywordList.Add(new TokenSymbol(TokenType.Statement, StatementKeywords.Array[i].String, StatementKeywords.Array[i]));
-            }
-            for(int i=0; i<KeywordList.Size; i++)
-            {
-                KeywordMap[KeywordList[i].String] = KeywordList[i];
+                KeywordMap.Add(new TokenSymbol(TokenType.Statement, StatementKeywords.Array[i].String, StatementKeywords.Array[i]));
             }
 
             StructureArray = new TokenSymbol[Structures.Array.Length];
             for(int i=0; i<Structures.Array.Length; i++)
             {
                 StructureArray[i] = new TokenSymbol(TokenType.Structure, Structures.Array[i].String, Structures.Array[i]);
+                StructureMap.Add(StructureArray[i]);
             }
 
             OperationArray = new TokenSymbol[Operations.Array.Length];
             for(int i=0; i<Operations.Array.Length; i++)
             {
                 OperationArray[i] = new TokenSymbol(TokenType.Operation, Operations.Array[i].String, Operations.Array[i]);
-            }
-        }
-
-        public class TokenSymbolCompare : IComparer<TokenSymbol>
-        {
-            public int Compare(TokenSymbol a, TokenSymbol b)
-            {
-                return (a.String.CompareTo(b.String));
             }
         }
     }

@@ -91,6 +91,7 @@
     <Compile Include="Dev\VisualView\ActionSelect.cs" />
     <Compile Include="Dev\VisualView\VisualView.cs" />
     <Compile Include="Lang\Symbol\Types\Sources.cs" />
+    <Compile Include="Lang\Token\TokenTrie.cs" />
     <Compile Include="Lib\SortUtils.cs" />
     <Compile Include="Lib\TimeUtils.cs" />
     <Compile Include="UI\Cases\FpsCounter.cs" />
@@ -112,7 +113,7 @@
     <Compile Include="Lang\Symbol\Types\Natives.cs" />
     <Compile Include="Lang\Symbol\Types\Operations.cs" />
     <Compile Include="Lang\Symbol\Types\Statements.cs" />
-    <Compile Include="Lang\Token\Keywords.cs" />
+    <Compile Include="Lang\Symbol\Types\Keywords.cs" />
     <Compile Include="Lang\Symbol\Types\Literals.cs" />
     <Compile Include="Lang\Symbol\Types\Structures.cs" />
     <Compile Include="Lang\Token\TextReader.cs" />

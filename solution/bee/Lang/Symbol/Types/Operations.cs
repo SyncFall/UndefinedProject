@@ -84,10 +84,10 @@ namespace Bee.Language
             new OperationSymbol("*", OperationGroup.Math, OperationType.Multi),
             new OperationSymbol("%", OperationGroup.Math, OperationType.Modulo),
             // type
-            new OperationSymbol("is_type", OperationGroup.Type, OperationType.IsType),
-            new OperationSymbol("has_type", OperationGroup.Type, OperationType.HasType),
-            new OperationSymbol("as_type", OperationGroup.Type, OperationType.AsType),
-            new OperationSymbol("get_type", OperationGroup.Type, OperationType.GetType)
+            new OperationSymbol("is", OperationGroup.Type, OperationType.IsType),
+            new OperationSymbol("has", OperationGroup.Type, OperationType.HasType),
+            new OperationSymbol("as", OperationGroup.Type, OperationType.AsType),
+            new OperationSymbol("type", OperationGroup.Type, OperationType.GetType)
         };
     }
 

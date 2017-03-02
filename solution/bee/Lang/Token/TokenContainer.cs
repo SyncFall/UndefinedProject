@@ -64,15 +64,43 @@ namespace Bee.Language
 
         private void AddToken(TokenSymbol token)
         {
+            if(token.Type == TokenType.Comment)
+            {
+                AddCommentToken(token);
+            }
+            else
+            {
+                AddTokenIntern(token);
+            }
+        }
+
+        private void AddCommentToken(TokenSymbol token)
+        {
+            if (token.Type == TokenType.Comment)
+            {
+                string[] commentLines = token.String.Split('\n');
+                for (int i = 0; i < commentLines.Length; i++)
+                {
+                    AddTokenIntern(new TokenSymbol(TokenType.Comment, commentLines[i], null));
+                    if (i < commentLines.Length - 1)
+                    {
+                        AddTokenIntern(new TokenSymbol(TokenType.Structure, "\n", new StructureSymbol(StructureType.LineSpace, StructureGroup.Space, "\n")));
+                    }
+                }
+            }
+        }
+
+        private void AddTokenIntern(TokenSymbol token)
+        {
             TokenNode newNode = new TokenNode(token);
             if (AllTokenNodes.Size > 0)
             {
-                TokenNode lastNode = AllTokenNodes.Get(AllTokenNodes.Size-1);
+                TokenNode lastNode = AllTokenNodes.Get(AllTokenNodes.Size - 1);
                 lastNode.Next = newNode;
                 newNode.Prev = lastNode;
             }
             AllTokenNodes.Add(newNode);
-            if(token.IsLineSpace())
+            if (token.IsLineSpace())
             {
                 LineTokenNodes.Add(newNode);
             }
@@ -80,7 +108,7 @@ namespace Bee.Language
 
         public void SetSource(SourceText Source)
         {
-            this.SourceText = SourceText;
+            this.SourceText = Source;
             AllTokenNodes.Clear();
             LineTokenNodes.Clear();
             TokenParser TokenParser = new TokenParser(Source.Text);

@@ -54,40 +54,53 @@ namespace Bee.Language
                     break;
                 }
             }
-            string alphaLower = null;
+            int alphaLowerStart = -1;
+            int alphaLowerLen = 0;
             if (idx > TextParser.Position)
-            { 
-                alphaLower = new string(TextParser.Text, TextParser.Position, idx - TextParser.Position);
+            {
+                alphaLowerStart = TextParser.Position;
+                alphaLowerLen = idx - TextParser.Position;
                 TextParser.Finish(idx);
             }
             // check for alpha numeric chars
-            bool hasAlpha = (alphaLower != null);
+            bool hasAlpha = (alphaLowerStart != -1);
             for(; idx < TextParser.Length; idx++)
             {
                 _char = TextParser.Text[idx];
-                if (!((_char >= 'a' && _char <= 'z' && (hasAlpha=true)) || (_char >= 'A' && _char <= 'Z' && (hasAlpha=true)) || (hasAlpha && _char >= '0' && _char <= '9')))
+                if (!((_char >= 'a' && _char <= 'z' && (hasAlpha|=true)) || (_char >= 'A' && _char <= 'Z' && (hasAlpha|=true)) || (hasAlpha && _char >= '0' && _char <= '9')))
                 {
                     break;
                 }
             }
-            string alphaNumeric = null;
+            int alphaNumericStart = -1;
+            int alphaNumericLen = 0;
             if (idx > TextParser.Position)
             {
-                alphaNumeric = new string(TextParser.Text, TextParser.Position, idx - TextParser.Position);
+                alphaNumericStart = TextParser.Position;
+                alphaNumericLen = idx - TextParser.Position;
                 TextParser.Finish(idx);
             }
             // check for keyword
-            if(alphaLower != null && alphaNumeric == null)
+            if(alphaLowerStart != -1 && alphaNumericStart == -1)
             {
-                if (Tokens.KeywordMap.KeyExist(alphaLower))
+                TokenSymbol tokenSymbol = Tokens.KeywordMap.Find(TextParser.Text, alphaLowerStart, alphaLowerStart + alphaLowerLen);
+                if(tokenSymbol != null)
                 {
-                    return Tokens.KeywordMap[alphaLower];
+                    return tokenSymbol;
                 }
             }
             // check for identifier
-            if(alphaLower != null || alphaNumeric != null)
+            if(alphaLowerStart != -1 || alphaNumericStart != -1)
             {
-                TokenSymbol identifierSymbol = new TokenSymbol(TokenType.Identifier, (alphaLower != null ? alphaLower : "") + (alphaNumeric != null ? alphaNumeric : ""), null);
+                char[] charArray = new char[alphaLowerLen + alphaNumericLen];
+                int i,x=0;
+                for(i=0; i<alphaLowerLen; i++){ 
+                    charArray[x++] = TextParser.Text[alphaLowerStart+i];
+                }
+                for(i=0; i < alphaNumericLen; i++){
+                    charArray[x++] = TextParser.Text[alphaNumericStart+i];
+                }
+                TokenSymbol identifierSymbol = new TokenSymbol(TokenType.Identifier, new string(charArray), null);
                 return identifierSymbol;
             }
             // none here
@@ -195,12 +208,15 @@ namespace Bee.Language
 
         public TokenSymbol TryStructureToken()
         {
-            for (int i = 0; i < Tokens.StructureArray.Length; i++)
+            if(TextParser.Text[TextParser.Start] > 127)
             {
-                if (TextParser.EqualChar(Tokens.StructureArray[i].String[0]))
-                {
-                    return Tokens.StructureArray[i];
-                }
+                return null;
+            }
+            TokenSymbol symbol = Tokens.StructureMap.Find(TextParser.Text, TextParser.Start, TextParser.Start+1);
+            if(symbol != null)
+            {
+                TextParser.Finish(TextParser.Start + 1);
+                return symbol;
             }
             return null;
         }

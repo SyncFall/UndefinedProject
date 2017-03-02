@@ -9,7 +9,7 @@ namespace Bee.Language
     public class TokenTextReader
     {
         public char[] Text;
-        public int Position, Length;
+        public int Position, Length; 
         public int Start;
 
         public TokenTextReader(string Text)
@@ -22,7 +22,7 @@ namespace Bee.Language
         {
             Start = Position = StartPosition;
         }
-
+        
         public bool EqualChar(char chr)
         {
             if(Text[Start] == chr)
@@ -87,6 +87,7 @@ namespace Bee.Language
                     Start = (Position+1 < Length ? Position+1 : Length);
                     return true;
                 }
+                Position++;
             }
             Start = Position;
             return false;

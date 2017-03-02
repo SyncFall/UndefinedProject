@@ -1,94 +1,233 @@
-use Scope.Path;
-use Scope.Base.Module;
+BasicObject : object
 
-scope Thing.One;
+bool boolean;
+char character;
+byte[] bytes;
+int integer;
+float floating;
+long bigInteger;
+double highPrecesion;
+number number;
+string text;
+list<Item> list;
+map<Key, Value> map;
+func functionVariable;
+var variableType;
+type typeVariable;
+object objectVariable;
+enum enumVariable;
 
-object Wonder extends Basic, Node
+get int Number
+	return this.number;
+set int Number
+	this.number = value;
+
+get byte Byte[int i]
 {
-	bool validState;
-	byte[] byteArray = { 14, 12, 45 };
-	char seperator = ',';
-	string text;
-	number anyNumber;
-	int integer;
-	float floating;
-	long bigint;
-	double highPrecision;
-	list<object> objectList = new list<object>{ null };
-	object[2] anotherObjectList = { null, "" };
-	map<string, number> stringMap;
-	call changeCall = ChangeState;
-	var dynamicObject = { test: "string", meter: {1, 2, 3}, types: {'a' => 1, 'b' => 3}, func: stateChangeCall}
-	type objectType = get_type(this);
+	if(i > 0)
+		return this.bytes[i];
+	return null;
+}
 
-	private object create(string text)
-	{ 
-		this.text = text;
-	}
+create()
 
-	static Wonder FromThing(string text="")
-	{
-		return new Wonder(text);
-	}
-
-	void ChangeState(float a, string numberString, State state = State.Default)
-	{
-		integer = int(a);
-		anyNumber = numberString;
-		if(state ==  State.One)
-		{
-			objectList.add(integer);
-			objectList[0] = 0.0f;
-			stringMap["state"] = anyNumber;
+	boolean = true;
+	character = 'A';
+	bytes = {1, 2, 3, 'A'};
+	integer = 1000;
+	floating = 1.5;
+	bigInteger = 1000L;
+	highPrecesion = 1.5;
+	text = "text";
+	list = {Item(1), Item(2)};
+	map = {Key(1) => Value(1), Key(2) => Value(2)};
+	functionVariable = modifyState;
+	variableType = {
+		counter = -1;
+		finished = false;
+		create(){
+			counter = parent.integer;
 		}
-		else if(state == State.Two)
-		{
-			changeCall(a, numberString, State.Three);
-			for(i in byteArray)
-			{
-				printLine(byteArray[0]);
-			}
+		updateState(){
+			counter++;
 		}
-		else
+	};
+	typeVariable = Type(this);
+	objectVariable = {};
+	enumVariable = (Pro, Contra);
+
+end create;
+
+void modifyState(attr=null)
+	bytes[0] = 0;
+	string[5] = "a";
+	list.add(Item(3));
+	list[0] = Item(0);
+	map[Key(1)] = Value(1);
+	functionVariable('do_show');
+	variableType.finished = true;
+	objectVariable = BasicObject(){
+		int status=5;
+		implement int result()
 		{
-			return;
+			return status;
+		}
+	};
+end
+
+void controlFlow() throws Exception
+{
+	// sample control-flow
+	int cnt = 0;
+	for(i in range(0, 100))
+		cnt += i;
+
+	bool active = true;
+	while(active){
+		if(cnt % 2 == 0){
+			break;
 		}
 	}
 
-	override void Build()
+	for(i in range(0, 100))
+		for(j in range(100, 1000))
+			if(i % 3 == 0)
+				break 2;
+		end
+	end
+
+	// default loop
+	for(int i=0; i<100; i++);
+
+	// simple loop
+	for(i in range(0, 100));
+	for(i from 0 to 100);
+
+	// extended loop
+	for(bool equalCount=true; i from 0 to byteArray.Length; equalCount=!equalCount)
+
+	// item loop
+	foreach(byte in byteArray);
+
+	// key and value loop
+	foreach(key and value in mapValues);
+	foreach(key in mapValues.Keys)
+
+	// error-handling
+	try
 	{
-		return;
+
+	}catch(IOError, FileNotFound : e)
+		throw e;
+}
+
+abstract void doImplement();
+
+destroy();
+
+
+ExtendObject<T> : BasicObject
+
+Node<T>
+
+implement void doImplement()
+{
+	Console.log("tick..");
+}
+
+end ExtendObject
+
+
+scope Path.Node;
+
+use Math;
+use IO;
+
+bool scopeVariable = 5;
+
+TagConstants : enum
+
+	Start=1,
+	Begin,
+	End,
+
+end
+
+func manipulateString(str manipulate)
+	for(i in range(0, manipulate.length))
+	{
+		manipulate[i] = char(random(255));
+	}
+end
+
+part func BasicObject.partialMethod(int i)
+{
+	number = i;
+}
+
+part object BasicObject
+{
+	public get Prop
+		return this.variable;
+}
+
+main(string[] args)
+{
+	BasicObject obj = ExtendObject();
+	obj.partialMethod(5);
+	return;
+}
+
+void handleSystemRessources()
+{
+	File file = File("absolute-path/file.txt");
+	file.delete();
+
+	byte[] buffer = byte[512];
+	Stream stream = BufferedStream(file, buffer.length);
+	while(buffer = stream.readBuffer()){
+		;
 	}
 
-	object destroy()
-	{ }
-}
-
-bool visibility=false;
-void SetVisible()
-{
-	visibility = true;
-}
-
-object Basic 
-{
-	abstract void Build();
-}
-
-object Node
-{
-	Node Next;
-}
-
-enum State
-{
-	One, Two, Three, Default
-}
-
-partial object string
-{
-	int CountString()
-	{ 
-		return data.length;
+	Thread thread = Thread({
+		while(true){
+			Console.log("tick..");
+			Thread.sleep(100);
+		}
 	}
+	thread.start();
+}
+
+func handleDataRessources()
+{
+	Node root = Xml(File("filepath.xml")).Root;
+	for(Node child in root.childrens)
+	{
+		if(child.Attributes["opt"]){
+			;
+		}else if(child["field"]){
+			;
+		}
+	}
+
+	root.add(Node("appendField", Value = "OperationValue", Attributes = {Attribute("abc", 1), Attribute("xyz", 2)}));
+
+	Node json = Json(File("test.json")).Root;
+	list<Node> fields = json.queryNodeList("group/fieldA");
+	Node node = json.queryNode("group/fieldB");
+	bool upload = bool(json.queryValue("group/option/upload"));
+}
+
+func handleWebRessources()
+{
+	HttpClient web = HttpClient();
+	HttpResponse response = web.get("http://domain/path?param=value");
+	if(response.status){
+		string html = response.Data;
+	}
+	
+	web.post(url, {"username" => username, "password" => password, "method" => "do_login"});
+	web.close();
+
+	string data = HttpClient.get("thing-url", Timeout:1500);
 }

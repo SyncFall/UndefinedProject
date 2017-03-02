@@ -27,7 +27,7 @@ namespace Bee
             SurfaceDraw SurfaceDraw = null;
 
             GameWindow gameWindow = null;
-            using (gameWindow = new GameWindow(1250, 750, new OpenTK.Graphics.GraphicsMode(32, 24, 0, 4)))
+            using (gameWindow = new GameWindow(1250, 750, new OpenTK.Graphics.GraphicsMode(32, 24, 0, 0)))
             {
                 gameWindow.Load += (sender, e) =>
                 {
