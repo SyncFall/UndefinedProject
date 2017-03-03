@@ -18,7 +18,7 @@ namespace Bee.Language
 	{
 		public TokenNode Root;
 		public TokenNode Current;
-        public ListCollection<TokenNode> BeginStepNode = new ListCollection<TokenNode>();
+        public ListCollection<TokenNode> StepNodes = new ListCollection<TokenNode>();
 
         public TokenPointer(TokenNode Root)
 		{
@@ -30,14 +30,22 @@ namespace Bee.Language
             return (Current != null ? Current = Current.Next : null);
         }
 
-        public void StepBegin()
+        public bool StepBegin()
         {
-            BeginStepNode.Add(Current);
+            if(Current != null)
+                StepNodes.Add(Current);
+            return (Current != null);
         }
 
         public void StepReset()
         {
-            Current = BeginStepNode.RemoveAt(BeginStepNode.Size-1);
+            Current = StepNodes.RemoveAt(StepNodes.Size-1);
+        }
+
+        public void StepCommit()
+        {
+            StepNodes.RemoveAt(StepNodes.Size-1);
+
         }
 	}
 

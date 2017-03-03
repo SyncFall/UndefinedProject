@@ -36,14 +36,19 @@ namespace Bee.Language
             return (TokenPointer.Current != null && TokenPointer.Next() != null ? TokenPointer.Current.Token : null);
         }
 
-        public void BeginStep()
+        public bool BeginStep()
         {
-            TokenPointer.StepBegin();
+            return  TokenPointer.StepBegin();
         }
 
         public void ResetStep()
         {
             TokenPointer.StepReset();
+        }
+
+        public void CommitStep()
+        {
+            TokenPointer.StepCommit();
         }
 
         public TokenSymbol TryToken(TokenType tokenType)

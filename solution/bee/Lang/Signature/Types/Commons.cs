@@ -80,10 +80,10 @@ namespace Bee.Language
             TypeDeclarationSignature typeDeclaration;
             while ((typeDeclaration = TryTypeDeclaration()) != null)
             {
-                ParameterDeclartionElementSignature parameterElement = new ParameterDeclartionElementSignature(typeDeclaration);
-                signature.ParameterList.Add(parameterElement);
-                parameterElement.ParameterSeperator = TrySeperator(StructureType.Seperator);
-                if (parameterElement.ParameterSeperator == null)
+                ParameterSignature parameter = new ParameterSignature(typeDeclaration);
+                signature.ParameterList.Add(parameter);
+                parameter.Seperator = TrySeperator(StructureType.Seperator);
+                if (parameter.Seperator == null)
                 {
                     break;
                 }
@@ -130,7 +130,7 @@ namespace Bee.Language
     public class ParameterDeclarationSignature : SignatureSymbol
     {
         public BlockSignature BlockBegin;
-        public ParameterDeclarationElementList ParameterList = new ParameterDeclarationElementList();
+        public ParameterListSignature ParameterList = new ParameterListSignature();
         public BlockSignature BlockEnd;
 
         public ParameterDeclarationSignature() : base(SignatureType.ParameterDeclaration)
@@ -142,22 +142,53 @@ namespace Bee.Language
         }
     }
 
-    public class ParameterDeclarationElementList : ListCollection<ParameterDeclartionElementSignature>
-    { }
+    public class ParameterListSignature : ListCollection<ParameterSignature>
+    {
+        public override string ToString()
+        {
+            string str = "parameter_list(";
+            for (int i = 0; i < Size; i++)
+            {
+                str += Get(i).ToString();
+                if(i < Size-1)
+                {
+                    str += ", ";
+                }
+            }
+            str += ")";
+            return str;
+        }
+    }
 
-    public class ParameterDeclartionElementSignature : SignatureSymbol
+    public class ParameterSignature : SignatureSymbol
     {
         public TypeDeclarationSignature TypeDeclaration;
-        public SeperatorSignature ParameterSeperator;
+        public ExpressionSignature Expression;
+        public SeperatorSignature Seperator;
 
-        public ParameterDeclartionElementSignature(TypeDeclarationSignature TypeDeclaration) : base(SignatureType.ParameterElementDeclaration)
+        public ParameterSignature(TypeDeclarationSignature TypeDeclaration) : base(SignatureType.Parameter)
         {
             this.TypeDeclaration = TypeDeclaration;
         }
 
+        public ParameterSignature(ExpressionSignature Expression) : base(SignatureType.Parameter)
+        {
+            this.Expression = Expression;
+        }
+
         public override string ToString()
         {
-            return "parameter(" + TypeDeclaration + ")";
+            string str = "parameter(";
+            if(TypeDeclaration != null)
+            {
+                str += TypeDeclaration;
+            }
+            if(Expression != null)
+            {
+                str += Expression;
+            }
+            str += ")";
+            return str;
         }
     }
 

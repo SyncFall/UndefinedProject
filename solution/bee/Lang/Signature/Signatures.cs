@@ -29,7 +29,7 @@ namespace Bee.Language
         Property,
         TypeDeclartion,
         ParameterDeclaration,
-        ParameterElementDeclaration,
+        Parameter,
         // code
         Code,
         Statement,
@@ -43,7 +43,6 @@ namespace Bee.Language
         LiteralAccess,
         VariableAccess,
         FunctionAccess,
-        FunctionAccessParameter,
         ArrayAccess,
     }
 }

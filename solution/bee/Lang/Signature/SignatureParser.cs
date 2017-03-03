@@ -31,10 +31,10 @@ namespace Bee.Language
                (signature = TryIdentifier()) != null ||
                (signature = TryUnknown()) != null
             ){
-                Console.WriteLine(signature);
-                return signature;
+                ;
             }
-            throw new Exception("invalid state");
+            Console.WriteLine(signature);
+            return signature;
         }
     }
 }

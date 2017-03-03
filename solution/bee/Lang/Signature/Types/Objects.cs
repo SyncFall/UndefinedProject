@@ -89,6 +89,7 @@ namespace Bee.Language
                 if(property != null)
                 {
                     signatur.Properties.Add(property);
+                    continue;
                 }
                 //
                 break;
@@ -103,6 +104,7 @@ namespace Bee.Language
         public MemberSignature TryMember()
         {
             TrySpace();
+            if(!BeginStep()) return null;
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
             if (typeDeclaration == null)
             {
@@ -114,20 +116,23 @@ namespace Bee.Language
                 MemberSignature member = new MemberSignature();
                 member.TypeDeclaration = typeDeclaration;
                 member.Complete = complete;
+                CommitStep();
                 return member;
             }
+            ResetStep();
             return null;
         }
 
         public MethodSignature TryMethod()
         {
             TrySpace();
+            if(!BeginStep()) return null;
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration(false);
             if (typeDeclaration == null)
             {
                 return null;
             }
-            BeginStep();
+            if(!BeginStep()) return null;
             SeperatorSignature enclosing = TrySeperator(StructureType.ClosingBegin);
             ResetStep();
             if (enclosing != null)
@@ -139,8 +144,10 @@ namespace Bee.Language
                 ){
                     ;
                 }
+                CommitStep();
                 return method;
             }
+            ResetStep();
             return null;
         }
 
@@ -148,6 +155,7 @@ namespace Bee.Language
         public PropertySignature TryProperty()
         {
             TrySpace();
+            if(!BeginStep()) return null;
             TokenSymbol propertyType = null;
             if((propertyType = TryToken(KeywordType.Get)) == null && (propertyType = TryToken(KeywordType.Set)) == null)
             {
@@ -158,7 +166,7 @@ namespace Bee.Language
             {
                  return null;
             }
-            BeginStep();
+            if(!BeginStep()) return null;
             SeperatorSignature enclosing = TrySeperator(StructureType.BlockBegin);
             ResetStep();
             if (enclosing != null)
@@ -169,8 +177,10 @@ namespace Bee.Language
                 {
                     ;
                 }
+                CommitStep();
                 return property;
             }
+            ResetStep();
             return null;
         }
     }
@@ -248,7 +258,7 @@ namespace Bee.Language
             string str = "";
             for (int i = 0; i < Size; i++)
             {
-                str += Get(i) + "\n";
+                str += Get(i);
             }
             return str;
         }
@@ -266,7 +276,7 @@ namespace Bee.Language
         {
             string str = "member(";
             str += TypeDeclaration;
-            return str + ")";
+            return str + ")\n";
         }
     }
 
@@ -277,7 +287,7 @@ namespace Bee.Language
             string str = "";
             for (int i = 0; i < Size; i++)
             {
-                str += Get(i) + "\n";
+                str += Get(i);
             }
             return str;
         }
@@ -296,7 +306,7 @@ namespace Bee.Language
         {
             string str = "method(";
             str += TypeDeclaration;
-            str += ", parameters(" + ParameterDeclaration + ")";
+            str += ", "+ParameterDeclaration;
             str += ")\n";
             str += Code;
             return str;
@@ -310,7 +320,7 @@ namespace Bee.Language
             string str = "";
             for (int i = 0; i < Size; i++)
             {
-                str += Get(i) + "\n";
+                str += Get(i);
             }
             return str;
         }

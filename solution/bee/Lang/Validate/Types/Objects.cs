@@ -42,8 +42,8 @@ namespace Bee.Language
                 {
                     for (int j = 0; j < parameterDeclaration.ParameterList.Size; j++)
                     {
-                        ParameterDeclartionElementSignature parameterElement = parameterDeclaration.ParameterList.Get(j);
-                        TypeDeclarationSignature parameterTypeDeclaration = parameterElement.TypeDeclaration;
+                        ParameterSignature parameter = parameterDeclaration.ParameterList.Get(j);
+                        TypeDeclarationSignature parameterTypeDeclaration = parameter.TypeDeclaration;
                         if (parameterTypeDeclaration.TypeIdentifier != null)
                         {
                             if (Registry.GetObjectSymbol(parameterTypeDeclaration.TypeIdentifier.Identifier.String) == null)

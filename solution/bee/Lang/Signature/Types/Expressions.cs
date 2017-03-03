@@ -83,7 +83,7 @@ namespace Bee.Language
                         {
                             break;
                         }
-                        FunctionAccessParameterSignature parameter = new FunctionAccessParameterSignature(expression);
+                        ParameterSignature parameter = new ParameterSignature(expression);
                         functionAccess.ParameterList.Add(parameter);
                         if ((parameter.Seperator = TrySeperator(StructureType.Seperator)) == null)
                         {
@@ -98,7 +98,25 @@ namespace Bee.Language
                 }
                 else if (TryBlock(StructureType.BracketBegin) != null)
                 {
-                    ArrayAccessSignature arrayAccess = new ArrayAccessSignature();
+                    ArrayAccessSignature arrayAccess = new ArrayAccessSignature(identifier);
+                    while (true)
+                    {
+                        ExpressionSignature expression = TryExpression();
+                        if (expression == null)
+                        {
+                            break;
+                        }
+                        ParameterSignature parameter = new ParameterSignature(expression);
+                        arrayAccess.ParameterList.Add(parameter);
+                        if ((parameter.Seperator = TrySeperator(StructureType.Seperator)) == null)
+                        {
+                            break;
+                        }
+                    }
+                    if ((arrayAccess.BlockEnd = TryBlock(StructureType.BracketEnd)) == null)
+                    {
+                        ;
+                    }
                     accessSignatur = arrayAccess;
                 }
                 else
@@ -254,7 +272,7 @@ namespace Bee.Language
     {
         public IdentifierSignature Identifier;
         public BlockSignature BlockBegin;
-        public FunctionAccessParameterList ParameterList = new FunctionAccessParameterList();
+        public ParameterListSignature ParameterList = new ParameterListSignature();
         public BlockSignature BlockEnd;
 
         public FunctionAccessSignature(IdentifierSignature Identifier) : base(SignatureType.FunctionAccess)
@@ -268,28 +286,21 @@ namespace Bee.Language
         }
     }
 
-    public class FunctionAccessParameterList : ListCollection<FunctionAccessParameterSignature>
-    { }
-
-    public class FunctionAccessParameterSignature : SignatureSymbol
+    public class ArrayAccessSignature : AccessSignature
     {
-        public ExpressionSignature Expression;
-        public SeperatorSignature Seperator;
+        public IdentifierSignature Identifier;
+        public BlockSignature BlockBegin;
+        public ParameterListSignature ParameterList = new ParameterListSignature();
+        public BlockSignature BlockEnd;
 
-        public FunctionAccessParameterSignature(ExpressionSignature Expression) : base(SignatureType.FunctionAccessParameter)
+        public ArrayAccessSignature(IdentifierSignature Identifier) : base(SignatureType.ArrayAccess)
         {
-            this.Expression = Expression;
+            this.Identifier = Identifier;
         }
 
         public override string ToString()
         {
-            return "parameter(" + Expression + ")";
+            return "array(name:" + Identifier.Identifier.String + ", parameters(" + ParameterList + "))";
         }
-    }
-
-    public class ArrayAccessSignature : AccessSignature
-    {
-        public ArrayAccessSignature() : base(SignatureType.ArrayAccess)
-        { }
     }
 }

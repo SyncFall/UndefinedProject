@@ -5,8 +5,11 @@ scope Wikipedia.Language;
 
 object Little
 {
-	int counter = 0;
-	get int Peter{
-		return counter;
-	}
+	get int Property{}
+	int method(int a, string str){}
+	int method = 0;
+}
+get int Index
+{
+	return cnt;
 }
