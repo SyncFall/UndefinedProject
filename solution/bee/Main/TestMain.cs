@@ -19,12 +19,14 @@ namespace Bee
             Thread.Sleep(2500);
 
             Stopwatch stopWatch = new Stopwatch();
+
             stopWatch.Start();
 
+            Registry registry = new Registry();
+            registry.AddSourceList(sourceList);
             for (int i=0; i<10000; i++)
             {
-                Registry registry = new Registry();
-                registry.AddSourceList(sourceList);
+                registry.UpdateSource(sourceList[0]);
             }
             
             stopWatch.Stop();

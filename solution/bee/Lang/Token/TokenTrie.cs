@@ -25,13 +25,35 @@ namespace Bee.Language
 
         public TokenSymbol FindSymbol(char[] Chars, int start, int end)
         {
-            /*
-            if (Chars == null || Chars.Length == 0)
+            int index=start;
+            Node node=Root;
+            Node child;
+            while (true)
             {
-                throw new Exception("invalid string");
+                child = node.Childrens[Chars[index]];
+                // no-node
+                if (child == null)
+                {
+                    return null;
+                }
+                // go-depth
+                else if (index + 1 < end)
+                {
+                    index++;
+                    node = child;
+                    continue;
+                }
+                // exact-node
+                else if (child.Symbol != null)
+                {
+                    return child.Symbol;
+                }
+                // not-exact-node
+                else
+                {
+                    return null;
+                }
             }
-            */
-            return FindNode(Chars, start, end, start, Root);
         }
 
         private void InsertNode(string String, TokenSymbol Symbol, Node Node)
@@ -60,43 +82,6 @@ namespace Bee.Language
                 else
                 {
                     InsertNode(String.Substring(1), Symbol, child);
-                }
-            }
-        }
-
-        private TokenSymbol FindNode(char[] Chars, int start, int end, int index, Node node)
-        {
-            /*
-            if (Char > 127)
-            {
-                throw new Exception("invalid char");
-            }
-            */
-            Node child;
-            while(true)
-            {
-                child = node.Childrens[Chars[index]];
-                // no-node
-                if (child == null)
-                {
-                    return null;
-                }
-                // go-depth
-                else if (index+1 < end)
-                {
-                    index++;
-                    node = child;
-                    continue;
-                }
-                // exact-node
-                else if (child.Symbol != null)
-                {
-                    return child.Symbol;
-                }
-                // not-exact-node
-                else
-                {
-                    return null;
                 }
             }
         }

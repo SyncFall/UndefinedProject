@@ -106,6 +106,11 @@ namespace Bee.Language
             return (Type == TokenType.Keyword && (this.Symbol as KeywordSymbol).Type == KeywordType);
         }
 
+        public bool IsLiteral(LiteralType LiteralType)
+        {
+            return (Type == TokenType.Literal && (this.Symbol as LiteralSymbol).Type == LiteralType);
+        }
+
         public bool IsNative(NativeType NativeType)
         {
             return (Type == TokenType.Native && (this.Symbol as NativeSymbol).Type == NativeType);

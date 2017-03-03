@@ -14,15 +14,20 @@ namespace Bee.Integrator
 {
     public class CodeContainer
     {
-        public Size ViewSize = new Size(600, 400);
+        public Size ViewSize = new Size(800, 600);
         public Size CodeSize = new Size(0, 0);
-        public Size ScrollVertical = new Size(0, 0);
-        public Size ScrollHorizontal = new Size(0, 0);
+        public Size ScrollPosition = new Size(0, 0);
+        public Size ScrollSize = new Size(0, 0);
         public CodeColor CodeColor;
         public CodeText CodeText;
         public GlyphMetrics GlyphMetrics;
         public GlyphContainer GlyphContainer;
         public TokenContainer TokenContainer;
+        public CodeInputListener InputListener;
+        public float TotalLineNumbers;
+        public float VisibleLineNumbers;
+        public int StartLineNumber;
+        public int EndLineNumber;
 
         public CodeContainer(CodeText CodeText)
         {
@@ -31,6 +36,7 @@ namespace Bee.Integrator
             this.GlyphMetrics = CodeText.GlyphMetrics;
             this.GlyphContainer = CodeText.GlyphContainer;
             this.TokenContainer = CodeText.TokenContainer;
+            this.InputListener = new CodeInputListener(this);
         }
 
         public void Save()
@@ -50,15 +56,21 @@ namespace Bee.Integrator
         {
             this.TokenContainer = TokenContainer;
             this.CodeSize = GetCodeSize();
-            this.ScrollVertical = new Size(0, 0);
-            this.ScrollHorizontal = new Size(0, 0);
         }
 
         public void Draw()
         {
-            int lineNumber = (int)Math.Floor(ViewSize.Height - GlyphMetrics.TopSpace) / (GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace);
-            lineNumber = 0;
-            Point position = new Point(GlyphMetrics.LeftSpace, GlyphMetrics.TopSpace + ((GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace) * lineNumber));
+            this.TotalLineNumbers = (CodeSize.Height - GlyphMetrics.TopSpace) / (float)(GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace);
+            this.VisibleLineNumbers = (ViewSize.Height - GlyphMetrics.TopSpace) / (float)(GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace);
+
+            float notVisibleFactor = (TotalLineNumbers / VisibleLineNumbers);
+            float relativeLineNumber = (ScrollPosition.Height / (GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace));
+
+            this.StartLineNumber = (int)Math.Round(relativeLineNumber * notVisibleFactor);
+            this.EndLineNumber = (int)Math.Round(StartLineNumber + VisibleLineNumbers);
+
+            int lineNumber = StartLineNumber;
+            Point position = new Point(GlyphMetrics.LeftSpace, GlyphMetrics.TopSpace);
 
             TokenNode node = TokenContainer.FirstLineTokenNode(lineNumber);
             while(node != null)
@@ -75,16 +87,16 @@ namespace Bee.Integrator
                 else if (token.IsStructure(StructureType.LineSpace))
                 {
                     lineNumber++;
-                    position.x = GlyphMetrics.LeftSpace;
-                    position.y += (GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace);
-                    if(position.y >= ViewSize.Height)
+                    if(lineNumber >= EndLineNumber)
                     {
                         break;
                     }
-                }
-                else if (token.Type == TokenType.Comment)
-                {
-                    DrawToken(token, position, CodeColor.Comment);
+                    position.x = GlyphMetrics.LeftSpace;
+                    position.y += (GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace);
+                    if(position.y + GlyphMetrics.VerticalAdvance > ViewSize.Height)
+                    {
+                        break;
+                    }
                 }
                 else if (token.Type == TokenType.Keyword || token.Type == TokenType.Native || token.Type == TokenType.Statement)
                 {
@@ -106,6 +118,10 @@ namespace Bee.Integrator
                         DrawToken(token, position, CodeColor.Keyword);
                     }
                 }
+                else if (token.Type == TokenType.Comment)
+                {
+                    DrawToken(token, position, CodeColor.Comment);
+                }
                 else if (token.Type == TokenType.Unknown)
                 {
                     DrawToken(token, position, CodeColor.Error);
@@ -117,11 +133,14 @@ namespace Bee.Integrator
                 node = node.Next;
             }
 
-            float w = 10;
-            float h = ViewSize.Height;
-            float s = ViewSize.Height / CodeSize.Height;
-            float x = ViewSize.Width - w;
-            float y = GlyphMetrics.TopSpace;
+            ScrollSize.Width = 10;
+            ScrollSize.Height = (ViewSize.Height) * (ViewSize.Height / CodeSize.Height);
+
+            float w = ScrollSize.Width;
+            float h = ScrollSize.Height;
+            float x = GlyphMetrics.LeftSpace + ViewSize.Width - w;
+            float y = ScrollPosition.Height;
+
             GL.Color3(75 / 255f, 75 / 255f, 75 / 255f);
             GL.Begin(PrimitiveType.Quads);
             GL.Vertex2(x, y);
@@ -130,6 +149,45 @@ namespace Bee.Integrator
             GL.Vertex2(x, y + h);
             GL.End();
         }
+
+
+        public class CodeInputListener : InputListener
+        {
+            public CodeContainer CodeContainer;
+            public bool ScrollY;
+            public float ScrollYOffset;
+
+            public CodeInputListener(CodeContainer CodeContainer)
+            {
+                this.CodeContainer = CodeContainer;
+            }
+
+            public override void Input(InputEvent Event)
+            {
+                if(Event.IsButton && Event.Button.IsClick && Event.Button.Type == Button.Left)
+                {
+                    if(GeometryUtils.IntersetMarginBound((int)CodeContainer.ViewSize.Width, (int)CodeContainer.ScrollSize.Width, (int)CodeContainer.ScrollPosition.Height, (int)CodeContainer.ScrollSize.Height, 10, Mouse.Cursor.x, Mouse.Cursor.y))                    
+                    {
+                        ScrollY = true;
+                        ScrollYOffset = (Mouse.Cursor.y - CodeContainer.ScrollPosition.Height);
+                    }
+                }
+                if(Event.IsButton && Event.Button.IsUp)
+                {
+                    ScrollY = false;
+                }
+                if(Event.IsCursor && ScrollY)
+                {
+                    float offset = (Mouse.Cursor.y - ScrollYOffset);
+                    if (offset < 0)
+                        offset = 0;
+                    if (offset > CodeContainer.ViewSize.Height - CodeContainer.ScrollSize.Height)
+                        offset = (CodeContainer.ViewSize.Height - CodeContainer.ScrollSize.Height);
+                    CodeContainer.ScrollPosition.Height = offset;
+                }
+            }
+        }
+
 
         public void DrawToken(TokenSymbol token, Point position, float[] color)
         {
@@ -145,12 +203,16 @@ namespace Bee.Integrator
                 {
                     position.x += GlyphMetrics.TabWidth;
                 }
+                else if (charCode == '\n')
+                {
+                    throw new Exception("invalid state");
+                }
                 else
                 {
                     Glyph glyph = GlyphContainer.GetGlyph(charCode);
                     float glyphX = (position.x + glyph.HoriziontalBearingX);
                     float glyphY = (position.y + glyph.VerticalAdvance - glyph.HoriziontalBearingY);
-                    if(position.x + glyph.HoriziontalAdvance >= ViewSize.Width)
+                    if(position.x + glyph.HoriziontalAdvance > ViewSize.Width)
                     {
                         break;
                     }
@@ -200,6 +262,10 @@ namespace Bee.Integrator
                         {
                             currentWidth += GlyphMetrics.TabWidth;
                         }
+                        else if (charCode == '\n')
+                        {
+                            throw new Exception("invalid state");
+                        }
                         else
                         {
                             Glyph Glyph = GlyphContainer.GetGlyph(charCode);
@@ -214,6 +280,7 @@ namespace Bee.Integrator
             {
                 totalWidth = currentWidth;
             }
+            totalHeight += (GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace);
 
             return new Size(totalWidth, totalHeight);
         }

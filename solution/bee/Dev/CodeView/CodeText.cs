@@ -53,6 +53,7 @@ namespace Bee.Integrator
         public void SetSourceText(SourceText Source)
         {
             this.SourceText = Source;
+            this.CodeContainer.SetContainer(Registry.EntryList.GetExist(SourceText).TokenContainer);
             this.Registry.UpdateSource(SourceText);
         }
        

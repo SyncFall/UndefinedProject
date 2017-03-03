@@ -11,9 +11,9 @@ namespace Bee.Language
     {
         public TokenTextReader TextParser;
 
-        public TokenParser(string text)
+        public TokenParser(SourceText source)
         {
-            this.TextParser = new TokenTextReader(text);
+            this.TextParser = new TokenTextReader(source);
         }
 
         public bool IsEnd()

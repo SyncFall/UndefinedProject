@@ -64,29 +64,22 @@ namespace Bee.Language
 
         private void AddToken(TokenSymbol token)
         {
-            if(token.Type == TokenType.Comment)
-            {
-                AddCommentToken(token);
-            }
-            else
-            {
-                AddTokenIntern(token);
-            }
-        }
-
-        private void AddCommentToken(TokenSymbol token)
-        {
-            if (token.Type == TokenType.Comment)
+            // split string-content types by new lines (workaround)
+            if (token.Type == TokenType.Comment || token.IsLiteral(LiteralType.Char) || token.IsLiteral(LiteralType.String))
             {
                 string[] commentLines = token.String.Split('\n');
                 for (int i = 0; i < commentLines.Length; i++)
                 {
-                    AddTokenIntern(new TokenSymbol(TokenType.Comment, commentLines[i], null));
+                    AddTokenIntern(new TokenSymbol(token.Type, commentLines[i], token.Symbol));
                     if (i < commentLines.Length - 1)
                     {
                         AddTokenIntern(new TokenSymbol(TokenType.Structure, "\n", new StructureSymbol(StructureType.LineSpace, StructureGroup.Space, "\n")));
                     }
                 }
+            }
+            else
+            {
+                AddTokenIntern(token);
             }
         }
 
@@ -111,7 +104,7 @@ namespace Bee.Language
             this.SourceText = Source;
             AllTokenNodes.Clear();
             LineTokenNodes.Clear();
-            TokenParser TokenParser = new TokenParser(Source.Text);
+            TokenParser TokenParser = new TokenParser(Source);
             while(!TokenParser.IsEnd())
             {
                 TokenSymbol token = TokenParser.TryToken();
@@ -162,12 +155,16 @@ namespace Bee.Language
             {
                 return null;
             }
-            else if(lineNumber==0)
+            else if(lineNumber<=0)
             {
                 return AllTokenNodes.First;
             }
             else
             {
+                if(lineNumber >= LineTokenNodes.Size-1)
+                {
+                    lineNumber = LineTokenNodes.Size-1;
+                }
                 return LineTokenNodes.Get(lineNumber-1).Next;
             }
         }

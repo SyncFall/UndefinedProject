@@ -98,7 +98,7 @@ namespace Bee.Integrator
             CodeSelection selection = CodeText.CodeSelection.GetOrdered();
             if (selection.HasSelection())
             {
-                string sourceText = CodeText.SourceText.Text;
+                string sourceText = CodeText.SourceText.StringContent;
                 StringBuilder strBuilder = new StringBuilder();
                 int line = 0, cursor = 0;
                 bool copy = false;
@@ -131,7 +131,7 @@ namespace Bee.Integrator
             CodeSelection selection = CodeText.CodeSelection.GetOrdered();
             if (selection.HasSelection())
             {
-                string sourceText = CodeText.SourceText.Text;
+                string sourceText = CodeText.SourceText.StringContent;
                 StringBuilder strBuilder = new StringBuilder(sourceText.Length);
                 StringBuilder strBuilderCut = new StringBuilder();
                 int line = 0, cursor = 0;
@@ -240,7 +240,7 @@ namespace Bee.Integrator
         {
             insertText = insertText.Replace("\r", "");
             CodeSelection selection = CodeText.CodeSelection.GetOrdered();
-            string sourceText = CodeText.SourceText.Text;
+            string sourceText = CodeText.SourceText.StringContent;
             StringBuilder strBuilder = new StringBuilder(sourceText.Length);
             bool isTab = (insertText == "\t");
             if (selection.HasSelection())
@@ -313,7 +313,7 @@ namespace Bee.Integrator
                 return;
             }
             CodeSelection selection = CodeText.CodeSelection.GetOrdered();
-            string sourceText = CodeText.SourceText.Text;
+            string sourceText = CodeText.SourceText.StringContent;
             StringBuilder strBuilder = new StringBuilder(sourceText.Length);
             if(selection.HasSelection())
             {
@@ -372,7 +372,7 @@ namespace Bee.Integrator
         public void KeyDelete()
         {
             CodeSelection selection = CodeText.CodeSelection.GetOrdered();
-            string sourceText = CodeText.SourceText.Text;
+            string sourceText = CodeText.SourceText.StringContent;
             StringBuilder strBuilder = new StringBuilder(sourceText.Length);
             if (selection.HasSelection())
             {

@@ -12,9 +12,9 @@ namespace Bee.Language
         public int Position, Length; 
         public int Start;
 
-        public TokenTextReader(string Text)
+        public TokenTextReader(SourceText Source)
         {
-            this.Text = Text.ToArray();
+            this.Text = Source.CharArray;
             this.Length = Text.Length;
         }
 

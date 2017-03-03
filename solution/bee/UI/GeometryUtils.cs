@@ -19,12 +19,23 @@ namespace Bee.UI
             return (intersectX && intersectY);
         }
 
-        public static bool IntersectPositionWithBound(int StartX, int Width, int StartY, int Height, int MouseX, int MouseY)
+        public static bool IntersetBound(int StartX, int Width, int StartY, int Height, int MouseX, int MouseY)
         {
             int minX = StartX;
             int maxX = StartX + Width;
             int minY = StartY;
             int maxY = StartY + Height;
+            bool intersectX = (MouseX >= minX && MouseX <= maxX);
+            bool intersectY = (MouseY >= minY && MouseY <= maxY);
+            return (intersectX && intersectY);
+        }
+
+        public static bool IntersetMarginBound(int StartX, int Width, int StartY, int Height, int Margin, int MouseX, int MouseY)
+        {
+            int minX = StartX - Margin;
+            int maxX = StartX + Width + Margin;
+            int minY = StartY - Margin;
+            int maxY = StartY + Height + Margin;
             bool intersectX = (MouseX >= minX && MouseX <= maxX);
             bool intersectY = (MouseY >= minY && MouseY <= maxY);
             return (intersectX && intersectY);

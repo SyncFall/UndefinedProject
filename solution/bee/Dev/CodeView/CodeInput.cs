@@ -42,6 +42,7 @@ namespace Bee.Integrator
                     CodeText.CodeCursor.CursorBlink.Reset();
                     return true;
                 }
+          
             }
             else if(Event.IsCursor)
             {
@@ -121,7 +122,7 @@ namespace Bee.Integrator
             bool isDown = keyState.IsDown;
             bool isClick = keyState.IsClick;
 
-            CodeHistoryEntry historyEntry = new CodeHistoryEntry(CodeText.SourceText.Text, CodeText.CodeCursor, CodeText.CodeSelection);
+            CodeHistoryEntry historyEntry = new CodeHistoryEntry(CodeText.SourceText.StringContent, CodeText.CodeCursor, CodeText.CodeSelection);
 
             // backspace
             if (isDown && key == Key.BackSpace)
@@ -185,7 +186,7 @@ namespace Bee.Integrator
                 CodeHistoryEntry undoHistory = CodeText.CodeHistory.UndoHistory();
                 if(undoHistory != null)
                 {
-                    CodeText.SetSourceText(CodeText.SourceText.SetText(undoHistory.CodeString));
+                    CodeText.SetSourceText(CodeText.SourceText.SetText(undoHistory.CodeText));
                     CodeText.CodeCursor.Bind(undoHistory.CodeCursor);
                     CodeText.CodeSelection.Bind(undoHistory.CodeSelection);
                 }
@@ -198,7 +199,7 @@ namespace Bee.Integrator
                 CodeHistoryEntry redoHistory = CodeText.CodeHistory.RedoHistory();
                 if(redoHistory != null)
                 {
-                    CodeText.SetSourceText(CodeText.SourceText.SetText(redoHistory.CodeString));
+                    CodeText.SetSourceText(CodeText.SourceText.SetText(redoHistory.CodeText));
                     CodeText.CodeCursor.Bind(redoHistory.CodeCursor);
                     CodeText.CodeSelection.Bind(redoHistory.CodeSelection);
                 }
@@ -435,7 +436,7 @@ namespace Bee.Integrator
             }
 
             // insert
-            CodeText.CodeHistory.AddHistory(new CodeHistoryEntry(CodeText.SourceText.Text, CodeText.CodeCursor, CodeText.CodeSelection));
+            CodeText.CodeHistory.AddHistory(new CodeHistoryEntry(CodeText.SourceText.StringContent, CodeText.CodeCursor, CodeText.CodeSelection));
             CodeText.CodeCursor.TextInsert(textChar + "");
             CodeText.CodeCursor.CursorBlink.Reset();
             return true;

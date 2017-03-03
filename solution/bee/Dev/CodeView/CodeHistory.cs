@@ -64,13 +64,13 @@ namespace Bee.Integrator
 
     public class CodeHistoryEntry
     {
-        public string CodeString;
+        public string CodeText;
         public CodeCursor CodeCursor;
         public CodeSelection CodeSelection;
 
-        public CodeHistoryEntry(string CodeString, CodeCursor CodeCursor, CodeSelection CodeSelection)
+        public CodeHistoryEntry(string CodeText, CodeCursor CodeCursor, CodeSelection CodeSelection)
         {
-            this.CodeString = CodeString;
+            this.CodeText = CodeText;
             this.CodeCursor = CodeCursor.Clone();
             this.CodeSelection = CodeSelection.Clone();
         }

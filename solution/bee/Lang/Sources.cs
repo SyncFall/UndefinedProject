@@ -19,7 +19,9 @@ namespace Bee.Language
 
     public class SourceText
     {
-        public string Text;
+        public char[] CharArray;
+        public string StringContent;
+
         public readonly string Filepath;
         
         private SourceText(string Filepath)
@@ -44,7 +46,7 @@ namespace Bee.Language
             {
                 throw new Exception("source-filepath can not null");
             }
-            File.WriteAllText((Filepath != null ? Filepath : this.Filepath), Text);
+            File.WriteAllText((Filepath != null ? Filepath : this.Filepath), new string(CharArray));
         }
         
         public SourceText SetText(string SourceText)
@@ -53,7 +55,8 @@ namespace Bee.Language
             {
                 throw new Exception("source-text can not null");
             }
-            this.Text = SourceText.Replace("\r", "");
+            this.StringContent = SourceText.Replace("\r", "");
+            this.CharArray = StringContent.ToCharArray();
             return this;
         }
 
