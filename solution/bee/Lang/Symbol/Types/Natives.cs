@@ -23,21 +23,9 @@ namespace Bee.Language
         Map,
     }
 
-    public class NativeSymbol
-    {
-        public readonly NativeType Type;
-        public readonly string String;
-
-        public NativeSymbol(string SymbolString, NativeType Type)
-        {
-            this.Type = Type;
-            this.String = SymbolString;
-        }
-    }
-
     public static class Natives
     {
-        public static readonly NativeSymbol[] Array = new NativeSymbol[]
+        public static readonly NativeSymbol[] Array =
         {
             new NativeSymbol("void", NativeType.Void),
             new NativeSymbol("bool", NativeType.Bool),
@@ -66,6 +54,18 @@ namespace Bee.Language
                 NativeSymbol symbol = Array[i];
                 EnumMap.Put(symbol.Type, symbol);
             }
+        }
+    }
+
+    public class NativeSymbol
+    {
+        public readonly NativeType Type;
+        public readonly string String;
+
+        public NativeSymbol(string SymbolString, NativeType Type)
+        {
+            this.Type = Type;
+            this.String = SymbolString;
         }
     }
 }

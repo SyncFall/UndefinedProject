@@ -36,30 +36,30 @@ namespace Bee.Language
         {
             for (int i=0; i < Keywords.Array.Length; i++)
             {
-                KeywordMap.Add(new TokenSymbol(TokenType.Keyword, Keywords.Array[i].String, Keywords.Array[i]));
+                KeywordMap.AddSymbol(new TokenSymbol(TokenType.Keyword, Keywords.Array[i].String, Keywords.Array[i]));
             }
             for (int i = 0; i < LiteralKeywords.Array.Length; i++)
             {
-                KeywordMap.Add(new TokenSymbol(TokenType.Literal, LiteralKeywords.Array[i].String, LiteralKeywords.Array[i]));
+                KeywordMap.AddSymbol(new TokenSymbol(TokenType.Literal, LiteralKeywords.Array[i].String, LiteralKeywords.Array[i]));
             }
             for (int i=0; i < Natives.Array.Length; i++)
             {
-                KeywordMap.Add(new TokenSymbol(TokenType.Native, Natives.Array[i].String, Natives.Array[i]));
+                KeywordMap.AddSymbol(new TokenSymbol(TokenType.Native, Natives.Array[i].String, Natives.Array[i]));
             }
             for(int i=0; i < Accessors.Array.Length; i++)
             {
-                KeywordMap.Add(new TokenSymbol(TokenType.Accessor, Accessors.Array[i].String, Accessors.Array[i]));
+                KeywordMap.AddSymbol(new TokenSymbol(TokenType.Accessor, Accessors.Array[i].String, Accessors.Array[i]));
             }
             for(int i=0; i < StatementKeywords.Array.Length; i++)
             {
-                KeywordMap.Add(new TokenSymbol(TokenType.Statement, StatementKeywords.Array[i].String, StatementKeywords.Array[i]));
+                KeywordMap.AddSymbol(new TokenSymbol(TokenType.Statement, StatementKeywords.Array[i].String, StatementKeywords.Array[i]));
             }
 
             StructureArray = new TokenSymbol[Structures.Array.Length];
             for(int i=0; i<Structures.Array.Length; i++)
             {
                 StructureArray[i] = new TokenSymbol(TokenType.Structure, Structures.Array[i].String, Structures.Array[i]);
-                StructureMap.Add(StructureArray[i]);
+                StructureMap.AddSymbol(StructureArray[i]);
             }
 
             OperationArray = new TokenSymbol[Operations.Array.Length];

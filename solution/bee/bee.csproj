@@ -84,7 +84,6 @@
     <Compile Include="Dev\CodeView\CodeHistory.cs" />
     <Compile Include="Dev\CodeView\CodeInput.cs" />
     <Compile Include="Dev\CodeView\CodeMessage.cs" />
-    <Compile Include="Dev\CodeView\CodeScroller.cs" />
     <Compile Include="Dev\CodeView\CodeSelection.cs" />
     <Compile Include="Dev\CodeView\CodeText.cs" />
     <Compile Include="Dev\CodeView\CodeView.cs" />

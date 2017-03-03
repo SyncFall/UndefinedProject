@@ -83,7 +83,7 @@ namespace Bee.Language
             // check for keyword
             if(alphaLowerLen > 0 && alphaNumericLen == 0)
             {
-                TokenSymbol tokenSymbol = Tokens.KeywordMap.Find(TextParser.Text, alphaLowerStart, alphaLowerStart + alphaLowerLen);
+                TokenSymbol tokenSymbol = Tokens.KeywordMap.FindSymbol(TextParser.Text, alphaLowerStart, alphaLowerStart + alphaLowerLen);
                 if(tokenSymbol != null)
                 {
                     return tokenSymbol;
@@ -212,7 +212,7 @@ namespace Bee.Language
             {
                 return null;
             }
-            TokenSymbol symbol = Tokens.StructureMap.Find(TextParser.Text, TextParser.Start, TextParser.Start+1);
+            TokenSymbol symbol = Tokens.StructureMap.FindSymbol(TextParser.Text, TextParser.Start, TextParser.Start+1);
             if(symbol != null)
             {
                 TextParser.Finish(TextParser.Start + 1);

@@ -8,14 +8,12 @@ namespace Bee.Language
 {
     public class TokenTrie
     {
-        private Node Root; 
+        private Node Root = new Node(0, null);
 
         public TokenTrie()
-        {
-            Root = new Node(0, null);
-        }
+        { }
 
-        public void Add(TokenSymbol Symbol)
+        public void AddSymbol(TokenSymbol Symbol)
         {
             string String = Symbol.String;
             if (String == null || String.Length == 0)
@@ -25,7 +23,7 @@ namespace Bee.Language
             InsertNode(String, Symbol, Root);
         }
 
-        public TokenSymbol Find(char[] Chars, int start, int end)
+        public TokenSymbol FindSymbol(char[] Chars, int start, int end)
         {
             /*
             if (Chars == null || Chars.Length == 0)
@@ -33,7 +31,7 @@ namespace Bee.Language
                 throw new Exception("invalid string");
             }
             */
-            return FindSymbolNode(Chars, start, end, start, Root);
+            return FindNode(Chars, start, end, start, Root);
         }
 
         private void InsertNode(string String, TokenSymbol Symbol, Node Node)
@@ -66,7 +64,7 @@ namespace Bee.Language
             }
         }
 
-        private TokenSymbol FindSymbolNode(char[] Chars, int start, int end, int index, Node node)
+        private TokenSymbol FindNode(char[] Chars, int start, int end, int index, Node node)
         {
             /*
             if (Char > 127)
@@ -95,7 +93,7 @@ namespace Bee.Language
                 {
                     return child.Symbol;
                 }
-                // no-exact-node
+                // not-exact-node
                 else
                 {
                     return null;

@@ -38,7 +38,7 @@ namespace Bee.Language
 
     public static class Structures
     {
-        public static readonly StructureSymbol[] Array = new StructureSymbol[]
+        public static readonly StructureSymbol[] Array =
         {
             new StructureSymbol(StructureType.WhiteSpace, StructureGroup.Space, " "),
             new StructureSymbol(StructureType.TabSpace, StructureGroup.Space, "\t"),

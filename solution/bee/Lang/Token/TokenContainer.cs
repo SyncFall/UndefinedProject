@@ -152,7 +152,7 @@ namespace Bee.Language
         {
             get
             {
-                return FirstLineTokenNode(0);
+                return AllTokenNodes.First;
             }
         }
 

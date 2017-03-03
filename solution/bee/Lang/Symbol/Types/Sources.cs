@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Lang.Symbol.Types
+namespace Bee.Lang
 {
-    public enum SourceKeywordType
+    public enum RegionType
     {
         RegionBegin,
         RegionEnd,
@@ -16,10 +16,26 @@ namespace Bee.Lang.Symbol.Types
         ProcessEnd,
     }
 
-    public static class SourceKeywords
+    public static class RegionKeywords
     {
-
+        public static readonly RegionSymbol[] Array = {
+            new RegionSymbol("#region", RegionType.RegionBegin),
+            new RegionSymbol("#endregion", RegionType.RegionEnd),
+            new RegionSymbol("#if", RegionType.ProcessIf),
+            new RegionSymbol("#elseif", RegionType.ProcessElseIf),
+            new RegionSymbol("#else", RegionType.ProcessElse),
+        };
     }
 
+    public class RegionSymbol
+    {
+        public readonly RegionType Type;
+        public readonly string String;
 
+        public RegionSymbol(string String, RegionType Type)
+        {
+            this.Type = Type;
+            this.String = String;
+        }
+    }
 }

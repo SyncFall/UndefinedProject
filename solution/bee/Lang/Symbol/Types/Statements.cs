@@ -67,7 +67,7 @@ namespace Bee.Language
 
     public static class StatementKeywords
     {
-        public static readonly StatementKeywordSymbol[] Array = new StatementKeywordSymbol[]
+        public static readonly StatementKeywordSymbol[] Array =
         {
             new StatementKeywordSymbol(StatementKeywordType.If, "if"),
             new StatementKeywordSymbol(StatementKeywordType.Else, "else"),

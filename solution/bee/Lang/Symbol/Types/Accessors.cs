@@ -12,7 +12,7 @@ namespace Bee.Language
 
     public static class Accessors
     {
-        public static readonly AccessorSymbol[] Array = new AccessorSymbol[]
+        public static readonly AccessorSymbol[] Array =
         {
             new AccessorSymbol("public", AccessorType.Public),
             new AccessorSymbol("private", AccessorType.Private),

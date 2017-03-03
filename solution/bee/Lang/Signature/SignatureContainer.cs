@@ -25,7 +25,6 @@ namespace Bee.Language
         public SourceText SourceText;
         public ListCollection<SignatureNode> SignatureNodes = new ListCollection<SignatureNode>(64);
 
-
         public SignatureContainer()
         { }
 

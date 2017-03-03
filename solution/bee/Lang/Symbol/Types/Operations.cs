@@ -53,7 +53,7 @@ namespace Bee.Language
 
     public class Operations
     {
-        public static readonly OperationSymbol[] Array = new OperationSymbol[]
+        public static readonly OperationSymbol[] Array =
         {
             // logic and-or
             new OperationSymbol("&&", OperationGroup.LogicAndOr, OperationType.And),

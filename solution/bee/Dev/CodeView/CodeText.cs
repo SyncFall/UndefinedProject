@@ -28,7 +28,6 @@ namespace Bee.Integrator
         public CodeInput CodeInput;
         public CodeSelection CodeSelection;
         public CodeHistory CodeHistory;
-        public CodeScroller CodeScroller;
         public TokenContainer TokenContainer;
         
         public CodeText()
@@ -48,7 +47,6 @@ namespace Bee.Integrator
             this.CodeInput = new CodeInput(this);
             this.CodeSelection = new CodeSelection(this);
             this.CodeHistory = new CodeHistory(this);
-            this.CodeScroller = new CodeScroller(this);
             this.SetSourceText(SourceText);
         }
 
