@@ -33,7 +33,7 @@ namespace Bee.Integrator
         public CodeText()
         {
             this.SourceFont = new Font("DroidSansMono.ttf", DefaultFontSize);
-            this.SourceText = SourceText.FromFile("language.bee-source");
+            this.SourceText = SourceText.FromFile("test1.bee-source");
             SourceList list = new SourceList();
             list.Add(this.SourceText);
             this.Registry = new Registry();
@@ -43,11 +43,11 @@ namespace Bee.Integrator
             this.GlyphContainer = new GlyphContainer(SourceFont);
             this.CodeColor = new CodeColor();
             this.CodeContainer = new CodeContainer(this);
+            this.CodeContainer.SetContainer(Registry.EntryList.GetExist(SourceText).TokenContainer);
             this.CodeCursor = new CodeCursor(this);
             this.CodeInput = new CodeInput(this);
             this.CodeSelection = new CodeSelection(this);
             this.CodeHistory = new CodeHistory(this);
-            this.SetSourceText(SourceText);
         }
 
         public void SetSourceText(SourceText Source)

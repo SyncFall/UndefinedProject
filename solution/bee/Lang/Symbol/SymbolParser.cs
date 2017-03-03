@@ -13,6 +13,7 @@ namespace Bee.Language
 
         public SourceSymbol TrySymbol(SignatureContainer SignatureContainer)
         {
+            ScopeSymbol lastScopeSymbol = null;
             SourceSymbol sourceSymbol = new SourceSymbol(SignatureContainer.SourceText);
             for (int i = 0; i < SignatureContainer.SignatureNodes.Size; i++)
             {
@@ -23,11 +24,11 @@ namespace Bee.Language
                 }
                 else if (signature.Type == SignatureType.Scope)
                 {
-                    TryScope(sourceSymbol, signature as ScopeSignature);
+                    lastScopeSymbol = TryScope(sourceSymbol, signature as ScopeSignature);
                 }
-                else
+                else if(signature.Type == SignatureType.Object)
                 {
-                    ;
+                    TryObject(lastScopeSymbol, signature as ObjectSignature);
                 }
             }
             return sourceSymbol;
@@ -49,7 +50,7 @@ namespace Bee.Language
             }
         }
 
-        public void TryScope(SourceSymbol Source, ScopeSignature Signature)
+        public ScopeSymbol TryScope(SourceSymbol Source, ScopeSignature Signature)
         {
             if (Signature.IdentifierPath == null)
             {
@@ -63,16 +64,17 @@ namespace Bee.Language
                     scopeSymbol = new ScopeSymbol(Source, Signature);
                     Source.ScopeList.Add(scopeSymbol);
                 }
-                for (int i = 0; i < Signature.ObjectList.Size; i++)
-                {
-                    ObjectSignature objectSignatur = Signature.ObjectList.Get(i);
-                    TryObject(scopeSymbol, objectSignatur);
-                }
+                return scopeSymbol;
             }
+            return null;
         }
 
         public void TryObject(ScopeSymbol Scope, ObjectSignature Signature)
         {
+            if(Scope == null)
+            {
+                throw new Exception("try-object, unknown scope");
+            }
             if (Signature.Identifier == null)
             {
                 ;

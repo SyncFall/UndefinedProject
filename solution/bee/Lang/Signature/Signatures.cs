@@ -14,6 +14,7 @@ namespace Bee.Language
         Seperator,
         Block,
         Keyword,
+        Native,
         // source-file
         Use,
         Scope,

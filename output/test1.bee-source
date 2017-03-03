@@ -5,23 +5,8 @@ scope Wikipedia.Language;
 
 object Little
 {
-	int basis = 400;
-	str text = "sym";
-
-	object create()
-	{
-		basis = 1;
-	}
-
-	void update()
-	{
-		if(basis < 1.0f)
-		{
-			text = "invalid";
-		}
-		else
-		{
-			text = (i + " valid");
-		}
+	int counter = 0;
+	get int Peter{
+		return counter;
 	}
 }

@@ -58,7 +58,7 @@ namespace Bee.Language
                     for(int k=0; k<scopeSymbol.ObjectList.Size; k++)
                     {
                         ObjectSymbol objectSymbol = scopeSymbol.ObjectList.Get(k);
-                        if(objectSymbol.Signature.Identifier.IdentifiereToken.String == ObjectName)
+                        if(objectSymbol.Signature.Identifier.Identifier.String == ObjectName)
                         {
                             return objectSymbol;
                         }

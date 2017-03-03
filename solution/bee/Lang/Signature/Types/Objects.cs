@@ -20,8 +20,7 @@ namespace Bee.Language
             if (!TrySpace() ||
                 (signatur.IdentifierPath = TryIdentifierPath()) == null ||
                 (signatur.Complete = TrySeperator(StructureType.Complete)) == null
-            )
-            {
+            ){
                 ;
             }
             return signatur;
@@ -37,9 +36,7 @@ namespace Bee.Language
             signatur.Keyword = new KeywordSignature(PrevToken);
             if (!TrySpace() ||
                 (signatur.IdentifierPath = TryIdentifierPath()) == null ||
-                (signatur.BlockBegin = TryBlock(StructureType.BlockBegin)) == null ||
-                (signatur.ObjectList = TryObjectList()) == null ||
-                (signatur.BlockEnd = TryBlock(StructureType.BlockEnd)) == null
+                (signatur.Complete = TrySeperator(StructureType.Complete)) == null
             )
             {
                 ;
@@ -70,25 +67,31 @@ namespace Bee.Language
             if (!TrySpace() ||
                 (signatur.Identifier = TryIdentifier()) == null ||
                 (signatur.BlockBegin = TryBlock(StructureType.BlockBegin)) == null
-            )
-            {
+            ){
                 return signatur;
             }
             SignatureSymbol objectElement;
-            while ((objectElement = TryObjectElement()) != null)
+            while(true)
             {
-                if (objectElement.Type == SignatureType.Member)
+                MemberSignature member = TryMember();
+                if(member != null)
                 {
-                    signatur.Members.Add(objectElement as MemberSignature);
+                    signatur.Members.Add(member);
+                    continue;
                 }
-                else if (objectElement.Type == SignatureType.Method)
+                MethodSignature method = TryMethod();
+                if(method != null)
                 {
-                    signatur.Methods.Add(objectElement as MethodSignature);
+                    signatur.Methods.Add(method);
+                    continue;
                 }
-                else
+                PropertySignature property = TryProperty();
+                if(property != null)
                 {
-                    throw new Exception("invalid state");
+                    signatur.Properties.Add(property);
                 }
+                //
+                break;
             }
             if ((signatur.BlockEnd = TryBlock(StructureType.BlockEnd)) == null)
             {
@@ -97,7 +100,7 @@ namespace Bee.Language
             return signatur;
         }
 
-        public SignatureSymbol TryObjectElement()
+        public MemberSignature TryMember()
         {
             TrySpace();
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
@@ -105,23 +108,22 @@ namespace Bee.Language
             {
                 return null;
             }
-            SeperatorSignature assigment = TrySeperator(StructureType.Assigment);
-            ExpressionSignature assigmentExpression = null;
-            if (assigment != null)
-            {
-                assigmentExpression = TryExpression();
-            }
             SeperatorSignature complete = TrySeperator(StructureType.Complete);
-            if (assigment != null)
+            if (complete != null)
             {
                 MemberSignature member = new MemberSignature();
                 member.TypeDeclaration = typeDeclaration;
-                member.Assigment = assigment;
-                member.AssigmentExpression = assigmentExpression;
                 member.Complete = complete;
                 return member;
             }
-            if (Token == null)
+            return null;
+        }
+
+        public MethodSignature TryMethod()
+        {
+            TrySpace();
+            TypeDeclarationSignature typeDeclaration = TryTypeDeclaration(false);
+            if (typeDeclaration == null)
             {
                 return null;
             }
@@ -138,6 +140,36 @@ namespace Bee.Language
                     ;
                 }
                 return method;
+            }
+            return null;
+        }
+
+
+        public PropertySignature TryProperty()
+        {
+            TrySpace();
+            TokenSymbol propertyType = null;
+            if((propertyType = TryToken(KeywordType.Get)) == null && (propertyType = TryToken(KeywordType.Set)) == null)
+            {
+                return null;
+            }
+            TypeDeclarationSignature typeDeclaration = TryTypeDeclaration(false);
+            if (typeDeclaration == null)
+            {
+                 return null;
+            }
+            BeginStep();
+            SeperatorSignature enclosing = TrySeperator(StructureType.BlockBegin);
+            ResetStep();
+            if (enclosing != null)
+            {
+                PropertySignature property = new PropertySignature(propertyType);
+                property.TypeDeclaration = typeDeclaration;
+                if ((property.Code = TryCode()) == null)
+                {
+                    ;
+                }
+                return property;
             }
             return null;
         }
@@ -162,18 +194,14 @@ namespace Bee.Language
     {
         public KeywordSignature Keyword;
         public IdentifierPathSignature IdentifierPath;
-        public BlockSignature BlockBegin;
-        public ObjectSignatureList ObjectList = new ObjectSignatureList();
-        public BlockSignature BlockEnd;
+        public SeperatorSignature Complete;
 
         public ScopeSignature() : base(SignatureType.Scope)
         { }
 
         public override string ToString()
         {
-            string str = "scope(" + IdentifierPath + ")\n";
-            str += ObjectList;
-            return str;
+            return "scope(" + IdentifierPath + ")";
         }
     }
 
@@ -197,6 +225,7 @@ namespace Bee.Language
         public BlockSignature BlockBegin;
         public MemberSignatureList Members = new MemberSignatureList();
         public MethodSignatureList Methods = new MethodSignatureList();
+        public PropertySignatureList Properties = new PropertySignatureList();
         public BlockSignature BlockEnd;
 
         public ObjectSignature() : base(SignatureType.Object)
@@ -207,6 +236,7 @@ namespace Bee.Language
             string str = "object(" + Identifier + ")\n";
             str += Members;
             str += Methods;
+            str += Properties;
             return str;
         }
     }
@@ -227,8 +257,6 @@ namespace Bee.Language
     public class MemberSignature : SignatureSymbol
     {
         public TypeDeclarationSignature TypeDeclaration;
-        public SeperatorSignature Assigment;
-        public ExpressionSignature AssigmentExpression;
         public SeperatorSignature Complete;
 
         public MemberSignature() : base(SignatureType.Member)
@@ -238,10 +266,6 @@ namespace Bee.Language
         {
             string str = "member(";
             str += TypeDeclaration;
-            if (Assigment != null)
-            {
-                str += ", assigment(" + AssigmentExpression + ")";
-            }
             return str + ")";
         }
     }
@@ -271,6 +295,43 @@ namespace Bee.Language
         public override string ToString()
         {
             string str = "method(";
+            str += TypeDeclaration;
+            str += ", parameters(" + ParameterDeclaration + ")";
+            str += ")\n";
+            str += Code;
+            return str;
+        }
+    }
+
+    public class PropertySignatureList : ListCollection<PropertySignature>
+    {
+        public override string ToString()
+        {
+            string str = "";
+            for (int i = 0; i < Size; i++)
+            {
+                str += Get(i) + "\n";
+            }
+            return str;
+        }
+    }
+
+    public class PropertySignature : SignatureSymbol
+    {
+        public TypeDeclarationSignature TypeDeclaration;
+        public ParameterDeclarationSignature ParameterDeclaration;
+        public TokenSymbol CodeType;
+        public CodeSignature Code;
+
+        public PropertySignature(TokenSymbol CodeType) : base(SignatureType.Property)
+        {
+            this.CodeType = CodeType;
+        }
+
+        public override string ToString()
+        {
+            string str = "property(";
+            str += "type:"+CodeType.String+", ";
             str += TypeDeclaration;
             str += ", parameters(" + ParameterDeclaration + ")";
             str += ")\n";

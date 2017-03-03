@@ -32,21 +32,20 @@ namespace Bee.Language
             {
                 return null;
             }
-            IdentifierSignature signatur = new IdentifierSignature();
-            signatur.IdentifiereToken = PrevToken;
-            return signatur;
+            return new IdentifierSignature(PrevToken);
         }
 
-        public TypeDeclarationSignature TryTypeDeclaration()
+        public TypeDeclarationSignature TryTypeDeclaration(bool WithAssigment=true)
         {
+            TrySpace();
             TypeDeclarationSignature signatur = new TypeDeclarationSignature();
             if (TryToken(TokenType.Native) != null)
             {
-                signatur.TypeNative = PrevToken;
+                signatur.TypeNative = new NativeSignature(PrevToken);
             }
             else if (TryToken(TokenType.Identifier) != null)
             {
-                signatur.TypeIdentifier = PrevToken;
+                signatur.TypeIdentifier = new IdentifierSignature(PrevToken);
             }
             else
             {
@@ -56,6 +55,14 @@ namespace Bee.Language
                (signatur.NameIdentifier = TryIdentifier()) == null
             ){
                 ;
+            }
+            if(WithAssigment)
+            {
+                if((signatur.Assigment = TrySeperator(StructureType.Assigment)) == null ||
+                   (signatur.AssigmentExpression = TryExpression()) == null
+                ){
+                    ;
+                }
             }
             return signatur;
         }
@@ -88,9 +95,11 @@ namespace Bee.Language
 
     public class TypeDeclarationSignature : SignatureSymbol
     {
-        public TokenSymbol TypeNative;
-        public TokenSymbol TypeIdentifier;
+        public NativeSignature TypeNative;
+        public IdentifierSignature TypeIdentifier;
         public IdentifierSignature NameIdentifier;
+        public SeperatorSignature Assigment;
+        public ExpressionSignature AssigmentExpression;
      
         public TypeDeclarationSignature() : base(SignatureType.TypeDeclartion)
         { }
@@ -100,15 +109,19 @@ namespace Bee.Language
             string str = "";
             if (TypeNative != null)
             {
-                str += "native:" + TypeNative.String;
+                str += "native:" + TypeNative.Native.String;
             }
             else if (TypeIdentifier != null)
             {
-                str += "object:" + TypeIdentifier.String;
+                str += "object:" + TypeIdentifier.Identifier.String;
             }
             if (NameIdentifier != null)
             {
-                str += ", name:" + NameIdentifier.IdentifiereToken.String;
+                str += ", name:" + NameIdentifier.Identifier.String;
+            }
+            if(Assigment != null)
+            {
+                str += ", assigment(" + AssigmentExpression + ")";
             }
             return str;
         }
@@ -184,7 +197,7 @@ namespace Bee.Language
                 string str = Identifier.String;
                 if (PointSeperator != null)
                 {
-                    str += PointSeperator.SeperatorToken.String;
+                    str += PointSeperator.Seperator.String;
                 }
                 return str;
             }
@@ -194,14 +207,16 @@ namespace Bee.Language
 
     public class IdentifierSignature : SignatureSymbol
     {
-        public TokenSymbol IdentifiereToken;
+        public TokenSymbol Identifier;
 
-        public IdentifierSignature() : base(SignatureType.Identifier)
-        { }
+        public IdentifierSignature(TokenSymbol IdentifiereToken) : base(SignatureType.Identifier)
+        {
+            this.Identifier = IdentifiereToken;
+        }
 
         public override string ToString()
         {
-            return "name(" + IdentifiereToken != null ? IdentifiereToken.String : "" + ")";
+            return "name(" + Identifier != null ? Identifier.String : "" + ")";
         }
     }
 }

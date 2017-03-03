@@ -10,7 +10,7 @@ namespace Bee.Language
     {
         public SignatureSymbol TrySignature()
         {
-            if (IsEnd())
+            if(IsEnd())
             {
                 return null;
             }
@@ -19,7 +19,9 @@ namespace Bee.Language
             if((signature = TryUse()) != null ||
                (signature = TryScope()) != null ||
                (signature = TryObject()) != null ||
-               (signature = TryObjectElement()) != null ||
+               (signature = TryMember()) != null ||
+               (signature = TryMethod()) != null ||
+               (signature = TryProperty()) != null ||
                (signature = TryCode()) != null ||
                (signature = TryStatement()) != null ||
                (signature = TryExpression()) != null ||
@@ -29,10 +31,10 @@ namespace Bee.Language
                (signature = TryIdentifier()) != null ||
                (signature = TryUnknown()) != null
             ){
-                ;
+                Console.WriteLine(signature);
+                return signature;
             }
-            //Console.WriteLine(signature);
-            return signature;
+            throw new Exception("invalid state");
         }
     }
 }

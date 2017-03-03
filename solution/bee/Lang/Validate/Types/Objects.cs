@@ -16,13 +16,13 @@ namespace Bee.Language
                 TypeDeclarationSignature typeDeclaration = memberSymbol.Signature.TypeDeclaration;
                 if (typeDeclaration.TypeIdentifier != null)
                 {
-                    if (Registry.GetObjectSymbol(typeDeclaration.TypeIdentifier.String) == null)
+                    if (Registry.GetObjectSymbol(typeDeclaration.TypeIdentifier.Identifier.String) == null)
                     {
                         ;
                     }
-                    else if (memberSymbol.Signature.AssigmentExpression != null)
+                    else if (memberSymbol.Signature.TypeDeclaration.AssigmentExpression != null)
                     {
-                        ValidateExpression(memberSymbol.Signature.AssigmentExpression);
+                        ValidateExpression(memberSymbol.Signature.TypeDeclaration.AssigmentExpression);
                     }
                 }
             }
@@ -32,7 +32,7 @@ namespace Bee.Language
                 TypeDeclarationSignature typeDeclaration = methodSymbol.Signature.TypeDeclaration;
                 if (typeDeclaration.TypeIdentifier != null)
                 {
-                    if (Registry.GetObjectSymbol(typeDeclaration.TypeIdentifier.String) == null)
+                    if (Registry.GetObjectSymbol(typeDeclaration.TypeIdentifier.Identifier.String) == null)
                     {
                         ;
                     }
@@ -46,7 +46,7 @@ namespace Bee.Language
                         TypeDeclarationSignature parameterTypeDeclaration = parameterElement.TypeDeclaration;
                         if (parameterTypeDeclaration.TypeIdentifier != null)
                         {
-                            if (Registry.GetObjectSymbol(parameterTypeDeclaration.TypeIdentifier.String) == null)
+                            if (Registry.GetObjectSymbol(parameterTypeDeclaration.TypeIdentifier.Identifier.String) == null)
                             {
                                 ;
                             }

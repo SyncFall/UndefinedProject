@@ -124,7 +124,7 @@ namespace Bee.Language
                 }
                 else if(accessSignature.Type == SignatureType.VariableAccess)
                 {
-                    string variableIdentifiere = (accessSignature as VariableAccessSignature).Identifier.IdentifiereToken.String;
+                    string variableIdentifiere = (accessSignature as VariableAccessSignature).Identifier.Identifier.String;
                    
                 }
                 else if(accessSignature.Type == SignatureType.FunctionAccess)

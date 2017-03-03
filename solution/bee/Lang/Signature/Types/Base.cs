@@ -185,13 +185,23 @@ namespace Bee.Language
         }
     }
 
+    public class NativeSignature : SignatureSymbol
+    {
+        public TokenSymbol Native;
+
+        public NativeSignature(TokenSymbol NativeToken) : base(SignatureType.Native)
+        {
+            this.Native = NativeToken;
+        }
+    }
+
     public class SeperatorSignature : SignatureSymbol
     {
-        public TokenSymbol SeperatorToken;
+        public TokenSymbol Seperator;
 
         public SeperatorSignature(TokenSymbol SeperatorToken) : base(SignatureType.Seperator)
         {
-            this.SeperatorToken = SeperatorToken;
+            this.Seperator = SeperatorToken;
         }
     }
 

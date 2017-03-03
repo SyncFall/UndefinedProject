@@ -137,7 +137,7 @@ namespace Bee.Language
                     {
                         TypeDeclarationStatementSignature signature = new TypeDeclarationStatementSignature();
                         signature.TypeDeclaration = typeDeclaration;
-                        if ((signature.Complete = TrySeperator(StructureType.Complete)) == null)
+                        if((signature.Complete = TrySeperator(StructureType.Complete)) == null)
                         {
                             ;
                         }

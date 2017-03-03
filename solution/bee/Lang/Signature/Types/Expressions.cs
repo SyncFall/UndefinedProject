@@ -246,7 +246,7 @@ namespace Bee.Language
 
         public override string ToString()
         {
-            return "variable(name:" + Identifier.IdentifiereToken.String + ")";
+            return "variable(name:" + Identifier.Identifier.String + ")";
         }
     }
 
@@ -264,7 +264,7 @@ namespace Bee.Language
 
         public override string ToString()
         {
-            return "function(name:" + Identifier.IdentifiereToken.String + ", parameters(" + ParameterList + "))";
+            return "function(name:" + Identifier.Identifier.String + ", parameters(" + ParameterList + "))";
         }
     }
 

@@ -97,7 +97,7 @@ namespace Bee.Language
                     TypeDeclarationStatementSignature typeDeclarationStatement = statement as TypeDeclarationStatementSignature;
                     if (typeDeclarationStatement.TypeDeclaration.TypeIdentifier != null)
                     {
-                        if (Registry.GetObjectSymbol(typeDeclarationStatement.TypeDeclaration.TypeIdentifier.String) == null)
+                        if (Registry.GetObjectSymbol(typeDeclarationStatement.TypeDeclaration.TypeIdentifier.Identifier.String) == null)
                         {
                             ;
                         }
