@@ -161,33 +161,19 @@ namespace Bee.Language
         void WriteTypeDeclaration(TypeDeclarationSignature td)
         {
             if(td.TypeNative != null)
-            {
                 Write(td.TypeNative.String + " ");
-            }
             if(td.TypeIdentifier != null)
-            {
                 Write(td.TypeIdentifier.String + " ");
-            }
             if(td.TypeGeneric != null)
-            {
                 WriteGenericDeclaration(td.TypeGeneric);
-            }
             if(td.TypeArray != null)
-            {
                 WriteArrayDeclaration(td.TypeArray);
-            }
             if(td.NameIdentifier != null)
-            {
                 Write(td.NameIdentifier.String);
-            }
             if(td.Assigment != null)
-            {
                 Write(" = ");
-            }
             if(td.AssigmentExpression != null)
-            {
                 WriteExpression(td.AssigmentExpression);
-            }
         }
 
         void WriteGenericDeclaration(GenericDeclarationSignature gn)
