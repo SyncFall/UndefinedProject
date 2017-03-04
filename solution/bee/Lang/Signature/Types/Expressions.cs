@@ -13,7 +13,7 @@ namespace Bee.Language
         {
             TrySpace();
             ExpressionSignature signature = new ExpressionSignature();
-            BlockSignature blockBegin;
+            TokenSymbol blockBegin;
             if ((blockBegin = TryBlock(StructureType.ClosingBegin)) != null)
             {
                 signature.BlockBegin = blockBegin;
@@ -54,9 +54,9 @@ namespace Bee.Language
             AccessSignature accessSignatur = null;
             if (TryToken(TokenType.Literal) != null)
             {
-                LiteralAccessSignature literalAccess = new LiteralAccessSignature(PrevToken.Symbol as LiteralSymbol);
+                LiteralAccessSignature literalAccess = new LiteralAccessSignature(PrevToken);
                 accessSignatur = literalAccess;
-                signature.AccessSignatureList.Add(literalAccess);
+                signature.AccessList.Add(literalAccess);
                 if ((literalAccess.Seperator = TrySeperator(StructureType.Point)) == null)
                 {
                     return signature;
@@ -72,7 +72,7 @@ namespace Bee.Language
             }
             while (Token != null && Token.Type == TokenType.Identifier)
             {
-                IdentifierSignature identifier = TryIdentifier();
+                TokenSymbol identifier = TryIdentifier();
                 if (TryBlock(StructureType.ClosingBegin) != null)
                 {
                     FunctionAccessSignature functionAccess = new FunctionAccessSignature(identifier);
@@ -124,7 +124,7 @@ namespace Bee.Language
                     VariableAccessSignature variableAccess = new VariableAccessSignature(identifier);
                     accessSignatur = variableAccess;
                 }
-                signature.AccessSignatureList.Add(accessSignatur);
+                signature.AccessList.Add(accessSignatur);
                 if ((accessSignatur.Seperator = TrySeperator(StructureType.Point)) == null)
                 {
                     return signature;
@@ -140,7 +140,7 @@ namespace Bee.Language
             {
                 return null;
             }
-            OperationSignature signature = new OperationSignature(PrevToken.Symbol as OperationSymbol);
+            OperationSignature signature = new OperationSignature(PrevToken);
             TrySpace();
             return signature;
         }
@@ -149,11 +149,12 @@ namespace Bee.Language
 
     public class ExpressionSignature : SignatureSymbol
     {
-        public BlockSignature BlockBegin;
+        public TokenSymbol BlockBegin;
         public ExpressionSignature ChildExpression;
-        public BlockSignature BlockEnd;
+        public TokenSymbol BlockEnd;
         public OperandSignatur Operand;
         public ExpressionOperationList OperationList = new ExpressionOperationList();
+        public TokenSymbol Seperator;
 
         public ExpressionSignature() : base(SignatureType.Expression)
         { }
@@ -176,11 +177,11 @@ namespace Bee.Language
 
     public class OperationSignature : SignatureSymbol
     {
-        public OperationSymbol Symbol;
+        public TokenSymbol Token;
 
-        public OperationSignature(OperationSymbol OperationSymbol) : base(SignatureType.Operation)
+        public OperationSignature(TokenSymbol OperationToken) : base(SignatureType.Operation)
         {
-            this.Symbol = OperationSymbol;
+            this.Token = OperationToken;
         }
     }
 
@@ -210,20 +211,20 @@ namespace Bee.Language
 
         public override string ToString()
         {
-            return ", operation(type:" + Operation.Symbol.Type + ", symbol:" + Operation.Symbol.String + "), " + ExpressionPair;
+            return ", operation(type:" + Operation.Token.Type + ", symbol:" + Operation.Token.String + "), " + ExpressionPair;
         }
     }
 
     public class OperandSignatur : SignatureSymbol
     {
-        public AccessSignatureList AccessSignatureList = new AccessSignatureList();
+        public AccessSignatureList AccessList = new AccessSignatureList();
 
         public OperandSignatur() : base(SignatureType.Operand)
         { }
 
         public override string ToString()
         {
-            return AccessSignatureList.ToString();
+            return AccessList.ToString();
         }
     }
     
@@ -232,7 +233,7 @@ namespace Bee.Language
 
     public abstract class AccessSignature : SignatureSymbol
     {
-        public SeperatorSignature Seperator;
+        public TokenSymbol Seperator;
 
         public AccessSignature(SignatureType accessType) : base(accessType)
         { }
@@ -240,67 +241,67 @@ namespace Bee.Language
 
     public class LiteralAccessSignature : AccessSignature
     {
-        public LiteralSymbol LiteralSymbol;
+        public TokenSymbol Literal;
 
-        public LiteralAccessSignature(LiteralSymbol LiteralSymbol) : base(SignatureType.LiteralAccess)
+        public LiteralAccessSignature(TokenSymbol Literal) : base(SignatureType.LiteralAccess)
         {
-            this.LiteralSymbol = LiteralSymbol;
+            this.Literal = Literal;
         }
 
         public override string ToString()
         {
-            return "literal(type:" + LiteralSymbol.Type + ", symbol:" + LiteralSymbol.String + ")";
+            return "literal(type:" + Literal.Type + ", symbol:" + Literal.String + ")";
         }
     }
 
     public class VariableAccessSignature : AccessSignature
     {
-        public IdentifierSignature Identifier;
+        public TokenSymbol Identifier;
 
-        public VariableAccessSignature(IdentifierSignature Identifier) : base(SignatureType.VariableAccess)
+        public VariableAccessSignature(TokenSymbol Identifier) : base(SignatureType.VariableAccess)
         {
             this.Identifier = Identifier;
         }
 
         public override string ToString()
         {
-            return "variable(name:" + Identifier.Identifier.String + ")";
+            return "variable(name:" + Identifier.String + ")";
         }
     }
 
     public class FunctionAccessSignature : AccessSignature
     {
-        public IdentifierSignature Identifier;
-        public BlockSignature BlockBegin;
+        public TokenSymbol Identifier;
+        public TokenSymbol BlockBegin;
         public ParameterListSignature ParameterList = new ParameterListSignature();
-        public BlockSignature BlockEnd;
+        public TokenSymbol BlockEnd;
 
-        public FunctionAccessSignature(IdentifierSignature Identifier) : base(SignatureType.FunctionAccess)
+        public FunctionAccessSignature(TokenSymbol Identifier) : base(SignatureType.FunctionAccess)
         {
             this.Identifier = Identifier;
         }
 
         public override string ToString()
         {
-            return "function(name:" + Identifier.Identifier.String + ", parameters(" + ParameterList + "))";
+            return "function(name:" + Identifier.String + ", parameters(" + ParameterList + "))";
         }
     }
 
     public class ArrayAccessSignature : AccessSignature
     {
-        public IdentifierSignature Identifier;
-        public BlockSignature BlockBegin;
+        public TokenSymbol Identifier;
+        public TokenSymbol BlockBegin;
         public ParameterListSignature ParameterList = new ParameterListSignature();
-        public BlockSignature BlockEnd;
+        public TokenSymbol BlockEnd;
 
-        public ArrayAccessSignature(IdentifierSignature Identifier) : base(SignatureType.ArrayAccess)
+        public ArrayAccessSignature(TokenSymbol Identifier) : base(SignatureType.ArrayAccess)
         {
             this.Identifier = Identifier;
         }
 
         public override string ToString()
         {
-            return "array(name:" + Identifier.Identifier.String + ", parameters(" + ParameterList + "))";
+            return "array(name:" + Identifier.String + ", parameters(" + ParameterList + "))";
         }
     }
 }

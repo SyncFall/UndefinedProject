@@ -14,11 +14,11 @@ namespace Bee.Language
             IdentifierPathSignature signature = new IdentifierPathSignature();
             while (TryToken(TokenType.Identifier) != null)
             {
-                IdentifierPathElementSignatur elementSignature = new IdentifierPathElementSignatur();
-                signature.PathElements.Add(elementSignature);
-                elementSignature.Identifier = PrevToken;
-                elementSignature.PointSeperator = TrySeperator(StructureType.Point);
-                if (elementSignature.PointSeperator == null)
+                IdentifierPathElementSignatur element = new IdentifierPathElementSignatur();
+                signature.PathElements.Add(element);
+                element.Identifier = PrevToken;
+                element.Seperator = TrySeperator(StructureType.Point);
+                if (element.Seperator == null)
                 {
                     break;
                 }
@@ -26,13 +26,13 @@ namespace Bee.Language
             return (signature.PathElements.Size > 0 ? signature : null);
         }
 
-        public IdentifierSignature TryIdentifier()
+        public TokenSymbol TryIdentifier()
         {
             if (TryToken(TokenType.Identifier) == null)
             {
                 return null;
             }
-            return new IdentifierSignature(PrevToken);
+            return PrevToken;
         }
 
         public TypeDeclarationSignature TryTypeDeclaration(bool WithAssigment=true)
@@ -41,19 +41,19 @@ namespace Bee.Language
             TypeDeclarationSignature signatur = new TypeDeclarationSignature();
             if (TryToken(TokenType.Native) != null)
             {
-                signatur.TypeNative = new NativeSignature(PrevToken);
+                signatur.TypeNative = PrevToken;
             }
             else if (TryToken(TokenType.Identifier) != null)
             {
-                signatur.TypeIdentifier = new IdentifierSignature(PrevToken);
+                signatur.TypeIdentifier = PrevToken;
             }
             else
             {
                 return null;
             }
-            if (!TrySpace() ||
-               (signatur.NameIdentifier = TryIdentifier()) == null
-            ){
+            signatur.TypeGeneric = TryGenericDeclaration();
+            TrySpace();
+            if((signatur.NameIdentifier = TryIdentifier()) == null){
                 ;
             }
             if(WithAssigment)
@@ -67,18 +67,54 @@ namespace Bee.Language
             return signatur;
         }
 
-        public ParameterDeclarationSignature TryParameterDeclaration()
+        public GenericDeclarationSignature TryGenericDeclaration()
         {
             TrySpace();
-            BlockSignature blockBegin;
-            if ((blockBegin = TryBlock(StructureType.ClosingBegin)) == null)
+            BeginStep();
+            TokenSymbol blockBegin;
+            if((blockBegin = TryToken(OperationType.Less)) == null)
+            {
+                ResetStep();
+                return null;
+            }
+            GenericDeclarationSignature signature = new GenericDeclarationSignature();
+            signature.BlockBegin = blockBegin;
+            while(true)
+            {
+                GenericElementSignature element = new GenericElementSignature();
+                if((element.Identifier = TryIdentifier())!= null)
+                {
+                    signature.ElementList.Add(element);
+                    element.Generic = TryGenericDeclaration();
+                    if((element.Seperator = TrySeperator(StructureType.Seperator)) != null)
+                    {
+                        continue;
+                    }
+                }
+                if((signature.BlockEnd = TryToken(OperationType.Greater)) != null)
+                {
+                    CommitStep();
+                    break;
+                }
+                //
+                ResetStep();
+                break;
+            }
+            return signature;
+        }
+
+        public ParameterDeclarationSignature TryParameterDeclaration(StructureType StructureBegin, StructureType StructureEnd)
+        {
+            TrySpace();
+            TokenSymbol blockBegin;
+            if ((blockBegin = TryBlock(StructureBegin)) == null)
             {
                 return null;
             }
             ParameterDeclarationSignature signature = new ParameterDeclarationSignature();
             signature.BlockBegin = blockBegin;
             TypeDeclarationSignature typeDeclaration;
-            while ((typeDeclaration = TryTypeDeclaration()) != null)
+            while((typeDeclaration = TryTypeDeclaration()) != null)
             {
                 ParameterSignature parameter = new ParameterSignature(typeDeclaration);
                 signature.ParameterList.Add(parameter);
@@ -88,50 +124,112 @@ namespace Bee.Language
                     break;
                 }
             }
-            signature.BlockEnd = TryBlock(StructureType.ClosingEnd);
+            signature.BlockEnd = TryBlock(StructureEnd);
             return signature;
         }
     }
 
     public class TypeDeclarationSignature : SignatureSymbol
     {
-        public NativeSignature TypeNative;
-        public IdentifierSignature TypeIdentifier;
-        public IdentifierSignature NameIdentifier;
-        public SeperatorSignature Assigment;
+        public TokenSymbol TypeNative;
+        public TokenSymbol TypeIdentifier;
+        public GenericDeclarationSignature TypeGeneric;
+        public TokenSymbol NameIdentifier;
+        public TokenSymbol Assigment;
         public ExpressionSignature AssigmentExpression;
+        public TokenSymbol Seperator;
      
         public TypeDeclarationSignature() : base(SignatureType.TypeDeclartion)
         { }
 
         public override string ToString()
         {
-            string str = "";
-            if (TypeNative != null)
+            string str = "type(";
+            if(TypeNative != null)
             {
-                str += "native:" + TypeNative.Native.String;
+                str += "native:" + TypeNative.String;
             }
-            else if (TypeIdentifier != null)
+            if(TypeIdentifier != null)
             {
-                str += "object:" + TypeIdentifier.Identifier.String;
+                str += "object:" + TypeIdentifier.String;
             }
-            if (NameIdentifier != null)
+            if(TypeGeneric != null)
             {
-                str += ", name:" + NameIdentifier.Identifier.String;
+                str += ", " +TypeGeneric.ToString();
+            }
+            if(NameIdentifier != null)
+            {
+                str += ", name:" + NameIdentifier.String;
             }
             if(Assigment != null)
             {
                 str += ", assigment(" + AssigmentExpression + ")";
             }
+            return str+")";
+        }
+    }
+
+    public class GenericDeclarationSignature : SignatureSymbol
+    {
+        public TokenSymbol BlockBegin;
+        public GenericElementListSignature ElementList = new GenericElementListSignature();
+        public TokenSymbol BlockEnd;
+
+        public GenericDeclarationSignature() : base(SignatureType.GenericDeclaration)
+        { }
+
+        public override string ToString()
+        {
+            string str = "generic(";
+            str += ElementList.ToString();
+            str += ")";
+            return str;
+        }
+    }
+
+    public class GenericElementListSignature : ListCollection<GenericElementSignature>
+    {
+        public override string ToString()
+        {
+            string str = "";
+            for(int i=0; i<Size; i++)
+            {
+                str += Get(i);
+                if(i < Size-1)
+                {
+                    str += ", ";
+                }
+            }
+            return str;
+        }
+    }
+
+    public class GenericElementSignature : SignatureSymbol
+    {
+        public TokenSymbol Identifier;
+        public TokenSymbol Seperator;
+        public GenericDeclarationSignature Generic = new GenericDeclarationSignature();
+
+        public GenericElementSignature() : base(SignatureType.GenericElement)
+        { }
+
+        public override string ToString()
+        {
+            string str = "element(name:" + Identifier.String;
+            if(Generic!= null && Generic.ElementList.Size > 0)
+            {
+                str += ", type("+Generic.ToString()+")";
+            }
+            str += ")";
             return str;
         }
     }
 
     public class ParameterDeclarationSignature : SignatureSymbol
     {
-        public BlockSignature BlockBegin;
+        public TokenSymbol BlockBegin;
         public ParameterListSignature ParameterList = new ParameterListSignature();
-        public BlockSignature BlockEnd;
+        public TokenSymbol BlockEnd;
 
         public ParameterDeclarationSignature() : base(SignatureType.ParameterDeclaration)
         { }
@@ -164,7 +262,7 @@ namespace Bee.Language
     {
         public TypeDeclarationSignature TypeDeclaration;
         public ExpressionSignature Expression;
-        public SeperatorSignature Seperator;
+        public TokenSymbol Seperator;
 
         public ParameterSignature(TypeDeclarationSignature TypeDeclaration) : base(SignatureType.Parameter)
         {
@@ -216,7 +314,7 @@ namespace Bee.Language
     public class IdentifierPathElementSignatur : SignatureSymbol
     {
         public TokenSymbol Identifier;
-        public SeperatorSignature PointSeperator;
+        public TokenSymbol Seperator;
 
         public IdentifierPathElementSignatur() : base(SignatureType.IdentifierPathElement)
         { }
@@ -226,28 +324,13 @@ namespace Bee.Language
             if (Identifier != null)
             {
                 string str = Identifier.String;
-                if (PointSeperator != null)
+                if (Seperator != null)
                 {
-                    str += PointSeperator.Seperator.String;
+                    str += Seperator.String;
                 }
                 return str;
             }
             return "";
-        }
-    }
-
-    public class IdentifierSignature : SignatureSymbol
-    {
-        public TokenSymbol Identifier;
-
-        public IdentifierSignature(TokenSymbol IdentifiereToken) : base(SignatureType.Identifier)
-        {
-            this.Identifier = IdentifiereToken;
-        }
-
-        public override string ToString()
-        {
-            return "name(" + Identifier != null ? Identifier.String : "" + ")";
         }
     }
 }

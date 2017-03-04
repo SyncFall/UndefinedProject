@@ -28,6 +28,8 @@ namespace Bee.Language
         Method,
         Property,
         TypeDeclartion,
+        GenericDeclaration,
+        GenericElement,
         ParameterDeclaration,
         Parameter,
         // code

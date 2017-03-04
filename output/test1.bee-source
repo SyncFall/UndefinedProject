@@ -3,13 +3,7 @@ use TinyWorld.TestRoadTrack;
 
 scope Wikipedia.Language;
 
-object Little
-{
-	get int Property{}
-	int method(int a, string str){}
-	int method = 0;
+for(int i, j=0; i<=10; i+=1){
+	List<T> feel;
 }
-get int Index
-{
-	return cnt;
-}
+

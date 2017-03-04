@@ -16,7 +16,7 @@ namespace Bee.Language
                 TypeDeclarationSignature typeDeclaration = memberSymbol.Signature.TypeDeclaration;
                 if (typeDeclaration.TypeIdentifier != null)
                 {
-                    if (Registry.GetObjectSymbol(typeDeclaration.TypeIdentifier.Identifier.String) == null)
+                    if (Registry.GetObjectSymbol(typeDeclaration.TypeIdentifier.String) == null)
                     {
                         ;
                     }
@@ -32,7 +32,7 @@ namespace Bee.Language
                 TypeDeclarationSignature typeDeclaration = methodSymbol.Signature.TypeDeclaration;
                 if (typeDeclaration.TypeIdentifier != null)
                 {
-                    if (Registry.GetObjectSymbol(typeDeclaration.TypeIdentifier.Identifier.String) == null)
+                    if (Registry.GetObjectSymbol(typeDeclaration.TypeIdentifier.String) == null)
                     {
                         ;
                     }
@@ -46,7 +46,7 @@ namespace Bee.Language
                         TypeDeclarationSignature parameterTypeDeclaration = parameter.TypeDeclaration;
                         if (parameterTypeDeclaration.TypeIdentifier != null)
                         {
-                            if (Registry.GetObjectSymbol(parameterTypeDeclaration.TypeIdentifier.Identifier.String) == null)
+                            if (Registry.GetObjectSymbol(parameterTypeDeclaration.TypeIdentifier.String) == null)
                             {
                                 ;
                             }

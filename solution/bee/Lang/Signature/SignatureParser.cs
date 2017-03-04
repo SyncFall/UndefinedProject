@@ -26,9 +26,9 @@ namespace Bee.Language
                (signature = TryStatement()) != null ||
                (signature = TryExpression()) != null ||
                (signature = TryTypeDeclaration()) != null ||
-               (signature = TryParameterDeclaration()) != null ||
+               (signature = TryParameterDeclaration(StructureType.ClosingBegin, StructureType.ClosingEnd)) != null ||
+               (signature = TryParameterDeclaration(StructureType.BracketBegin, StructureType.BracketEnd)) != null ||
                (signature = TryIdentifierPath()) != null ||
-               (signature = TryIdentifier()) != null ||
                (signature = TryUnknown()) != null
             ){
                 ;

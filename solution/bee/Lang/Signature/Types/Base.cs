@@ -1,4 +1,5 @@
 ﻿
+using Bee.Library;
 using System;
 
 namespace Bee.Language
@@ -101,6 +102,16 @@ namespace Bee.Language
             return PrevToken;
         }
 
+        public TokenSymbol TryToken(OperationType statementType)
+        {
+            if (Token == null || !Token.isOperation(statementType))
+            {
+                return null;
+            }
+            NextToken();
+            return PrevToken;
+        }
+
         public bool TrySpace()
         {
             bool hasSpace = false;
@@ -112,30 +123,30 @@ namespace Bee.Language
             return hasSpace;
         }
 
-        public SeperatorSignature TrySeperator(StructureType seperatorType)
+        public TokenSymbol TrySeperator(StructureType seperatorType)
         {
             TrySpace();
             if(Token == null || !Token.IsStructure(seperatorType))
             { 
                 return null;
             }
-            SeperatorSignature signatur = new SeperatorSignature(Token);
+            TokenSymbol token = Token;
             NextToken();
             TrySpace();
-            return signatur;
+            return token;
         }
 
-        public BlockSignature TryBlock(StructureType blockType)
+        public TokenSymbol TryBlock(StructureType blockType)
         {
             TrySpace();
             if (Token == null || !Token.IsStructure(blockType))
             {
                 return null;
             }
-            BlockSignature signatur = new BlockSignature(Token);
+            TokenSymbol token = Token;
             NextToken();
             TrySpace();
-            return signatur;
+            return token;
         }
 
         public UnknownSignatur TryUnknown()
@@ -165,58 +176,35 @@ namespace Bee.Language
         }
     }
 
+    public class SignatureList : ListCollection<SignatureSymbol>
+    {
+        public override string ToString()
+        {
+            string str = "";
+            for(int i=0; i< Size; i++)
+            {
+                str += Get(i).ToString();
+                if(i < Size-1)
+                {
+                    str += ", ";
+                }
+            }
+            return str;
+        }
+    }
+
     public class UnknownSignatur : SignatureSymbol
     {
-        public TokenSymbol UnknownToken;
+        public TokenSymbol Token;
 
         public UnknownSignatur(TokenSymbol UnknownToken) : base(SignatureType.Unknown)
         {
-            this.UnknownToken = UnknownToken;
+            this.Token = UnknownToken;
         }
 
         public override string ToString()
         {
-            return base.ToString() + " (type:" + UnknownToken.Type + ", string:'" + UnknownToken.String + "')";
-        }
-    }
-
-    public class KeywordSignature : SignatureSymbol
-    {
-        public TokenSymbol KeywordToken;
-
-        public KeywordSignature(TokenSymbol keywordToken) : base(SignatureType.Keyword)
-        {
-            this.KeywordToken = keywordToken;
-        }
-    }
-
-    public class NativeSignature : SignatureSymbol
-    {
-        public TokenSymbol Native;
-
-        public NativeSignature(TokenSymbol NativeToken) : base(SignatureType.Native)
-        {
-            this.Native = NativeToken;
-        }
-    }
-
-    public class SeperatorSignature : SignatureSymbol
-    {
-        public TokenSymbol Seperator;
-
-        public SeperatorSignature(TokenSymbol SeperatorToken) : base(SignatureType.Seperator)
-        {
-            this.Seperator = SeperatorToken;
-        }
-    }
-
-    public class BlockSignature : SignatureSymbol
-    {
-        public TokenSymbol BlockToken;
-
-        public BlockSignature(TokenSymbol BlockToken) : base(SignatureType.Block)
-        {
-            this.BlockToken = BlockToken;
+            return base.ToString() + " (type:" + Token.Type + ", string:'" + Token.String + "')";
         }
     }
 }

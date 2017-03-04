@@ -116,9 +116,14 @@ namespace Bee.Language
             return (Type == TokenType.Native && (this.Symbol as NativeSymbol).Type == NativeType);
         }
 
-        public bool IsStatement(StatementKeywordType StatementKeyword)
+        public bool IsStatement(StatementKeywordType StatementType)
         {
-            return (Type == TokenType.Statement && (this.Symbol as StatementKeywordSymbol).Type == StatementKeyword);
+            return (Type == TokenType.Statement && (this.Symbol as StatementKeywordSymbol).Type == StatementType);
+        }
+
+        public bool isOperation(OperationType OperationType)
+        {
+            return (Type == TokenType.Operation && (this.Symbol as OperationSymbol).Type == OperationType);
         }
     }
 }

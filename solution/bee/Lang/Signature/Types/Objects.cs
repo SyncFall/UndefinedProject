@@ -16,7 +16,7 @@ namespace Bee.Language
                 return null;
             }
             UseSignature signatur = new UseSignature();
-            signatur.Keyword = new KeywordSignature(PrevToken);
+            signatur.Keyword = PrevToken;
             if (!TrySpace() ||
                 (signatur.IdentifierPath = TryIdentifierPath()) == null ||
                 (signatur.Complete = TrySeperator(StructureType.Complete)) == null
@@ -33,7 +33,7 @@ namespace Bee.Language
                 return null;
             }
             ScopeSignature signatur = new ScopeSignature();
-            signatur.Keyword = new KeywordSignature(PrevToken);
+            signatur.Keyword = PrevToken;
             if (!TrySpace() ||
                 (signatur.IdentifierPath = TryIdentifierPath()) == null ||
                 (signatur.Complete = TrySeperator(StructureType.Complete)) == null
@@ -44,17 +44,6 @@ namespace Bee.Language
             return signatur;
         }
 
-        public ObjectSignatureList TryObjectList()
-        {
-            ObjectSignatureList list = new ObjectSignatureList();
-            ObjectSignature signatur;
-            while ((signatur = TryObject()) != null)
-            {
-                list.Add(signatur);
-            }
-            return list;
-        }
-
         public ObjectSignature TryObject()
         {
             TrySpace();
@@ -63,7 +52,7 @@ namespace Bee.Language
                 return null;
             }
             ObjectSignature signatur = new ObjectSignature();
-            signatur.Keyword = new KeywordSignature(PrevToken);
+            signatur.Keyword = PrevToken;
             if (!TrySpace() ||
                 (signatur.Identifier = TryIdentifier()) == null ||
                 (signatur.BlockBegin = TryBlock(StructureType.BlockBegin)) == null
@@ -108,10 +97,11 @@ namespace Bee.Language
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
             if (typeDeclaration == null)
             {
+                ResetStep();
                 return null;
             }
-            SeperatorSignature complete = TrySeperator(StructureType.Complete);
-            if (complete != null)
+            TokenSymbol complete = TrySeperator(StructureType.Complete);
+            if(complete != null)
             {
                 MemberSignature member = new MemberSignature();
                 member.TypeDeclaration = typeDeclaration;
@@ -128,18 +118,23 @@ namespace Bee.Language
             TrySpace();
             if(!BeginStep()) return null;
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration(false);
-            if (typeDeclaration == null)
+            if(typeDeclaration == null)
             {
+                ResetStep();
                 return null;
             }
-            if(!BeginStep()) return null;
-            SeperatorSignature enclosing = TrySeperator(StructureType.ClosingBegin);
+            if(!BeginStep())
+            {
+                ResetStep();
+                return null;
+            }
+            TokenSymbol enclosing = TrySeperator(StructureType.ClosingBegin);
             ResetStep();
-            if (enclosing != null)
+            if(enclosing != null)
             {
                 MethodSignature method = new MethodSignature();
                 method.TypeDeclaration = typeDeclaration;
-                if ((method.ParameterDeclaration = TryParameterDeclaration()) == null ||
+                if ((method.ParameterDeclaration = TryParameterDeclaration(StructureType.ClosingBegin, StructureType.ClosingEnd)) == null ||
                     (method.Code = TryCode()) == null
                 ){
                     ;
@@ -151,7 +146,6 @@ namespace Bee.Language
             return null;
         }
 
-
         public PropertySignature TryProperty()
         {
             TrySpace();
@@ -159,20 +153,28 @@ namespace Bee.Language
             TokenSymbol propertyType = null;
             if((propertyType = TryToken(KeywordType.Get)) == null && (propertyType = TryToken(KeywordType.Set)) == null)
             {
+                ResetStep();
                 return null;
             }
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration(false);
-            if (typeDeclaration == null)
+            if(typeDeclaration == null)
             {
-                 return null;
+                ResetStep();
+                return null;
             }
-            if(!BeginStep()) return null;
-            SeperatorSignature enclosing = TrySeperator(StructureType.BlockBegin);
+            ParameterDeclarationSignature parameterDeclaration = TryParameterDeclaration(StructureType.BracketBegin, StructureType.BracketEnd);
+            if(!BeginStep())
+            {
+                ResetStep();
+                return null;
+            }
+            TokenSymbol enclosing = TrySeperator(StructureType.BlockBegin);
             ResetStep();
-            if (enclosing != null)
+            if(enclosing != null)
             {
                 PropertySignature property = new PropertySignature(propertyType);
                 property.TypeDeclaration = typeDeclaration;
+                property.ParameterDeclaration = parameterDeclaration;
                 if ((property.Code = TryCode()) == null)
                 {
                     ;
@@ -187,31 +189,31 @@ namespace Bee.Language
 
     public class UseSignature : SignatureSymbol
     {
-        public KeywordSignature Keyword;
+        public TokenSymbol Keyword;
         public IdentifierPathSignature IdentifierPath;
-        public SeperatorSignature Complete;
+        public TokenSymbol Complete;
 
         public UseSignature() : base(SignatureType.Use)
         { }
 
         public override string ToString()
         {
-            return "use(" + IdentifierPath + ")";
+            return "use(" + IdentifierPath + ")\n";
         }
     }
 
     public class ScopeSignature : SignatureSymbol
     {
-        public KeywordSignature Keyword;
+        public TokenSymbol Keyword;
         public IdentifierPathSignature IdentifierPath;
-        public SeperatorSignature Complete;
+        public TokenSymbol Complete;
 
         public ScopeSignature() : base(SignatureType.Scope)
         { }
 
         public override string ToString()
         {
-            return "scope(" + IdentifierPath + ")";
+            return "scope(" + IdentifierPath + ")\n";
         }
     }
 
@@ -230,13 +232,13 @@ namespace Bee.Language
 
     public class ObjectSignature : SignatureSymbol
     {
-        public KeywordSignature Keyword;
-        public IdentifierSignature Identifier;
-        public BlockSignature BlockBegin;
+        public TokenSymbol Keyword;
+        public TokenSymbol Identifier;
+        public TokenSymbol BlockBegin;
         public MemberSignatureList Members = new MemberSignatureList();
         public MethodSignatureList Methods = new MethodSignatureList();
         public PropertySignatureList Properties = new PropertySignatureList();
-        public BlockSignature BlockEnd;
+        public TokenSymbol BlockEnd;
 
         public ObjectSignature() : base(SignatureType.Object)
         { }
@@ -267,7 +269,7 @@ namespace Bee.Language
     public class MemberSignature : SignatureSymbol
     {
         public TypeDeclarationSignature TypeDeclaration;
-        public SeperatorSignature Complete;
+        public TokenSymbol Complete;
 
         public MemberSignature() : base(SignatureType.Member)
         { }

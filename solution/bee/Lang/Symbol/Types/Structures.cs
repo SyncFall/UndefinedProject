@@ -25,8 +25,8 @@ namespace Bee.Language
         ClosingEnd,
         BracketBegin,
         BracketEnd,
-        ShiftBegin,
-        ShiftEnd,
+        //ShiftBegin,
+        //ShiftEnd,
     }
 
     public enum StructureGroup
@@ -54,8 +54,8 @@ namespace Bee.Language
             new StructureSymbol(StructureType.ClosingEnd, StructureGroup.Block, ")"),
             new StructureSymbol(StructureType.BracketBegin, StructureGroup.Block, "["),
             new StructureSymbol(StructureType.BracketEnd, StructureGroup.Block, "]"),
-            new StructureSymbol(StructureType.ShiftBegin, StructureGroup.Block, "<"),
-            new StructureSymbol(StructureType.ShiftEnd, StructureGroup.Block, ">"),
+            //new StructureSymbol(StructureType.ShiftBegin, StructureGroup.Block, "<"),
+            //new StructureSymbol(StructureType.ShiftEnd, StructureGroup.Block, ">"),
         };
     }
 
