@@ -26,10 +26,8 @@ namespace Feltic.Language
     
     public static class Tokens
     {
-        //public static MapCollection<string, TokenSymbol> KeywordMap = new MapCollection<string, TokenSymbol>();
         public static TokenTrie KeywordMap = new TokenTrie();
         public static TokenTrie StructureMap = new TokenTrie();
-        public static TokenSymbol[] StructureArray;
         public static TokenSymbol[] OperationArray;
 
         static Tokens()
@@ -55,11 +53,9 @@ namespace Feltic.Language
                 KeywordMap.AddSymbol(new TokenSymbol(TokenType.Statement, StatementKeywords.Array[i].String, StatementKeywords.Array[i]));
             }
 
-            StructureArray = new TokenSymbol[Structures.Array.Length];
             for(int i=0; i<Structures.Array.Length; i++)
             {
-                StructureArray[i] = new TokenSymbol(TokenType.Structure, Structures.Array[i].String, Structures.Array[i]);
-                StructureMap.AddSymbol(StructureArray[i]);
+                StructureMap.AddSymbol(new TokenSymbol(TokenType.Structure, Structures.Array[i].String, Structures.Array[i]));
             }
 
             OperationArray = new TokenSymbol[Operations.Array.Length];
