@@ -36,60 +36,65 @@ namespace Bee.Language
             WriteLine("{");
             for (int i = 0; i < objectSymbolList.Size; i++)
             {
-                ObjectSymbol obj = objectSymbolList[i];
-                WriteLine(1, "public class " + obj.Signature.Identifier.String);
-                WriteLine(1, "{");
-                for(int j=0; j<obj.MemberList.Size; j++)
-                {
-                    MemberSymbol mbr = obj.MemberList[j];
-                    WriteTab(2);
-                    Write("public ");
-                    WriteTypeDeclaration(mbr.Signature.TypeDeclaration);
-                    WriteLine(";");
-                }
-                WriteLine();
-                for(int j=0; j<obj.MethodList.Size; j++)
-                {
-                    MethodSymbol mth = obj.MethodList[j];
-                    WriteTab(2);
-                    Write("public ");
-                    WriteTypeDeclaration(mth.Signature.TypeDeclaration);
-                    Write("(");
-                    WriteParameterList(mth.Signature.ParameterDeclaration.ParameterList);
-                    WriteLine(")");
-                    WriteLine(2, "{");
-                    WriteStatements(3, mth.Signature.Code.Statements);
-                    WriteLine(2, "}");
-                }
-                WriteLine(1, "}");
+                WriteObject(1, objectSymbolList[i]);
             }
             WriteLine("}");
             File.WriteAllText(Filepath, Builder.ToString());
             Compile();
         }
 
-        void WriteStatements(int TabCount, StatementSignatureList stmList)
+        void WriteObject(int tabs, ObjectSymbol obj)
+        {
+            WriteLine(tabs, "public class " + obj.Signature.Identifier.String);
+            WriteLine(tabs, "{");
+            for (int j = 0; j < obj.MemberList.Size; j++)
+            {
+                MemberSymbol mbr = obj.MemberList[j];
+                WriteTab(tabs+1);
+                Write("public ");
+                WriteTypeDeclaration(mbr.Signature.TypeDeclaration);
+                WriteLine(";");
+            }
+            WriteLine();
+            for (int j = 0; j < obj.MethodList.Size; j++)
+            {
+                MethodSymbol mth = obj.MethodList[j];
+                WriteTab(tabs+1);
+                Write("public ");
+                WriteTypeDeclaration(mth.Signature.TypeDeclaration);
+                Write("(");
+                WriteParameterList(mth.Signature.ParameterDeclaration.ParameterList);
+                WriteLine(")");
+                WriteLine(tabs+1, "{");
+                WriteStatements(3, mth.Signature.Code.Statements);
+                WriteLine(tabs+1, "}");
+            }
+            WriteLine(tabs, "}");
+            WriteLine();
+        }
+
+        void WriteStatements(int tabs, StatementSignatureList stmList)
         {
             for(int i=0; i<stmList.Size; i++)
             {
-                WriteTab(TabCount);
+                WriteTab(tabs);
                 StatementSignature stm = stmList[i];
                 if (stm.Group == StatementGroup.ConditionBlock)
                 {
                     Write(stm.Keyword.String+"(");
                     WriteExpression((stm as ConditionBlockStatementSignature).ConditionExpression);
                     WriteLine(")");
-                    WriteLine(TabCount, "{");
-                    WriteStatements(TabCount+1, (stm as ConditionBlockStatementSignature).ChildStatements);
-                    WriteLine(TabCount, "}");
+                    WriteLine(tabs, "{");
+                    WriteStatements(tabs+1, (stm as ConditionBlockStatementSignature).ChildStatements);
+                    WriteLine(tabs, "}");
                 }
                 else if(stm.Group == StatementGroup.KeywordStatement)
                 {
-                    WriteLine(TabCount, stm.Keyword.String + ";");
+                    WriteLine(tabs, stm.Keyword.String + ";");
                 }
                 else if(stm.Group == StatementGroup.ExpressionStatement)
                 {
-                    WriteTab(TabCount);
+                    WriteTab(tabs);
                     if(stm.Keyword != null)
                     {
                         Write(stm.Keyword.String);  
@@ -103,9 +108,9 @@ namespace Bee.Language
                     {
                         WriteLine(stm.Keyword.String);
                     }
-                    WriteLine(TabCount, "{");
-                    WriteStatements(TabCount+1, (stm as BlockStatementSignature).ChildStatements);
-                    WriteLine(TabCount, "}");
+                    WriteLine(tabs, "{");
+                    WriteStatements(tabs+1, (stm as BlockStatementSignature).ChildStatements);
+                    WriteLine(tabs, "}");
                 }
                 else if(stm.Type == StatementType.TypeDeclaration)
                 {
@@ -117,7 +122,7 @@ namespace Bee.Language
                     WriteExpression((stm as ExpressionStatementSignature).Expression);
                     WriteLine(";");
                 }
-                if(stm.Type == StatementType.For)
+                else if(stm.Type == StatementType.For)
                 {
                     Write("for(");
                     ForLoopStatementSignature forLoop = stm as ForLoopStatementSignature;
@@ -142,9 +147,9 @@ namespace Bee.Language
                         WriteExpression((ol[j] as ExpressionSignature));
                     }
                     WriteLine(")");
-                    WriteLine(TabCount, "{");
-                    WriteStatements(TabCount + 1, (stm as ConditionBlockStatementSignature).ChildStatements);
-                    WriteLine(TabCount, "}");
+                    WriteLine(tabs, "{");
+                    WriteStatements(tabs + 1, (stm as ConditionBlockStatementSignature).ChildStatements);
+                    WriteLine(tabs, "}");
                 }
                 else
                 {

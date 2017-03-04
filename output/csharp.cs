@@ -18,6 +18,7 @@ namespace Scope
 			{
 				for(int j = 0;j < 100;j += 1)
 				{
+					;
 				}
 			}
 		}
