@@ -27,9 +27,11 @@ namespace Bee.Language
         Member,
         Method,
         Property,
-        TypeDeclartion,
+        TypeDeclaration,
         GenericDeclaration,
         GenericElement,
+        ArrayDeclaration,
+        ArrayParameter,
         ParameterDeclaration,
         Parameter,
         // code

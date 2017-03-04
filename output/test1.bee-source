@@ -1,9 +1,22 @@
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
 
-scope Wikipedia.Language;
+scope Hello;
 
-for(int i, j=0; i<=10; i+=1){
-	List<T> feel;
+object Fucking
+{
+	int i=0;
+	string str = "string";
+	bool b;
+
+	void method(int cnt, string text)
+	{
+		i = (cnt % 2);
+		str = text;
+		if(i > 0 && i < 100 && true)
+		{
+			for(int j=0; j<100; j+=1)
+			{
+				
+			}
+		}
+	}
 }
-

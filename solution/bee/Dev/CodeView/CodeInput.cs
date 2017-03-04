@@ -145,6 +145,7 @@ namespace Bee.Integrator
                 if (isClick)
                 {
                     CodeText.CodeContainer.Save();
+                    CodeText.Registry.WriteToTarget("D:\\dev\\UndefinedProject\\output\\csharp.cs");
                 }
             }
             // paste

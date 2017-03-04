@@ -47,6 +47,11 @@ namespace Bee.Language
             }
         }
 
+        public void WriteToTarget(string Filepath)
+        {
+            new TargetWriter(Filepath).Convert(EntryList[0].SourceSymbol);
+        }
+
         public ObjectSymbol GetObjectSymbol(string ObjectName)
         {
             for(int i=0; i<EntryList.Size; i++)

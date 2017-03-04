@@ -211,6 +211,11 @@ namespace Bee.Language
         public ScopeSignature() : base(SignatureType.Scope)
         { }
 
+        public bool IsDefaultScope()
+        {
+            return (IdentifierPath == null);
+        }
+
         public override string ToString()
         {
             return "scope(" + IdentifierPath + ")\n";

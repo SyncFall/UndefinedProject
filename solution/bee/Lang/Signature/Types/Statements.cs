@@ -40,83 +40,82 @@ namespace Bee.Language
         public StatementSignature TryStatement()
         {
             TrySpace();
+
             TokenSymbol keyword=null, secondKeyword=null;
-            StatementType statementType;
-            bool conditionBlock = false;
-            bool keywordStatement = false;
-            bool expressionStatement = false;
-            bool blockStatement = false;
+            StatementType type;
+            StatementGroup group;
 
             if ((keyword = TryToken(StatementKeywordType.If)) != null)
             {
-                statementType = StatementType.If;
-                conditionBlock = true;
+                type = StatementType.If;
+                group = StatementGroup.ConditionBlock;
             }
             else if((keyword = TryToken(StatementKeywordType.Else)) != null)
             {
                 if((secondKeyword = TryToken(StatementKeywordType.If)) != null)
                 {
-                    statementType = StatementType.ElseIf;
-                    conditionBlock = true;
+                    type = StatementType.ElseIf;
+                    group = StatementGroup.ConditionBlock;
                 }
                 else
                 {
-                    statementType = StatementType.Else;
-                    blockStatement = true;
+                    type = StatementType.Else;
+                    group = StatementGroup.BlockStatement;
                 }
             }
             else if((keyword = TryToken(StatementKeywordType.For)) != null)
             {
-                statementType = StatementType.For;
+                type = StatementType.For;
+                group = StatementGroup.ForLoop;
             }
             else if((keyword = TryToken(StatementKeywordType.While)) != null)
             {
-                statementType = StatementType.While;
-                conditionBlock = true;
+                type = StatementType.While;
+                group = StatementGroup.ConditionBlock;
             }
             else if((keyword = TryToken(StatementKeywordType.Continue)) != null)
             {
-                statementType = StatementType.Continue;
-                keywordStatement = true;
+                type = StatementType.Continue;
+                group = StatementGroup.KeywordStatement;
             }
             else if ((keyword = TryToken(StatementKeywordType.Break)) != null)
             {
-                statementType = StatementType.Break;
-                keywordStatement = true;
+                type = StatementType.Break;
+                group = StatementGroup.KeywordStatement;
             }
             else if ((keyword = TryToken(StatementKeywordType.Return)) != null)
             {
-                statementType = StatementType.Return;
-                expressionStatement = true;
+                type = StatementType.Return;
+                group = StatementGroup.ExpressionStatement;
             }
             else if((keyword = TryToken(StatementKeywordType.Sanity)) != null)
             {
-                statementType = StatementType.Sanity;
-                expressionStatement = true;
+                type = StatementType.Sanity;
+                group = StatementGroup.ExpressionStatement;
             }
             else if ((keyword = TryToken(StatementKeywordType.Throw)) != null)
             {
-                statementType = StatementType.Throw;
-                expressionStatement = true;
+                type = StatementType.Throw;
+                group = StatementGroup.ExpressionStatement;
             }
             else if ((keyword = TryToken(StatementKeywordType.Try)) != null)
             {
-                statementType = StatementType.Try;
-                blockStatement = true;
+                type = StatementType.Try;
+                group = StatementGroup.BlockStatement;
             }
             else if ((keyword = TryToken(StatementKeywordType.Finally)) != null)
             {
-                statementType = StatementType.Finally;
-                blockStatement = true;
+                type = StatementType.Finally;
+                group = StatementGroup.BlockStatement;
             }
             else if ((keyword = TryToken(StatementKeywordType.Sync)) != null)
             {
-                statementType = StatementType.Sync;
-                conditionBlock = true;
+                type = StatementType.Sync;
+                group = StatementGroup.ConditionBlock;
             }
             else if(TryToken(StructureType.Complete) != null)
             {
-                StatementSignature signature = new StatementSignature(StatementType.NoOperation, false);
+                StatementSignature signature = new StatementSignature(StatementType.NoOperation, StatementGroup.NoOperation, false);
                 signature.Keyword = PrevToken;
                 return signature;
             }
@@ -150,7 +149,7 @@ namespace Bee.Language
                         if (expression != null)
                         {
                             ExpressionStatementSignature signature = new ExpressionStatementSignature(StatementType.ExpressionStatement);
-                            signature.ConditionExpression = expression;
+                            signature.Expression = expression;
                             signature.Complete = TrySeperator(StructureType.Complete);
                             return signature;
                         }
@@ -161,10 +160,9 @@ namespace Bee.Language
                     }
                 }
             }
-
-            if (conditionBlock)
+            if(group == StatementGroup.ConditionBlock)
             {
-                ConditionBlockStatementSignature signature = new ConditionBlockStatementSignature(statementType);
+                ConditionBlockStatementSignature signature = new ConditionBlockStatementSignature(type);
                 signature.Keyword = keyword;
                 if((signature.ConditionBegin = TryBlock(StructureType.ClosingBegin)) == null ||
                    (signature.ConditionExpression = TryExpression()) == null ||
@@ -177,9 +175,9 @@ namespace Bee.Language
                 }
                 return signature;
             }
-            else if(keywordStatement)
+            else if(group == StatementGroup.KeywordStatement)
             {
-                StatementSignature signature = new StatementSignature(statementType, false);
+                StatementSignature signature = new StatementSignature(type, group, false);
                 signature.Keyword = keyword;
                 if((signature.Complete = TrySeperator(StructureType.Complete)) == null)
                 {
@@ -187,17 +185,17 @@ namespace Bee.Language
                 }
                 return signature;
             }
-            else if(expressionStatement)
+            else if(group == StatementGroup.ExpressionStatement)
             {
-                ExpressionStatementSignature signature = new ExpressionStatementSignature(statementType);
+                ExpressionStatementSignature signature = new ExpressionStatementSignature(type);
                 signature.Keyword = keyword;
-                signature.ConditionExpression = TryExpression();
+                signature.Expression = TryExpression();
                 signature.Complete = TrySeperator(StructureType.Complete);
                 return signature;
             }
-            else if(blockStatement)
+            else if(group == StatementGroup.BlockStatement)
             {
-                BlockStatementSignature signature = new BlockStatementSignature(statementType);
+                BlockStatementSignature signature = new BlockStatementSignature(type, group);
                 signature.Keyword = keyword;
                 if((signature.BlockBegin = TryBlock(StructureType.BlockBegin)) == null ||
                    (signature.ChildStatements = TryStatementList()) == null ||
@@ -207,18 +205,18 @@ namespace Bee.Language
                 }
                 return signature;
             }
-            else if(statementType == StatementType.For)
+            else if(type == StatementType.For)
             {
                 ForLoopStatementSignature signature = new ForLoopStatementSignature();
                 signature.ConditionBegin = TryBlock(StructureType.ClosingBegin);
-                while(true)
+                while (true)
                 {
-                    if((signature.ParameterDeclarationSeperator = TrySeperator(StructureType.Complete)) != null)
+                    if ((signature.ParameterDeclarationSeperator = TrySeperator(StructureType.Complete)) != null)
                     {
                         break;
                     }
                     TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
-                    if(typeDeclaration != null)
+                    if (typeDeclaration != null)
                     {
                         signature.ParameterList.Add(typeDeclaration);
                         if ((typeDeclaration.Seperator = TrySeperator(StructureType.Seperator)) != null)
@@ -247,9 +245,9 @@ namespace Bee.Language
                 }
                 signature.ConditionExpression = TryExpression();
                 signature.ConditionSeperator = TrySeperator(StructureType.Complete);
-                while(true)
+                while (true)
                 {
-                    if((signature.ConditionEnd = TryBlock(StructureType.ClosingEnd)) != null)
+                    if ((signature.ConditionEnd = TryBlock(StructureType.ClosingEnd)) != null)
                     {
                         break;
                     }
@@ -270,10 +268,11 @@ namespace Bee.Language
                     break;
                 }
                 signature.ConditionEnd = TryBlock(StructureType.ClosingEnd);
-                if((signature.BlockBegin = TryBlock(StructureType.BlockBegin)) == null ||
+                if ((signature.BlockBegin = TryBlock(StructureType.BlockBegin)) == null ||
                    (signature.ChildStatements = TryStatementList()) == null ||
                    (signature.BlockEnd = TryBlock(StructureType.BlockEnd)) == null
-                ){
+                )
+                {
                     ;
                 }
                 return signature;
@@ -322,13 +321,15 @@ namespace Bee.Language
         public TokenSymbol Keyword;
         public TokenSymbol Complete;
         public StatementType Type;
+        public StatementGroup Group;
         public CodeSignature Code;
         public StatementSignature Parent;
         public StatementSignatureList ChildStatements;
 
-        public StatementSignature(StatementType StatementType, bool HasChildStatements) : base(SignatureType.Statement)
+        public StatementSignature(StatementType StatementType, StatementGroup StatementGroup, bool HasChildStatements=false) : base(SignatureType.Statement)
         {
             this.Type = StatementType;
+            this.Group = StatementGroup;
             if (HasChildStatements)
             {
                 this.ChildStatements = new StatementSignatureList();
@@ -345,7 +346,7 @@ namespace Bee.Language
     {
         public TypeDeclarationSignature TypeDeclaration;
 
-        public TypeDeclarationStatementSignature() : base(StatementType.TypeDeclaration, false)
+        public TypeDeclarationStatementSignature() : base(StatementType.TypeDeclaration, StatementGroup.TypeDeclaration)
         { }
 
         public override string ToString()
@@ -356,14 +357,14 @@ namespace Bee.Language
 
     public class ExpressionStatementSignature : StatementSignature
     {
-        public ExpressionSignature ConditionExpression;
+        public ExpressionSignature Expression;
 
-        public ExpressionStatementSignature(StatementType StatementType) : base(StatementType, false)
+        public ExpressionStatementSignature(StatementType StatementType) : base(StatementType, StatementGroup.ExpressionStatement)
         { }
 
         public override string ToString()
         {
-            return "expression_statement(type:" + Type + ", expression("+ConditionExpression+"))";
+            return "expression_statement(type:" + Type + ", expression("+Expression+"))";
         }
     }
 
@@ -372,7 +373,7 @@ namespace Bee.Language
         public TokenSymbol BlockBegin;
         public TokenSymbol BlockEnd;
 
-        public BlockStatementSignature(StatementType StatementType) : base(StatementType, true)
+        public BlockStatementSignature(StatementType StatementType, StatementGroup StatementGroup=StatementGroup.BlockStatement) : base(StatementType, StatementGroup, true)
         { }
 
         public override string ToString()
@@ -389,7 +390,7 @@ namespace Bee.Language
         public TokenSymbol ConditionEnd;
         public ExpressionSignature ConditionExpression;
 
-        public ConditionBlockStatementSignature(StatementType StatementType) : base(StatementType)
+        public ConditionBlockStatementSignature(StatementType StatementType, StatementGroup StatementGroup=StatementGroup.ConditionBlock) : base(StatementType, StatementGroup)
         { }
 
         public override string ToString()
@@ -407,7 +408,7 @@ namespace Bee.Language
         public TokenSymbol ConditionSeperator;
         public SignatureList PostOperationList = new SignatureList();
 
-        public ForLoopStatementSignature() : base(StatementType.For)
+        public ForLoopStatementSignature() : base(StatementType.For, StatementGroup.ForLoop)
         { }
 
         public override string ToString()

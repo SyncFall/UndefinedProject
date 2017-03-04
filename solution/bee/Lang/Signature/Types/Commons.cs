@@ -52,6 +52,7 @@ namespace Bee.Language
                 return null;
             }
             signatur.TypeGeneric = TryGenericDeclaration();
+            signatur.TypeArray = TryArrayDeclaration();
             TrySpace();
             if((signatur.NameIdentifier = TryIdentifier()) == null){
                 ;
@@ -69,8 +70,7 @@ namespace Bee.Language
 
         public GenericDeclarationSignature TryGenericDeclaration()
         {
-            TrySpace();
-            BeginStep();
+            if(!BeginStep()) return null;
             TokenSymbol blockBegin;
             if((blockBegin = TryToken(OperationType.Less)) == null)
             {
@@ -103,9 +103,44 @@ namespace Bee.Language
             return signature;
         }
 
+        public ArrayDeclarationSignature TryArrayDeclaration()
+        {
+            TokenSymbol blockBegin;
+            if(!BeginStep()) return null;
+            if((blockBegin = TryBlock(StructureType.BracketBegin)) == null)
+            {
+                ResetStep();
+                return null; ;
+            }
+            ArrayDeclarationSignature signature = new ArrayDeclarationSignature();
+            signature.BlockBegin = blockBegin;
+            while(true)
+            {
+                if((signature.BlockEnd = TryBlock(StructureType.BracketEnd)) != null)
+                {
+                    CommitStep();
+                    break;
+                }
+                TokenSymbol dimensionToken;
+                if ((dimensionToken = TrySeperator(StructureType.Seperator)) != null)
+                {
+                    signature.DimensionSymbols.Add(dimensionToken);
+                    continue;
+                }
+                if ((signature.BlockEnd = TryBlock(StructureType.BracketEnd)) != null)
+                {
+                    CommitStep();
+                    break;
+                }
+                //
+                ResetStep();
+                break;
+            }
+            return signature;
+        }
+
         public ParameterDeclarationSignature TryParameterDeclaration(StructureType StructureBegin, StructureType StructureEnd)
         {
-            TrySpace();
             TokenSymbol blockBegin;
             if ((blockBegin = TryBlock(StructureBegin)) == null)
             {
@@ -134,12 +169,13 @@ namespace Bee.Language
         public TokenSymbol TypeNative;
         public TokenSymbol TypeIdentifier;
         public GenericDeclarationSignature TypeGeneric;
+        public ArrayDeclarationSignature TypeArray;
         public TokenSymbol NameIdentifier;
         public TokenSymbol Assigment;
         public ExpressionSignature AssigmentExpression;
         public TokenSymbol Seperator;
      
-        public TypeDeclarationSignature() : base(SignatureType.TypeDeclartion)
+        public TypeDeclarationSignature() : base(SignatureType.TypeDeclaration)
         { }
 
         public override string ToString()
@@ -155,7 +191,11 @@ namespace Bee.Language
             }
             if(TypeGeneric != null)
             {
-                str += ", " +TypeGeneric.ToString();
+                str += ", " + TypeGeneric.ToString();
+            }
+            if(TypeArray != null)
+            {
+                str += ", " + TypeArray.ToString();
             }
             if(NameIdentifier != null)
             {
@@ -172,7 +212,7 @@ namespace Bee.Language
     public class GenericDeclarationSignature : SignatureSymbol
     {
         public TokenSymbol BlockBegin;
-        public GenericElementListSignature ElementList = new GenericElementListSignature();
+        public ListCollection<GenericElementSignature> ElementList = new ListCollection<GenericElementSignature>();
         public TokenSymbol BlockEnd;
 
         public GenericDeclarationSignature() : base(SignatureType.GenericDeclaration)
@@ -180,27 +220,7 @@ namespace Bee.Language
 
         public override string ToString()
         {
-            string str = "generic(";
-            str += ElementList.ToString();
-            str += ")";
-            return str;
-        }
-    }
-
-    public class GenericElementListSignature : ListCollection<GenericElementSignature>
-    {
-        public override string ToString()
-        {
-            string str = "";
-            for(int i=0; i<Size; i++)
-            {
-                str += Get(i);
-                if(i < Size-1)
-                {
-                    str += ", ";
-                }
-            }
-            return str;
+            return "generic("+ElementList.ToString()+")";
         }
     }
 
@@ -218,17 +238,32 @@ namespace Bee.Language
             string str = "element(name:" + Identifier.String;
             if(Generic!= null && Generic.ElementList.Size > 0)
             {
-                str += ", type("+Generic.ToString()+")";
+                str += ", "+Generic.ToString();
             }
             str += ")";
             return str;
         }
     }
 
+    public class ArrayDeclarationSignature : SignatureSymbol
+    {
+        public TokenSymbol BlockBegin;
+        public ListCollection<TokenSymbol> DimensionSymbols = new ListCollection<TokenSymbol>();
+        public TokenSymbol BlockEnd;
+
+        public ArrayDeclarationSignature() : base(SignatureType.ArrayDeclaration)
+        { }
+
+        public override string ToString()
+        {
+            return "array(dimesion-size("+(DimensionSymbols.Size+1)+")";
+        }
+    }
+
     public class ParameterDeclarationSignature : SignatureSymbol
     {
         public TokenSymbol BlockBegin;
-        public ParameterListSignature ParameterList = new ParameterListSignature();
+        public ListCollection<ParameterSignature> ParameterList = new ListCollection<ParameterSignature>();
         public TokenSymbol BlockEnd;
 
         public ParameterDeclarationSignature() : base(SignatureType.ParameterDeclaration)
@@ -236,25 +271,7 @@ namespace Bee.Language
 
         public override string ToString()
         {
-            return ParameterList.ToString();
-        }
-    }
-
-    public class ParameterListSignature : ListCollection<ParameterSignature>
-    {
-        public override string ToString()
-        {
-            string str = "parameter_list(";
-            for (int i = 0; i < Size; i++)
-            {
-                str += Get(i).ToString();
-                if(i < Size-1)
-                {
-                    str += ", ";
-                }
-            }
-            str += ")";
-            return str;
+            return "parameter_list("+ParameterList+")";
         }
     }
 
@@ -292,7 +309,7 @@ namespace Bee.Language
 
     public class IdentifierPathSignature : SignatureSymbol
     {
-        public IdentifierPathElemementList PathElements = new IdentifierPathElemementList();
+        public ListCollection<IdentifierPathElementSignatur> PathElements = new ListCollection<IdentifierPathElementSignatur>();
 
         public IdentifierPathSignature() : base(SignatureType.IdentifierPath)
         { }
@@ -307,9 +324,6 @@ namespace Bee.Language
             return str + ")";
         }
     }
-
-    public class IdentifierPathElemementList : ListCollection<IdentifierPathElementSignatur>
-    { }
 
     public class IdentifierPathElementSignatur : SignatureSymbol
     {

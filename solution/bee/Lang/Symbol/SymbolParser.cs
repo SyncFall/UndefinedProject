@@ -13,16 +13,16 @@ namespace Bee.Language
 
         public SourceSymbol TrySymbol(SignatureContainer SignatureContainer)
         {
-            ScopeSymbol lastScopeSymbol = null;
             SourceSymbol sourceSymbol = new SourceSymbol(SignatureContainer.SourceText);
+            ScopeSymbol lastScopeSymbol = new ScopeSymbol(sourceSymbol, new ScopeSignature()); // default-scope
             for (int i = 0; i < SignatureContainer.SignatureNodes.Size; i++)
             {
                 SignatureSymbol signature = SignatureContainer.SignatureNodes.Get(i).Signature;
-                if (signature.Type == SignatureType.Use)
+                if(signature.Type == SignatureType.Use)
                 {
                     TryUse(sourceSymbol, signature as UseSignature);
                 }
-                else if (signature.Type == SignatureType.Scope)
+                else if(signature.Type == SignatureType.Scope)
                 {
                     lastScopeSymbol = TryScope(sourceSymbol, signature as ScopeSignature);
                 }

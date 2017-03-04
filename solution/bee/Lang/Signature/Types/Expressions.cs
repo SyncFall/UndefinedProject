@@ -273,7 +273,7 @@ namespace Bee.Language
     {
         public TokenSymbol Identifier;
         public TokenSymbol BlockBegin;
-        public ParameterListSignature ParameterList = new ParameterListSignature();
+        public ListCollection<ParameterSignature> ParameterList = new ListCollection<ParameterSignature>();
         public TokenSymbol BlockEnd;
 
         public FunctionAccessSignature(TokenSymbol Identifier) : base(SignatureType.FunctionAccess)
@@ -291,7 +291,7 @@ namespace Bee.Language
     {
         public TokenSymbol Identifier;
         public TokenSymbol BlockBegin;
-        public ParameterListSignature ParameterList = new ParameterListSignature();
+        public ListCollection<ParameterSignature> ParameterList = new ListCollection<ParameterSignature>();
         public TokenSymbol BlockEnd;
 
         public ArrayAccessSignature(TokenSymbol Identifier) : base(SignatureType.ArrayAccess)

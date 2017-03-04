@@ -90,6 +90,7 @@
     <Compile Include="Dev\VisualView\ActionSelect.cs" />
     <Compile Include="Dev\VisualView\VisualView.cs" />
     <Compile Include="Lang\Symbol\Types\Regions.cs" />
+    <Compile Include="Lang\Target\TargetWriter.cs" />
     <Compile Include="Lang\Token\TokenTrie.cs" />
     <Compile Include="Lib\SortUtils.cs" />
     <Compile Include="Lib\TimeUtils.cs" />

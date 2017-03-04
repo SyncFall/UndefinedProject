@@ -39,7 +39,7 @@ namespace Bee.Language
 
         public bool BeginStep()
         {
-            return  TokenPointer.StepBegin();
+            return TokenPointer.StepBegin();
         }
 
         public void ResetStep()

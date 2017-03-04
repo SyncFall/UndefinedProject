@@ -35,6 +35,12 @@ namespace Bee.Language
                     BlockStatementSignature elseStatement = statement as BlockStatementSignature;
                     ValidateStatementBlock(elseStatement.ChildStatements);
                 }
+                else if(statement.Type == StatementType.For)
+                {
+                    ForLoopStatementSignature forStatement = statement as ForLoopStatementSignature;
+                    ValidateExpression(forStatement.ConditionExpression);
+                    ValidateStatementBlock(forStatement.ChildStatements);
+                }
                 else if (statement.Type == StatementType.While)
                 {
                     ConditionBlockStatementSignature whileStatement = statement as ConditionBlockStatementSignature;
@@ -66,12 +72,12 @@ namespace Bee.Language
                 else if (statement.Type == StatementType.Sanity)
                 {
                     ExpressionStatementSignature sanityStatement = statement as ExpressionStatementSignature;
-                    ValidateExpression(sanityStatement.ConditionExpression);
+                    ValidateExpression(sanityStatement.Expression);
                 }
                 else if (statement.Type == StatementType.Throw)
                 {
                     ExpressionStatementSignature throwStatement = statement as ExpressionStatementSignature;
-                    ValidateExpression(throwStatement.ConditionExpression);
+                    ValidateExpression(throwStatement.Expression);
                 }
                 else if (statement.Type == StatementType.Try || statement.Type == StatementType.Finally)
                 {
@@ -106,7 +112,7 @@ namespace Bee.Language
                 else if (statement.Type == StatementType.ExpressionStatement)
                 {
                     ExpressionStatementSignature expressionStatement = statement as ExpressionStatementSignature;
-                    ValidateExpression(expressionStatement.ConditionExpression);
+                    ValidateExpression(expressionStatement.Expression);
                 }
                 else
                 {

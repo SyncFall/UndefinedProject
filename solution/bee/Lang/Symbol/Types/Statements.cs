@@ -42,6 +42,17 @@ namespace Bee.Language
         InnerBlock,
     }
 
+    public enum StatementGroup
+    {
+        KeywordStatement,
+        ConditionBlock,
+        ExpressionStatement,
+        BlockStatement,
+        TypeDeclaration,
+        NoOperation,
+        ForLoop,
+    }
+
     public enum StatementKeywordType
     {
         // condition
