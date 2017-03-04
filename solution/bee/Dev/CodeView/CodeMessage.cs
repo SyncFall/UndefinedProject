@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Bee.Language;
-using Bee.UI.Types;
-using Bee.Integrator;
+using Feltic.Language;
+using Feltic.UI.Types;
+using Feltic.Integrator;
 using OpenTK.Graphics.OpenGL;
-using Bee.UI;
+using Feltic.UI;
 
-namespace Bee.Integrator
+namespace Feltic.Integrator
 {
     public class CodeMessage
     {

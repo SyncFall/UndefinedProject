@@ -1,6 +1,6 @@
-﻿using Bee.Library;
+﻿using Feltic.Library;
 
-namespace Bee.Language
+namespace Feltic.Language
 {
     public enum OperationType
     {

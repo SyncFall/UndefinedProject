@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
-namespace Bee.Library
+namespace Feltic.Library
 {
     public class ListCollection<T>
     {

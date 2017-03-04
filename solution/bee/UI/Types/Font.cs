@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using System.IO;
-using Bee.UI.Types;
+using Feltic.UI.Types;
 
-namespace Bee.UI
+namespace Feltic.UI
 {
     public class FontMetric
     {

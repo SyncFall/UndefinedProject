@@ -1,8 +1,8 @@
-﻿using Bee.Library;
+﻿using Feltic.Library;
 using System;
 using System.IO;
 
-namespace Bee.Language
+namespace Feltic.Language
 {
     public class SourceList : ListCollection<SourceText>
     {

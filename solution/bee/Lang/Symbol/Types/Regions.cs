@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Lang
+namespace Feltic.Lang
 {
     public enum RegionType
     {

@@ -1,5 +1,5 @@
-﻿using Bee.Library;
-using Bee.UI.Types;
+﻿using Feltic.Library;
+using Feltic.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using verb.geom;
 using verb.core;
 
-namespace Bee.UI
+namespace Feltic.UI
 { 
     public enum CurveType
     {

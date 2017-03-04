@@ -1,5 +1,5 @@
 ﻿
-namespace Bee.Library
+namespace Feltic.Library
 {
     public static class StringUtils
     {

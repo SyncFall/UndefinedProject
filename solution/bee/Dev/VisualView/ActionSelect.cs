@@ -1,4 +1,4 @@
-﻿using Bee.UI;
+﻿using Feltic.UI;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Integrator
+namespace Feltic.Integrator
 {
     public enum ActionButtonType
     {

@@ -1,6 +1,6 @@
-﻿using Bee.Lib;
-using Bee.Library;
-using Bee.UI;
+﻿using Feltic.Lib;
+using Feltic.Library;
+using Feltic.UI;
 using DelaunayTriangulator;
 using OpenTK.Graphics.OpenGL;
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Integrator
+namespace Feltic.Integrator
 {
     public class VisualView
     {

@@ -1,8 +1,8 @@
 ﻿
-using Bee.Library;
+using Feltic.Library;
 using System;
 
-namespace Bee.Language
+namespace Feltic.Language
 {
     public partial class SignatureParser
     {

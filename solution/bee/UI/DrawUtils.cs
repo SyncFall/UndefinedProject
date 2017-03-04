@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.UI
+namespace Feltic.UI
 {
     public class DrawUtils
     {

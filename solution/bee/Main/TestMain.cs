@@ -1,9 +1,9 @@
-﻿using Bee.Language;
+﻿using Feltic.Language;
 using System;
 using System.Diagnostics;
 using System.Threading;
 
-namespace Bee
+namespace Feltic
 {
     public class MainTest
     {

@@ -1,7 +1,7 @@
-﻿using Bee.Language;
-using Bee.UI;
-using Bee.UI.Types;
-using Bee.Library;
+﻿using Feltic.Language;
+using Feltic.UI;
+using Feltic.UI.Types;
+using Feltic.Library;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Integrator
+namespace Feltic.Integrator
 {
     public class CodeContainer
     {

@@ -1,4 +1,4 @@
-﻿using Bee.UI.Types;
+﻿using Feltic.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Bee.Library;
+using Feltic.Library;
 
-namespace Bee.UI
+namespace Feltic.UI
 {
     public class SurfaceDraw
     {

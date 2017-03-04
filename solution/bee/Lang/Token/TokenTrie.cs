@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Language
+namespace Feltic.Language
 {
     public class TokenTrie
     {

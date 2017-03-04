@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using Bee.Library;
+using Feltic.Library;
 
-namespace Bee.UI.Types
+namespace Feltic.UI.Types
 {
     public enum ShaderType
     {

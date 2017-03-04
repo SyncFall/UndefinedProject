@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Bee.Integrator;
-using Bee.UI.Types;
-using Bee.UI;
-using Bee.Language;
+using Feltic.Integrator;
+using Feltic.UI.Types;
+using Feltic.UI;
+using Feltic.Language;
 
-namespace Bee.Integrator
+namespace Feltic.Integrator
 {
     public class CodeView
     {

@@ -1,13 +1,13 @@
-﻿using Bee.Integrator;
-using Bee.UI;
-using Bee.UI.Types;
+﻿using Feltic.Integrator;
+using Feltic.UI;
+using Feltic.UI.Types;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
-using Bee.Library;
+using Feltic.Library;
 
-namespace Bee
+namespace Feltic
 {
     public class MainUI
     {

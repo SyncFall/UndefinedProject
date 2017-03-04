@@ -1,4 +1,4 @@
-﻿using Bee.Library;
+﻿using Feltic.Library;
 using Microsoft.CSharp;
 using System;
 using System.CodeDom.Compiler;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.Language
+namespace Feltic.Language
 {
     public class TargetWriter
     {

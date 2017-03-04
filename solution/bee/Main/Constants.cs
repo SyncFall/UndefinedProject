@@ -1,4 +1,4 @@
-﻿namespace Bee
+﻿namespace Feltic
 {
     public class Constants
     {

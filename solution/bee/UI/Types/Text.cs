@@ -1,5 +1,5 @@
-﻿using Bee.Library;
-using Bee.UI.Types;
+﻿using Feltic.Library;
+using Feltic.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bee.UI
+namespace Feltic.UI
 {
     public class Text
     {
