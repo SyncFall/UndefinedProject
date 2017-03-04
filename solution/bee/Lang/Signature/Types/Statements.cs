@@ -11,7 +11,7 @@ namespace Bee.Language
     {
         public CodeSignature TryCode()
         {
-            TokenSymbol blockBegin = TryBlock(StructureType.BlockBegin);
+            TokenSymbol blockBegin = TryNonSpace(StructureType.BlockBegin);
             if (blockBegin == null)
             {
                 return null;
@@ -19,7 +19,7 @@ namespace Bee.Language
             CodeSignature signature = new CodeSignature();
             signature.BlockBegin = blockBegin;
             if((signature.Statements = TryStatementList()) == null ||
-              ((signature.BlockEnd = TryBlock(StructureType.BlockEnd)) == null)
+              ((signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null)
             ){
                 ;
             }
@@ -121,13 +121,13 @@ namespace Bee.Language
             }
             else
             {
-                TokenSymbol beginBlock = TryBlock(StructureType.BlockBegin);
+                TokenSymbol beginBlock = TryNonSpace(StructureType.BlockBegin);
                 if(beginBlock != null)
                 {
                     BlockStatementSignature signature = new BlockStatementSignature(StatementType.InnerBlock);
                     signature.BlockBegin = beginBlock;
                     if((signature.ChildStatements = TryStatementList()) == null ||
-                       (signature.BlockEnd = TryBlock(StructureType.BlockEnd)) == null
+                       (signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null
                     ){
                         ;
                     }
@@ -140,7 +140,7 @@ namespace Bee.Language
                     {
                         TypeDeclarationStatementSignature signature = new TypeDeclarationStatementSignature();
                         signature.TypeDeclaration = typeDeclaration;
-                        signature.Complete = TrySeperator(StructureType.Complete);
+                        signature.Complete = TryNonSpace(StructureType.Complete);
                         return signature;
                     }
                     else
@@ -150,7 +150,7 @@ namespace Bee.Language
                         {
                             ExpressionStatementSignature signature = new ExpressionStatementSignature(StatementType.ExpressionStatement);
                             signature.Expression = expression;
-                            signature.Complete = TrySeperator(StructureType.Complete);
+                            signature.Complete = TryNonSpace(StructureType.Complete);
                             return signature;
                         }
                         else
@@ -164,12 +164,12 @@ namespace Bee.Language
             {
                 ConditionBlockStatementSignature signature = new ConditionBlockStatementSignature(type);
                 signature.Keyword = keyword;
-                if((signature.ConditionBegin = TryBlock(StructureType.ClosingBegin)) == null ||
+                if((signature.ConditionBegin = TryNonSpace(StructureType.ClosingBegin)) == null ||
                    (signature.ConditionExpression = TryExpression()) == null ||
-                   (signature.ConditionEnd = TryBlock(StructureType.ClosingEnd)) == null ||
-                   (signature.BlockBegin = TryBlock(StructureType.BlockBegin)) == null ||
+                   (signature.ConditionEnd = TryNonSpace(StructureType.ClosingEnd)) == null ||
+                   (signature.BlockBegin = TryNonSpace(StructureType.BlockBegin)) == null ||
                    (signature.ChildStatements = TryStatementList()) == null ||
-                   (signature.BlockEnd = TryBlock(StructureType.BlockEnd)) == null
+                   (signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null
                 ){
                     ;
                 }
@@ -179,7 +179,7 @@ namespace Bee.Language
             {
                 StatementSignature signature = new StatementSignature(type, group, false);
                 signature.Keyword = keyword;
-                if((signature.Complete = TrySeperator(StructureType.Complete)) == null)
+                if((signature.Complete = TryNonSpace(StructureType.Complete)) == null)
                 {
                     ;
                 }
@@ -190,16 +190,16 @@ namespace Bee.Language
                 ExpressionStatementSignature signature = new ExpressionStatementSignature(type);
                 signature.Keyword = keyword;
                 signature.Expression = TryExpression();
-                signature.Complete = TrySeperator(StructureType.Complete);
+                signature.Complete = TryNonSpace(StructureType.Complete);
                 return signature;
             }
             else if(group == StatementGroup.BlockStatement)
             {
                 BlockStatementSignature signature = new BlockStatementSignature(type, group);
                 signature.Keyword = keyword;
-                if((signature.BlockBegin = TryBlock(StructureType.BlockBegin)) == null ||
+                if((signature.BlockBegin = TryNonSpace(StructureType.BlockBegin)) == null ||
                    (signature.ChildStatements = TryStatementList()) == null ||
-                   (signature.BlockEnd = TryBlock(StructureType.BlockEnd)) == null
+                   (signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null
                 ){
                     ;
                 }
@@ -208,10 +208,10 @@ namespace Bee.Language
             else if(type == StatementType.For)
             {
                 ForLoopStatementSignature signature = new ForLoopStatementSignature();
-                signature.ConditionBegin = TryBlock(StructureType.ClosingBegin);
+                signature.ConditionBegin = TryNonSpace(StructureType.ClosingBegin);
                 while (true)
                 {
-                    if ((signature.ParameterDeclarationSeperator = TrySeperator(StructureType.Complete)) != null)
+                    if ((signature.ParameterDeclarationSeperator = TryNonSpace(StructureType.Complete)) != null)
                     {
                         break;
                     }
@@ -219,7 +219,7 @@ namespace Bee.Language
                     if (typeDeclaration != null)
                     {
                         signature.ParameterList.Add(typeDeclaration);
-                        if ((typeDeclaration.Seperator = TrySeperator(StructureType.Seperator)) != null)
+                        if ((typeDeclaration.Seperator = TryNonSpace(StructureType.Seperator)) != null)
                         {
                             continue;
                         }
@@ -230,13 +230,13 @@ namespace Bee.Language
                         if (expression != null)
                         {
                             signature.ParameterList.Add(expression);
-                            if ((expression.Seperator = TrySeperator(StructureType.Seperator)) != null)
+                            if ((expression.Seperator = TryNonSpace(StructureType.Seperator)) != null)
                             {
                                 continue;
                             }
                         }
                     }
-                    if ((signature.ParameterDeclarationSeperator = TrySeperator(StructureType.Complete)) != null)
+                    if ((signature.ParameterDeclarationSeperator = TryNonSpace(StructureType.Complete)) != null)
                     {
                         break;
                     }
@@ -244,10 +244,10 @@ namespace Bee.Language
                     break;
                 }
                 signature.ConditionExpression = TryExpression();
-                signature.ConditionSeperator = TrySeperator(StructureType.Complete);
+                signature.ConditionSeperator = TryNonSpace(StructureType.Complete);
                 while (true)
                 {
-                    if ((signature.ConditionEnd = TryBlock(StructureType.ClosingEnd)) != null)
+                    if ((signature.ConditionEnd = TryNonSpace(StructureType.ClosingEnd)) != null)
                     {
                         break;
                     }
@@ -255,22 +255,22 @@ namespace Bee.Language
                     if (expression != null)
                     {
                         signature.PostOperationList.Add(expression);
-                        if ((expression.Seperator = TrySeperator(StructureType.Seperator)) != null)
+                        if ((expression.Seperator = TryNonSpace(StructureType.Seperator)) != null)
                         {
                             continue;
                         }
                     }
-                    if ((signature.ConditionEnd = TryBlock(StructureType.ClosingEnd)) != null)
+                    if ((signature.ConditionEnd = TryNonSpace(StructureType.ClosingEnd)) != null)
                     {
                         break;
                     }
                     //
                     break;
                 }
-                signature.ConditionEnd = TryBlock(StructureType.ClosingEnd);
-                if ((signature.BlockBegin = TryBlock(StructureType.BlockBegin)) == null ||
+                signature.ConditionEnd = TryNonSpace(StructureType.ClosingEnd);
+                if((signature.BlockBegin = TryNonSpace(StructureType.BlockBegin)) == null ||
                    (signature.ChildStatements = TryStatementList()) == null ||
-                   (signature.BlockEnd = TryBlock(StructureType.BlockEnd)) == null
+                   (signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null
                 )
                 {
                     ;

@@ -19,7 +19,7 @@ namespace Bee.Language
             signatur.Keyword = PrevToken;
             if (!TrySpace() ||
                 (signatur.IdentifierPath = TryIdentifierPath()) == null ||
-                (signatur.Complete = TrySeperator(StructureType.Complete)) == null
+                (signatur.Complete = TryNonSpace(StructureType.Complete)) == null
             ){
                 ;
             }
@@ -36,7 +36,7 @@ namespace Bee.Language
             signatur.Keyword = PrevToken;
             if (!TrySpace() ||
                 (signatur.IdentifierPath = TryIdentifierPath()) == null ||
-                (signatur.Complete = TrySeperator(StructureType.Complete)) == null
+                (signatur.Complete = TryNonSpace(StructureType.Complete)) == null
             )
             {
                 ;
@@ -55,7 +55,7 @@ namespace Bee.Language
             signatur.Keyword = PrevToken;
             if (!TrySpace() ||
                 (signatur.Identifier = TryIdentifier()) == null ||
-                (signatur.BlockBegin = TryBlock(StructureType.BlockBegin)) == null
+                (signatur.BlockBegin = TryNonSpace(StructureType.BlockBegin)) == null
             ){
                 return signatur;
             }
@@ -83,7 +83,7 @@ namespace Bee.Language
                 //
                 break;
             }
-            if ((signatur.BlockEnd = TryBlock(StructureType.BlockEnd)) == null)
+            if ((signatur.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null)
             {
                 ;
             }
@@ -100,7 +100,7 @@ namespace Bee.Language
                 ResetStep();
                 return null;
             }
-            TokenSymbol complete = TrySeperator(StructureType.Complete);
+            TokenSymbol complete = TryNonSpace(StructureType.Complete);
             if(complete != null)
             {
                 MemberSignature member = new MemberSignature();
@@ -128,7 +128,7 @@ namespace Bee.Language
                 ResetStep();
                 return null;
             }
-            TokenSymbol enclosing = TrySeperator(StructureType.ClosingBegin);
+            TokenSymbol enclosing = TryNonSpace(StructureType.ClosingBegin);
             ResetStep();
             if(enclosing != null)
             {
@@ -168,7 +168,7 @@ namespace Bee.Language
                 ResetStep();
                 return null;
             }
-            TokenSymbol enclosing = TrySeperator(StructureType.BlockBegin);
+            TokenSymbol enclosing = TryNonSpace(StructureType.BlockBegin);
             ResetStep();
             if(enclosing != null)
             {

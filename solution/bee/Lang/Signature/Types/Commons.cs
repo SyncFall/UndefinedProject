@@ -17,7 +17,7 @@ namespace Bee.Language
                 IdentifierPathElementSignatur element = new IdentifierPathElementSignatur();
                 signature.PathElements.Add(element);
                 element.Identifier = PrevToken;
-                element.Seperator = TrySeperator(StructureType.Point);
+                element.Seperator = TryNonSpace(StructureType.Point);
                 if (element.Seperator == null)
                 {
                     break;
@@ -59,7 +59,7 @@ namespace Bee.Language
             }
             if(WithAssigment)
             {
-                if((signatur.Assigment = TrySeperator(StructureType.Assigment)) == null ||
+                if((signatur.Assigment = TryNonSpace(StructureType.Assigment)) == null ||
                    (signatur.AssigmentExpression = TryExpression()) == null
                 ){
                     ;
@@ -86,7 +86,7 @@ namespace Bee.Language
                 {
                     signature.ElementList.Add(element);
                     element.Generic = TryGenericDeclaration();
-                    if((element.Seperator = TrySeperator(StructureType.Seperator)) != null)
+                    if((element.Seperator = TryNonSpace(StructureType.Seperator)) != null)
                     {
                         continue;
                     }
@@ -107,7 +107,7 @@ namespace Bee.Language
         {
             TokenSymbol blockBegin;
             if(!BeginStep()) return null;
-            if((blockBegin = TryBlock(StructureType.BracketBegin)) == null)
+            if((blockBegin = TryNonSpace(StructureType.BracketBegin)) == null)
             {
                 ResetStep();
                 return null; ;
@@ -116,18 +116,18 @@ namespace Bee.Language
             signature.BlockBegin = blockBegin;
             while(true)
             {
-                if((signature.BlockEnd = TryBlock(StructureType.BracketEnd)) != null)
+                if((signature.BlockEnd = TryNonSpace(StructureType.BracketEnd)) != null)
                 {
                     CommitStep();
                     break;
                 }
                 TokenSymbol dimensionToken;
-                if ((dimensionToken = TrySeperator(StructureType.Seperator)) != null)
+                if ((dimensionToken = TryNonSpace(StructureType.Seperator)) != null)
                 {
                     signature.DimensionSymbols.Add(dimensionToken);
                     continue;
                 }
-                if ((signature.BlockEnd = TryBlock(StructureType.BracketEnd)) != null)
+                if ((signature.BlockEnd = TryNonSpace(StructureType.BracketEnd)) != null)
                 {
                     CommitStep();
                     break;
@@ -142,7 +142,7 @@ namespace Bee.Language
         public ParameterDeclarationSignature TryParameterDeclaration(StructureType StructureBegin, StructureType StructureEnd)
         {
             TokenSymbol blockBegin;
-            if ((blockBegin = TryBlock(StructureBegin)) == null)
+            if ((blockBegin = TryNonSpace(StructureBegin)) == null)
             {
                 return null;
             }
@@ -153,13 +153,13 @@ namespace Bee.Language
             {
                 ParameterSignature parameter = new ParameterSignature(typeDeclaration);
                 signature.ParameterList.Add(parameter);
-                parameter.Seperator = TrySeperator(StructureType.Seperator);
+                parameter.Seperator = TryNonSpace(StructureType.Seperator);
                 if (parameter.Seperator == null)
                 {
                     break;
                 }
             }
-            signature.BlockEnd = TryBlock(StructureEnd);
+            signature.BlockEnd = TryNonSpace(StructureEnd);
             return signature;
         }
     }
@@ -182,29 +182,17 @@ namespace Bee.Language
         {
             string str = "type(";
             if(TypeNative != null)
-            {
                 str += "native:" + TypeNative.String;
-            }
             if(TypeIdentifier != null)
-            {
                 str += "object:" + TypeIdentifier.String;
-            }
             if(TypeGeneric != null)
-            {
                 str += ", " + TypeGeneric.ToString();
-            }
             if(TypeArray != null)
-            {
                 str += ", " + TypeArray.ToString();
-            }
             if(NameIdentifier != null)
-            {
                 str += ", name:" + NameIdentifier.String;
-            }
             if(Assigment != null)
-            {
                 str += ", assigment(" + AssigmentExpression + ")";
-            }
             return str+")";
         }
     }

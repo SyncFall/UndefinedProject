@@ -14,11 +14,11 @@ namespace Bee.Language
             TrySpace();
             ExpressionSignature signature = new ExpressionSignature();
             TokenSymbol blockBegin;
-            if ((blockBegin = TryBlock(StructureType.ClosingBegin)) != null)
+            if ((blockBegin = TryNonSpace(StructureType.ClosingBegin)) != null)
             {
                 signature.BlockBegin = blockBegin;
                 if ((signature.ChildExpression = TryExpression()) == null ||
-                   (signature.BlockEnd = TryBlock(StructureType.ClosingEnd)) == null
+                   (signature.BlockEnd = TryNonSpace(StructureType.ClosingEnd)) == null
                 )
                 {
                     return signature;
@@ -57,7 +57,7 @@ namespace Bee.Language
                 LiteralAccessSignature literalAccess = new LiteralAccessSignature(PrevToken);
                 accessSignatur = literalAccess;
                 signature.AccessList.Add(literalAccess);
-                if ((literalAccess.Seperator = TrySeperator(StructureType.Point)) == null)
+                if ((literalAccess.Seperator = TryNonSpace(StructureType.Point)) == null)
                 {
                     return signature;
                 }
@@ -73,7 +73,7 @@ namespace Bee.Language
             while (Token != null && Token.Type == TokenType.Identifier)
             {
                 TokenSymbol identifier = TryIdentifier();
-                if (TryBlock(StructureType.ClosingBegin) != null)
+                if (TryNonSpace(StructureType.ClosingBegin) != null)
                 {
                     FunctionAccessSignature functionAccess = new FunctionAccessSignature(identifier);
                     while (true)
@@ -85,18 +85,18 @@ namespace Bee.Language
                         }
                         ParameterSignature parameter = new ParameterSignature(expression);
                         functionAccess.ParameterList.Add(parameter);
-                        if ((parameter.Seperator = TrySeperator(StructureType.Seperator)) == null)
+                        if ((parameter.Seperator = TryNonSpace(StructureType.Seperator)) == null)
                         {
                             break;
                         }
                     }
-                    if ((functionAccess.BlockEnd = TryBlock(StructureType.ClosingEnd)) == null)
+                    if ((functionAccess.BlockEnd = TryNonSpace(StructureType.ClosingEnd)) == null)
                     {
                         ;
                     }
                     accessSignatur = functionAccess;
                 }
-                else if (TryBlock(StructureType.BracketBegin) != null)
+                else if (TryNonSpace(StructureType.BracketBegin) != null)
                 {
                     ArrayAccessSignature arrayAccess = new ArrayAccessSignature(identifier);
                     while (true)
@@ -108,12 +108,12 @@ namespace Bee.Language
                         }
                         ParameterSignature parameter = new ParameterSignature(expression);
                         arrayAccess.ParameterList.Add(parameter);
-                        if ((parameter.Seperator = TrySeperator(StructureType.Seperator)) == null)
+                        if ((parameter.Seperator = TryNonSpace(StructureType.Seperator)) == null)
                         {
                             break;
                         }
                     }
-                    if ((arrayAccess.BlockEnd = TryBlock(StructureType.BracketEnd)) == null)
+                    if ((arrayAccess.BlockEnd = TryNonSpace(StructureType.BracketEnd)) == null)
                     {
                         ;
                     }
@@ -125,7 +125,7 @@ namespace Bee.Language
                     accessSignatur = variableAccess;
                 }
                 signature.AccessList.Add(accessSignatur);
-                if ((accessSignatur.Seperator = TrySeperator(StructureType.Point)) == null)
+                if ((accessSignatur.Seperator = TryNonSpace(StructureType.Point)) == null)
                 {
                     return signature;
                 }

@@ -123,24 +123,11 @@ namespace Bee.Language
             return hasSpace;
         }
 
-        public TokenSymbol TrySeperator(StructureType seperatorType)
+        public TokenSymbol TryNonSpace(StructureType structure)
         {
             TrySpace();
-            if(Token == null || !Token.IsStructure(seperatorType))
+            if(Token == null || !Token.IsStructure(structure))
             { 
-                return null;
-            }
-            TokenSymbol token = Token;
-            NextToken();
-            TrySpace();
-            return token;
-        }
-
-        public TokenSymbol TryBlock(StructureType blockType)
-        {
-            TrySpace();
-            if (Token == null || !Token.IsStructure(blockType))
-            {
                 return null;
             }
             TokenSymbol token = Token;
@@ -177,21 +164,7 @@ namespace Bee.Language
     }
 
     public class SignatureList : ListCollection<SignatureSymbol>
-    {
-        public override string ToString()
-        {
-            string str = "";
-            for(int i=0; i< Size; i++)
-            {
-                str += Get(i).ToString();
-                if(i < Size-1)
-                {
-                    str += ", ";
-                }
-            }
-            return str;
-        }
-    }
+    { }
 
     public class UnknownSignatur : SignatureSymbol
     {
