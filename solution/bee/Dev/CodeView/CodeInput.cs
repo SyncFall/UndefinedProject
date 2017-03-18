@@ -1,13 +1,13 @@
-﻿using Feltic.Integrator;
-using Feltic.UI;
-using Feltic.UI.Types;
+﻿using feltic.Integrator;
+using feltic.UI;
+using feltic.UI.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Integrator
+namespace feltic.Integrator
 {
     public class CodeInput : InputListener
     {
@@ -220,225 +220,19 @@ namespace Feltic.Integrator
 
         public bool TextInputs(InputEvent InputEvent)
         {
-            if (!InputEvent.IsKey)
-            {
+            if(!InputEvent.IsKey)
                 return false;
-            }
 
-            KeyState keyState = InputEvent.Key;
-            Key key = keyState.Type;
-
-            if (!keyState.IsDown)
-            {
+            if(!InputEvent.Key.IsDown)
                 return false;
-            }
 
-            char textChar = '\0';
-
-            // alphabetic and specials
-            if (keyState.IsAlphabetChar())
-            {
-                textChar = keyState.GetAlphabetChar();
-                // todo: y/z
-                if (textChar == 'z')
-                {
-                    textChar = 'y';
-                }
-                else if(textChar == 'y')
-                {
-                    textChar = 'z';
-                }
-                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
-                {
-                    textChar = Char.ToUpper(textChar);
-                }
-                else if (Keyboard.Keys[Key.AltRight].IsDown)
-                {
-                    textChar = '@';
-                }
-            }
-            // numeric and specials
-            else if (keyState.IsNumberChar())
-            {
-                textChar = keyState.GetNumberChar();
-                if(Keyboard.Keys[Key.ShiftLeft].IsDown)
-                {
-                    if(textChar == '0')
-                    {
-                        textChar = '=';
-                    }
-                    else if(textChar == '1')
-                    {
-                        textChar = '!';
-                    }
-                    else if(textChar == '2')
-                    {
-                        textChar = '"';
-                    }
-                    else if(textChar == '3')
-                    {
-                        textChar = '§';
-                    }
-                    else if(textChar == '4')
-                    {
-                        textChar = '$';
-                    }
-                    else if(textChar == '5')
-                    {
-                        textChar = '%';
-                    }
-                    else if (textChar == '6')
-                    {
-                        textChar = '&';
-                    }
-                    else if (textChar == '7')
-                    {
-                        textChar = '/';
-                    }
-                    else if (textChar == '8')
-                    {
-                        textChar = '(';
-                    }
-                    else if (textChar == '9')
-                    {
-                        textChar = ')';
-                    }
-                }
-                else if(Keyboard.Keys[Key.AltLeft].IsDown || Keyboard.Keys[Key.AltRight].IsDown)
-                {
-                    if(textChar == '7')
-                    {
-                        textChar = '{';
-                    }
-                    else if(textChar == '8')
-                    {
-                        textChar = '[';
-                    }
-                    else if(textChar == '9')
-                    {
-                        textChar = ']';
-                    }
-                    else if(textChar == '0')
-                    {
-                        textChar = '}';
-                    }
-                }
-            }
-            // space
-            else if (key == Key.Space)
-            {
-                textChar = ' ';
-            }
-            // tab
-            else if (key == Key.Tab)
-            {
-                textChar = '\t';
-            }
-            // ß
-            else if(key == Key.Minus)
-            {
-                if(Keyboard.Keys[Key.ShiftLeft].IsDown)
-                {
-                    textChar = '?';
-                }
-                else if(Keyboard.Keys[Key.AltRight].IsDown || Keyboard.Keys[Key.AltRight].IsDown)
-                {
-                    textChar = '\\';
-                }
-                else
-                {
-                    textChar = 'ß';
-                }
-            }
-            // +
-            else if(key == Key.BracketRight)
-            {
-                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
-                {
-                    textChar = '*';
-                }
-                else if (Keyboard.Keys[Key.AltLeft].IsDown || Keyboard.Keys[Key.AltRight].IsDown)
-                {
-                    textChar = '~';
-                }
-                else
-                {
-                    textChar = '+';
-                }
-            }
-            // -
-            else if (key == Key.Slash)
-            {
-                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
-                {
-                    textChar = '_';
-                }
-                else
-                {
-                    textChar = '-';
-                }
-            }
-            // #
-            else if (key == Key.BackSlash)
-            {
-                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
-                {
-                    textChar = '\'';
-                }
-                else
-                {
-                    textChar = '#';
-                }
-            }
-            // .
-            else if (key == Key.Period)
-            {
-                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
-                {
-                    textChar = ':';
-                }
-                else
-                {
-                    textChar = '.';
-                }
-            }
-            // ,
-            else if (key == Key.Comma)
-            {
-                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
-                {
-                    textChar = ';';
-                }
-                else
-                {
-                    textChar = ',';
-                }
-            }
-            // <
-            else if(key == Key.NonUSBackSlash)
-            {
-                if (Keyboard.Keys[Key.ShiftLeft].IsDown)
-                {
-                    textChar = '>';
-                }
-                else if (Keyboard.Keys[Key.AltLeft].IsDown || Keyboard.Keys[Key.AltRight].IsDown)
-                {
-                    textChar = '|';
-                }
-                else
-                {
-                    textChar = '<';
-                }
-            }
-            // none
-            else
-            {
+            string textContent = InputEvent.Key.TextContent;
+            if(textContent == null)
                 return false;
-            }
 
             // insert
             CodeText.CodeHistory.AddHistory(new CodeHistoryEntry(CodeText.SourceText.StringContent, CodeText.CodeCursor, CodeText.CodeSelection));
-            CodeText.CodeCursor.TextInsert(textChar + "");
+            CodeText.CodeCursor.TextInsert(textContent);
             CodeText.CodeCursor.CursorBlink.Reset();
             return true;
         }

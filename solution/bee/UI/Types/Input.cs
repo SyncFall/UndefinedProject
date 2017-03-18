@@ -1,12 +1,12 @@
-﻿using Feltic.Lib;
-using Feltic.Library;
+﻿using feltic.Lib;
+using feltic.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.UI
+namespace feltic.UI
 {
     public enum InputType
     {
@@ -14,6 +14,7 @@ namespace Feltic.UI
         Cursor,
         Button,
         Scroll,
+        Text,
     }
 
     public abstract class InputState
@@ -52,7 +53,14 @@ namespace Feltic.UI
             {
                 return (this.Type == InputType.Button);
             }
+        }
 
+        public bool IsText
+        {
+            get
+            {
+                return (this.Type == InputType.Text);
+            }
         }
 
         public KeyState Key
@@ -78,6 +86,15 @@ namespace Feltic.UI
                 return (State as ButtonState);
             }
         }
+
+        public TextState Text
+        {
+            get
+            {
+                return (State as TextState);
+            }
+        }
+
     }
 
     public class Input
@@ -136,27 +153,8 @@ namespace Feltic.UI
         }
 
         public void ProcessInputEvent(InputEvent Event)
-        {   
-            if (Sender != null /*&& Sender is Compose*/)
-            {
-                /*
-                Compose compose = (Sender as Compose);
-                if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick)
-                {
-                    CursorState cursor = Mouse.Cursor;
-                    Size size = compose.Size;
-                    if(cursor.x >= 0 && cursor.x <= size.Width && 
-                       cursor.y >= 0 && cursor.x <= size.Height
-                    ){
-                        this.Input(Event);
-                    }
-                }
-                */
-            }
-            else
-            {
-                this.Input(Event);
-            }    
+        {
+            this.Input(Event);    
         }
 
         public void Dispose()
@@ -165,6 +163,16 @@ namespace Feltic.UI
         }
 
         public abstract void Input(InputEvent Event);
+    }
+
+    public class TextState : InputState
+    {
+        public string TextContent;
+
+        public TextState(string Text)
+        {
+            this.TextContent = Text;
+        }
     }
 
     public class KeyboardState
@@ -200,6 +208,10 @@ namespace Feltic.UI
                 }
                 keyState.IsUp = false;
                 Input.FireListeners(new InputEvent(InputType.Key, keyState));
+                if (keyState.IsDown && keyState.TextContent != null)
+                {
+                    Input.FireListeners(new InputEvent(InputType.Text, new TextState(keyState.TextContent)));
+                }
             };
             GameWindow.KeyUp += (object sender, OpenTK.Input.KeyboardKeyEventArgs e) =>
             {
@@ -242,24 +254,179 @@ namespace Feltic.UI
             this.Type = key;
         }
 
-        public bool IsAlphabetChar()
+        public bool IsAlphabet
         {
-            return (Type >= Key.A && Type <= Key.Z);
+            get
+            {
+                return (Type >= Key.A && Type <= Key.Z);
+            }
         }
 
-        public char GetAlphabetChar()
+        public char AlphabetChar
         {
-            return Alphabet[(int)Type - 83];
+            get
+            {
+                return Alphabet[(int)Type - 83];
+            }
         }
 
-        public bool IsNumberChar()
+        public bool IsNumber
         {
-            return (Type >= Key.Number0 && Type <= Key.Number9);
+            get
+            {
+                return (Type >= Key.Number0 && Type <= Key.Number9);
+            } 
         }
 
-        public char GetNumberChar()
+        public char NumberChar
         {
-            return Numbers[(int)Type - 109];
+            get
+            {
+                return Numbers[(int)Type - 109];
+            }
+        }
+
+        public string TextContent
+        {
+            get
+            {
+                if(IsAlphabet)
+                {
+                    char chr = AlphabetChar;
+                    // y/z
+                    if (chr == 'z')
+                        chr = 'y';
+                    else if (chr == 'y')
+                        chr = 'z';
+                    // upper char
+                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                        chr = Char.ToUpper(chr);
+                    // @
+                    else if (UI.Input.Keyboard.Keys[Key.AltRight].IsDown)
+                        chr = '@';
+                    // ret
+                    return chr+"";
+                }
+                if(IsNumber)
+                {
+                    char chr = NumberChar;
+                    // shift
+                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                    {
+                        if (chr == '0')
+                            chr = '=';
+                        else if (chr == '1')
+                            chr = '!';
+                        else if (chr == '2')
+                            chr = '"';
+                        else if (chr == '3')
+                            chr = '§';
+                        else if (chr == '4')
+                            chr = '$';
+                        else if (chr == '5')
+                            chr = '%';
+                        else if (chr == '6')
+                            chr = '&';
+                        else if (chr == '7')
+                            chr = '/';
+                        else if (chr == '8')
+                            chr = '(';
+                        else if (chr == '9')
+                            chr = ')';
+                    }
+                    // alt-gr
+                    else if (UI.Input.Keyboard.Keys[Key.AltLeft].IsDown || UI.Input.Keyboard.Keys[Key.AltRight].IsDown)
+                    {
+                        if (chr == '7')
+                            chr = '{';
+                        else if (chr == '8')
+                            chr = '[';
+                        else if (chr == '9')
+                            chr = ']';
+                        else if (chr == '0')
+                            chr = '}';
+                    }
+                    // ret
+                    return chr+"";
+                }
+                // space
+                else if (Type == Key.Space)
+                {
+                    return " ";
+                }
+                // tab
+                else if (Type == Key.Tab)
+                {
+                    return "\t";
+                }
+                // ?
+                else if (Type == Key.Minus)
+                {
+                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                        return "?";
+                    else if (UI.Input.Keyboard.Keys[Key.AltRight].IsDown || UI.Input.Keyboard.Keys[Key.AltRight].IsDown)
+                        return "\\";
+                    else
+                        return "?";
+                }
+                // +
+                else if (Type == Key.BracketRight)
+                {
+                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                        return "*";
+                    else if (UI.Input.Keyboard.Keys[Key.AltLeft].IsDown || UI.Input.Keyboard.Keys[Key.AltRight].IsDown)
+                        return "~";
+                    else
+                        return "+";
+                }
+                // -
+                else if (Type == Key.Slash)
+                {
+                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                        return "_";
+                    else
+                        return "-";
+                }
+                // #
+                else if (Type == Key.BackSlash)
+                {
+                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                        return "'";
+                    else
+                        return "#";
+                }
+                // .
+                else if (Type == Key.Period)
+                {
+                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                        return ":";
+                    else
+                        return ".";
+                }
+                // ,
+                else if (Type == Key.Comma)
+                {
+                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                        return ";";
+                    else
+                        return ",";
+                }
+                // <
+                else if (Type == Key.NonUSBackSlash)
+                {
+                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                        return ">";
+                    else if (UI.Input.Keyboard.Keys[Key.AltLeft].IsDown || UI.Input.Keyboard.Keys[Key.AltRight].IsDown)
+                        return  "|";
+                    else
+                        return "<";
+                }
+                // none
+                else
+                {
+                    return null;
+                }
+            }
         }
     }
 

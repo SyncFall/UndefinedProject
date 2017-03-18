@@ -1,24 +1,18 @@
-﻿using Feltic.Language;
-using Feltic.Library;
+﻿using feltic.Language;
+using feltic.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
-    public class TokenNodeList : ListCollection<TokenNode>
-    {
-        public TokenNodeList(int Size) : base(Size)
-        { }
-    }
-
 	public class TokenPointer
 	{
 		public TokenNode Root;
 		public TokenNode Current;
-        public ListCollection<TokenNode> StepNodes = new ListCollection<TokenNode>();
+        public ListCollection<TokenNode> StepNodes = new ListCollection<TokenNode>(8);
 
         public TokenPointer(TokenNode Root)
 		{
@@ -45,7 +39,6 @@ namespace Feltic.Language
         public void StepCommit()
         {
             StepNodes.RemoveAt(StepNodes.Size-1);
-
         }
 	}
 
@@ -61,6 +54,12 @@ namespace Feltic.Language
         }
     }
 
+    public class TokenNodeList : ListCollection<TokenNode>
+    {
+        public TokenNodeList(int Size) : base(Size)
+        { }
+    }
+
     public class TokenContainer
     {
         public SourceText SourceText;
@@ -72,7 +71,7 @@ namespace Feltic.Language
 
         private void AddToken(TokenSymbol token)
         {
-            // split string-content types by new lines (workaround)
+            // split string-content types by new line-tokens (hack)
             if (token.Type == TokenType.Comment || token.IsLiteral(LiteralType.Char) || token.IsLiteral(LiteralType.String))
             {
                 string[] commentLines = token.String.Split('\n');
@@ -163,18 +162,15 @@ namespace Feltic.Language
             {
                 return null;
             }
-            else if(lineNumber<=0)
+            if(lineNumber<=0)
             {
                 return AllTokenNodes.First;
             }
-            else
+            if(lineNumber >= LineTokenNodes.Size-1)
             {
-                if(lineNumber >= LineTokenNodes.Size-1)
-                {
-                    lineNumber = LineTokenNodes.Size-1;
-                }
-                return LineTokenNodes.Get(lineNumber-1).Next;
+                lineNumber = LineTokenNodes.Size-1;
             }
+            return LineTokenNodes.Get(lineNumber-1).Next;
         }
     }
 }

@@ -1,0 +1,31 @@
+
+
+object Editor
+{
+	ActionBar actionBar;
+
+	<block width=700px height=500px>
+		<block>
+			<block>actionBar = <ActionBar/></block>
+			<block height=100%>
+				<column width=65%>"workspace"</column>
+				<column width=35%>"navigation"</column>
+			</block>
+			<block height=125px>"status"</block>
+		</block>
+	</block>
+}
+
+object ActionBar
+{	
+	Select solutionSelect = Select("Solution.");
+	Select runSelect = Select("Run.");
+	runSelect.OnClick = {
+
+	};
+
+	<block>
+		<inline>solutionSelect</inline>
+		<inline>runSelect</inline>
+	</block>
+}

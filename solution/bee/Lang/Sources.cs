@@ -1,8 +1,8 @@
-﻿using Feltic.Library;
+﻿using feltic.Library;
 using System;
 using System.IO;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public class SourceList : ListCollection<SourceText>
     {

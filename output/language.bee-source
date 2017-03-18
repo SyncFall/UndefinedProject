@@ -1,8 +1,8 @@
 
 object BasicObject
 
-	bool boolean;
-	char character;
+	data bool boolean;
+	data char character;
 	byte[] bytes;
 	int integer;
 	float floating;
@@ -28,6 +28,11 @@ object BasicObject
 		if(i > 0)
 			return this.byteArray;
 		return null;
+	}
+
+	state Event(bool true)
+	{
+
 	}
 
 create()

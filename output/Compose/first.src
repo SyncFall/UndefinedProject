@@ -1,0 +1,30 @@
+
+var tatu = Fuck(){
+	
+};
+<compose width=700px height=500px>
+	<block height=25px>"Compose-Editor"</block>
+	<block>
+		<block height=20px>
+			<column>"Workspace"</column>
+			<column>"Settings"</column>
+			<column>"About"</column>
+			<column><input>"text-write"</input></column>
+		</block>
+		<block height=15px>
+			<column>"Undo"</column>
+			<column>"Redo"</column>
+		</block>
+		<block height=100%>
+			<column width=65%>
+				for(int i=0; i<10; i+=1)
+				{
+					<block>"block-{i+1}"</block>
+				}
+			</column>
+			<column width=35%>"navigation"</column>
+		</block>
+		<block height=125px>"status"</block>
+	</block>
+</compose>
+

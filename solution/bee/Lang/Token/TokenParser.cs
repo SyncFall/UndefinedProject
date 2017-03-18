@@ -1,11 +1,11 @@
-﻿using Feltic.Language;
+﻿using feltic.Language;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public class TokenParser
     {
@@ -40,7 +40,7 @@ namespace Feltic.Language
             }
             return token;
         }
-
+        
         public TokenSymbol TryKeywordOrIdentifierToken()
         {
             int idx;
@@ -173,6 +173,10 @@ namespace Feltic.Language
                     {
                         TextParser.Finish(++idx);
                     }
+                    else if(TextParser.EqualString("em") || TextParser.EqualString("px") || TextParser.EqualChar('%'))
+                    {
+                        idx = TextParser.Position;
+                    }
                 }
                 string numberData = new string(TextParser.Text, start, idx - start);
                 return new TokenSymbol(TokenType.Literal, numberData, new LiteralSymbol(LiteralType.Number, numberData));
@@ -208,7 +212,7 @@ namespace Feltic.Language
 
         public TokenSymbol TryStructureToken()
         {
-            if(TextParser.Text[TextParser.Start] > 127)
+            if(TextParser.Text[TextParser.Start] > (char)127)
             {
                 return null;
             }

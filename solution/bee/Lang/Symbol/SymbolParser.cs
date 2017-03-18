@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public class SymbolParser
     {
@@ -17,7 +17,7 @@ namespace Feltic.Language
             ScopeSymbol lastScopeSymbol = new ScopeSymbol(sourceSymbol, new ScopeSignature()); // default-scope
             for (int i = 0; i < SignatureContainer.SignatureNodes.Size; i++)
             {
-                SignatureSymbol signature = SignatureContainer.SignatureNodes.Get(i).Signature;
+                SignatureSymbol signature = SignatureContainer.SignatureNodes[i].Signature;
                 if(signature.Type == SignatureType.Use)
                 {
                     TryUse(sourceSymbol, signature as UseSignature);
@@ -29,6 +29,11 @@ namespace Feltic.Language
                 else if(signature.Type == SignatureType.Object)
                 {
                     TryObject(lastScopeSymbol, signature as ObjectSignature);
+                }
+                else if(signature.Type == SignatureType.Statement)
+                {
+                    lastScopeSymbol.VisualElement = signature;
+                    sourceSymbol.ScopeList.Add(lastScopeSymbol);
                 }
             }
             return sourceSymbol;
@@ -91,15 +96,17 @@ namespace Feltic.Language
                 {
                     ;
                 }
-                for (int i = 0; i < Signature.Members.Size; i++)
+                for (int i = 0; i < Signature.ElementList.Size; i++)
                 {
-                    MemberSignature memberSignature = Signature.Members.Get(i);
-                    TryMember(objectSymbol, memberSignature);
-                }
-                for (int i = 0; i < Signature.Methods.Size; i++)
-                {
-                    MethodSignature methodSignature = Signature.Methods.Get(i);
-                    TryMethod(objectSymbol, methodSignature);
+                    SignatureSymbol element = Signature.ElementList[i];
+                    if(element.Type == SignatureType.Member)
+                    {
+                        TryMember(objectSymbol, element as MemberSignature);
+                    }
+                    else if(element.Type == SignatureType.Method)
+                    {
+                        TryMethod(objectSymbol, element as MethodSignature);
+                    }
                 }
             }
         }
@@ -157,6 +164,11 @@ namespace Feltic.Language
             {
                 Method.Code = new CodeSymbol(Method, Signature);
             }
+        }
+
+        public void TryVisualElement(ScopeSymbol Scope, StructedBlockSignature Signature)
+        {
+            Scope.VisualElement = Signature;
         }
     }
 }

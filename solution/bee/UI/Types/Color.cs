@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.UI
+namespace feltic.UI
 {
     public class Color
     {

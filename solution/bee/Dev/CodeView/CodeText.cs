@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Feltic.UI.Types;
-using Feltic.Language;
+using feltic.UI.Types;
+using feltic.Language;
 using OpenTK.Graphics.OpenGL;
-using Feltic.UI;
-using Feltic.Language;
+using feltic.UI;
+using feltic.Language;
 
-namespace Feltic.Integrator
+namespace feltic.Integrator
 {
     public class CodeText
     {
@@ -33,7 +33,7 @@ namespace Feltic.Integrator
         public CodeText()
         {
             this.SourceFont = new Font("DroidSansMono.ttf", DefaultFontSize);
-            this.SourceText = SourceText.FromFile("test1.bee-source");
+            this.SourceText = SourceText.FromFile("Compose/first.src");
             SourceList list = new SourceList();
             list.Add(this.SourceText);
             this.Registry = new Registry();

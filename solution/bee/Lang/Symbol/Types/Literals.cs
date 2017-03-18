@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public enum LiteralType
     {
@@ -18,7 +18,8 @@ namespace Feltic.Language
 
     public static class LiteralKeywords
     {
-        public static LiteralSymbol[] Array = {
+        public static LiteralSymbol[] Array = 
+        {
             new LiteralSymbol(LiteralType.Null, "null"),
             new LiteralSymbol(LiteralType.True, "true"),
             new LiteralSymbol(LiteralType.False, "false"),

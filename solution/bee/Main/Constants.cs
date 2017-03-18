@@ -1,7 +1,7 @@
-﻿namespace Feltic
+﻿namespace feltic
 {
     public class Constants
     {
-        public static readonly string SourceFileExtension = "bee-source";
+        public static readonly string SourceFileExtension = "src";
     }
 }

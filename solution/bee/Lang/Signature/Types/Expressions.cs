@@ -1,11 +1,11 @@
-﻿using Feltic.Library;
+﻿using feltic.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public partial class SignatureParser
     {
@@ -17,7 +17,7 @@ namespace Feltic.Language
             if ((blockBegin = TryNonSpace(StructureType.ClosingBegin)) != null)
             {
                 signature.BlockBegin = blockBegin;
-                if ((signature.ChildExpression = TryExpression()) == null ||
+                if((signature.ChildExpression = TryExpression()) == null ||
                    (signature.BlockEnd = TryNonSpace(StructureType.ClosingEnd)) == null
                 )
                 {
@@ -33,24 +33,31 @@ namespace Feltic.Language
             }
             while (true)
             {
+                if(!BeginStep())
+                {
+                    return signature;
+                }
                 OperationSignature operation = TryOperation();
                 if (operation == null)
                 {
+                    ResetStep();
                     break;
                 }
                 ExpressionSignature expressionPair = TryExpression();
                 if (expressionPair == null)
                 {
+                    ResetStep();
                     break;
                 }
+                CommitStep();
                 signature.OperationList.Add(new ExpressionOperationPair(operation, expressionPair));
             }
             return signature;
         }
 
-        public OperandSignatur TryOperand()
+        public OperandSignature TryOperand()
         {
-            OperandSignatur signature = new OperandSignatur();
+            OperandSignature signature = new OperandSignature();
             AccessSignature accessSignatur = null;
             if (TryToken(TokenType.Literal) != null)
             {
@@ -62,18 +69,51 @@ namespace Feltic.Language
                     return signature;
                 }
             }
-            else if (Token != null && Token.Type == TokenType.Identifier)
+            else if(Token != null && Token.Type == TokenType.Identifier)
             {
                 ;
             }
+            else if(Token != null && Token.IsStructure(StructureType.BlockBegin))
+            {
+                BlockSignature blockSignature = TryBlock();
+                if(blockSignature != null)
+                {
+                    BlockAccessSignature blockAccess = new BlockAccessSignature(blockSignature);
+                    signature.AccessList.Add(blockAccess);
+                    if((blockAccess.Seperator = TryNonSpace(StructureType.Point)) == null)
+                    {
+                        return signature;
+                    }
+                }
+                //
+                else
+                {
+                    return null;
+                }  
+            }
             else
             {
-                return null;
+                StructedBlockSignature blockSignature = TryStructedBlock();
+                if(blockSignature != null)
+                {
+                    StructedBlockAccessSignature blockAccess = new StructedBlockAccessSignature(blockSignature);
+                    signature.AccessList.Add(blockAccess);
+                    if ((blockAccess.Seperator = TryNonSpace(StructureType.Point)) == null)
+                    {
+                        return signature;
+                    }
+                }
+                //
+                else
+                {
+                    return null;
+                }
             }
-            while (Token != null && Token.Type == TokenType.Identifier)
+            while (true)
             {
                 TokenSymbol identifier = TryIdentifier();
-                if (TryNonSpace(StructureType.ClosingBegin) != null)
+                TrySpace();
+                if(identifier != null && Token.IsStructure(StructureType.ClosingBegin))
                 {
                     FunctionAccessSignature functionAccess = new FunctionAccessSignature(identifier);
                     while (true)
@@ -90,13 +130,14 @@ namespace Feltic.Language
                             break;
                         }
                     }
-                    if ((functionAccess.BlockEnd = TryNonSpace(StructureType.ClosingEnd)) == null)
-                    {
+                    if((functionAccess.BlockEnd = TryNonSpace(StructureType.ClosingEnd)) == null ||
+                       (functionAccess.BlockSignature = TryBlock()) == null
+                    ){
                         ;
                     }
                     accessSignatur = functionAccess;
                 }
-                else if (TryNonSpace(StructureType.BracketBegin) != null)
+                else if(identifier != null && Token.IsStructure(StructureType.BracketBegin))
                 {
                     ArrayAccessSignature arrayAccess = new ArrayAccessSignature(identifier);
                     while (true)
@@ -119,15 +160,26 @@ namespace Feltic.Language
                     }
                     accessSignatur = arrayAccess;
                 }
-                else
+                else if(Token.IsStructure(StructureType.BlockBegin))
+                {
+                    BlockSignature blockSignature = TryBlock();
+                    if(blockSignature == null)
+                    {
+                        break;
+                    }
+                    BlockAccessSignature blockAccess = new BlockAccessSignature(blockSignature, identifier);
+                    accessSignatur = blockAccess;
+                }
+                else if(identifier != null)
                 {
                     VariableAccessSignature variableAccess = new VariableAccessSignature(identifier);
                     accessSignatur = variableAccess;
+
                 }
                 signature.AccessList.Add(accessSignatur);
                 if ((accessSignatur.Seperator = TryNonSpace(StructureType.Point)) == null)
                 {
-                    return signature;
+                    break;
                 }
             }
             return signature;
@@ -136,7 +188,7 @@ namespace Feltic.Language
         public OperationSignature TryOperation()
         {
             TrySpace();
-            if (TryToken(TokenType.Operation) == null)
+            if(TryToken(TokenType.Operation) == null)
             {
                 return null;
             }
@@ -152,7 +204,7 @@ namespace Feltic.Language
         public TokenSymbol BlockBegin;
         public ExpressionSignature ChildExpression;
         public TokenSymbol BlockEnd;
-        public OperandSignatur Operand;
+        public OperandSignature Operand;
         public ExpressionOperationList OperationList = new ExpressionOperationList();
         public TokenSymbol Seperator;
 
@@ -215,11 +267,11 @@ namespace Feltic.Language
         }
     }
 
-    public class OperandSignatur : SignatureSymbol
+    public class OperandSignature : SignatureSymbol
     {
         public AccessSignatureList AccessList = new AccessSignatureList();
 
-        public OperandSignatur() : base(SignatureType.Operand)
+        public OperandSignature(SignatureType Type=SignatureType.Operand) : base(Type)
         { }
 
         public override string ToString()
@@ -269,11 +321,22 @@ namespace Feltic.Language
         }
     }
 
+    public class StructedBlockAccessSignature : AccessSignature
+    {
+        public StructedBlockSignature StructedBlock;
+
+        public StructedBlockAccessSignature(StructedBlockSignature StructedBlock) : base(SignatureType.StructedBlockAccess)
+        {
+            this.StructedBlock = StructedBlock;
+        }
+    }
+
     public class FunctionAccessSignature : AccessSignature
     {
         public TokenSymbol Identifier;
         public TokenSymbol BlockBegin;
         public ListCollection<ParameterSignature> ParameterList = new ListCollection<ParameterSignature>();
+        public BlockSignature BlockSignature;
         public TokenSymbol BlockEnd;
 
         public FunctionAccessSignature(TokenSymbol Identifier) : base(SignatureType.FunctionAccess)
@@ -302,6 +365,18 @@ namespace Feltic.Language
         public override string ToString()
         {
             return "array(name:" + Identifier.String + ", parameters(" + ParameterList + "))";
+        }
+    }
+
+    public class BlockAccessSignature : AccessSignature
+    {
+        public TokenSymbol Identifier;
+        public BlockSignature BlockSignature;
+
+        public BlockAccessSignature(BlockSignature BlockSignature, TokenSymbol Identifier=null) : base(SignatureType.BlockAccess)
+        {
+            this.BlockSignature = BlockSignature;
+            this.Identifier = Identifier;
         }
     }
 }

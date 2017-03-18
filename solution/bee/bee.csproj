@@ -55,9 +55,13 @@
     <RootNamespace>Bee</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Bee.MainUI</StartupObject>
+    <StartupObject>feltic.MainUI</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="csharp.cs, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\output\csharp.cs.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -87,12 +91,16 @@
     <Compile Include="Dev\CodeView\CodeSelection.cs" />
     <Compile Include="Dev\CodeView\CodeText.cs" />
     <Compile Include="Dev\CodeView\CodeView.cs" />
+    <Compile Include="Dev\SceneView\SceneView.cs" />
     <Compile Include="Dev\VisualView\ActionSelect.cs" />
     <Compile Include="Dev\VisualView\VisualView.cs" />
+    <Compile Include="Lang\Signature\Types\Block.cs" />
+    <Compile Include="Lang\Signature\Types\StructedBlock.cs" />
     <Compile Include="Lang\Symbol\Types\Regions.cs" />
+    <Compile Include="Lang\Symbol\Types\Visuals.cs" />
     <Compile Include="Lang\Target\TargetWriter.cs" />
+    <Compile Include="Lang\Target\VisualWriter.cs" />
     <Compile Include="Lang\Token\TokenTrie.cs" />
-    <Compile Include="Lib\SortUtils.cs" />
     <Compile Include="Lib\TimeUtils.cs" />
     <Compile Include="UI\Cases\FpsCounter.cs" />
     <Compile Include="Dev\IntegratorView.cs" />
@@ -130,7 +138,6 @@
     <Compile Include="Main\TestMain.cs" />
     <Compile Include="Main\UIMain.cs" />
     <Compile Include="Main\Utils.cs" />
-    <Compile Include="UI\Cases\SurfaceDraw.cs" />
     <Compile Include="UI\Cases\TrackBox.cs" />
     <Compile Include="UI\DelaunayTriangulator\Hull.cs" />
     <Compile Include="UI\DelaunayTriangulator\Set.cs" />
@@ -156,6 +163,8 @@
     <Compile Include="UI\Types\Surface.cs" />
     <Compile Include="UI\Types\Template.cs" />
     <Compile Include="UI\Types\Transform.cs" />
+    <Compile Include="UI\Types\Visual.cs" />
+    <Compile Include="UI\Types\Way.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6">

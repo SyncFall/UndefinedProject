@@ -1,500 +1,284 @@
 
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
+page default = '/';
 
-scope Wikipedia.Language
+string message;
+<h2>Login</h2>
+if(message){
+	<p padding:10 color:red>message</p>
+}
+<table>
+	<tr>
+		<td align:right>email:</td>
+		<td>var email = TextInput()</td>
+	</tr>
+	<tr>
+		<td align=right>password:</td>
+		<td>var password = TextInput()</td>
+	<tr>
+		<td colspan=2>submit = Button(DoLogin, "LogIn")</td>
+	</tr>
+</table>
+
+func DoLogin
 {
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
+	if(email && password){
+		Session.loggedIn = true;
+		Page.Redirect(tool);
+	}else{
+		loggedIn = false;
+	}
+}
 
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
+page tool = '/tool';
+
+if(!Session.loggedIn){
+	Page.Redirect(default);
+}
+
+<h1>Tool</h1>
+var list = select NewsEntry where time < Now() limit 10;
+for(entry in list){
+	<rect marginTop:10 padding:10>
+		<h2>entry.headline</h2>
+		<image src=entry.image/>
+		<p>entry.text</p>
+	</rect>
+}
+
+
+
+
+
+
+
+
+
+Point point = Point(10, 10){
+	PointSize = 10;
+	Color = red;
+}
+
+Polyline polyline = Polyline(){
+	.Line(10, 10);
+	.Line(100, 100);
+	.Line(10, 10);
+}
+
+Rect rect = Rect(Size(100, 100)){
+	Margin = 10;
+	Padding = 10;
+}
+
+Contour contour = Contour({
+	.Curve(10, 10, Anchor(25, 25));
+	.Line(50, 100); 
+	.Rect(){
+		Padding = 10;
+		."<b>status:</b>\n";
+	}
+}
+
+Shape shape = Shape(){
+	.rect;
+	.contour;
+}
+
+Area area = Area(shape);
+
+Display.draw(shape);
+
+Text text = Text("peter-statistics: <b>{points}</b>");
+
+r = rect(100, 100);
+r = rect(100, 100){ padding = 10; margin = 10; };
+r = rect(100, 100){
+	Padding = 10;
+	Margin = 10;
+	Size = (100, 100);
+	Width = 200;
+};
+
+TextInput email;
+r = Rect(100, 100){
+	Padding = 10;
+	rect(){
+		Padding = 10;
+		Layout(Row){
+			Label("email-address");
+			email = TextInput();
 		}
 	}
 }
 
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
+r = Rect(100, 100){
+	Padding = 10;
+	Layout(Row){
+		for(i from 0 to 100){
+			Label("line{i}");
 		}
 	}
 }
 
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
+bool loggedIn=false;
+TextInput email;
+TextInput password;
+Button submit;
+Label message;
 
-scope Wikipedia.Language
+page default;
+page my_profile;
+
+func Logout()
 {
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
+	entryPage = EntryPage();
+	Display(entryPage);
+}
 
-		int method(int a, int b, int c)
+entryPage;
+if(!entryPage){
+	entryPage = EntryPage();
+	Display(entryPage);
+	return;
+}
+
+profilePage;
+if(page == my_profile)
+{
+	if(profilePage){
+		profilePage = new MyProfile();
+	}
+	.profilePage;
+}
+
+template MyProfile
+{
+	Layout(Row){
+		Label("username:");
+		username = TextInput();
+		Label("password:")
+		password = TextInput();
+		Button(Save);
+	}
+
+	func Save(){
+		if(username && password)
 		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
+			UserProfile userProfile = Session.userProfile;
+			userProfile.username = username.text;
+			userProfile.password = password.text;
+			Database.update(userProfile);
 		}
 	}
 }
 
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
+template EntryPage
 {
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
+	Login login = Login({
+		Success = {
+			Display(NewsFeed);
+		};
+		Fail = {
+			;
+		};
+		Error = (Exception e){
+			;
+		};
+	};
+	Display(login);
+}
 
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
+template Menubar
+{
+	home = MenuItem('home.png', 'Home', '/', Click = {
+		Display(entryPage);
+	});
+	profile = MenuItem('profile.png', 'My Profil', Click = {
+		Page(my_profile);
+	});
+
+	<MenuItem image='logout.png', title='Logout' click=Logout()/>
+}
+
+template MenuItem(Image image, string title)
+{
+	<rect>
+		<image size=(300, 300) title={title}/>
+	</rect>
+
+	state Click[element.Click]
+	{ }
+}
+
+template Login(successCallback, failedCallback, errorCallback)
+{
+	LoggedIn = false;
+	[] = message = Label(DisplayNone);
+	Table(Columns(2))
+	{
+		CellPadding = 5;
+		[0,0] = Label("<b>email:</b>");
+		[0,1] = email = TextInput();
+		[1,0] = Label("<b>password:</b>");
+		[1,1] = password = TextInput();
+		[2,1] = submit = Button(Login);
+	}
+
+	private func Login
+	{
+		try{
+			if(email == "to.feltic@gmail.com" && password == "abc")
+			{
+				Success();
+			}
+			else
+			{
+				Fail();
+			}
+		}catch(Exception e){
+			Error(e)
 		}
+	}
+
+	private state EmailInput[email > Input.Text]
+	{
+
+	}
+
+	case activity state Success{
+		LoggedIn = true;
+	}
+	state Fail{
+		LoggedIn = false;
+		message = Label("enter your login information.");
+	}
+	state Error(Exception e){
+		LoggedIn = false;
+		message = Label("unknown error, please try again.");
 	}
 }
 
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
+template NewsEntry(NewsItem newItem)
 {
-	object One
+	.Rect(Size(350, 350)){
+		.headline = ("<b>{newsItem.headline}</b>");
+		.image = (newsItem.Image, Size(250, 250));
+		.text = newsItem.Text;
+	}
+	for(i in range(0, 100))
 	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
+		<rect size(350, 350)>
+			<b>{newsItem.headline}</b>
+			<image src=image size(250, 255)/>
+			{newsItem.Text}
+		</rect>
 	}
 }
 
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
+template NewsFeed
 {
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
-}
-
-use World.One.Backend;
-use TinyWorld.TestRoadTrack;
-
-scope Wikipedia.Language
-{
-	object One
-	{
-		int member = (1 + (2));
-		float member;
-		BigOne fell;
-
-		int method(int a, int b, int c)
-		{
-			if(true){
-				return (1 + (2 + 3));
-			}			
-		}
-	}
+	 .headline = ("<b>Headline</b>", DisplayNone, Color:Red);
+	 List<NewsItem> list = select NewsFeed where from 0 to 100;
+	 for(item in list){
+	 	.NewEntry(item);
+	 }
 }

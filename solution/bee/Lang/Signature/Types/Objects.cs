@@ -1,11 +1,11 @@
-﻿using Feltic.Library;
+﻿using feltic.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public partial class SignatureParser
     {
@@ -51,43 +51,28 @@ namespace Feltic.Language
             {
                 return null;
             }
-            ObjectSignature signatur = new ObjectSignature();
-            signatur.Keyword = PrevToken;
+            ObjectSignature signature = new ObjectSignature();
+            signature.Keyword = PrevToken;
             if (!TrySpace() ||
-                (signatur.Identifier = TryIdentifier()) == null ||
-                (signatur.BlockBegin = TryNonSpace(StructureType.BlockBegin)) == null
+                (signature.Identifier = TryIdentifier()) == null ||
+                (signature.BlockBegin = TryNonSpace(StructureType.BlockBegin)) == null
             ){
-                return signatur;
+                return signature;
             }
-            SignatureSymbol objectElement;
+            SignatureSymbol element;
             while(true)
             {
-                MemberSignature member = TryMember();
-                if(member != null)
+                if((element = TryBaseSignature()) == null)
                 {
-                    signatur.Members.Add(member);
-                    continue;
+                    break;
                 }
-                MethodSignature method = TryMethod();
-                if(method != null)
-                {
-                    signatur.Methods.Add(method);
-                    continue;
-                }
-                PropertySignature property = TryProperty();
-                if(property != null)
-                {
-                    signatur.Properties.Add(property);
-                    continue;
-                }
-                //
-                break;
+                signature.ElementList.Add(element);
             }
-            if ((signatur.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null)
+            if ((signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null)
             {
                 ;
             }
-            return signatur;
+            return signature;
         }
 
         public MemberSignature TryMember()
@@ -240,9 +225,7 @@ namespace Feltic.Language
         public TokenSymbol Keyword;
         public TokenSymbol Identifier;
         public TokenSymbol BlockBegin;
-        public MemberSignatureList Members = new MemberSignatureList();
-        public MethodSignatureList Methods = new MethodSignatureList();
-        public PropertySignatureList Properties = new PropertySignatureList();
+        public SignatureList ElementList = new SignatureList();
         public TokenSymbol BlockEnd;
 
         public ObjectSignature() : base(SignatureType.Object)
@@ -251,22 +234,7 @@ namespace Feltic.Language
         public override string ToString()
         {
             string str = "object(" + Identifier + ")\n";
-            str += Members;
-            str += Methods;
-            str += Properties;
-            return str;
-        }
-    }
-
-    public class MemberSignatureList : ListCollection<MemberSignature>
-    {
-        public override string ToString()
-        {
-            string str = "";
-            for (int i = 0; i < Size; i++)
-            {
-                str += Get(i);
-            }
+            str += ElementList;
             return str;
         }
     }
@@ -287,19 +255,6 @@ namespace Feltic.Language
         }
     }
 
-    public class MethodSignatureList : ListCollection<MethodSignature>
-    {
-        public override string ToString()
-        {
-            string str = "";
-            for (int i = 0; i < Size; i++)
-            {
-                str += Get(i);
-            }
-            return str;
-        }
-    }
-
     public class MethodSignature : SignatureSymbol
     {
         public TypeDeclarationSignature TypeDeclaration;
@@ -316,19 +271,6 @@ namespace Feltic.Language
             str += ", "+ParameterDeclaration;
             str += ")\n";
             str += Code;
-            return str;
-        }
-    }
-
-    public class PropertySignatureList : ListCollection<PropertySignature>
-    {
-        public override string ToString()
-        {
-            string str = "";
-            for (int i = 0; i < Size; i++)
-            {
-                str += Get(i);
-            }
             return str;
         }
     }

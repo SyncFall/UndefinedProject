@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.UI.Types
+namespace feltic.UI.Types
 {
     public enum BeeBufferType
     {

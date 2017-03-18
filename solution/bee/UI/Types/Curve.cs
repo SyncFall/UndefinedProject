@@ -1,5 +1,5 @@
-﻿using Feltic.Library;
-using Feltic.UI.Types;
+﻿using feltic.Library;
+using feltic.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using verb.geom;
 using verb.core;
 
-namespace Feltic.UI
+namespace feltic.UI
 { 
     public enum CurveType
     {

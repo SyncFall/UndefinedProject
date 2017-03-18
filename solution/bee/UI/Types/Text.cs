@@ -1,5 +1,5 @@
-﻿using Feltic.Library;
-using Feltic.UI.Types;
+﻿using feltic.Library;
+using feltic.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.UI
+namespace feltic.UI
 {
     public class Text
     {
@@ -18,8 +18,11 @@ namespace Feltic.UI
         public Text(string String, TextFormat Format)
         {
             this.String = String;
-            this.Format = Format;
-            this.GlyphContainer = new GlyphContainer(Format.Font);
+            if(Format == null)
+                this.Format = new TextFormat();
+            else
+                this.Format = Format;
+            this.GlyphContainer = new GlyphContainer(this.Format.Font);
         }
 
         public Size Size
@@ -27,7 +30,7 @@ namespace Feltic.UI
             get
             {
                 float width = 0f;
-                float maxWidth = width;
+                float maxWidth = 0f;
                 float totalHeight = 0f;
                 if(String.Length > 0)
                 {
@@ -46,26 +49,27 @@ namespace Feltic.UI
                     }
                     else if (textChar == '\n')
                     {
-                        if (width > maxWidth)
-                        {
-                            maxWidth = width;
-                        }
                         totalHeight += (GlyphContainer.Font.Metric.GlyphVerticalAdvance + GlyphContainer.Font.Metric.LineSpace);
+                        width = 0f;
                     }
                     else
                     {
                         Glyph glyph = GlyphContainer.GetGlyph(String[i]);
                         width += glyph.HoriziontalAdvance;
                     }
+                    if (width > maxWidth)
+                    {
+                        maxWidth = width;
+                    }
                 }
                 return new Size(maxWidth, totalHeight);
             }
         }
        
-        public void Draw()
+        public void Draw(float X=0, float Y=0)
         {
-            float currentX = 0;
-            float currentY = 0;
+            float currentX = X;
+            float currentY = Y;
             GL.Color3(Format.Color.GetGlColor().Rgb);
             for (int i = 0; i < String.Length; i++)
             {
@@ -81,7 +85,7 @@ namespace Feltic.UI
                 else if(textChar == '\n')
                 {
                     currentY += (GlyphContainer.Font.Metric.GlyphVerticalAdvance + GlyphContainer.Font.Metric.LineSpace);
-                    currentX = 0;
+                    currentX = X;
                 }
                 else
                 {

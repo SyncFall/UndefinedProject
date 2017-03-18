@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public partial class SignatureParser
     {
@@ -18,23 +18,30 @@ namespace Feltic.Language
             SignatureSymbol signature=null;
             if((signature = TryUse()) != null ||
                (signature = TryScope()) != null ||
-               (signature = TryObject()) != null ||
-               (signature = TryMember()) != null ||
-               (signature = TryMethod()) != null ||
-               (signature = TryProperty()) != null ||
-               (signature = TryCode()) != null ||
-               (signature = TryStatement()) != null ||
+               (signature = TryBaseSignature()) != null ||
                (signature = TryExpression()) != null ||
-               (signature = TryTypeDeclaration()) != null ||
-               (signature = TryParameterDeclaration(StructureType.ClosingBegin, StructureType.ClosingEnd)) != null ||
-               (signature = TryParameterDeclaration(StructureType.BracketBegin, StructureType.BracketEnd)) != null ||
-               (signature = TryIdentifierPath()) != null ||
                (signature = TryUnknown()) != null
             ){
                 ;
             }
-            //Console.WriteLine(signature);
+            Console.WriteLine(signature);
             return signature;
+        }
+
+        public SignatureSymbol TryBaseSignature()
+        {
+            TrySpace();
+            SignatureSymbol signature = null;
+            if ((signature = TryObject()) != null ||
+                (signature = TryMember()) != null ||
+                (signature = TryMethod()) != null ||
+                (signature = TryProperty()) != null ||
+                (signature = TryStatement()) != null)
+            {
+                return signature;
+            }
+            return signature;
+
         }
     }
 }

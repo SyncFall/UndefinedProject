@@ -1,6 +1,6 @@
-﻿using Feltic.Library;
+﻿using feltic.Library;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public enum NativeType
     {
@@ -19,8 +19,6 @@ namespace Feltic.Language
         Type,
         Var,
         Func,
-        List,
-        Map,
     }
 
     public static class Natives
@@ -42,8 +40,6 @@ namespace Feltic.Language
             new NativeSymbol("type", NativeType.Type),
             new NativeSymbol("var", NativeType.Var),
             new NativeSymbol("enum", NativeType.Enum),
-            new NativeSymbol("list", NativeType.List),
-            new NativeSymbol("map", NativeType.Map),
         };
         public static readonly MapCollection<NativeType, NativeSymbol> EnumMap = new MapCollection<NativeType, NativeSymbol>();
 

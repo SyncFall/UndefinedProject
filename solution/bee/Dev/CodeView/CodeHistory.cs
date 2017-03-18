@@ -1,17 +1,12 @@
-﻿using Feltic.Library;
+﻿using feltic.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Integrator
+namespace feltic.Integrator
 {
-    public enum CodeHistoryType
-    {
-
-    }
-
     public class CodeHistory
     {
         public CodeText CodeText;

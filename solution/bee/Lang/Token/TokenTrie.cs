@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
+    // n log n - keyword-lookup
     public class TokenTrie
     {
-        private Node Root = new Node(0, null);
+        private Node Root = new Node(null);
 
         public TokenTrie()
         { }
@@ -37,7 +38,7 @@ namespace Feltic.Language
                     return null;
                 }
                 // go-depth
-                else if (index + 1 < end)
+                else if (index+1 < end)
                 {
                     index++;
                     node = child;
@@ -66,7 +67,7 @@ namespace Feltic.Language
             Node child = Node.Childrens[Char];
             if(child == null)
             {
-                child = new Node(Char, (String.Length == 1 ? Symbol : null));
+                child = new Node((String.Length == 1 ? Symbol : null));
                 Node.Childrens[Char] = child;
                 if(String.Length > 1)
                 {
@@ -88,13 +89,11 @@ namespace Feltic.Language
 
         class Node
         {
-            public int Char;
             public TokenSymbol Symbol;
             public Node[] Childrens;
 
-            public Node(int Char, TokenSymbol Symbol)
+            public Node(TokenSymbol Symbol)
             {
-                this.Char = Char;
                 this.Symbol = Symbol;
                 this.Childrens = new Node[128];
             }

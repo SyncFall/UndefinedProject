@@ -1,12 +1,12 @@
-﻿using Feltic.Language;
-using Feltic.Library;
+﻿using feltic.Language;
+using feltic.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public enum TokenType
     {
@@ -22,6 +22,7 @@ namespace Feltic.Language
         Unknown,
         Region,
         Processor,
+        Visual,
     }
     
     public static class Tokens
@@ -52,12 +53,14 @@ namespace Feltic.Language
             {
                 KeywordMap.AddSymbol(new TokenSymbol(TokenType.Statement, StatementKeywords.Array[i].String, StatementKeywords.Array[i]));
             }
-
+            for(int i=0; i < VisualKeywords.Array.Length; i++)
+            {
+                KeywordMap.AddSymbol(new TokenSymbol(TokenType.Visual, VisualKeywords.Array[i].String, VisualKeywords.Array[i]));
+            }
             for(int i=0; i<Structures.Array.Length; i++)
             {
                 StructureMap.AddSymbol(new TokenSymbol(TokenType.Structure, Structures.Array[i].String, Structures.Array[i]));
             }
-
             OperationArray = new TokenSymbol[Operations.Array.Length];
             for(int i=0; i<Operations.Array.Length; i++)
             {
@@ -117,9 +120,14 @@ namespace Feltic.Language
             return (Type == TokenType.Statement && (this.Symbol as StatementKeywordSymbol).Type == StatementType);
         }
 
-        public bool isOperation(OperationType OperationType)
+        public bool IsOperation(OperationType OperationType)
         {
             return (Type == TokenType.Operation && (this.Symbol as OperationSymbol).Type == OperationType);
+        }
+
+        public bool IsVisual(VisualElementType VisualType)
+        {
+            return (Type == TokenType.Visual && (this.Symbol as VisualKeywordSymbol).Type == VisualType);
         }
     }
 }

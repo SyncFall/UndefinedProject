@@ -1,11 +1,11 @@
-﻿using Feltic.Library;
+﻿using feltic.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public class Registry
     {
@@ -25,7 +25,7 @@ namespace Feltic.Language
                     entry = new RegistryEntry(source);
                     EntryList.Add(entry);
                 }
-                entry.ParseSource();
+                entry.TrySymbolFromSource();
             }
             Validate();
         }
@@ -33,7 +33,7 @@ namespace Feltic.Language
         public void UpdateSource(SourceText SourceText)
         {
             RegistryEntry entry = EntryList.GetExist(SourceText);
-            entry.ParseSource();
+            entry.TrySymbolFromSource();
             Validate();
         }
 
@@ -105,7 +105,7 @@ namespace Feltic.Language
             this.SymbolContainer = new SymbolContainer();
         }
 
-        public void ParseSource()
+        public void TrySymbolFromSource()
         {
             this.TokenContainer.SetSource(this.SourceText);
             this.SignatureContainer.SetContainer(this.TokenContainer);

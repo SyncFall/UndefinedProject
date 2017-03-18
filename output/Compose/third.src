@@ -1,0 +1,38 @@
+
+entry wildcard = '/*';
+
+var input = Input();
+input.Success = {
+	Entry.Redirect(Fuck);
+};
+.input
+
+compose Input
+{
+	get string Text
+		return field.content;
+	end
+
+	func Check()
+	{
+		if(Text == "abc"){
+			Success();
+		}
+	}
+
+	state Success
+	{
+		input.readonly = true;
+	}
+
+	default template Input
+	{
+		<inline>
+			var field = <input minWidth=50px active=Check()/>
+		</inline>
+	}
+}
+
+entry Fuck
+
+."hello"

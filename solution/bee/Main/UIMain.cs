@@ -1,13 +1,15 @@
-﻿using Feltic.Integrator;
-using Feltic.UI;
-using Feltic.UI.Types;
+﻿using feltic.Integrator;
+using feltic.UI;
+using feltic.UI.Types;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
-using Feltic.Library;
+using feltic.Library;
+using Scope;
+using feltic.Language;
 
-namespace Feltic
+namespace feltic
 {
     public class MainUI
     {
@@ -15,6 +17,13 @@ namespace Feltic
         public static void Main()
         {
             Utils.PrintSourceTreeStatistics(@"..\solution\bee\");
+            SourceList list = new SourceList();
+            list.Add(SourceText.FromFile("Compose/first.src"));
+            Registry registry = new Registry();
+            registry.AddSourceList(list);
+            registry.WriteToTarget("D:\\dev\\UndefinedProject\\output\\csharp.cs");
+
+            //Visual1 elm = new Visual1();
 
             new MainUI().RenderCycle();
         }
@@ -24,8 +33,7 @@ namespace Feltic
             float aspect_ratio = 1;
 
             IntegratorView IntegratorView = null;
-            SurfaceDraw SurfaceDraw = null;
-
+            
             GameWindow gameWindow = null;
             using (gameWindow = new GameWindow(1250, 750, new OpenTK.Graphics.GraphicsMode(32, 24, 0, 0)))
             {
@@ -34,7 +42,6 @@ namespace Feltic
                     gameWindow.VSync = VSyncMode.On;
                     Input.Inititialize(gameWindow);
                     IntegratorView = new IntegratorView();
-                    //SurfaceDraw = new SurfaceDraw();
                 };
 
                 gameWindow.Resize += (sender, e) =>
@@ -55,6 +62,8 @@ namespace Feltic
                 gameWindow.RenderFrame += (sender, e) =>
                 {
                     /*
+                    todo: multi-threaded, non-blocking environment processing
+                    todo: non-blocking render thread
                     new Thread(() =>
                     {
                         IGraphicsContext context = new GraphicsContext(GraphicsMode.Default, gameWindow.WindowInfo);
@@ -72,9 +81,6 @@ namespace Feltic
 
                     if (IntegratorView != null)
                         IntegratorView.Draw();
-
-                    if (SurfaceDraw != null)
-                        SurfaceDraw.Draw();
 
                     // frame
                     gameWindow.SwapBuffers();

@@ -1,9 +1,9 @@
-﻿using Feltic.Language;
+﻿using feltic.Language;
 using System;
 using System.Diagnostics;
 using System.Threading;
 
-namespace Feltic
+namespace feltic
 {
     public class MainTest
     {

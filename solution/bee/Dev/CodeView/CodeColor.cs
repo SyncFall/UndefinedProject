@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Integrator
+namespace feltic.Integrator
 {
     public class CodeColor
     {

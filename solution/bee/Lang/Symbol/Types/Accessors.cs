@@ -1,6 +1,6 @@
-﻿using Feltic.Library;
+﻿using feltic.Library;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public enum AccessorType
     {

@@ -1,7 +1,7 @@
-﻿using Feltic.Language;
-using Feltic.UI;
-using Feltic.UI.Types;
-using Feltic.Library;
+﻿using feltic.Language;
+using feltic.UI;
+using feltic.UI.Types;
+using feltic.Library;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Integrator
+namespace feltic.Integrator
 {
     public class CodeContainer
     {
@@ -23,7 +23,7 @@ namespace Feltic.Integrator
         public GlyphMetrics GlyphMetrics;
         public GlyphContainer GlyphContainer;
         public TokenContainer TokenContainer;
-        public CodeInputListener InputListener;
+        public ScrollListener InputListener;
         public float TotalLineNumbers;
         public float VisibleLineNumbers;
         public int StartLineNumber;
@@ -36,7 +36,7 @@ namespace Feltic.Integrator
             this.GlyphMetrics = CodeText.GlyphMetrics;
             this.GlyphContainer = CodeText.GlyphContainer;
             this.TokenContainer = CodeText.TokenContainer;
-            this.InputListener = new CodeInputListener(this);
+            this.InputListener = new ScrollListener(this);
         }
 
         public void Save()
@@ -133,6 +133,11 @@ namespace Feltic.Integrator
                 node = node.Next;
             }
 
+            DrawScroller();
+        }
+
+        public void DrawScroller()
+        {
             ScrollSize.Width = 10;
             ScrollSize.Height = (ViewSize.Height) * (ViewSize.Height / CodeSize.Height);
 
@@ -150,14 +155,13 @@ namespace Feltic.Integrator
             GL.End();
         }
 
-
-        public class CodeInputListener : InputListener
+        public class ScrollListener : InputListener
         {
             public CodeContainer CodeContainer;
             public bool ScrollY;
             public float ScrollYOffset;
 
-            public CodeInputListener(CodeContainer CodeContainer)
+            public ScrollListener(CodeContainer CodeContainer)
             {
                 this.CodeContainer = CodeContainer;
             }
@@ -187,7 +191,6 @@ namespace Feltic.Integrator
                 }
             }
         }
-
 
         public void DrawToken(TokenSymbol token, Point position, float[] color)
         {

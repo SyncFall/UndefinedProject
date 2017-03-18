@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public class ExpressionResultType
     {
@@ -36,18 +36,18 @@ namespace Feltic.Language
     {
         public ExpressionResultType ValidateExpression(ExpressionSignature Expression)
         {
-            ExpressionResultType first;
+            ExpressionResultType left;
             if(Expression.ChildExpression != null)
             {
-                first = ValidateExpression(Expression.ChildExpression);
+                left = ValidateExpression(Expression.ChildExpression);
             }
             else
             {
-                first = ValidateOperand(Expression.Operand);
+                left = ValidateOperand(Expression.Operand);
             }
             if(Expression.OperationList.Size == 0)
             {
-                return first;
+                return left;
             }
 
             ExpressionResultType result = null;
@@ -57,7 +57,7 @@ namespace Feltic.Language
                 ExpressionOperationPair operationPair = Expression.OperationList.Get(i);
                 OperationSymbol operation = operationPair.Operation.Token.Symbol as OperationSymbol;
 
-                ExpressionResultType second = ValidateExpression(operationPair.ExpressionPair);
+                ExpressionResultType right = ValidateExpression(operationPair.ExpressionPair);
 
                 if(operation.Group == OperationGroup.LogicAndOr)
                 {
@@ -78,21 +78,21 @@ namespace Feltic.Language
                 {
                     if(!hasResult)
                     {
-                        result = first;
+                        result = left;
                     }
                 }
                 else if(operation.Group == OperationGroup.Assigment)
                 {
                     if (!hasResult)
                     {
-                        result = first;
+                        result = left;
                     }
                 }
                 else if(operation.Group == OperationGroup.Math)
                 {
                     if (!hasResult)
                     {
-                        result = first;
+                        result = left;
                     }
                 }
                 else if(operation.Group == OperationGroup.Type)
@@ -104,16 +104,15 @@ namespace Feltic.Language
                     throw new Exception("invalid state");
                 }
 
-                first = second;
+                left = right;
             }
 
             return result;
         }
 
-        public ExpressionResultType ValidateOperand(OperandSignatur Operand)
+        public ExpressionResultType ValidateOperand(OperandSignature Operand)
         {
             ExpressionResultType result = null;
-
             for(int i=0; i<Operand.AccessList.Size; i++)
             {
                 AccessSignature accessSignature = Operand.AccessList.Get(i);
@@ -125,11 +124,14 @@ namespace Feltic.Language
                 else if(accessSignature.Type == SignatureType.VariableAccess)
                 {
                     string variableIdentifiere = (accessSignature as VariableAccessSignature).Identifier.String;
-                   
                 }
                 else if(accessSignature.Type == SignatureType.FunctionAccess)
                 {
                     FunctionAccessSignature functionAccess = (accessSignature as FunctionAccessSignature);
+                }
+                else if(accessSignature.Type == SignatureType.ArrayAccess)
+                {
+                    ArrayAccessSignature arrayAccess = (accessSignature as ArrayAccessSignature);
                 }
                 else
                 {

@@ -1,12 +1,12 @@
-﻿using Feltic.Language;
-using Feltic.Library;
+﻿using feltic.Language;
+using feltic.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public class SignatureNode
     {

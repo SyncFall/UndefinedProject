@@ -1,11 +1,11 @@
-﻿using Feltic.Library;
+﻿using feltic.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public partial class SignatureParser
     {
@@ -133,33 +133,26 @@ namespace Feltic.Language
                     }
                     return signature;
                 }
-                else
+                TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
+                if(typeDeclaration != null)
                 {
-                    TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
-                    if(typeDeclaration != null)
-                    {
-                        TypeDeclarationStatementSignature signature = new TypeDeclarationStatementSignature();
-                        signature.TypeDeclaration = typeDeclaration;
-                        signature.Complete = TryNonSpace(StructureType.Complete);
-                        return signature;
-                    }
-                    else
-                    {
-                        ExpressionSignature expression = TryExpression();
-                        if (expression != null)
-                        {
-                            ExpressionStatementSignature signature = new ExpressionStatementSignature(StatementType.ExpressionStatement);
-                            signature.Expression = expression;
-                            signature.Complete = TryNonSpace(StructureType.Complete);
-                            return signature;
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
+                    TypeDeclarationStatementSignature signature = new TypeDeclarationStatementSignature();
+                    signature.TypeDeclaration = typeDeclaration;
+                    signature.Complete = TryNonSpace(StructureType.Complete);
+                    return signature;
                 }
+                ExpressionSignature expression = TryExpression();
+                if (expression != null)
+                {
+                    ExpressionStatementSignature signature = new ExpressionStatementSignature(StatementType.ExpressionStatement);
+                    signature.Expression = expression;
+                    signature.Complete = TryNonSpace(StructureType.Complete);
+                    return signature;
+                }
+                //
+                return null;
             }
+
             if(group == StatementGroup.ConditionBlock)
             {
                 ConditionBlockStatementSignature signature = new ConditionBlockStatementSignature(type);

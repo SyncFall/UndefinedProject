@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
-namespace Feltic.Library
+namespace feltic.Library
 {
     public class ListCollection<T>
     {
@@ -227,41 +227,17 @@ namespace Feltic.Library
             map.Remove(key);
         }
 
-        public int Size()
+        public int Size
         {
-            return map.Count;
-        }
-
-        public bool IsEmpty()
-        {
-            return (map.Count == 0);
-        }
-
-        public bool IsNotEmpty()
-        {
-            return (map.Count > 0);
+            get
+            {
+                return map.Count;
+            }
         }
 
         public void Clear()
         {
             map.Clear();
-        }
-    }
-
-    public class SetCollection<T> : ListCollection<T>
-    {
-        public SetCollection() : base()
-        { }
-
-        public SetCollection(int Size) : base(Size)
-        { }
-       
-        public void Add(T Item)
-        {
-            if (!list.Contains(Item))
-            {
-                list.Add(Item);
-            }
         }
     }
 }

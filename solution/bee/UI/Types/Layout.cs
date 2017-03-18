@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.UI
+namespace feltic.UI
 {
     public enum LayoutType
     {
@@ -28,14 +28,18 @@ namespace Feltic.UI
         { }
     }
 
-    public class Position : Point
+    public class Position
     {
         public float x;
         public float y;
         public float z;
 
-        public Position()
-        { }
+        public Position(float x=0, float y=0, float z=0)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = y;
+        }
     }
 
     public class Size
@@ -47,10 +51,11 @@ namespace Feltic.UI
         public Size()
         { }
 
-        public Size(float width, float height)
+        public Size(float width, float height, float depth=0f)
         {
             this.Width = width;
             this.Height = height;
+            this.Depth = depth;
         }
     }
 

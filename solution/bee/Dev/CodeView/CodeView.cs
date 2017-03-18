@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Feltic.Integrator;
-using Feltic.UI.Types;
-using Feltic.UI;
-using Feltic.Language;
+using feltic.Integrator;
+using feltic.UI.Types;
+using feltic.UI;
+using feltic.Language;
 
-namespace Feltic.Integrator
+namespace feltic.Integrator
 {
     public class CodeView
     {

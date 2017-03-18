@@ -1,5 +1,5 @@
 ﻿
-namespace Feltic.Library
+namespace feltic.Library
 {
     public static class StringUtils
     {

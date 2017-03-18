@@ -1,4 +1,5 @@
-﻿using Feltic.Library;
+﻿using feltic.Integrator;
+using feltic.Library;
 using Microsoft.CSharp;
 using System;
 using System.CodeDom.Compiler;
@@ -8,12 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
-    public class TargetWriter
+    public partial class TargetWriter
     {
         public string Filepath;
         public StringBuilder Builder = new StringBuilder();
+        public ListCollection<StructedBlockSignature> StructedBlockList = new ListCollection<StructedBlockSignature>();
 
         public TargetWriter(string Filepath)
         {
@@ -26,6 +28,10 @@ namespace Feltic.Language
             WriteLine("using System;");
             WriteLine("using System.IO;");
             WriteLine("using System.Collections;");
+            WriteLine("using feltic.Language;");
+            WriteLine("using feltic.UI;");
+            WriteLine("using feltic.UI.Types;");
+            WriteLine("using feltic.Integrator;"); 
             for (int i = 0; i < SourceSymbol.UseList.Size; i++)
             {
 
@@ -37,6 +43,10 @@ namespace Feltic.Language
             for (int i = 0; i < objectSymbolList.Size; i++)
             {
                 WriteObject(1, objectSymbolList[i]);
+            }
+            StructedBlockSignature visual = ((SourceSymbol.ScopeList[0].VisualElement as ExpressionStatementSignature).Expression.Operand.AccessList[0] as StructedBlockAccessSignature).StructedBlock;
+            if(visual != null){
+                WriteVisualComponent(1, visual);
             }
             WriteLine("}");
             File.WriteAllText(Filepath, Builder.ToString());
@@ -212,42 +222,47 @@ namespace Feltic.Language
                 Write("(");
                 WriteExpression(exp.ChildExpression);
                 Write(")");
+                return;
             }
-            else
+            
+            for(int i=0; i < exp.Operand.AccessList.Size; i++)
             {
-                for(int i=0; i < exp.Operand.AccessList.Size; i++)
+                AccessSignature access = exp.Operand.AccessList[i];
+                if(access.Type == SignatureType.LiteralAccess)
                 {
-                    AccessSignature access = exp.Operand.AccessList[i];
-                    if(access.Type == SignatureType.LiteralAccess)
-                    {
-                        Write((access as LiteralAccessSignature).Literal.String);
-                    }
-                    if(access.Type == SignatureType.VariableAccess)
-                    {
-                        Write((access as VariableAccessSignature).Identifier.String);
-                    }
-                    if(access.Type == SignatureType.FunctionAccess)
-                    {
-                        FunctionAccessSignature functionAccess = access as FunctionAccessSignature;
-                        Write(functionAccess.Identifier.String);
-                        Write("(");
-                        WriteParameterList(functionAccess.ParameterList);
-                        Write(")");
-                    }
-                    if(access.Type == SignatureType.ArrayAccess)
-                    {
-                        ArrayAccessSignature arrayAccess = access as ArrayAccessSignature;
-                        Write(arrayAccess.Identifier.String);
-                        Write("[");
-                        WriteParameterList(arrayAccess.ParameterList);
-                        Write("]");
-                    }
-                    if(access.Seperator != null)
-                    {
-                        Write(access.Seperator.String);
-                    }
+                    Write((access as LiteralAccessSignature).Literal.String);
+                }
+                else if(access.Type == SignatureType.VariableAccess)
+                {
+                    Write((access as VariableAccessSignature).Identifier.String);
+                }
+                else if(access.Type == SignatureType.FunctionAccess)
+                {
+                    FunctionAccessSignature functionAccess = access as FunctionAccessSignature;
+                    Write(functionAccess.Identifier.String);
+                    Write("(");
+                    WriteParameterList(functionAccess.ParameterList);
+                    Write(")");
+                }
+                else if(access.Type == SignatureType.ArrayAccess)
+                {
+                    ArrayAccessSignature arrayAccess = access as ArrayAccessSignature;
+                    Write(arrayAccess.Identifier.String);
+                    Write("[");
+                    WriteParameterList(arrayAccess.ParameterList);
+                    Write("]");
+                }
+                else if(access.Type == SignatureType.StructedBlockAccess)
+                {
+                    StructedBlockAccessSignature blockAcess = access as StructedBlockAccessSignature;
+                    this.StructedBlockList.Add(blockAcess.StructedBlock);
+                }
+                if(access.Seperator != null)
+                {
+                    Write(access.Seperator.String);
                 }
             }
+        
             for(int i=0; i < exp.OperationList.Size; i++)
             {
                 ExpressionOperationPair opPair = exp.OperationList[i];
@@ -306,7 +321,7 @@ namespace Feltic.Language
         private bool Compile()
         {
             CSharpCodeProvider codeProvider = new CSharpCodeProvider();
-            CompilerParameters parameters = new CompilerParameters();
+            CompilerParameters parameters = new CompilerParameters(new string[]{ "BeeRuntime.exe" });
             parameters.GenerateExecutable = false;
             parameters.GenerateInMemory = false;
             parameters.OutputAssembly = Filepath+".dll";

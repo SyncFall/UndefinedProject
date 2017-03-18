@@ -1,11 +1,11 @@
-﻿using Feltic.Language;
-using Feltic.UI;
-using Feltic.UI.Types;
+﻿using feltic.Language;
+using feltic.UI;
+using feltic.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Text;
 
-namespace Feltic.Integrator
+namespace feltic.Integrator
 {
     public class BlinkCursor
     {

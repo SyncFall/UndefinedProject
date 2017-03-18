@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using Feltic.Library;
+using feltic.Library;
 
-namespace Feltic.UI.Types
+namespace feltic.UI.Types
 {
     public enum ShaderType
     {

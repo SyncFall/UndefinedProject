@@ -1,11 +1,11 @@
-﻿using Feltic.Library;
+﻿using feltic.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public enum SignatureType
     {
@@ -48,5 +48,10 @@ namespace Feltic.Language
         VariableAccess,
         FunctionAccess,
         ArrayAccess,
+        StructedBlockAccess,
+        BlockAccess,
+        // structed/visual-elements
+        StructedBlock,
+        StructedAttribute,
     }
 }

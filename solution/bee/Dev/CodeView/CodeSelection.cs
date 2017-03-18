@@ -1,14 +1,14 @@
-﻿using Feltic.UI.Types;
+﻿using feltic.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Feltic.Language;
-using Feltic.UI;
+using feltic.Language;
+using feltic.UI;
 
-namespace Feltic.Integrator
+namespace feltic.Integrator
 { 
     public class CodeSelectionPart
     {

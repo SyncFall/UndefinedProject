@@ -1,6 +1,6 @@
-﻿using Feltic.Lib;
-using Feltic.Library;
-using Feltic.UI;
+﻿using feltic.Lib;
+using feltic.Library;
+using feltic.UI;
 using DelaunayTriangulator;
 using OpenTK.Graphics.OpenGL;
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Integrator
+namespace feltic.Integrator
 {
     public class VisualView
     {

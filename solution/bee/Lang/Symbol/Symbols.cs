@@ -1,11 +1,11 @@
-﻿using Feltic.Library;
+﻿using feltic.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public class SourceSymbolList : ListCollection<SourceSymbol>
     {
@@ -97,6 +97,7 @@ namespace Feltic.Language
         public SourceSymbol Source;
         public ScopeSignature Signature;
         public ObjectSymbolList ObjectList = new ObjectSymbolList();
+        public SignatureSymbol VisualElement;
 
         public ScopeSymbol(SourceSymbol SourceSymbol, ScopeSignature Signature)
         {
@@ -217,6 +218,16 @@ namespace Feltic.Language
         public CodeSymbol(MethodSymbol MethodSymbol, CodeSignature Signature)
         {
             this.Method = MethodSymbol;
+            this.Signature = Signature;
+        }
+    }
+
+    public class VisualElementSymbol
+    {
+        public StructedBlockSignature Signature;
+
+        public VisualElementSymbol(StructedBlockSignature Signature)
+        {
             this.Signature = Signature;
         }
     }

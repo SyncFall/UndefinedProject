@@ -1,8 +1,8 @@
 ﻿
-using Feltic.Library;
+using feltic.Library;
 using System;
 
-namespace Feltic.Language
+namespace feltic.Language
 {
     public partial class SignatureParser
     {
@@ -104,7 +104,17 @@ namespace Feltic.Language
 
         public TokenSymbol TryToken(OperationType statementType)
         {
-            if (Token == null || !Token.isOperation(statementType))
+            if (Token == null || !Token.IsOperation(statementType))
+            {
+                return null;
+            }
+            NextToken();
+            return PrevToken;
+        }
+
+        public TokenSymbol TryToken(VisualElementType visualType)
+        {
+            if (Token == null || !Token.IsVisual(visualType))
             {
                 return null;
             }
