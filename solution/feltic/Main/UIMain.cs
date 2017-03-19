@@ -6,7 +6,6 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
 using feltic.Library;
-using Scope;
 using feltic.Language;
 
 namespace feltic
@@ -35,7 +34,7 @@ namespace feltic
             IntegratorView IntegratorView = null;
             
             GameWindow gameWindow = null;
-            using (gameWindow = new GameWindow(1250, 750, new OpenTK.Graphics.GraphicsMode(32, 24, 0, 0)))
+            using (gameWindow = new GameWindow(1250, 750, new OpenTK.Graphics.GraphicsMode(32, 32, 0, 0)))
             {
                 gameWindow.Load += (sender, e) =>
                 {

@@ -1,24 +1,25 @@
 
+// component-based
 
 object Editor
 {
 	ActionBar actionBar;
+	Workspace workspace;
 
 	<block width=700px height=500px>
-		<block>
-			<block>actionBar = <ActionBar/></block>
-			<block height=100%>
-				<column width=65%>"workspace"</column>
-				<column width=35%>"navigation"</column>
-			</block>
-			<block height=125px>"status"</block>
+		<block>actionBar = <ActionBar/></block>
+		<block height=100%>
+			<column width=65%>workspace = <Workspace/></column>
+			<column width=35%>"navigation"</column>
 		</block>
+		<block height=125px>"status"</block>
 	</block>
 }
 
 object ActionBar
 {	
 	Select solutionSelect = Select("Solution.");
+	solutionSelect.Options = {}
 	Select runSelect = Select("Run.");
 	runSelect.OnClick = {
 
@@ -28,4 +29,21 @@ object ActionBar
 		<inline>solutionSelect</inline>
 		<inline>runSelect</inline>
 	</block>
+}
+
+object Workspace
+{
+	<block height="100%">
+		<ScrollView/>
+	</block>
+}
+
+object ScrollView
+{
+	<block/>
+}
+
+object Select
+{
+	<inline>"select"</inline>
 }

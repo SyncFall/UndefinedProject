@@ -18,8 +18,8 @@ namespace Scope
 			VisualElement element, parent=null;
 
 			this.Element = 			element = new VisualElement(VisualElementType.Compose, parent);
-			element.RoomFromDefinition.Width = new Way(WayType.Pixel, 700f);
-			element.RoomFromDefinition.Height = new Way(WayType.Pixel, 500f);
+			element.RoomFromDefinition.Width = new Way(WayType.Pixel, 900f);
+			element.RoomFromDefinition.Height = new Way(WayType.Pixel, 550f);
 			stack.Push(parent);
 			parent = element;
 		}
