@@ -17,11 +17,13 @@ namespace feltic.Integrator
         Registry Registry;
         GlyphContainer GlyphContainer = new GlyphContainer(new Font("DroidSansMono.ttf"));
         public static VisualElement Root = new VisualElement(VisualElementType.Compose, null);
+        public CodeText CodeText;
 
         public SceneView()
         {
             SourceList list = new SourceList();
             list.Add(SourceText.FromFile("./Compose/first.src"));
+            CodeText = new CodeText();
             this.Registry = new Registry();
             this.Registry.AddSourceList(list);
             SignatureSymbol signature = Registry.EntryList[0].SourceSymbol.ScopeList[0].VisualElement;
@@ -67,7 +69,7 @@ namespace feltic.Integrator
                 {
                     if(type == VisualElementType.Text)
                     {
-                        element = new VisualTextElement(File.ReadAllText("language.src"), Parent);
+                        element = new VisualTextElement("text", Parent);
                     }
                     else if(type == VisualElementType.Scroll)
                     {
@@ -100,6 +102,16 @@ namespace feltic.Integrator
                             element.Color = Color.Try(value);
                             int q = 0;
                         }
+                        if(attribute.Identifier.String == "id")
+                        {
+                            string value = (attribute.AssigmentOperand.AccessList[0] as LiteralAccessSignature).Literal.String;
+                            if (value.Replace("\"", "") == "code")
+                            {
+                                CodeText.VisualRoot = element;
+                                CodeText.CodeContainer.Build();
+                            }
+
+                        }
                     }
                 }
                 if(structedSignature.ElementList != null)
@@ -115,7 +127,6 @@ namespace feltic.Integrator
                 string stringData = (operandSignature.AccessList[0] as LiteralAccessSignature).Literal.String;
                 stringData = stringData.Replace("\"", "");
                 VisualTextElement element = new VisualTextElement(stringData, Parent);
-                Parent.AddChild(element);
             }
         }
 

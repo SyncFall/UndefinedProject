@@ -29,11 +29,12 @@ namespace feltic.Integrator
         public CodeSelection CodeSelection;
         public CodeHistory CodeHistory;
         public TokenContainer TokenContainer;
-        
+        public VisualElement VisualRoot;
+
         public CodeText()
         {
             this.SourceFont = new Font("DroidSansMono.ttf", DefaultFontSize);
-            this.SourceText = SourceText.FromFile("Compose/first.src");
+            this.SourceText = SourceText.FromFile("language.src");
             SourceList list = new SourceList();
             list.Add(this.SourceText);
             this.Registry = new Registry();
@@ -60,7 +61,7 @@ namespace feltic.Integrator
         public void Draw()
         {
             CodeSelection.Draw();
-            CodeContainer.Draw();
+            //CodeContainer.Draw();
             CodeCursor.Draw();
         }
     }

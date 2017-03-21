@@ -13,17 +13,16 @@ namespace feltic.UI
     public class Text
     {
         public string String;
-        public GlyphContainer GlyphContainer;
-        public TextFormat Format;
+        public static GlyphContainer GlyphContainer;
+        public static TextFormat Format;
 
-        public Text(string String, TextFormat Format)
+        public Text(string String, TextFormat f)
         {
             this.String = String;
             if(Format == null)
-                this.Format = new TextFormat();
-            else
-                this.Format = Format;
-            this.GlyphContainer = new GlyphContainer(this.Format.Font);
+                Format = new TextFormat();
+            if(GlyphContainer == null)
+                GlyphContainer = new GlyphContainer(Format.Font);
         }
 
         public Size Size
@@ -67,14 +66,14 @@ namespace feltic.UI
             }
         }
 
-        Color same = new Color(220, 220, 200);
+        //Color same = new Color(220, 220, 200);
         public void Draw(Color Color, float X=0, float Y=0, float OffsetX=0, float OffsetY=0, float Width=0, float Height=0)
         {
             float currentX = X;
             float currentY = Y;
-            //if(Color == null)   Color = new Color(220, 220, 200);
-            //GL.Color3(Color.GetGlColor().Rgb);
-            GL.Color3(same.GetGlColor().Rgb);
+            if(Color == null)   Color = new Color(220, 220, 200);
+            GL.Color3(Color.GetGlColor().Rgb);
+            //GL.Color3(same.GetGlColor().Rgb);
             for (int i = 0; i < String.Length; i++)
             {
                 char textChar = String[i];
@@ -119,7 +118,7 @@ namespace feltic.UI
 
         public TextFormat()
         {
-            this.Font = new Font("DroidSansMono.ttf");
+            this.Font = new Font("D:\\dev\\UndefinedProject\\output\\DroidSansMono.ttf");
             //this.Color = new Color(0, 100, 150);
             this.Color = new Color(220, 220, 220);
         }

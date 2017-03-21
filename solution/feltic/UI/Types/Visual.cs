@@ -80,13 +80,44 @@ namespace feltic.UI.Types
 
             float currentX = X;
             float currentY = Y;
+            float realX = currentX;
+            float realY = currentY;
             for (int i = 0; i < Childrens.Size; i++)
             {
                 VisualElement childElement = Childrens[i];
                 Size childSize = childElement.Size;
-                bool smaller = (currentX + childSize.Width < currentX + OffsetX) || (currentY + childSize.Height < currentY + OffsetY);
-                bool taller = (currentX > currentX + OffsetX + w) || (currentY > currentY + OffsetY + h);
-                if(!smaller && !taller)
+                bool smaller = (currentY + childSize.Height < Y + OffsetY);
+                bool taller = false;
+                bool notVisible = false;
+                if (childElement.Type == VisualElementType.Text && Childrens.Size > 1)
+                {
+                    taller = (realY - Y + childSize.Height > (Height > 0 ? Height : Size.Height));
+                    notVisible = (currentX + childSize.Width < X + OffsetX) || (currentX > X + OffsetX + (Width > 0 ? Width : Size.Width));
+                    float offset = ((X + OffsetX) - currentX);
+                    float offset2 = ((X + OffsetX + (Width > 0 ? Width : Size.Width)) - currentX);
+                    if (!smaller && !notVisible && offset > 0 && offset < childSize.Width)
+                    {
+                        float oo = (int)Math.Ceiling(offset);
+                        float ww = childSize.Width - offset;
+                        childElement.Draw(realX, realY, oo, 0, ww, 0);
+                        realX += ww;
+                        currentX += childSize.Width;
+                        continue;
+                    }
+                    else if (!smaller && !notVisible && offset2 < childSize.Width)
+                    {
+                        float ww = (int)Math.Round(offset2);
+                        childElement.Draw(realX, realY, 0, 0, ww, 0);
+                        realX += ww;
+                        currentX += childSize.Width;
+                        continue;
+                    }
+                    else if (!smaller && !taller && !notVisible)
+                    {
+                        childElement.Draw(realX, realY, 0, 0, 0, 0);
+                    }
+                }
+                else if (!smaller && !taller)
                 {
                     float childWidth = (childSize.Width > w ? w : 0);
                     float childHeight = (childSize.Height > h ? h : 0);
@@ -101,6 +132,29 @@ namespace feltic.UI.Types
                     else if(childElement.Type == VisualElementType.Inline || childElement.Type == VisualElementType.Column)
                     {
                         currentX += childSize.Width;
+                    }
+                    else if(childElement.Type == VisualElementType.Text)
+                    {
+                        if (Childrens.Size == 1)
+                            break;
+                        else
+                        {
+                            currentX += childSize.Width;
+                            if(!smaller && !taller && !notVisible)
+                            {
+                                realX += childSize.Width;
+                            }                            
+                        }
+                    }
+                    else if(childElement.Type == VisualElementType.Break)
+                    {
+                        currentY += childSize.Height;
+                        currentX = X;
+                        if (!smaller && !taller && !notVisible)
+                        {
+                            realY += childSize.Height;
+                        }
+                        realX = X;
                     }
                 }
                 if(taller) break;
@@ -263,6 +317,22 @@ namespace feltic.UI.Types
                     {
                         currentX += childSize.Width;
                     }
+                    else if (childElement.Type == VisualElementType.Text || childElement.Type == VisualElementType.Input)
+                    {
+                        if(Element.Childrens.Size==1)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            currentX += childSize.Width;   
+                        }
+                    }
+                    else if (childElement.Type == VisualElementType.Break)
+                    {
+                        currentY += childSize.Height;
+                        currentX = 0;
+                    }
                 }
             }
 
@@ -281,6 +351,12 @@ namespace feltic.UI.Types
             if (Element.Type == VisualElementType.Text)
             {
                 return (Element.Size = (Element as VisualTextElement)._TextHandle.Size);
+            }
+
+            // break-size
+            if(Element.Type == VisualElementType.Break)
+            {
+                return (Element.Size = new Size(0, new UI.Text(" ", null).Size.Height));
             }
 
             // size from definition
@@ -315,12 +391,13 @@ namespace feltic.UI.Types
 
             // size from childrens
             float childsWidth = 0f;
+            float currentWidth = 0f;
             float childsHeight = 0f;
             for (int i = 0; Element.Childrens != null && i < Element.Childrens.Size; i++)
             {
                 VisualElement childElement = Element.Childrens[i];
                 Size childSize = GetSize(childElement);
-                if (childElement.Type == VisualElementType.Block)
+                if (childElement.Type == VisualElementType.Block || childElement.Type == VisualElementType.Scroll)
                 {
                     if (childSize.Width > childsWidth)
                     {
@@ -328,18 +405,34 @@ namespace feltic.UI.Types
                     }
                     childsHeight += childSize.Height;
                 }
-                else if (childElement.Type == VisualElementType.Inline || childElement.Type == VisualElementType.Column)
-                {
+                else if(childElement.Type == VisualElementType.Inline || childElement.Type == VisualElementType.Column){
                     childsWidth += childSize.Width;
                     if (childSize.Height > childsHeight)
                     {
                         childsHeight = childSize.Height;
                     }
                 }
-                else if (childElement.Type == VisualElementType.Text || childElement.Type == VisualElementType.Input)
+                else if(childElement.Type == VisualElementType.Text || childElement.Type == VisualElementType.Input)
                 {
-                    childsWidth = childSize.Width;
-                    childsHeight = childSize.Height;
+                    if(Element.Childrens.Size == 1)
+                    {
+                        childsHeight = childSize.Height;
+                        childsWidth = childSize.Width;
+                        break;
+                    }
+                    else
+                    {
+                        currentWidth += childSize.Width;
+                    }
+                }
+                else if (childElement.Type == VisualElementType.Break)
+                {
+                    childsHeight += childSize.Height;
+                    if(currentWidth > childsWidth)
+                    {
+                        childsWidth = currentWidth;
+                    }
+                    currentWidth = 0;
                 }
             }
 
@@ -376,9 +469,10 @@ namespace feltic.UI.Types
             }
         }
 
-        public VisualTextElement(string String, VisualElement Parent) : base(VisualElementType.Text, Parent)
+        public VisualTextElement(string String, VisualElement Parent, Color Color=null) : base(VisualElementType.Text, Parent)
         {
             this.Text = String;
+            this.Color = Color;
         }
 
         public void DrawText(Color Color, float X =0, float Y=0, float OffsetX=0, float OffsetY=0, float Width=0, float Height=0)
@@ -440,7 +534,7 @@ namespace feltic.UI.Types
 
     public class VisualScrollElement : VisualElement
     {
-        public static readonly int ScrollThickness = 10;
+        public static readonly int ScrollThickness = 12;
         public float ScrollYPosition = 0f;
         public float ScrollXPosition = 0f;
         public Size ScrollYSize = new Size(ScrollThickness, 0);

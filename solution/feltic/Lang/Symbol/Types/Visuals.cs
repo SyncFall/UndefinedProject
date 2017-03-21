@@ -16,6 +16,7 @@ namespace feltic.Language
         Line,
         Cell,
         Text,
+        Break,
         Input,
         Scroll,
     }
@@ -34,6 +35,7 @@ namespace feltic.Language
             new VisualKeywordSymbol(VisualElementType.Text, "text"),
             new VisualKeywordSymbol(VisualElementType.Input, "input"),
             new VisualKeywordSymbol(VisualElementType.Scroll, "scroll"),
+            new VisualKeywordSymbol(VisualElementType.Break, "break"),
         };
     }
 

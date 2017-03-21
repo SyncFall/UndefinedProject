@@ -23,11 +23,12 @@ namespace feltic.Integrator
         public GlyphMetrics GlyphMetrics;
         public GlyphContainer GlyphContainer;
         public TokenContainer TokenContainer;
-        public ScrollListener InputListener;
+        //public ScrollListener InputListener;
         public float TotalLineNumbers;
         public float VisibleLineNumbers;
         public int StartLineNumber;
         public int EndLineNumber;
+        public VisualElement VisualRoot;
 
         public CodeContainer(CodeText CodeText)
         {
@@ -36,7 +37,7 @@ namespace feltic.Integrator
             this.GlyphMetrics = CodeText.GlyphMetrics;
             this.GlyphContainer = CodeText.GlyphContainer;
             this.TokenContainer = CodeText.TokenContainer;
-            this.InputListener = new ScrollListener(this);
+            //this.InputListener = new ScrollListener(this);
         }
 
         public void Save()
@@ -55,11 +56,68 @@ namespace feltic.Integrator
         public void SetContainer(TokenContainer TokenContainer)
         {
             this.TokenContainer = TokenContainer;
-            this.CodeSize = GetCodeSize();
+            //this.CodeSize = GetCodeSize();
         }
 
+        public void Build()
+        {
+            this.VisualRoot = CodeText.VisualRoot;
+            TokenNode node = TokenContainer.FirstTokenNode;
+            while (node != null)
+            {
+                TokenSymbol token = node.Token;
+                if (token.IsStructure(StructureType.WhiteSpace))
+                {
+                    new VisualTextElement(" ", VisualRoot);
+                }
+                else if (token.IsStructure(StructureType.TabSpace))
+                {
+                    new VisualTextElement("    ", VisualRoot);
+                }
+                else if (token.IsStructure(StructureType.LineSpace))
+                {
+                    new VisualElement(VisualElementType.Break, VisualRoot);
+                }
+                else if (token.Type == TokenType.Keyword || token.Type == TokenType.Native || token.Type == TokenType.Statement)
+                {
+                    new VisualTextElement(token.String, VisualRoot, CodeColor.Keyword);
+                }
+                else if (token.Type == TokenType.Literal)
+                {
+                    LiteralSymbol literal = token.Symbol as LiteralSymbol;
+                    if (literal.Type == LiteralType.String || literal.Type == LiteralType.Char)
+                    {
+                        new VisualTextElement(token.String, VisualRoot, CodeColor.String);
+                    }
+                    else if (literal.Type == LiteralType.Number)
+                    {
+                        new VisualTextElement(token.String, VisualRoot, CodeColor.Normal);
+                    }
+                    else
+                    {
+                        new VisualTextElement(token.String, VisualRoot, CodeColor.Keyword);
+                    }
+                }
+                else if (token.Type == TokenType.Comment)
+                {
+                    new VisualTextElement(token.String, VisualRoot, CodeColor.Comment);
+                }
+                else if (token.Type == TokenType.Unknown)
+                {
+                    new VisualTextElement(token.String, VisualRoot, CodeColor.Error);
+                }
+                else
+                {
+                    new VisualTextElement(token.String, VisualRoot, CodeColor.Normal);
+                }
+                node = node.Next;
+            }
+        }
+
+        /*
         public void Draw()
         {
+            
             this.TotalLineNumbers = (CodeSize.Height - GlyphMetrics.TopSpace) / (float)(GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace);
             this.VisibleLineNumbers = (ViewSize.Height - GlyphMetrics.TopSpace) / (float)(GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace);
 
@@ -71,7 +129,7 @@ namespace feltic.Integrator
 
             int lineNumber = StartLineNumber;
             Point position = new Point(GlyphMetrics.LeftSpace, GlyphMetrics.TopSpace);
-
+            
             TokenNode node = TokenContainer.FirstLineTokenNode(lineNumber);
             while(node != null)
             {
@@ -287,5 +345,6 @@ namespace feltic.Integrator
 
             return new Size(totalWidth, totalHeight);
         }
+        */
     }
 }
