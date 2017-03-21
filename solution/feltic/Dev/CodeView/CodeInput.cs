@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace feltic.Integrator
 {
-    public class CodeInput : VisualInputListener
+    public class CodeInput : InputListener
     {
         public CodeText CodeText;
 
-        public CodeInput(CodeText CodeText, VisualElement Element) : base(Element)
+        public CodeInput(CodeText CodeText)
         {
             this.CodeText = CodeText;
         }
 
-        public override void Event(InputEvent InputEvent)
+        public override void Input(InputEvent InputEvent)
         {
             if( MouseInputs(InputEvent) ||
                 CursorInputs(InputEvent) ||

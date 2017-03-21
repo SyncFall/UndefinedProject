@@ -86,7 +86,6 @@ namespace feltic.UI.Types
             {
                 VisualElement childElement = Childrens[i];
                 Size childSize = childElement.Size;
-                if (childSize == null) return;
                 bool smaller = (currentY + childSize.Height < Y + OffsetY);
                 bool taller = false;
                 bool notVisible = false;

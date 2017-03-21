@@ -17,7 +17,6 @@ namespace feltic.Integrator
         Registry Registry;
         GlyphContainer GlyphContainer = new GlyphContainer(new Font("DroidSansMono.ttf"));
         public static VisualElement Root = new VisualElement(VisualElementType.Compose, null);
-        public static VisualElement Code = null;
         public CodeText CodeText;
 
         public SceneView()
@@ -108,9 +107,8 @@ namespace feltic.Integrator
                             string value = (attribute.AssigmentOperand.AccessList[0] as LiteralAccessSignature).Literal.String;
                             if (value.Replace("\"", "") == "code")
                             {
-                                CodeText.VisualCode = element;
+                                CodeText.VisualRoot = element;
                                 CodeText.CodeContainer.Build();
-                                CodeText.CodeInput = new CodeInput(CodeText, element);
                             }
 
                         }
@@ -134,12 +132,7 @@ namespace feltic.Integrator
 
         public void Draw()
         {
-            if(Root != null)
-            {
-                CodeText.CodeSelection.Draw();
-                Root.Draw(10, 10);
-                CodeText.CodeCursor.Draw();
-            }
+            Root.Draw(10, 10);
         }
     }
 

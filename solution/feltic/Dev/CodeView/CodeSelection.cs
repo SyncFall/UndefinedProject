@@ -94,8 +94,10 @@ namespace feltic.Integrator
             }
             else if(BeginPart.LinePosition == EndPart.LinePosition && EndPart.CursorPosition < BeginPart.CursorPosition)
             {
-                ordered.BeginPart = EndPart;
-                ordered.EndPart = BeginPart;
+                ordered.BeginPart = BeginPart;
+                ordered.BeginPart.CursorPosition = EndPart.CursorPosition;
+                ordered.EndPart = EndPart;
+                ordered.EndPart.CursorPosition = BeginPart.CursorPosition;
             }
             else
             {
@@ -117,24 +119,14 @@ namespace feltic.Integrator
             GL.Color3(38 / 255f, 79 / 255f, 120 / 255f);
 
             CodeSelection CodeSelection = GetOrdered();
+            GlyphMetrics GlyphMetrics = CodeText.GlyphMetrics;
+            GlyphContainer GlyphContainer = CodeText.GlyphContainer;
             TokenContainer TokenContainer = CodeText.TokenContainer;
 
-            if (CodeText.VisualCode == null) return;
-            VisualElement VisualCode = CodeText.VisualCode;
-            FontMetric fontMetric = Text.GlyphContainer.Font.Metric;
-
-            Position start = CodeText.CodeContainer.Start;
-
-            float scrollOffset = (VisualCode.Parent as VisualScrollElement).ScrollYPosition;
-            float scrollHeight = (VisualCode.Parent as VisualScrollElement).Size.Height;
-            float codeHeight = (VisualCode.Size.Height);
-            float factorHeight = (codeHeight / scrollHeight);
-            float offsetHeight = (scrollOffset * factorHeight);
-
-            for (int line=CodeSelection.BeginPart.LinePosition; line <= CodeSelection.EndPart.LinePosition; line++)
+            for(int line=CodeSelection.BeginPart.LinePosition; line <= CodeSelection.EndPart.LinePosition; line++)
             {
-                float yOffset = start.y - 3 + (((fontMetric.VerticalAdvance + fontMetric.LineSpace) * line) - offsetHeight); //start.y - 3 + ((fontMetric.VerticalAdvance + fontMetric.LineSpace) * line);
-                float xOffset = start.x;
+                float yOffset = GlyphMetrics.TopSpace + ((GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace) * line);
+                float xOffset = GlyphMetrics.LeftSpace;
                 float xBegin=0, xEnd=0;
 
                 string lineText = TokenContainer.LineText(line);
@@ -143,7 +135,7 @@ namespace feltic.Integrator
                 if (lineText.Length == 0)
                 {
                     xBegin = xOffset;
-                    xEnd = xOffset + ((int)Math.Ceiling(fontMetric.SpaceWidth/2f));
+                    xEnd = xOffset + ((int)Math.Ceiling(GlyphMetrics.SpaceWidth/2f));
                 }
                 for (int cursor=0; cursor<lineText.Length; cursor++)
                 {
@@ -161,15 +153,15 @@ namespace feltic.Integrator
                     char textChar = lineText[cursor];
                     if (textChar == ' ')
                     {
-                        xOffset += fontMetric.SpaceWidth;
+                        xOffset += GlyphMetrics.SpaceWidth;
                     }
                     else if (textChar == '\t')
                     {
-                        xOffset += fontMetric.TabWidth;
+                        xOffset += GlyphMetrics.TabWidth;
                     }
                     else
                     {
-                        Glyph glyph = Text.GlyphContainer.GetGlyph(textChar);
+                        Glyph glyph = GlyphContainer.GetGlyph(textChar);
                         xOffset += glyph.HoriziontalAdvance;
                     }
 
@@ -184,8 +176,8 @@ namespace feltic.Integrator
                     }
                 }
 
-                yOffset += fontMetric.Delimeter.VerticalAdvance - fontMetric.Delimeter.HoriziontalBearingY;
-                float yHeight = fontMetric.Delimeter.Height;
+                yOffset += GlyphMetrics.DelimeterGlyph.VerticalAdvance - GlyphMetrics.DelimeterGlyph.HoriziontalBearingY;
+                float yHeight = GlyphMetrics.DelimeterGlyph.Height;
 
                 GL.Begin(PrimitiveType.Quads);
                 GL.Vertex2(xBegin, yOffset);
