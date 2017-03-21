@@ -16,7 +16,7 @@ object BasicObject
 	var variableType;
 	type typeVariable;
 	object objectVariable;
-	//enum enumVariable;
+	enum enumVariable;
 	
 	get int Number
 		return this.number;
