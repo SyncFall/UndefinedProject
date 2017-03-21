@@ -12,10 +12,11 @@ namespace feltic.UI
     public class FontMetric
     {
         public Font Font;
-        public float WhiteSpaceHorizontalAdvance;
-        public float TabSpaceHorizontalAdvance;
-        public float GlyphVerticalAdvance;
+        public float SpaceWidth;
+        public float TabWidth;
+        public float VerticalAdvance;
         public float LineSpace;
+        public Glyph Delimeter;
 
         public FontMetric(Font Font)
         {
@@ -26,11 +27,11 @@ namespace feltic.UI
         private void Create()
         {
             Glyph spaceGlyph = Font.GetGlyph(' ');
-            this.WhiteSpaceHorizontalAdvance = spaceGlyph.HoriziontalAdvance;
-            this.TabSpaceHorizontalAdvance = (spaceGlyph.HoriziontalAdvance * 4);
-            this.GlyphVerticalAdvance = spaceGlyph.VerticalAdvance;
-            Glyph delimeterGlyph = Font.GetGlyph('|');
-            this.LineSpace = (delimeterGlyph.Height - delimeterGlyph.VerticalAdvance);
+            this.SpaceWidth = spaceGlyph.HoriziontalAdvance;
+            this.TabWidth = (spaceGlyph.HoriziontalAdvance * 4);
+            this.Delimeter = Font.GetGlyph('|');
+            this.LineSpace = (Delimeter.Height - Delimeter.VerticalAdvance);
+            this.VerticalAdvance = (Delimeter.Height) * 1.1f;
         }
     }
 

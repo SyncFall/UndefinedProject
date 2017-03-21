@@ -154,9 +154,6 @@
     <Compile Include="UI\Types\Visual.cs" />
     <Compile Include="UI\Types\Way.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

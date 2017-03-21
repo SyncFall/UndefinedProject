@@ -34,22 +34,22 @@ namespace feltic.UI
                 float totalHeight = 0f;
                 if(String.Length > 0)
                 {
-                    totalHeight = GlyphContainer.Font.Metric.GlyphVerticalAdvance;
+                    totalHeight = GlyphContainer.Font.Metric.VerticalAdvance;
                 }
                 for (int i = 0; i < String.Length; i++)
                 {
                     char textChar = String[i];
                     if (textChar == ' ')
                     {
-                        width += GlyphContainer.Font.Metric.WhiteSpaceHorizontalAdvance;
+                        width += GlyphContainer.Font.Metric.SpaceWidth;
                     }
                     else if (textChar == '\t')
                     {
-                        width += GlyphContainer.Font.Metric.TabSpaceHorizontalAdvance;
+                        width += GlyphContainer.Font.Metric.TabWidth;
                     }
                     else if (textChar == '\n')
                     {
-                        totalHeight += (GlyphContainer.Font.Metric.GlyphVerticalAdvance + GlyphContainer.Font.Metric.LineSpace);
+                        totalHeight += (GlyphContainer.Font.Metric.VerticalAdvance + GlyphContainer.Font.Metric.LineSpace);
                         width = 0f;
                     }
                     else
@@ -79,15 +79,15 @@ namespace feltic.UI
                 char textChar = String[i];
                 if(textChar == ' ')
                 {
-                    currentX += GlyphContainer.Font.Metric.WhiteSpaceHorizontalAdvance;
+                    currentX += GlyphContainer.Font.Metric.SpaceWidth;
                 }
                 else if(textChar == '\t')
                 {
-                    currentX += GlyphContainer.Font.Metric.TabSpaceHorizontalAdvance;
+                    currentX += GlyphContainer.Font.Metric.TabWidth;
                 }
                 else if(textChar == '\n')
                 {
-                    currentY += (GlyphContainer.Font.Metric.GlyphVerticalAdvance + GlyphContainer.Font.Metric.LineSpace);
+                    currentY += (GlyphContainer.Font.Metric.VerticalAdvance + GlyphContainer.Font.Metric.LineSpace);
                     currentX = X;
                 }
                 else

@@ -169,12 +169,26 @@ namespace feltic.Integrator
 
         public void SetCursor(int CursorX, int CursorY)
         {
-            GlyphContainer GlyphContainer = CodeText.GlyphContainer;
-            GlyphMetrics GlyphMetrics = CodeText.CodeContainer.GlyphMetrics;
+            VisualElement VisualCode = CodeText.VisualCode;
+            if (VisualCode == null) return;
 
-            int lineNumber = ((CursorY - GlyphMetrics.TopSpace) / ((GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace)));
-            int cursorPosition = 0;
-            if(lineNumber < 0)
+            FontMetric fontMetric = Text.GlyphContainer.Font.Metric;
+
+            Position start = CodeText.CodeContainer.Start;
+            if (start == null) return;
+
+            float cursorOffset = (CursorY - start.y);
+            float scrollOffset = (VisualCode.Parent as VisualScrollElement).ScrollYPosition;
+            float scrollHeight = (VisualCode.Parent as VisualScrollElement).Size.Height;
+            float codeHeight = (VisualCode.Size.Height);
+            float factorHeight = (codeHeight / scrollHeight);
+            float offsetHeight = (scrollOffset * factorHeight);
+           
+            int lineNumber = (int)((offsetHeight + cursorOffset) / (fontMetric.VerticalAdvance + fontMetric.LineSpace));
+
+            int viewLineNumber = (int)(cursorOffset / (fontMetric.VerticalAdvance + fontMetric.LineSpace));
+
+            if (lineNumber < 0)
             {
                 lineNumber = 0;
             }
@@ -184,22 +198,22 @@ namespace feltic.Integrator
             }
 
             string lineText = CodeText.TokenContainer.LineText(lineNumber);
-            float currentX = GlyphMetrics.LeftSpace;
+            float currentX = start.x;
             bool cursorSet = false;
             for (int i = 0; i < lineText.Length; i++)
             {
                 char charCode = lineText[i];
                 if (charCode == ' ')
                 {
-                    currentX += GlyphMetrics.SpaceWidth;
+                    currentX += fontMetric.SpaceWidth;
                 }
                 else if (charCode == '\t')
                 {
-                    currentX += GlyphMetrics.TabWidth;
+                    currentX += fontMetric.TabWidth;
                 }
                 else
                 {
-                    Glyph glyph = GlyphContainer.GetGlyph(charCode);
+                    Glyph glyph = Text.GlyphContainer.GetGlyph(charCode);
                     currentX += glyph.HoriziontalAdvance;
                 }
                 if (currentX > CursorX)
@@ -490,11 +504,29 @@ namespace feltic.Integrator
 
         public void Draw()
         {
-            GlyphContainer GlyphContainer = CodeText.GlyphContainer;
-            GlyphMetrics GlyphMetrics = CodeText.GlyphMetrics;
+            VisualElement VisualCode = CodeText.VisualCode;
+            if (VisualCode == null) return;
 
-            float yOffset = GlyphMetrics.TopSpace + ((GlyphMetrics.VerticalAdvance + GlyphMetrics.LineSpace) * LineNumber);
-            float xOffset = GlyphMetrics.LeftSpace;
+            if (!CodeText.CodeInput.Active) return;
+
+            FontMetric fontMetric = Text.GlyphContainer.Font.Metric;
+
+            Position start = CodeText.CodeContainer.Start;
+            if (start == null) return;
+
+
+            float yOffset = start.y + ((fontMetric.VerticalAdvance + fontMetric.LineSpace) * LineNumber);
+            float xOffset = start.x;
+
+ 
+            float scrollOffset = (VisualCode.Parent as VisualScrollElement).ScrollYPosition;
+            float scrollHeight = (VisualCode.Parent as VisualScrollElement).Size.Height;
+            float codeHeight = (VisualCode.Size.Height);
+            float factorHeight = (codeHeight / scrollHeight);
+            float offsetHeight = (scrollOffset * factorHeight);
+
+
+            yOffset = start.y + (((fontMetric.VerticalAdvance + fontMetric.LineSpace) * (LineNumber)) - (offsetHeight));
 
             TokenNode node = TokenContainer.FirstLineTokenNode(LineNumber);
             int cursorIdx = 0;
@@ -507,27 +539,27 @@ namespace feltic.Integrator
                     char charCode = token.String[tokenIdx];
                     if (charCode == ' ')
                     {
-                        xOffset += GlyphMetrics.SpaceWidth;
+                        xOffset += fontMetric.SpaceWidth;
                     }
                     else if (charCode == '\t')
                     {
-                        xOffset += GlyphMetrics.TabWidth;
+                        xOffset += fontMetric.TabWidth;
                     }
                     else
                     {
-                        Glyph glyph = GlyphContainer.GetGlyph(charCode);
+                        Glyph glyph = Text.GlyphContainer.GetGlyph(charCode);
                         xOffset += glyph.HoriziontalAdvance;
                     }
                 }
                 node = node.Next;
             }
 
-            float glyphX = xOffset - (float)Math.Ceiling(GlyphMetrics.DelimeterGlyph.Width / 2f);
-            float glyphY = yOffset + GlyphMetrics.DelimeterGlyph.VerticalAdvance - GlyphMetrics.DelimeterGlyph.HoriziontalBearingY;
+            float glyphX = xOffset - (float)Math.Ceiling(fontMetric.Delimeter.Width / 2f);
+            float glyphY = yOffset + fontMetric.Delimeter.VerticalAdvance - fontMetric.Delimeter.HoriziontalBearingY;
             if (CursorBlink.IsBlink())
             {
                 GL.Color3(220 / 255f, 220 / 255f, 220 / 255f);
-                GlyphMetrics.DelimeterGlyph.Draw(glyphX, glyphY);
+                fontMetric.Delimeter.Draw(glyphX, glyphY-3);
             }
         }
     }
