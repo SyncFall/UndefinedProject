@@ -7,9 +7,9 @@ object Editor
 	Workspace workspace;
 
 	<block width=700px height=500px>
-		<block>actionBar = <ActionBar/></block>
+		<block>actionBar = new ActionBar()</block>
 		<block height=100%>
-			<column width=65%>workspace = <Workspace/></column>
+			<column width=65%>workspace = new Workspace()</column>
 			<column width=35%>"navigation"</column>
 		</block>
 		<block height=125px>"status"</block>
@@ -18,13 +18,9 @@ object Editor
 
 object ActionBar
 {	
-	Select solutionSelect = Select("Solution.");
-	solutionSelect.Options = {}
-	Select runSelect = Select("Run.");
-	runSelect.OnClick = {
-
-	};
-
+	Select solutionSelect = Select();
+	Select runSelect = Select();
+	
 	<block>
 		<inline>solutionSelect</inline>
 		<inline>runSelect</inline>
@@ -33,14 +29,13 @@ object ActionBar
 
 object Workspace
 {
-	<block height="100%">
-		<ScrollView/>
-	</block>
-}
+	VisualElement CodeBlock;
 
-object ScrollView
-{
-	<block/>
+	<block height="100%">
+		<scroll>
+			CodeBlock = <block/>
+		</scroll>
+	</block>
 }
 
 object Select

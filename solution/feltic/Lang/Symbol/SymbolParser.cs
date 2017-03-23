@@ -15,6 +15,7 @@ namespace feltic.Language
         {
             SourceSymbol sourceSymbol = new SourceSymbol(SignatureContainer.SourceText);
             ScopeSymbol lastScopeSymbol = new ScopeSymbol(sourceSymbol, new ScopeSignature()); // default-scope
+            sourceSymbol.ScopeList.Add(lastScopeSymbol);
             for (int i = 0; i < SignatureContainer.SignatureNodes.Size; i++)
             {
                 SignatureSymbol signature = SignatureContainer.SignatureNodes[i].Signature;
@@ -33,7 +34,7 @@ namespace feltic.Language
                 else if(signature.Type == SignatureType.Statement)
                 {
                     lastScopeSymbol.VisualElement = signature;
-                    sourceSymbol.ScopeList.Add(lastScopeSymbol);
+                    
                 }
             }
             return sourceSymbol;

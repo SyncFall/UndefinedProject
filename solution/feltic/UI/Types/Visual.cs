@@ -9,6 +9,11 @@ using System.Threading.Tasks;
 
 namespace feltic.UI.Types
 {
+    public class VisualObject : object
+    {
+        public VisualElement Visual;
+    }
+
     public class VisualElement
     {
         public VisualElementType Type;
@@ -33,6 +38,7 @@ namespace feltic.UI.Types
         {
             if (Childrens == null)
                 Childrens = new VisualElementList();
+            VisualElement.Parent = this;
             Childrens.Add(VisualElement);
         }
 

@@ -146,6 +146,19 @@ namespace feltic.Language
             return token;
         }
 
+        public TokenSymbol TryNonSpace(OperationType operation)
+        {
+            TrySpace();
+            if (Token == null || !Token.IsOperation(operation))
+            {
+                return null;
+            }
+            TokenSymbol token = Token;
+            NextToken();
+            TrySpace();
+            return token;
+        }
+
         public UnknownSignatur TryUnknown()
         {
             if (Token == null)

@@ -44,9 +44,10 @@ namespace feltic.Language
             {
                 WriteObject(1, objectSymbolList[i]);
             }
-            StructedBlockSignature visual = ((SourceSymbol.ScopeList[0].VisualElement as ExpressionStatementSignature).Expression.Operand.AccessList[0] as StructedBlockAccessSignature).StructedBlock;
-            if(visual != null){
-                WriteVisualComponent(1, visual);
+            WriteLine();
+            for (int i=0; i<VisualComponents.Size; i++)
+            {
+                WriteVisualComponent(1, VisualComponents[i]);
             }
             WriteLine("}");
             File.WriteAllText(Filepath, Builder.ToString());
@@ -62,7 +63,7 @@ namespace feltic.Language
                 MemberSymbol mbr = obj.MemberList[j];
                 WriteTab(tabs+1);
                 Write("public ");
-                WriteTypeDeclaration(mbr.Signature.TypeDeclaration);
+                WriteTypeDeclaration(obj, mbr.Signature.TypeDeclaration);
                 WriteLine(";");
             }
             WriteLine();
@@ -71,19 +72,19 @@ namespace feltic.Language
                 MethodSymbol mth = obj.MethodList[j];
                 WriteTab(tabs+1);
                 Write("public ");
-                WriteTypeDeclaration(mth.Signature.TypeDeclaration);
+                WriteTypeDeclaration(obj, mth.Signature.TypeDeclaration);
                 Write("(");
-                WriteParameterList(mth.Signature.ParameterDeclaration.ParameterList);
+                WriteParameterList(obj, mth.Signature.ParameterDeclaration.ParameterList);
                 WriteLine(")");
                 WriteLine(tabs+1, "{");
-                WriteStatements(3, mth.Signature.Code.Statements);
+                WriteStatements(3, obj, mth.Signature.Code.Statements);
                 WriteLine(tabs+1, "}");
             }
             WriteLine(tabs, "}");
             WriteLine();
         }
 
-        void WriteStatements(int tabs, StatementSignatureList stmList)
+        void WriteStatements(int tabs, ObjectSymbol obj, StatementSignatureList stmList)
         {
             for(int i=0; i<stmList.Size; i++)
             {
@@ -92,10 +93,10 @@ namespace feltic.Language
                 if (stm.Group == StatementGroup.ConditionBlock)
                 {
                     Write(stm.Keyword.String+"(");
-                    WriteExpression((stm as ConditionBlockStatementSignature).ConditionExpression);
+                    WriteExpression(obj, (stm as ConditionBlockStatementSignature).ConditionExpression);
                     WriteLine(")");
                     WriteLine(tabs, "{");
-                    WriteStatements(tabs+1, (stm as ConditionBlockStatementSignature).ChildStatements);
+                    WriteStatements(tabs+1, obj, (stm as ConditionBlockStatementSignature).ChildStatements);
                     WriteLine(tabs, "}");
                 }
                 else if(stm.Group == StatementGroup.KeywordStatement)
@@ -110,7 +111,8 @@ namespace feltic.Language
                         Write(stm.Keyword.String);  
                         Write(" ");
                     }
-                    WriteExpression((stm as ExpressionStatementSignature).Expression);
+                    WriteExpression(obj, (stm as ExpressionStatementSignature).Expression);
+                    WriteLine(";");
                 }
                 else if(stm.Group == StatementGroup.BlockStatement)
                 {
@@ -119,17 +121,17 @@ namespace feltic.Language
                         WriteLine(stm.Keyword.String);
                     }
                     WriteLine(tabs, "{");
-                    WriteStatements(tabs+1, (stm as BlockStatementSignature).ChildStatements);
+                    WriteStatements(tabs+1, obj, (stm as BlockStatementSignature).ChildStatements);
                     WriteLine(tabs, "}");
                 }
                 else if(stm.Type == StatementType.TypeDeclaration)
                 {
-                    WriteTypeDeclaration((stm as TypeDeclarationStatementSignature).TypeDeclaration);
+                    WriteTypeDeclaration(obj, (stm as TypeDeclarationStatementSignature).TypeDeclaration);
                     WriteLine(";");
                 }
                 else if(stm.Type == StatementType.ExpressionStatement)
                 {
-                    WriteExpression((stm as ExpressionStatementSignature).Expression);
+                    WriteExpression(obj, (stm as ExpressionStatementSignature).Expression);
                     WriteLine(";");
                 }
                 else if(stm.Type == StatementType.For)
@@ -141,34 +143,34 @@ namespace feltic.Language
                     {
                         if (sl[j] is TypeDeclarationSignature)
                         {
-                            WriteTypeDeclaration((sl[j] as TypeDeclarationSignature));
+                            WriteTypeDeclaration(obj, (sl[j] as TypeDeclarationSignature));
                         }
                         if (sl[j] is ExpressionSignature)
                         {
-                            WriteExpression((sl[j] as ExpressionSignature));
+                            WriteExpression(obj, (sl[j] as ExpressionSignature));
                         }
                     }
                     Write(";");
-                    WriteExpression(forLoop.ConditionExpression);
+                    WriteExpression(obj, forLoop.ConditionExpression);
                     Write(";");
                     SignatureList ol = forLoop.PostOperationList;
                     for (int j = 0; j < ol.Size; j++)
                     {
-                        WriteExpression((ol[j] as ExpressionSignature));
+                        WriteExpression(obj, (ol[j] as ExpressionSignature));
                     }
                     WriteLine(")");
                     WriteLine(tabs, "{");
-                    WriteStatements(tabs + 1, (stm as ConditionBlockStatementSignature).ChildStatements);
+                    WriteStatements(tabs + 1, obj, (stm as ConditionBlockStatementSignature).ChildStatements);
                     WriteLine(tabs, "}");
                 }
                 else
                 {
-                    throw new Exception("invalid state");
+                    //throw new Exception("invalid state");
                 }
             }
         }
 
-        void WriteTypeDeclaration(TypeDeclarationSignature td)
+        void WriteTypeDeclaration(ObjectSymbol obj, TypeDeclarationSignature td)
         {
             if(td.TypeNative != null)
                 Write(td.TypeNative.String + " ");
@@ -183,7 +185,7 @@ namespace feltic.Language
             if(td.Assigment != null)
                 Write(" = ");
             if(td.AssigmentExpression != null)
-                WriteExpression(td.AssigmentExpression);
+                WriteExpression(obj, td.AssigmentExpression, true);
         }
 
         void WriteGenericDeclaration(GenericDeclarationSignature gn)
@@ -215,12 +217,12 @@ namespace feltic.Language
             Write("]");
         }
 
-        void WriteExpression(ExpressionSignature exp)
+        void WriteExpression(ObjectSymbol obj, ExpressionSignature exp, bool IsAssigment = false)
         {
             if(exp.ChildExpression != null)
             {
                 Write("(");
-                WriteExpression(exp.ChildExpression);
+                WriteExpression(obj, exp.ChildExpression);
                 Write(")");
                 return;
             }
@@ -239,9 +241,13 @@ namespace feltic.Language
                 else if(access.Type == SignatureType.FunctionAccess)
                 {
                     FunctionAccessSignature functionAccess = access as FunctionAccessSignature;
+                    if(exp.Operand.AccessList.Size == 1 && IsAssigment)
+                    {
+                        Write("new ");
+                    }
                     Write(functionAccess.Identifier.String);
                     Write("(");
-                    WriteParameterList(functionAccess.ParameterList);
+                    WriteParameterList(obj, functionAccess.ParameterList);
                     Write(")");
                 }
                 else if(access.Type == SignatureType.ArrayAccess)
@@ -249,13 +255,14 @@ namespace feltic.Language
                     ArrayAccessSignature arrayAccess = access as ArrayAccessSignature;
                     Write(arrayAccess.Identifier.String);
                     Write("[");
-                    WriteParameterList(arrayAccess.ParameterList);
+                    WriteParameterList(obj, arrayAccess.ParameterList);
                     Write("]");
                 }
                 else if(access.Type == SignatureType.StructedBlockAccess)
                 {
                     StructedBlockAccessSignature blockAcess = access as StructedBlockAccessSignature;
-                    this.StructedBlockList.Add(blockAcess.StructedBlock);
+                    VisualComponent visual = AddVisualComponent(obj, blockAcess.StructedBlock);
+                    WriteLine("new Visual"+visual.StringId + "(this)");
                 }
                 if(access.Seperator != null)
                 {
@@ -268,22 +275,22 @@ namespace feltic.Language
                 ExpressionOperationPair opPair = exp.OperationList[i];
                 OperationSignature op = opPair.Operation;
                 Write(" " + op.Token.String + " ");
-                WriteExpression(opPair.ExpressionPair);
+                WriteExpression(obj, opPair.ExpressionPair);
             }
         }
-
-        void WriteParameterList(ListCollection<ParameterSignature> pl)
+    
+        void WriteParameterList(ObjectSymbol obj, ListCollection<ParameterSignature> pl)
         {
             for(int i=0; i<pl.Size; i++)
             {
                 ParameterSignature ps = pl[i];
                 if(ps.TypeDeclaration != null)
                 {
-                    WriteTypeDeclaration(ps.TypeDeclaration);
+                    WriteTypeDeclaration(obj, ps.TypeDeclaration);
                 }
                 if(ps.Expression != null)
                 {
-                    WriteExpression(ps.Expression);
+                    WriteExpression(obj, ps.Expression);
                 }
                 if(ps.Seperator != null)
                 {
@@ -321,7 +328,7 @@ namespace feltic.Language
         private bool Compile()
         {
             CSharpCodeProvider codeProvider = new CSharpCodeProvider();
-            CompilerParameters parameters = new CompilerParameters(new string[]{ "BeeRuntime.exe" });
+            CompilerParameters parameters = new CompilerParameters(new string[]{ "feltic.exe" });
             parameters.GenerateExecutable = false;
             parameters.GenerateInMemory = false;
             parameters.OutputAssembly = Filepath+".dll";

@@ -113,7 +113,7 @@ namespace feltic.Language
             {
                 TokenSymbol identifier = TryIdentifier();
                 TrySpace();
-                if(identifier != null && Token.IsStructure(StructureType.ClosingBegin))
+                if(identifier != null && TryNonSpace(StructureType.ClosingBegin) != null)
                 {
                     FunctionAccessSignature functionAccess = new FunctionAccessSignature(identifier);
                     while (true)
@@ -137,7 +137,7 @@ namespace feltic.Language
                     }
                     accessSignatur = functionAccess;
                 }
-                else if(identifier != null && Token.IsStructure(StructureType.BracketBegin))
+                else if(identifier != null && TryNonSpace(StructureType.BracketBegin) != null)
                 {
                     ArrayAccessSignature arrayAccess = new ArrayAccessSignature(identifier);
                     while (true)
@@ -328,6 +328,11 @@ namespace feltic.Language
         public StructedBlockAccessSignature(StructedBlockSignature StructedBlock) : base(SignatureType.StructedBlockAccess)
         {
             this.StructedBlock = StructedBlock;
+        }
+
+        public override string ToString()
+        {
+            return "block(" + StructedBlock + ")";
         }
     }
 

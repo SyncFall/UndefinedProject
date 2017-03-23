@@ -27,7 +27,7 @@ namespace feltic.Integrator
 
         public CodeText()
         {
-            this.SourceText = SourceText.FromFile("language.src");
+            this.SourceText = SourceText.FromFile("Compose/second.src");
             SourceList list = new SourceList();
             list.Add(this.SourceText);
             this.Registry = new Registry();

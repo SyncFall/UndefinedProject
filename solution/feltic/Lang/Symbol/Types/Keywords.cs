@@ -23,7 +23,6 @@ namespace feltic.Language
         Static,
         Const,
         // object-code
-        This,
         Base,
         Parent,
         New,
@@ -47,7 +46,6 @@ namespace feltic.Language
             new KeywordSymbol(KeywordType.Override, "override"),
             new KeywordSymbol(KeywordType.Static, "static"),
             new KeywordSymbol(KeywordType.Const, "const"),
-            new KeywordSymbol(KeywordType.This, "this"),
             new KeywordSymbol(KeywordType.Base, "base"),
             new KeywordSymbol(KeywordType.Parent, "parent"),
             new KeywordSymbol(KeywordType.New, "new"),

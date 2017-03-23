@@ -17,7 +17,6 @@ namespace feltic.Language
         Seperator,
         Point,
         PointDouble,
-        Assigment,
         // blocks
         BlockBegin,
         BlockEnd,
@@ -44,7 +43,6 @@ namespace feltic.Language
             new StructureSymbol(StructureType.TabSpace, StructureGroup.Space, "\t"),
             new StructureSymbol(StructureType.LineSpace, StructureGroup.Space, "\n"),
             new StructureSymbol(StructureType.Complete, StructureGroup.Seperator, ";"),
-            new StructureSymbol(StructureType.Assigment, StructureGroup.Seperator, "="),
             new StructureSymbol(StructureType.Seperator, StructureGroup.Seperator, ","),
             new StructureSymbol(StructureType.Point, StructureGroup.Seperator, "."),
             new StructureSymbol(StructureType.PointDouble, StructureGroup.Seperator, ":"),

@@ -135,7 +135,7 @@ namespace feltic.Language
                 }
                 else
                 {
-                    throw new Exception("invalid state");
+                    //throw new Exception("invalid state");
                 }
 
             }

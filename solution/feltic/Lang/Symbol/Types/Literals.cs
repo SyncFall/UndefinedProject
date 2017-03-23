@@ -11,6 +11,7 @@ namespace feltic.Language
         Null,
         True,
         False,
+        This,
         Char,
         String,
         Number,
@@ -23,6 +24,7 @@ namespace feltic.Language
             new LiteralSymbol(LiteralType.Null, "null"),
             new LiteralSymbol(LiteralType.True, "true"),
             new LiteralSymbol(LiteralType.False, "false"),
+            new LiteralSymbol(LiteralType.This, "this"),
         };
     }
 

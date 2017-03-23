@@ -47,11 +47,6 @@ namespace feltic.Language
         public TokenNode Prev;
         public TokenNode Next;
         public TokenSymbol Token;
-        
-        public TokenNode(TokenSymbol Token)
-        {
-            this.Token = Token;  
-        }
     }
 
     public class TokenNodeList : ListCollection<TokenNode>
@@ -63,7 +58,8 @@ namespace feltic.Language
     public class TokenContainer
     {
         public SourceText SourceText;
-        public TokenNodeList AllTokenNodes = new TokenNodeList(2048);
+        public TokenNode Begin;
+        public TokenNode Current;
         public TokenNodeList LineTokenNodes = new TokenNodeList(128);
 
         public TokenContainer()
@@ -92,15 +88,19 @@ namespace feltic.Language
 
         private void AddTokenIntern(TokenSymbol token)
         {
-            TokenNode newNode = new TokenNode(token);
-            if (AllTokenNodes.Size > 0)
+            TokenNode newNode = new TokenNode();
+            newNode.Token = token;
+            if (Begin != null)
             {
-                TokenNode lastNode = AllTokenNodes.Get(AllTokenNodes.Size - 1);
-                lastNode.Next = newNode;
-                newNode.Prev = lastNode;
+                newNode.Prev = Current;
+                Current.Next = newNode;
+                Current = newNode;
             }
-            AllTokenNodes.Add(newNode);
-            if (token.IsLineSpace())
+            else
+            {
+                Begin = Current = newNode;
+            }
+            if(token.IsLineSpace())
             {
                 LineTokenNodes.Add(newNode);
             }
@@ -109,7 +109,8 @@ namespace feltic.Language
         public void SetSource(SourceText Source)
         {
             this.SourceText = Source;
-            AllTokenNodes.Clear();
+            this.Begin = null;
+            this.Current = null;
             LineTokenNodes.Clear();
             TokenParser TokenParser = new TokenParser(Source);
             while(!TokenParser.IsEnd())
@@ -121,14 +122,7 @@ namespace feltic.Language
         
         public int TextCount(int lineNumber)
         {
-            int textCount = 0;
-            TokenNode node = FirstLineTokenNode(lineNumber);
-            while (node != null && !node.Token.IsLineSpace())
-            {
-                textCount += node.Token.String.Length;
-                node = node.Next;
-            }
-            return textCount;
+            return LineText(lineNumber).Length;
         }
 
         public string LineText(int lineNumber)
@@ -152,19 +146,19 @@ namespace feltic.Language
         {
             get
             {
-                return AllTokenNodes.First;
+                return Begin;
             }
         }
 
         public TokenNode FirstLineTokenNode(int lineNumber)
         {
-            if(AllTokenNodes.Size==0)
+            if(Begin==null)
             {
                 return null;
             }
             if(lineNumber<=0)
             {
-                return AllTokenNodes.First;
+                return Begin;
             }
             if(lineNumber >= LineTokenNodes.Size-1)
             {

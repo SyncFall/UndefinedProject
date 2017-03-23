@@ -38,6 +38,7 @@ namespace feltic.Language
         public TypeDeclarationSignature TryTypeDeclaration(bool WithAssigment=true)
         {
             TrySpace();
+            if (!BeginStep()) return null;
             TypeDeclarationSignature signatur = new TypeDeclarationSignature();
             if (TryToken(TokenType.Native) != null)
             {
@@ -49,22 +50,26 @@ namespace feltic.Language
             }
             else
             {
+                ResetStep();
                 return null;
             }
             signatur.TypeGeneric = TryGenericDeclaration();
             signatur.TypeArray = TryArrayDeclaration();
             TrySpace();
-            if((signatur.NameIdentifier = TryIdentifier()) == null){
-                ;
+            if((signatur.NameIdentifier = TryIdentifier()) == null)
+            {
+                ResetStep();
+                return null;
             }
             if(WithAssigment)
             {
-                if((signatur.Assigment = TryNonSpace(StructureType.Assigment)) == null ||
+                if((signatur.Assigment = TryNonSpace(OperationType.Assigment)) == null ||
                    (signatur.AssigmentExpression = TryExpression()) == null
                 ){
                     ;
                 }
             }
+            CommitStep();
             return signatur;
         }
 

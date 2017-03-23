@@ -93,7 +93,7 @@ namespace feltic.Language
                 }
                 StructedAttributeSignature attribute = new StructedAttributeSignature();
                 attribute.Identifier = identifier;
-                if((attribute.Assigment = TryNonSpace(StructureType.Assigment)) == null ||
+                if((attribute.Assigment = TryNonSpace(OperationType.Assigment)) == null ||
                    (attribute.AssigmentOperand = TryOperand()) == null
                 ){
                     ;
@@ -121,6 +121,11 @@ namespace feltic.Language
 
         public StructedBlockSignature() : base(SignatureType.StructedBlock)
         { }
+
+        public override string ToString()
+        {
+            return (ElementList != null ? ElementList.ToString() : "");
+        }
     }
 
     public class StructedAttributeList : ListCollection<StructedAttributeSignature>

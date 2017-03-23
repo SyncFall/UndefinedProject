@@ -19,12 +19,11 @@ namespace feltic.Language
             if((signature = TryUse()) != null ||
                (signature = TryScope()) != null ||
                (signature = TryBaseSignature()) != null ||
-               (signature = TryExpression()) != null ||
                (signature = TryUnknown()) != null
             ){
                 ;
             }
-            //Console.WriteLine(signature);
+            Console.WriteLine(signature);
             return signature;
         }
 

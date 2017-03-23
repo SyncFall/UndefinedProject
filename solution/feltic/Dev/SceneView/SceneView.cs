@@ -1,5 +1,6 @@
 ﻿using feltic.Language;
 using feltic.UI;
+using Scope;
 using feltic.UI.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
@@ -12,27 +13,30 @@ using System.Threading.Tasks;
 
 namespace feltic.Integrator
 {
+
     public class SceneView
     {
         Registry Registry;
         GlyphContainer GlyphContainer = new GlyphContainer(new Font("DroidSansMono.ttf"));
-        public static VisualElement Root = new VisualElement(VisualElementType.Compose, null);
+        public static VisualElement Root = new VisualElement(VisualElementType.Block, null);
         public static VisualElement Code = null;
         public CodeText CodeText;
 
         public SceneView()
         {
             SourceList list = new SourceList();
-            list.Add(SourceText.FromFile("./Compose/first.src"));
+            list.Add(SourceText.FromFile("./Compose/second.src"));
             CodeText = new CodeText();
             this.Registry = new Registry();
             this.Registry.AddSourceList(list);
-            SignatureSymbol signature = Registry.EntryList[0].SourceSymbol.ScopeList[0].VisualElement;
+            SignatureSymbol signature = null;// Registry.EntryList[0].SourceSymbol.ScopeList[0].VisualElement;
             if (signature != null)
             {
                 AddVisualElements(Root, signature);
             }
-
+            Editor editor = new Editor();
+            editor.Create();
+            Root.AddChild(editor.Root.Visual);
             VisualElementMetrics.GetSize(Root);
             VisualElementMetrics.GetPosition(Root, 10, 10);
         }
