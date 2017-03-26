@@ -40,9 +40,9 @@ namespace feltic.Language
                 ParameterDeclarationSignature parameterDeclaration = methodSymbol.Signature.ParameterDeclaration;
                 if (parameterDeclaration != null)
                 {
-                    for (int j = 0; j < parameterDeclaration.ParameterList.Size; j++)
+                    for (int j = 0; j < parameterDeclaration.Elements.Size; j++)
                     {
-                        ParameterSignature parameter = parameterDeclaration.ParameterList.Get(j);
+                        ParameterSignature parameter = parameterDeclaration.Elements.Get(j);
                         TypeDeclarationSignature parameterTypeDeclaration = parameter.TypeDeclaration;
                         if (parameterTypeDeclaration.TypeIdentifier != null)
                         {
@@ -56,7 +56,7 @@ namespace feltic.Language
                 if (methodSymbol.Code != null)
                 {
                     CodeSignature codeSignature = methodSymbol.Code.Signature;
-                    ValidateStatementBlock(codeSignature.Statements);
+                    ValidateStatementBlock(codeSignature.Elements);
                 }
             }
         }

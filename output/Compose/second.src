@@ -26,6 +26,11 @@ object Editor
 	}
 }
 
+statement Fuck()
+{
+	
+}
+
 object ActionBar
 {	
 	Select solutionSelect = Select();

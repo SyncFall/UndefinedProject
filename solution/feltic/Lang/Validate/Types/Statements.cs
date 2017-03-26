@@ -8,44 +8,48 @@ namespace feltic.Language
 {
     public partial class Validator
     {
-        public void ValidateStatementBlock(StatementSignatureList StatementList)
+        public void ValidateStatementBlock(SignatureList SignatureList)
         {
-            for (int i = 0; i < StatementList.Size; i++)
+            if (SignatureList == null) return;
+            SignatureSymbol signature;
+            StatementSignature statement, lastStatement=null;
+            for (int i = 0; i < SignatureList.Size; i++)
             {
-                StatementSignature statement = StatementList.Get(i);
+                signature = SignatureList[i];
+                if(signature.Type != SignatureType.Statement) continue;
+                statement = signature as StatementSignature;
+
                 if (statement.Type == StatementType.If)
                 {
                     ConditionBlockStatementSignature ifStatement = statement as ConditionBlockStatementSignature;
                     ValidateExpression(ifStatement.ConditionExpression);
-                    ValidateStatementBlock(ifStatement.ChildStatements);
+                    ValidateStatementBlock(ifStatement.Elements);
                 }
                 else if (statement.Type == StatementType.ElseIf)
                 {
-                    StatementSignature lastLastment = (i > 0 ? StatementList.Get(i - 1) : null);
-                    if (lastLastment == null || lastLastment.Type != StatementType.If)
-                    {
+                    if (lastStatement == null || lastStatement.Type != StatementType.If){
                         ;
                     }
                     ConditionBlockStatementSignature elseIfStatement = statement as ConditionBlockStatementSignature;
                     ValidateExpression(elseIfStatement.ConditionExpression);
-                    ValidateStatementBlock(elseIfStatement.ChildStatements);
+                    ValidateStatementBlock(elseIfStatement.Elements);
                 }
                 else if (statement.Type == StatementType.Else)
                 {
                     BlockStatementSignature elseStatement = statement as BlockStatementSignature;
-                    ValidateStatementBlock(elseStatement.ChildStatements);
+                    ValidateStatementBlock(elseStatement.Elements);
                 }
                 else if(statement.Type == StatementType.For)
                 {
                     ForLoopStatementSignature forStatement = statement as ForLoopStatementSignature;
                     ValidateExpression(forStatement.ConditionExpression);
-                    ValidateStatementBlock(forStatement.ChildStatements);
+                    ValidateStatementBlock(forStatement.Elements);
                 }
                 else if (statement.Type == StatementType.While)
                 {
                     ConditionBlockStatementSignature whileStatement = statement as ConditionBlockStatementSignature;
                     ValidateExpression(whileStatement.ConditionExpression);
-                    ValidateStatementBlock(whileStatement.ChildStatements);
+                    ValidateStatementBlock(whileStatement.Elements);
                 }
                 else if (statement.Type == StatementType.Continue || statement.Type == StatementType.Break)
                 {
@@ -82,13 +86,13 @@ namespace feltic.Language
                 else if (statement.Type == StatementType.Try || statement.Type == StatementType.Finally)
                 {
                     BlockStatementSignature tryStatement = statement as BlockStatementSignature;
-                    ValidateStatementBlock(tryStatement.ChildStatements);
+                    ValidateStatementBlock(tryStatement.Elements);
                 }
                 else if (statement.Type == StatementType.Sync)
                 {
                     ConditionBlockStatementSignature syncStatement = statement as ConditionBlockStatementSignature;
                     ValidateExpression(syncStatement.ConditionExpression);
-                    ValidateStatementBlock(syncStatement.ChildStatements);
+                    ValidateStatementBlock(syncStatement.Elements);
                 }
                 else if (statement.Type == StatementType.NoOperation)
                 {
@@ -96,7 +100,7 @@ namespace feltic.Language
                 }
                 else if (statement.Type == StatementType.InnerBlock)
                 {
-                    ValidateStatementBlock(statement.ChildStatements);
+                    ValidateStatementBlock(statement.Elements);
                 }
                 else if (statement.Type == StatementType.TypeDeclaration)
                 {
@@ -118,6 +122,7 @@ namespace feltic.Language
                 {
                     throw new Exception("invalid state");
                 }
+                lastStatement = statement;
             }
         }
 

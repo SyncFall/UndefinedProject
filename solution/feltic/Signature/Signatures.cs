@@ -9,31 +9,29 @@ namespace feltic.Language
 {
     public enum SignatureType
     {
+        None=0,
         // common
         Unknown,
-        Seperator,
-        Block,
-        Keyword,
-        Native,
-        // source-file
+        // source
         Use,
         Scope,
         // path
         Identifier,
-        IdentifierPath,
-        IdentifierPathElement,
+        Path,
+        PathNode,
         // object, function, variable
-        Object,
-        Member,
-        Method,
-        Property,
-        TypeDeclaration,
-        GenericDeclaration,
-        GenericElement,
-        ArrayDeclaration,
-        ArrayParameter,
-        ParameterDeclaration,
-        Parameter,
+        ObjectDec,
+        VariableDec,
+        FunctionDec,
+        PropertyDec,
+        BlockDef,
+        TypeDec,
+        GenericDec,
+        GenericElm,
+        ArrayDec,
+        ArrayParam,
+        ParamDec,
+        Param,
         // code
         Code,
         Statement,
@@ -44,12 +42,13 @@ namespace feltic.Language
         Operand,
         OperandOperation,
         // operand/-access
-        LiteralAccess,
-        VariableAccess,
-        FunctionAccess,
-        ArrayAccess,
-        StructedBlockAccess,
-        BlockAccess,
+        ObjectOperand,
+        LiteralOperand,
+        VariableOperand,
+        FunctionOperand,
+        ArrayOperand,
+        BlockOperand,
+        StructedBlockOperand,
         // structed/visual-elements
         StructedBlock,
         StructedAttribute,

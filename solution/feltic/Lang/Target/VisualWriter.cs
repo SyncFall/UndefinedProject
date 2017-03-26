@@ -39,7 +39,7 @@ namespace feltic.Language
         public void WriteVisualComponent(int tabs, VisualComponent visual)
         {
             StructedBlockSignature structedSignature = visual.Signature;
-            if (structedSignature.OpenBlockIdentifiere.Type != TokenType.Visual)
+            if(!structedSignature.OpenBlockIdentifiere.IsType(TokenType.Visual))
             {
                 return;
             }
@@ -65,40 +65,40 @@ namespace feltic.Language
         {
             StructedBlockSignature sb = sig as StructedBlockSignature;
             StatementSignature ss = sig as StatementSignature;
-            if (sb != null && sb.OpenBlockIdentifiere.Type == TokenType.Visual)
+            if (sb != null && sb.OpenBlockIdentifiere.IsType(TokenType.Visual))
             {
-                if((sb.OpenBlockIdentifiere.Symbol as VisualKeywordSymbol).Type == VisualElementType.Scroll)
+                if(sb.OpenBlockIdentifiere.IsVisual(VisualType.Scroll))
                 {
                     WriteLine(tabs, "element = new VisualScrollElement(parent);");
                 }
                 else
                 {
-                    WriteLine(tabs, "element = new VisualElement(VisualElementType." + (sb.OpenBlockIdentifiere.Symbol as VisualKeywordSymbol).Type + ", parent);");
+                    WriteLine(tabs, "element = new VisualElement(VisualElementType." + sb.OpenBlockIdentifiere.Type + ", parent);");
                 }
             }
             else if(ss != null)
             {
                 OperandSignature op = (ss as ExpressionStatementSignature).Expression.Operand;
-                if (op.AccessList[0] is LiteralAccessSignature)
+                if (op.AccessList[0] is LiteralOperand)
                 {
-                    string stringData = (op.AccessList[0] as LiteralAccessSignature).Literal.String;
+                    string stringData = (op.AccessList[0] as LiteralOperand).Literal.String;
                     stringData = stringData.Replace("\"", "");
                     WriteLine(tabs, "element = new VisualTextElement(\"" + stringData + "\", parent);");
                 }
-                else if(op.AccessList[0] is VariableAccessSignature)
+                else if(op.AccessList[0] is VariableOperand)
                 {
                     Write("element.AddChild(this.Object.");
                     for (int i = 0; i < op.AccessList.Size; i++)
                     {
-                        Write((op.AccessList[i] as VariableAccessSignature).Identifier.String);
+                        Write((op.AccessList[i] as VariableOperand).Identifier.String);
                         if (i < op.AccessList.Size - 1)
                             Write(".");
                     }
                     WriteLine(");");
                 }
-                else if(op.AccessList[0] is StructedBlockAccessSignature)
+                else if(op.AccessList[0] is StructedBlockOperand)
                 {
-                    WriteVisualElement(tabs, sig, (op.AccessList[0] as StructedBlockAccessSignature).StructedBlock);
+                    WriteVisualElement(tabs, sig, (op.AccessList[0] as StructedBlockOperand).StructedBlock);
                 }
             }
             else
@@ -113,19 +113,19 @@ namespace feltic.Language
                     string attr = attribute.Identifier.String;
                     if (attr == "width" || attr == "height")
                     {
-                        string value = (attribute.AssigmentOperand.AccessList[0] as LiteralAccessSignature).Literal.String;
+                        string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
                         Way way = Way.Try(value);
                         WriteLine(tabs, "element.Room."+Char.ToUpper(attr[0])+attr.Substring(1)+" = new Way(WayType."+way.Type+", "+((way.way)+"").Replace(',', '.')+"f);");
                     }
                 }
             }
-            if (sb != null && sb.ElementList != null && sb.ElementList.Size > 0)
+            if (sb != null && sb.Elements != null && sb.Elements.Size > 0)
             {
                 WriteLine(tabs, "stack.Push(parent);");
                 WriteLine(tabs, "parent = element;");
-                for(int i=0; i<sb.ElementList.Size; i++)
+                for(int i=0; i<sb.Elements.Size; i++)
                 {
-                    WriteVisualElement(tabs, sb, sb.ElementList[i]);
+                    WriteVisualElement(tabs, sb, sb.Elements[i]);
                 }
                 if(parent != null)
                     WriteLine(tabs, "parent = stack.Pop() as VisualElement;");

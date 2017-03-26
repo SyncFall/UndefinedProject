@@ -13,12 +13,12 @@ namespace feltic.Language
 
         public SourceSymbol TrySymbol(SignatureContainer SignatureContainer)
         {
-            SourceSymbol sourceSymbol = new SourceSymbol(SignatureContainer.SourceText);
+            SourceSymbol sourceSymbol = new SourceSymbol(null);
             ScopeSymbol lastScopeSymbol = new ScopeSymbol(sourceSymbol, new ScopeSignature()); // default-scope
             sourceSymbol.ScopeList.Add(lastScopeSymbol);
-            for (int i = 0; i < SignatureContainer.SignatureNodes.Size; i++)
+            for (int i = 0; i < SignatureContainer.Signatures.Size; i++)
             {
-                SignatureSymbol signature = SignatureContainer.SignatureNodes[i].Signature;
+                SignatureSymbol signature = SignatureContainer.Signatures[i];
                 if(signature.Type == SignatureType.Use)
                 {
                     TryUse(sourceSymbol, signature as UseSignature);
@@ -27,7 +27,7 @@ namespace feltic.Language
                 {
                     lastScopeSymbol = TryScope(sourceSymbol, signature as ScopeSignature);
                 }
-                else if(signature.Type == SignatureType.Object)
+                else if(signature.Type == SignatureType.ObjectDec)
                 {
                     TryObject(lastScopeSymbol, signature as ObjectSignature);
                 }
@@ -100,19 +100,19 @@ namespace feltic.Language
                 for (int i = 0; i < Signature.ElementList.Size; i++)
                 {
                     SignatureSymbol element = Signature.ElementList[i];
-                    if(element.Type == SignatureType.Member)
+                    if(element.Type == SignatureType.VariableDec)
                     {
-                        TryMember(objectSymbol, element as MemberSignature);
+                        TryMember(objectSymbol, element as VariableSignature);
                     }
-                    else if(element.Type == SignatureType.Method)
+                    else if(element.Type == SignatureType.FunctionDec)
                     {
-                        TryMethod(objectSymbol, element as MethodSignature);
+                        TryMethod(objectSymbol, element as FunctionSignature);
                     }
                 }
             }
         }
 
-        public void TryMember(ObjectSymbol Object, MemberSignature Signature)
+        public void TryMember(ObjectSymbol Object, VariableSignature Signature)
         {
             if (Signature.TypeDeclaration == null)
             {
@@ -133,7 +133,7 @@ namespace feltic.Language
             }
         }
 
-        public void TryMethod(ObjectSymbol Object, MethodSignature Signature)
+        public void TryMethod(ObjectSymbol Object, FunctionSignature Signature)
         {
             if (Signature.TypeDeclaration == null)
             {

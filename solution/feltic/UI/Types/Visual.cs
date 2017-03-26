@@ -16,7 +16,7 @@ namespace feltic.UI.Types
 
     public class VisualElement
     {
-        public VisualElementType Type;
+        public VisualType Type;
         public VisualElement Parent;
         public Room Room;
         public Size Size;
@@ -25,7 +25,7 @@ namespace feltic.UI.Types
         public InputListener InputListener;
         public Color Color;
 
-        public VisualElement(VisualElementType Type, VisualElement Parent)
+        public VisualElement(VisualType Type, VisualElement Parent)
         {
             this.Type = Type;
             this.Parent = Parent;
@@ -44,13 +44,13 @@ namespace feltic.UI.Types
 
         public virtual void Draw(float X=0, float Y=0, float OffsetX=0, float OffsetY=0, float Width=0, float Height=0)
         {
-            if (Type == VisualElementType.Text)
+            if (Type == VisualType.Text)
             {
                 (this as VisualTextElement).DrawText(this.Color, X, Y - 3, OffsetX, OffsetY, Width, Height);
                 return;
             }
 
-            if (Type == VisualElementType.Scroll)
+            if (Type == VisualType.Scroll)
             {
                 if (Childrens != null && Childrens.Size == 1)
                 {
@@ -96,7 +96,7 @@ namespace feltic.UI.Types
                 bool smaller = (currentY + childSize.Height < Y + OffsetY);
                 bool taller = false;
                 bool notVisible = false;
-                if (childElement.Type == VisualElementType.Text && Childrens.Size > 1)
+                if (childElement.Type == VisualType.Text && Childrens.Size > 1)
                 {
                     taller = (realY - Y + childSize.Height > (Height > 0 ? Height : Size.Height));
                     notVisible = (currentX + childSize.Width < X + OffsetX) || (currentX > X + OffsetX + (Width > 0 ? Width : Size.Width));
@@ -132,15 +132,15 @@ namespace feltic.UI.Types
                 }
                 if (childSize != null && childSize.Width != -1f && childSize.Height != -1f)
                 {
-                    if(childElement.Type == VisualElementType.Block)
+                    if(childElement.Type == VisualType.Block)
                     {
                         currentY += childSize.Height;
                     }
-                    else if(childElement.Type == VisualElementType.Inline || childElement.Type == VisualElementType.Column)
+                    else if(childElement.Type == VisualType.Inline || childElement.Type == VisualType.Column)
                     {
                         currentX += childSize.Width;
                     }
-                    else if(childElement.Type == VisualElementType.Text)
+                    else if(childElement.Type == VisualType.Text)
                     {
                         if (Childrens.Size == 1)
                             break;
@@ -153,7 +153,7 @@ namespace feltic.UI.Types
                             }                            
                         }
                     }
-                    else if(childElement.Type == VisualElementType.Break)
+                    else if(childElement.Type == VisualType.Break)
                     {
                         currentY += childSize.Height;
                         currentX = X;
@@ -316,15 +316,15 @@ namespace feltic.UI.Types
                     VisualElement childElement = Element.Childrens[i];
                     Size childSize = GetSize(childElement);
                     Position childPosition = GetPosition(childElement, currentX, currentY);
-                    if (childElement.Type == VisualElementType.Block)
+                    if (childElement.Type == VisualType.Block)
                     {
                         currentY += childSize.Height;
                     }
-                    else if (childElement.Type == VisualElementType.Inline || childElement.Type == VisualElementType.Column)
+                    else if (childElement.Type == VisualType.Inline || childElement.Type == VisualType.Column)
                     {
                         currentX += childSize.Width;
                     }
-                    else if (childElement.Type == VisualElementType.Text || childElement.Type == VisualElementType.Input)
+                    else if (childElement.Type == VisualType.Text || childElement.Type == VisualType.Input)
                     {
                         if(Element.Childrens.Size==1)
                         {
@@ -335,7 +335,7 @@ namespace feltic.UI.Types
                             currentX += childSize.Width;   
                         }
                     }
-                    else if (childElement.Type == VisualElementType.Break)
+                    else if (childElement.Type == VisualType.Break)
                     {
                         currentY += childSize.Height;
                         currentX = 0;
@@ -355,13 +355,13 @@ namespace feltic.UI.Types
             }
 
             // text-size
-            if (Element.Type == VisualElementType.Text)
+            if (Element.Type == VisualType.Text)
             {
                 return (Element.Size = (Element as VisualTextElement)._TextHandle.Size);
             }
 
             // break-size
-            if(Element.Type == VisualElementType.Break)
+            if(Element.Type == VisualType.Break)
             {
                 return (Element.Size = new Size(0, new UI.Text(" ", null).Size.Height));
             }
@@ -371,7 +371,7 @@ namespace feltic.UI.Types
             float height = GetHeight(Element);
 
             // total width from parents for block element
-            if (width == -1f && (Element.Type == VisualElementType.Block || Element.Type == VisualElementType.Scroll))
+            if (width == -1f && (Element.Type == VisualType.Block || Element.Type == VisualType.Scroll))
             {
                 if ((width = ParentWidth(Element)) != -1f)
                 {
@@ -380,7 +380,7 @@ namespace feltic.UI.Types
             }
 
             // total height from parents for columen element
-            if (height == -1f && (Element.Type == VisualElementType.Column || Element.Type == VisualElementType.Scroll))
+            if (height == -1f && (Element.Type == VisualType.Column || Element.Type == VisualType.Scroll))
             {
                 if ((height = ParentHeight(Element)) != -1f)
                 {
@@ -389,7 +389,7 @@ namespace feltic.UI.Types
             }
             
             // default sizes for input-field
-            if ((width == -1f || height == -1f) && Element.Type == VisualElementType.Input)
+            if ((width == -1f || height == -1f) && Element.Type == VisualType.Input)
             {
                 Size size = new Text(new string(' ', 15), null).Size;
                 if(width == -1f) width = size.Width;
@@ -404,7 +404,7 @@ namespace feltic.UI.Types
             {
                 VisualElement childElement = Element.Childrens[i];
                 Size childSize = GetSize(childElement);
-                if (childElement.Type == VisualElementType.Block || childElement.Type == VisualElementType.Scroll)
+                if (childElement.Type == VisualType.Block || childElement.Type == VisualType.Scroll)
                 {
                     if (childSize.Width > childsWidth)
                     {
@@ -412,14 +412,14 @@ namespace feltic.UI.Types
                     }
                     childsHeight += childSize.Height;
                 }
-                else if(childElement.Type == VisualElementType.Inline || childElement.Type == VisualElementType.Column){
+                else if(childElement.Type == VisualType.Inline || childElement.Type == VisualType.Column){
                     childsWidth += childSize.Width;
                     if (childSize.Height > childsHeight)
                     {
                         childsHeight = childSize.Height;
                     }
                 }
-                else if(childElement.Type == VisualElementType.Text || childElement.Type == VisualElementType.Input)
+                else if(childElement.Type == VisualType.Text || childElement.Type == VisualType.Input)
                 {
                     if(Element.Childrens.Size == 1)
                     {
@@ -432,7 +432,7 @@ namespace feltic.UI.Types
                         currentWidth += childSize.Width;
                     }
                 }
-                else if (childElement.Type == VisualElementType.Break)
+                else if (childElement.Type == VisualType.Break)
                 {
                     childsHeight += childSize.Height;
                     if(currentWidth > childsWidth)
@@ -444,7 +444,7 @@ namespace feltic.UI.Types
             }
 
             // extend element size
-            if(Element.Type != VisualElementType.Scroll)
+            if(Element.Type != VisualType.Scroll)
             {
                 if (childsWidth > width)
                     width = childsWidth;
@@ -476,7 +476,7 @@ namespace feltic.UI.Types
             }
         }
 
-        public VisualTextElement(string String, VisualElement Parent, Color Color=null) : base(VisualElementType.Text, Parent)
+        public VisualTextElement(string String, VisualElement Parent, Color Color=null) : base(VisualType.Text, Parent)
         {
             this.Text = String;
             this.Color = Color;
@@ -495,18 +495,18 @@ namespace feltic.UI.Types
         {
             get
             {
-                if (Childrens != null && Childrens[0].Type == VisualElementType.Text)
+                if (Childrens != null && Childrens[0].Type == VisualType.Text)
                     return (Childrens[0] as VisualTextElement).Text;
                 return "";
             }
             set
             {
-                if (Childrens != null && Childrens[0].Type == VisualElementType.Text)
+                if (Childrens != null && Childrens[0].Type == VisualType.Text)
                     (Childrens[0] as VisualTextElement).Text = (value != null ? value : "");
             }
         }
 
-        public VisualInputElement(VisualElement Parent) : base(VisualElementType.Input, Parent)
+        public VisualInputElement(VisualElement Parent) : base(VisualType.Input, Parent)
         {
             this.InputListener = new TextListener(this);
         }
@@ -547,7 +547,7 @@ namespace feltic.UI.Types
         public Size ScrollYSize = new Size(ScrollThickness, 0);
         public Size ScrollXSize = new Size(0, ScrollThickness);
 
-        public VisualScrollElement(VisualElement Parent) : base(VisualElementType.Scroll, Parent)
+        public VisualScrollElement(VisualElement Parent) : base(VisualType.Scroll, Parent)
         {
             this.InputListener = new ScrollListener(this);
         }

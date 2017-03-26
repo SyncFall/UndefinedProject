@@ -1,5 +1,5 @@
 
-<compose width=900 height=550px>
+<block width=900px height=550px>
 	<block height=25px>"Compose-Editor"</block>
 	<block height=20px>
 		<column>"Workspace"</column>
@@ -20,5 +20,4 @@
 		<column width=30%>"navigation"</column>
 	</block>
 	<block height=125px>"status"</block>
-</compose>
-
+</block>

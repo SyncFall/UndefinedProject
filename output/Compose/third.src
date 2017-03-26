@@ -1,38 +1,110 @@
 
-entry wildcard = '/*';
+// function/object/logic/system/dynamic/structed/visual/data/architecture
 
-var input = Input();
-input.Success = {
-	Entry.Redirect(Fuck);
-};
-.input
+// intern-segementation
+scope pain.gain;
 
-compose Input
+// application-segmentation
+node main = '/*';
+
+// source-depends
+using pipi;
+using bill;
+
+// object-declaration
+object Editor
 {
-	get string Text
-		return field.content;
-	end
+	extend
+}
 
-	func Check()
-	{
-		if(Text == "abc"){
-			Success();
-		}
+// data-types
+void
+bool
+byte,
+int, long, big
+float, double, high
+char, string,
+object, type, var, func
+list, map,
+linked,stacked
+generic
+enum, attr, exception
+
+// variable-declaration/definition
+Button button;
+Button buttonAssigment = Button();
+button = new Button();
+
+// constructor
+Editor(int a)
+{ 
+	this
+	base
+	parent
+	new
+	part
+}
+
+// function
+func method(bool yes)
+abstract
+implement
+override
+virtual
+throws
+part
+state
+{ }
+
+// access
+static
+const
+readonly
+
+// property
+get string Property[int idx=0]
+{ }
+set string Prop
+{ }
+
+// assigment/expression/operation/operand/operator/access
+button = buttons[0].Name("change", Property:true);
+
+// statements
+if(!false && true){
+	for(int i=0; i<100; i++){
+		i += i;
 	}
+	// condition
+	// loop
+	// error
+	// control
+	// other
+}
+return "yes";
 
-	state Success
-	{
-		input.readonly = true;
-	}
+// block-assigment
+byte[] array = {1, 2, 3};
 
-	default template Input
-	{
-		<inline>
-			var field = <input minWidth=50px active=Check()/>
-		</inline>
+// anonymous-implementation and inititial-members
+object obj = Object(1, 2, peter:A, jo:"Smash"){
+	func implement tata(){
+
 	}
 }
 
-entry Fuck
+// text-block-segmentation
+{ }
+;
+end
 
-."hello"
+// structed/visual blocks
+Root = <block>.var = <input attr=1px/></block>;
+compose,visual,template,block,scene,component,graph,physic,actor,timeline,schema,event
+
+// data-language
+select last Pie;
+data, statement
+
+// application
+session, activity, case, service, host, client, request, response, device

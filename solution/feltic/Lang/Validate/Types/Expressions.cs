@@ -45,7 +45,7 @@ namespace feltic.Language
             {
                 left = ValidateOperand(Expression.Operand);
             }
-            if(Expression.OperationList.Size == 0)
+            if(Expression.OperationList == null)
             {
                 return left;
             }
@@ -55,47 +55,47 @@ namespace feltic.Language
             for (int i=0; i<Expression.OperationList.Size; i++)
             {
                 ExpressionOperationPair operationPair = Expression.OperationList.Get(i);
-                OperationSymbol operation = operationPair.Operation.Token.Symbol as OperationSymbol;
+                OperationSymbol operation = operationPair.Operation.Token as OperationSymbol;
 
                 ExpressionResultType right = ValidateExpression(operationPair.ExpressionPair);
 
-                if(operation.Group == OperationGroup.LogicAndOr)
+                if(operation.IsCategory(OperationCategory.LogicAndOr))
                 {
-                    result = new ExpressionResultType(Natives.EnumMap.GetValue(NativeType.Bool));
+                    result = null;
                     hasResult = true;
                 }
-                else if(operation.Group == OperationGroup.LogicEqualNot)
+                else if(operation.IsCategory(OperationCategory.LogicEqualNot))
                 {
-                    result = new ExpressionResultType(Natives.EnumMap.GetValue(NativeType.Bool));
+                    result = null;
                     hasResult = true;
                 }
-                else if(operation.Group == OperationGroup.LogicRelationCompare)
+                else if(operation.IsCategory(OperationCategory.LogicRelationCompare))
                 {
-                    result = new ExpressionResultType(Natives.EnumMap.GetValue(NativeType.Bool));
+                    result = null;
                     hasResult = true;
                 }
-                else if(operation.Group == OperationGroup.MathAssigment)
+                else if(operation.IsCategory(OperationCategory.MathAssigment))
                 {
                     if(!hasResult)
                     {
                         result = left;
                     }
                 }
-                else if(operation.Group == OperationGroup.Assigment)
+                else if(operation.IsCategory(OperationCategory.Assigment))
                 {
                     if (!hasResult)
                     {
                         result = left;
                     }
                 }
-                else if(operation.Group == OperationGroup.Math)
+                else if(operation.IsCategory(OperationCategory.Math))
                 {
                     if (!hasResult)
                     {
                         result = left;
                     }
                 }
-                else if(operation.Group == OperationGroup.Type)
+                else if(operation.IsCategory(OperationCategory.Type))
                 {
                     ;
                 }
@@ -115,23 +115,23 @@ namespace feltic.Language
             ExpressionResultType result = null;
             for(int i=0; i<Operand.AccessList.Size; i++)
             {
-                AccessSignature accessSignature = Operand.AccessList.Get(i);
-                if(accessSignature.Type == SignatureType.LiteralAccess)
+                OperandAccessSignature accessSignature = Operand.AccessList.Get(i);
+                if(accessSignature.Type == SignatureType.LiteralOperand)
                 {
-                    LiteralSymbol literalSymbol = (accessSignature as LiteralAccessSignature).Literal.Symbol as LiteralSymbol;
-                    result = new ExpressionResultType(Natives.EnumMap.GetValue(NativeType.Number));
+                    LiteralSymbol literalSymbol = (accessSignature as LiteralOperand).Literal as LiteralSymbol;
+                    result = null;
                 }
-                else if(accessSignature.Type == SignatureType.VariableAccess)
+                else if(accessSignature.Type == SignatureType.VariableOperand)
                 {
-                    string variableIdentifiere = (accessSignature as VariableAccessSignature).Identifier.String;
+                    string variableIdentifiere = (accessSignature as VariableOperand).Identifier.String;
                 }
-                else if(accessSignature.Type == SignatureType.FunctionAccess)
+                else if(accessSignature.Type == SignatureType.FunctionOperand)
                 {
-                    FunctionAccessSignature functionAccess = (accessSignature as FunctionAccessSignature);
+                    FunctionOperand functionAccess = (accessSignature as FunctionOperand);
                 }
-                else if(accessSignature.Type == SignatureType.ArrayAccess)
+                else if(accessSignature.Type == SignatureType.ArrayOperand)
                 {
-                    ArrayAccessSignature arrayAccess = (accessSignature as ArrayAccessSignature);
+                    ArrayOperand arrayAccess = (accessSignature as ArrayOperand);
                 }
                 else
                 {

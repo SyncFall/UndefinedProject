@@ -107,8 +107,8 @@ namespace feltic.Language
 
         public void TrySymbolFromSource()
         {
-            this.TokenContainer.SetSource(this.SourceText);
-            this.SignatureContainer.SetContainer(this.TokenContainer);
+            this.TokenContainer.SetSourceText(this.SourceText);
+            this.SignatureContainer.SetTokenContainer(this.TokenContainer);
             this.SymbolContainer.SetContainer(this.SignatureContainer);
             this.SourceSymbol = this.SymbolContainer.SourceSymbol;
         }

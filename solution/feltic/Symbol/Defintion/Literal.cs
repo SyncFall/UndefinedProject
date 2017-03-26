@@ -8,16 +8,19 @@ namespace feltic.Language
 {
     public enum LiteralType
     {
+        None=0,
+        // constants
         Null,
         True,
         False,
         This,
+        // variables
         Char,
         String,
         Number,
     }
 
-    public static class LiteralKeywords
+    public static class LiteralConstants
     {
         public static LiteralSymbol[] Array = 
         {
@@ -28,15 +31,14 @@ namespace feltic.Language
         };
     }
 
-    public class LiteralSymbol
+    public class LiteralSymbol : Symbol
     {
-        public readonly LiteralType Type;
-        public readonly string String;
+        public LiteralSymbol(LiteralType Type, string String) : base(String, (int)TokenType.Literal, (int)Type)
+        { }
 
-        public LiteralSymbol(LiteralType type, string String)
+        public bool IsType(LiteralType Type)
         {
-            this.Type = type;
-            this.String = String;
+            return (this.Type == (int)Type);
         }
     }
 }

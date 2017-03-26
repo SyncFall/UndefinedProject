@@ -16,11 +16,14 @@ namespace feltic
         public static void Main()
         {
             Utils.PrintSourceTreeStatistics(@"..\solution\feltic\");
+
+            /*
             SourceList list = new SourceList();
             list.Add(SourceText.FromFile("Compose/second.src"));
             Registry registry = new Registry();
             registry.AddSourceList(list);
             registry.WriteToTarget("D:\\dev\\UndefinedProject\\output\\csharp.cs");
+            */
 
             //Visual1 elm = new Visual1();
           

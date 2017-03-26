@@ -1,0 +1,33 @@
+
+object Test
+{
+	int i1;
+	int i2 = 0;
+	Pie p1;
+	Pie p2 = Pie();
+	Pie p3 = new Pie(1, "str");
+
+	void Test(){}
+	int Test(int a, string b){}
+	Bold Test()
+	{
+		fuck;
+		fuck.create();
+		fuck.array[2];
+		fuck.thing().pie;
+
+		if(true && i > 0 || 4 != 4f){
+			break;
+			continue;
+			return this;
+			return false;
+			return i;
+		}
+
+
+		for(int i=0; i<100; i++){
+			i+=1;
+		}
+	}
+}
+

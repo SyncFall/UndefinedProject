@@ -192,9 +192,9 @@ namespace feltic.Integrator
             {
                 lineNumber = 0;
             }
-            else if(lineNumber > CodeText.TokenContainer.LineCount()-1)
+            else if(lineNumber > CodeText.TokenContainer.LineCount-1)
             {
-                lineNumber = CodeText.TokenContainer.LineCount()-1;
+                lineNumber = CodeText.TokenContainer.LineCount-1;
             }
 
             string lineText = CodeText.TokenContainer.LineText(lineNumber);
@@ -236,9 +236,9 @@ namespace feltic.Integrator
             {
                 LineNumber = 0;
             }
-            else if (LineNumber >= TokenContainer.LineCount())
+            else if (LineNumber >= TokenContainer.LineCount)
             {
-                LineNumber = TokenContainer.LineCount() - 1;
+                LineNumber = TokenContainer.LineCount - 1;
             }
             if (CursorPosition < 0)
             {
@@ -467,7 +467,7 @@ namespace feltic.Integrator
             }
             else
             {
-                if (LineNumber < TokenContainer.LineCount()-1)
+                if (LineNumber < TokenContainer.LineCount-1)
                 {
                     LineNumber++;
                     CursorPosition = 0;
@@ -491,7 +491,7 @@ namespace feltic.Integrator
 
         public void CursorDown()
         {
-            if (LineNumber < TokenContainer.LineCount()-1)
+            if (LineNumber < TokenContainer.LineCount-1)
             {
                 LineNumber++;
                 CursorPosition = CursorPreferedPosition;
@@ -528,12 +528,14 @@ namespace feltic.Integrator
 
             yOffset = start.y + (((fontMetric.VerticalAdvance + fontMetric.LineSpace) * (LineNumber)) - (offsetHeight));
 
-            TokenNode node = TokenContainer.FirstLineTokenNode(LineNumber);
+            TokenPointer pointer = TokenContainer.FirstLineToken(LineNumber);
+            if (pointer == null) return;
             int cursorIdx = 0;
 
-            while(node != null)
+            // todo
+            Symbol token = pointer.Current;
+            while (true)
             {
-                TokenSymbol token = node.Token;
                 for (int tokenIdx = 0; tokenIdx < token.String.Length && cursorIdx < CursorPosition; tokenIdx++, cursorIdx++)
                 {
                     char charCode = token.String[tokenIdx];
@@ -551,7 +553,8 @@ namespace feltic.Integrator
                         xOffset += glyph.HoriziontalAdvance;
                     }
                 }
-                node = node.Next;
+                token = pointer.Next;
+                if (token == null || token.IsLineSpace()) break;
             }
 
             float glyphX = xOffset - (float)Math.Ceiling(fontMetric.Delimeter.Width / 2f);

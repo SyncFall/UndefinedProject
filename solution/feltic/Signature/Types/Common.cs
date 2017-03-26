@@ -9,26 +9,32 @@ namespace feltic.Language
 {
     public partial class SignatureParser
     {
-        public IdentifierPathSignature TryIdentifierPath()
+        public PathSignature TryPath()
         {
-            IdentifierPathSignature signature = new IdentifierPathSignature();
-            while (TryToken(TokenType.Identifier) != null)
+            TrySpace();
+            if(TryToken(TokenType.Identifier) == null)
             {
-                IdentifierPathElementSignatur element = new IdentifierPathElementSignatur();
-                signature.PathElements.Add(element);
+                return null;
+            }
+            PathSignature signature = new PathSignature();
+            do
+            {
+                PathNodeSignature element = new PathNodeSignature();
+                signature.Elements.Add(element);
                 element.Identifier = PrevToken;
                 element.Seperator = TryNonSpace(StructureType.Point);
-                if (element.Seperator == null)
+                if(element.Seperator == null)
                 {
                     break;
                 }
-            }
-            return (signature.PathElements.Size > 0 ? signature : null);
+            }while (TryToken(TokenType.Identifier) != null) ;
+            return signature;
         }
 
-        public TokenSymbol TryIdentifier()
+        public Symbol TryIdentifier()
         {
-            if (TryToken(TokenType.Identifier) == null)
+            TrySpace();
+            if(TryToken(TokenType.Identifier) == null)
             {
                 return null;
             }
@@ -38,13 +44,13 @@ namespace feltic.Language
         public TypeDeclarationSignature TryTypeDeclaration(bool WithAssigment=true)
         {
             TrySpace();
-            if (!BeginStep()) return null;
+            if(!BeginStep()) return null;
             TypeDeclarationSignature signatur = new TypeDeclarationSignature();
             if (TryToken(TokenType.Native) != null)
             {
                 signatur.TypeNative = PrevToken;
             }
-            else if (TryToken(TokenType.Identifier) != null)
+            else if(TryToken(TokenType.Identifier) != null)
             {
                 signatur.TypeIdentifier = PrevToken;
             }
@@ -76,8 +82,8 @@ namespace feltic.Language
         public GenericDeclarationSignature TryGenericDeclaration()
         {
             if(!BeginStep()) return null;
-            TokenSymbol blockBegin;
-            if((blockBegin = TryToken(OperationType.Less)) == null)
+            Symbol blockBegin;
+            if((blockBegin = TryNonSpace(OperationType.Less)) == null)
             {
                 ResetStep();
                 return null;
@@ -87,7 +93,7 @@ namespace feltic.Language
             while(true)
             {
                 GenericElementSignature element = new GenericElementSignature();
-                if((element.Identifier = TryIdentifier())!= null)
+                if((element.Identifier = TryIdentifier()) != null)
                 {
                     signature.ElementList.Add(element);
                     element.Generic = TryGenericDeclaration();
@@ -110,7 +116,7 @@ namespace feltic.Language
 
         public ArrayDeclarationSignature TryArrayDeclaration()
         {
-            TokenSymbol blockBegin;
+            Symbol blockBegin;
             if(!BeginStep()) return null;
             if((blockBegin = TryNonSpace(StructureType.BracketBegin)) == null)
             {
@@ -126,7 +132,7 @@ namespace feltic.Language
                     CommitStep();
                     break;
                 }
-                TokenSymbol dimensionToken;
+                Symbol dimensionToken;
                 if ((dimensionToken = TryNonSpace(StructureType.Seperator)) != null)
                 {
                     signature.DimensionSymbols.Add(dimensionToken);
@@ -146,8 +152,8 @@ namespace feltic.Language
 
         public ParameterDeclarationSignature TryParameterDeclaration(StructureType StructureBegin, StructureType StructureEnd)
         {
-            TokenSymbol blockBegin;
-            if ((blockBegin = TryNonSpace(StructureBegin)) == null)
+            Symbol blockBegin;
+            if((blockBegin = TryNonSpace(StructureBegin)) == null)
             {
                 return null;
             }
@@ -157,7 +163,31 @@ namespace feltic.Language
             while((typeDeclaration = TryTypeDeclaration()) != null)
             {
                 ParameterSignature parameter = new ParameterSignature(typeDeclaration);
-                signature.ParameterList.Add(parameter);
+                signature.Elements.Add(parameter);
+                parameter.Seperator = TryNonSpace(StructureType.Seperator);
+                if (parameter.Seperator == null)
+                {
+                    break;
+                }
+            }
+            signature.BlockEnd = TryNonSpace(StructureEnd);
+            return signature;
+        }
+
+        public ParameterDeclarationSignature TryParameterDefintion(StructureType StructureBegin, StructureType StructureEnd)
+        {
+            Symbol blockBegin;
+            if ((blockBegin = TryNonSpace(StructureBegin)) == null)
+            {
+                return null;
+            }
+            ParameterDeclarationSignature signature = new ParameterDeclarationSignature();
+            signature.BlockBegin = blockBegin;
+            ExpressionSignature expression;
+            while ((expression = TryExpression()) != null)
+            {
+                ParameterSignature parameter = new ParameterSignature(expression);
+                signature.Elements.Add(parameter);
                 parameter.Seperator = TryNonSpace(StructureType.Seperator);
                 if (parameter.Seperator == null)
                 {
@@ -171,16 +201,16 @@ namespace feltic.Language
 
     public class TypeDeclarationSignature : SignatureSymbol
     {
-        public TokenSymbol TypeNative;
-        public TokenSymbol TypeIdentifier;
+        public Symbol TypeNative;
+        public Symbol TypeIdentifier;
         public GenericDeclarationSignature TypeGeneric;
         public ArrayDeclarationSignature TypeArray;
-        public TokenSymbol NameIdentifier;
-        public TokenSymbol Assigment;
+        public Symbol NameIdentifier;
+        public Symbol Assigment;
         public ExpressionSignature AssigmentExpression;
-        public TokenSymbol Seperator;
+        public Symbol Seperator;
      
-        public TypeDeclarationSignature() : base(SignatureType.TypeDeclaration)
+        public TypeDeclarationSignature() : base(SignatureType.TypeDec)
         { }
 
         public override string ToString()
@@ -204,11 +234,11 @@ namespace feltic.Language
 
     public class GenericDeclarationSignature : SignatureSymbol
     {
-        public TokenSymbol BlockBegin;
+        public Symbol BlockBegin;
         public ListCollection<GenericElementSignature> ElementList = new ListCollection<GenericElementSignature>();
-        public TokenSymbol BlockEnd;
+        public Symbol BlockEnd;
 
-        public GenericDeclarationSignature() : base(SignatureType.GenericDeclaration)
+        public GenericDeclarationSignature() : base(SignatureType.GenericDec)
         { }
 
         public override string ToString()
@@ -219,11 +249,11 @@ namespace feltic.Language
 
     public class GenericElementSignature : SignatureSymbol
     {
-        public TokenSymbol Identifier;
-        public TokenSymbol Seperator;
+        public Symbol Identifier;
+        public Symbol Seperator;
         public GenericDeclarationSignature Generic = new GenericDeclarationSignature();
 
-        public GenericElementSignature() : base(SignatureType.GenericElement)
+        public GenericElementSignature() : base(SignatureType.GenericElm)
         { }
 
         public override string ToString()
@@ -240,11 +270,11 @@ namespace feltic.Language
 
     public class ArrayDeclarationSignature : SignatureSymbol
     {
-        public TokenSymbol BlockBegin;
-        public ListCollection<TokenSymbol> DimensionSymbols = new ListCollection<TokenSymbol>();
-        public TokenSymbol BlockEnd;
+        public Symbol BlockBegin;
+        public ListCollection<Symbol> DimensionSymbols = new ListCollection<Symbol>();
+        public Symbol BlockEnd;
 
-        public ArrayDeclarationSignature() : base(SignatureType.ArrayDeclaration)
+        public ArrayDeclarationSignature() : base(SignatureType.ArrayDec)
         { }
 
         public override string ToString()
@@ -255,16 +285,16 @@ namespace feltic.Language
 
     public class ParameterDeclarationSignature : SignatureSymbol
     {
-        public TokenSymbol BlockBegin;
-        public ListCollection<ParameterSignature> ParameterList = new ListCollection<ParameterSignature>();
-        public TokenSymbol BlockEnd;
+        public Symbol BlockBegin;
+        public ListCollection<ParameterSignature> Elements = new ListCollection<ParameterSignature>();
+        public Symbol BlockEnd;
 
-        public ParameterDeclarationSignature() : base(SignatureType.ParameterDeclaration)
+        public ParameterDeclarationSignature() : base(SignatureType.ParamDec)
         { }
 
         public override string ToString()
         {
-            return "parameter_list("+ParameterList+")";
+            return "parameter_list("+Elements+")";
         }
     }
 
@@ -272,14 +302,14 @@ namespace feltic.Language
     {
         public TypeDeclarationSignature TypeDeclaration;
         public ExpressionSignature Expression;
-        public TokenSymbol Seperator;
+        public Symbol Seperator;
 
-        public ParameterSignature(TypeDeclarationSignature TypeDeclaration) : base(SignatureType.Parameter)
+        public ParameterSignature(TypeDeclarationSignature TypeDeclaration) : base(SignatureType.Param)
         {
             this.TypeDeclaration = TypeDeclaration;
         }
 
-        public ParameterSignature(ExpressionSignature Expression) : base(SignatureType.Parameter)
+        public ParameterSignature(ExpressionSignature Expression) : base(SignatureType.Param)
         {
             this.Expression = Expression;
         }
@@ -300,30 +330,30 @@ namespace feltic.Language
         }
     }
 
-    public class IdentifierPathSignature : SignatureSymbol
+    public class PathSignature : SignatureSymbol
     {
-        public ListCollection<IdentifierPathElementSignatur> PathElements = new ListCollection<IdentifierPathElementSignatur>();
+        public ListCollection<PathNodeSignature> Elements = new ListCollection<PathNodeSignature>();
 
-        public IdentifierPathSignature() : base(SignatureType.IdentifierPath)
+        public PathSignature() : base(SignatureType.Path)
         { }
 
         public override string ToString()
         {
             string str = "path(";
-            for (int i = 0; i < PathElements.Size; i++)
+            for (int i = 0; i < Elements.Size; i++)
             {
-                str += PathElements.Get(i);
+                str += Elements.Get(i);
             }
             return str + ")";
         }
     }
 
-    public class IdentifierPathElementSignatur : SignatureSymbol
+    public class PathNodeSignature : SignatureSymbol
     {
-        public TokenSymbol Identifier;
-        public TokenSymbol Seperator;
+        public Symbol Identifier;
+        public Symbol Seperator;
 
-        public IdentifierPathElementSignatur() : base(SignatureType.IdentifierPathElement)
+        public PathNodeSignature() : base(SignatureType.PathNode)
         { }
 
         public override string ToString()

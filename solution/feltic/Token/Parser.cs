@@ -16,18 +16,19 @@ namespace feltic.Language
             this.TextParser = new TokenTextReader(source);
         }
 
-        public bool IsEnd()
+        public bool IsEnd
         {
-            return (TextParser.Position >= TextParser.Length);
+            get
+            {
+                return TextParser.Position >= TextParser.Length;
+            }
         }
 
-        public TokenSymbol TryToken()
+        public Symbol TryToken()
         {
-            if(IsEnd())
-            {
+            if(IsEnd)
                 return null;
-            }
-            TokenSymbol token=null;
+            Symbol token =null;
             if((token = TryKeywordOrIdentifierToken()) != null ||
                (token = TryCharOrStringToken()) != null ||
                (token = TryNumberToken()) != null ||
@@ -41,7 +42,7 @@ namespace feltic.Language
             return token;
         }
         
-        public TokenSymbol TryKeywordOrIdentifierToken()
+        public Symbol TryKeywordOrIdentifierToken()
         {
             int idx;
             char _char;
@@ -83,7 +84,7 @@ namespace feltic.Language
             // check for keyword
             if(alphaLowerLen > 0 && alphaNumericLen == 0)
             {
-                TokenSymbol tokenSymbol = Tokens.KeywordMap.FindSymbol(TextParser.Text, alphaLowerStart, alphaLowerStart + alphaLowerLen);
+                Symbol tokenSymbol = SymbolLookup.Keywords.FindSymbol(ref TextParser.Text, alphaLowerStart, alphaLowerStart + alphaLowerLen);
                 if(tokenSymbol != null)
                 {
                     return tokenSymbol;
@@ -97,17 +98,16 @@ namespace feltic.Language
                 for(i=0; i<alphaLowerLen; i++){ 
                     charArray[x++] = TextParser.Text[alphaLowerStart+i];
                 }
-                for(i=0; i < alphaNumericLen; i++){
+                for(i=0; i<alphaNumericLen; i++){
                     charArray[x++] = TextParser.Text[alphaNumericStart+i];
                 }
-                TokenSymbol identifierSymbol = new TokenSymbol(TokenType.Identifier, new string(charArray), null);
-                return identifierSymbol;
+                return new Symbol(new string(charArray), (int)TokenType.Identifier);
             }
             // none here
             return null;
         }
 
-        public TokenSymbol TryCharOrStringToken()
+        public Symbol TryCharOrStringToken()
         {
             int start = TextParser.Start;
             // check for string
@@ -116,7 +116,7 @@ namespace feltic.Language
                 TextParser.ToCharWithoutEscapeOrFileEnd('"');
                 int end = TextParser.Start;
                 string stringData = new string(TextParser.Text, start, end - start);
-                return new TokenSymbol(TokenType.Literal, stringData, new LiteralSymbol(LiteralType.String, stringData));
+                return new Symbol(stringData, (int)TokenType.Literal, (int)LiteralType.String);
             }
             // check for char
             if (TextParser.EqualChar('\''))
@@ -124,13 +124,13 @@ namespace feltic.Language
                 TextParser.ToCharWithoutEscapeOrFileEnd('\'');
                 int end = TextParser.Start;
                 string charData = new string(TextParser.Text, start, end - start);
-                return new TokenSymbol(TokenType.Literal, charData, new LiteralSymbol(LiteralType.Char, charData));
+                return new Symbol(charData, (int)TokenType.Literal, (int)LiteralType.Char);
             }
             // none here
             return null;
         }
 
-        public TokenSymbol TryNumberToken()
+        public Symbol TryNumberToken()
         {
             int start = TextParser.Start;
             int idx;
@@ -179,14 +179,14 @@ namespace feltic.Language
                     }
                 }
                 string numberData = new string(TextParser.Text, start, idx - start);
-                return new TokenSymbol(TokenType.Literal, numberData, new LiteralSymbol(LiteralType.Number, numberData));
+                return new Symbol(numberData, (int)TokenType.Literal, (int)LiteralType.Number);
             }
             // none here
             TextParser.Finish(start);
             return null;
         }
 
-        public TokenSymbol TryCommentToken()
+        public Symbol TryCommentToken()
         {
             int start = TextParser.Start;
             // check for line comment
@@ -195,7 +195,7 @@ namespace feltic.Language
                 TextParser.ToLineOrFileEnd();
                 int end = TextParser.Start;
                 string commentData = new string(TextParser.Text, start, end - start);
-                return new TokenSymbol(TokenType.Comment, commentData, null);
+                return new Symbol(commentData, (int)TokenType.Comment, 1);
             }
             // check for block comment
             else if (TextParser.EqualString("/*"))
@@ -203,45 +203,45 @@ namespace feltic.Language
                 TextParser.ToStringOrFileEnd("*/");
                 int end = TextParser.Start;
                 string commentData = new string(TextParser.Text, start, end - start);
-                return new TokenSymbol(TokenType.Comment, commentData, null);
+                return new Symbol(commentData, (int)TokenType.Comment, 2);
             }
             // none here
             return null;
         }
 
 
-        public TokenSymbol TryStructureToken()
+        public Symbol TryStructureToken()
         {
             if(TextParser.Text[TextParser.Start] > (char)127)
             {
                 return null;
             }
-            TokenSymbol symbol = Tokens.StructureMap.FindSymbol(TextParser.Text, TextParser.Start, TextParser.Start+1);
+            Symbol symbol = SymbolLookup.Structures.FindSymbol(ref TextParser.Text, TextParser.Start, TextParser.Start+1);
             if(symbol != null)
             {
-                TextParser.Finish(TextParser.Start + 1);
+                TextParser.Finish(TextParser.Start+1);
                 return symbol;
             }
             return null;
         }
 
-        public TokenSymbol TryOperationToken()
+        public Symbol TryOperationToken()
         {
-            for (int i = 0; i < Tokens.OperationArray.Length; i++)
+            for(int i=0; i<SymbolLookup.Operations.Length; i++)
             {
-                if (TextParser.EqualString(Tokens.OperationArray[i].String))
+                if(TextParser.EqualString(SymbolLookup.Operations[i].String))
                 {
-                    return Tokens.OperationArray[i];
+                    return SymbolLookup.Operations[i];
                 }
             }
             return null;
         }
 
-        public TokenSymbol TryUnknownToken()
+        public Symbol TryUnknownToken()
         {
             string unknown = TextParser.Text[TextParser.Start]+"";
-            TextParser.Finish(TextParser.Start + 1);
-            return new TokenSymbol(TokenType.Unknown, unknown, null);
+            TextParser.Finish(TextParser.Start+1);
+            return new Symbol(unknown, (int)TokenType.Unknown);
         }
     }
 }

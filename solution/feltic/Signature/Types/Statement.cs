@@ -11,122 +11,125 @@ namespace feltic.Language
     {
         public CodeSignature TryCode()
         {
-            TokenSymbol blockBegin = TryNonSpace(StructureType.BlockBegin);
-            if (blockBegin == null)
+            Symbol blockBegin = TryNonSpace(StructureType.BlockBegin);
+            if(blockBegin == null)
             {
                 return null;
             }
             CodeSignature signature = new CodeSignature();
             signature.BlockBegin = blockBegin;
-            if((signature.Statements = TryStatementList()) == null ||
-              ((signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null)
-            ){
+            signature.Elements = TryStatementList();
+            if((signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null){
                 ;
             }
             return signature;
         }
 
-        public StatementSignatureList TryStatementList()
+        public SignatureList TryStatementList()
         {
-            StatementSignatureList list = new StatementSignatureList();
-            StatementSignature signatur;
-            while ((signatur = TryStatement()) != null)
+            SignatureList signature=null;
+            SignatureSymbol element;
+            while (true)
             {
-                list.Add(signatur);
+                if((element = TryStatement()) == null)
+                    break;
+                if (signature == null)
+                    signature = new SignatureList();
+                signature.Add(element);
             }
-            return list;
+            return signature;
         }
 
         public StatementSignature TryStatement()
         {
             TrySpace();
 
-            TokenSymbol keyword=null, secondKeyword=null;
+            Symbol keyword=null, secondKeyword=null;
             StatementType type;
-            StatementGroup group;
+            StatementCategory group;
 
-            if ((keyword = TryToken(StatementKeywordType.If)) != null)
+            if((keyword = TryToken(StatementKeywordType.If)) != null)
             {
                 type = StatementType.If;
-                group = StatementGroup.ConditionBlock;
+                group = StatementCategory.ConditionBlock;
             }
             else if((keyword = TryToken(StatementKeywordType.Else)) != null)
             {
                 if((secondKeyword = TryToken(StatementKeywordType.If)) != null)
                 {
                     type = StatementType.ElseIf;
-                    group = StatementGroup.ConditionBlock;
+                    group = StatementCategory.ConditionBlock;
                 }
                 else
                 {
                     type = StatementType.Else;
-                    group = StatementGroup.BlockStatement;
+                    group = StatementCategory.BlockStatement;
                 }
             }
             else if((keyword = TryToken(StatementKeywordType.For)) != null)
             {
                 type = StatementType.For;
-                group = StatementGroup.ForLoop;
+                group = StatementCategory.ForLoop;
             }
             else if((keyword = TryToken(StatementKeywordType.While)) != null)
             {
                 type = StatementType.While;
-                group = StatementGroup.ConditionBlock;
+                group = StatementCategory.ConditionBlock;
             }
             else if((keyword = TryToken(StatementKeywordType.Continue)) != null)
             {
                 type = StatementType.Continue;
-                group = StatementGroup.KeywordStatement;
+                group = StatementCategory.KeywordStatement;
             }
-            else if ((keyword = TryToken(StatementKeywordType.Break)) != null)
+            else if((keyword = TryToken(StatementKeywordType.Break)) != null)
             {
                 type = StatementType.Break;
-                group = StatementGroup.KeywordStatement;
+                group = StatementCategory.KeywordStatement;
             }
-            else if ((keyword = TryToken(StatementKeywordType.Return)) != null)
+            else if((keyword = TryToken(StatementKeywordType.Return)) != null)
             {
                 type = StatementType.Return;
-                group = StatementGroup.ExpressionStatement;
+                group = StatementCategory.ExpressionStatement;
             }
             else if((keyword = TryToken(StatementKeywordType.Sanity)) != null)
             {
                 type = StatementType.Sanity;
-                group = StatementGroup.ExpressionStatement;
+                group = StatementCategory.ExpressionStatement;
             }
-            else if ((keyword = TryToken(StatementKeywordType.Throw)) != null)
+            else if((keyword = TryToken(StatementKeywordType.Throw)) != null)
             {
                 type = StatementType.Throw;
-                group = StatementGroup.ExpressionStatement;
+                group = StatementCategory.ExpressionStatement;
             }
-            else if ((keyword = TryToken(StatementKeywordType.Try)) != null)
+            else if((keyword = TryToken(StatementKeywordType.Try)) != null)
             {
                 type = StatementType.Try;
-                group = StatementGroup.BlockStatement;
+                group = StatementCategory.BlockStatement;
             }
-            else if ((keyword = TryToken(StatementKeywordType.Finally)) != null)
+            else if((keyword = TryToken(StatementKeywordType.Finally)) != null)
             {
                 type = StatementType.Finally;
-                group = StatementGroup.BlockStatement;
+                group = StatementCategory.BlockStatement;
             }
-            else if ((keyword = TryToken(StatementKeywordType.Sync)) != null)
+            else if((keyword = TryToken(StatementKeywordType.Sync)) != null)
             {
                 type = StatementType.Sync;
-                group = StatementGroup.ConditionBlock;
+                group = StatementCategory.ConditionBlock;
             }
             else if(TryToken(StructureType.Complete) != null)
             {
-                StatementSignature signature = new StatementSignature(StatementType.NoOperation, StatementGroup.NoOperation, false);
+                StatementSignature signature = new StatementSignature(StatementType.NoOperation, StatementCategory.NoOperation, false);
                 signature.Keyword = PrevToken;
                 return signature;
             }
             else
             {
-                TokenSymbol beginBlock = TryNonSpace(StructureType.BlockBegin);
+                Symbol beginBlock = TryNonSpace(StructureType.BlockBegin);
                 if(beginBlock != null)
                 {
                     BlockStatementSignature signature = new BlockStatementSignature(StatementType.InnerBlock);
                     signature.BlockBegin = beginBlock;
-                    if((signature.ChildStatements = TryStatementList()) == null ||
+                    if((signature.Elements = TryStatementList()) == null ||
                        (signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null
                     ){
                         ;
@@ -134,7 +137,7 @@ namespace feltic.Language
                     return signature;
                 }
                 TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
-                if(typeDeclaration != null)
+                if (typeDeclaration != null)
                 {
                     TypeDeclarationStatementSignature signature = new TypeDeclarationStatementSignature();
                     signature.TypeDeclaration = typeDeclaration;
@@ -153,7 +156,7 @@ namespace feltic.Language
                 return null;
             }
 
-            if(group == StatementGroup.ConditionBlock)
+            if(group == StatementCategory.ConditionBlock)
             {
                 ConditionBlockStatementSignature signature = new ConditionBlockStatementSignature(type);
                 signature.Keyword = keyword;
@@ -161,14 +164,14 @@ namespace feltic.Language
                    (signature.ConditionExpression = TryExpression()) == null ||
                    (signature.ConditionEnd = TryNonSpace(StructureType.ClosingEnd)) == null ||
                    (signature.BlockBegin = TryNonSpace(StructureType.BlockBegin)) == null ||
-                   (signature.ChildStatements = TryStatementList()) == null ||
+                   (signature.Elements = TryStatementList()) == null ||
                    (signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null
                 ){
                     ;
                 }
                 return signature;
             }
-            else if(group == StatementGroup.KeywordStatement)
+            else if(group == StatementCategory.KeywordStatement)
             {
                 StatementSignature signature = new StatementSignature(type, group, false);
                 signature.Keyword = keyword;
@@ -178,7 +181,7 @@ namespace feltic.Language
                 }
                 return signature;
             }
-            else if(group == StatementGroup.ExpressionStatement)
+            else if(group == StatementCategory.ExpressionStatement)
             {
                 ExpressionStatementSignature signature = new ExpressionStatementSignature(type);
                 signature.Keyword = keyword;
@@ -186,12 +189,12 @@ namespace feltic.Language
                 signature.Complete = TryNonSpace(StructureType.Complete);
                 return signature;
             }
-            else if(group == StatementGroup.BlockStatement)
+            else if(group == StatementCategory.BlockStatement)
             {
                 BlockStatementSignature signature = new BlockStatementSignature(type, group);
                 signature.Keyword = keyword;
                 if((signature.BlockBegin = TryNonSpace(StructureType.BlockBegin)) == null ||
-                   (signature.ChildStatements = TryStatementList()) == null ||
+                   (signature.Elements = TryStatementList()) == null ||
                    (signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null
                 ){
                     ;
@@ -262,7 +265,7 @@ namespace feltic.Language
                 }
                 signature.ConditionEnd = TryNonSpace(StructureType.ClosingEnd);
                 if((signature.BlockBegin = TryNonSpace(StructureType.BlockBegin)) == null ||
-                   (signature.ChildStatements = TryStatementList()) == null ||
+                   (signature.Elements = TryStatementList()) == null ||
                    (signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null
                 )
                 {
@@ -279,53 +282,36 @@ namespace feltic.Language
 
     public class CodeSignature : SignatureSymbol
     {
-        public TokenSymbol BlockBegin;
-        public StatementSignatureList Statements = new StatementSignatureList();
-        public TokenSymbol BlockEnd;
+        public Symbol BlockBegin;
+        public SignatureList Elements;
+        public Symbol BlockEnd;
 
         public CodeSignature() : base(SignatureType.Code)
         { }
 
         public override string ToString()
         {
-            return Statements.ToString();
-        }
-    }
-
-    public class StatementSignatureList : ListCollection<StatementSignature>
-    {
-        public override string ToString()
-        {
-            string str = "";
-            for(int i=0; i<Size; i++)
-            {
-                str += Get(i);
-                if(i < Size-1)
-                {
-                    str += "\n";
-                }
-            }
-            return str;
+            return (Elements!=null?Elements.ToString():"");
         }
     }
 
     public class StatementSignature : SignatureSymbol
     {
-        public TokenSymbol Keyword;
-        public TokenSymbol Complete;
+        public Symbol Keyword;
+        public Symbol Complete;
         public StatementType Type;
-        public StatementGroup Group;
+        public StatementCategory Group;
         public CodeSignature Code;
         public StatementSignature Parent;
-        public StatementSignatureList ChildStatements;
+        public SignatureList Elements;
 
-        public StatementSignature(StatementType StatementType, StatementGroup StatementGroup, bool HasChildStatements=false) : base(SignatureType.Statement)
+        public StatementSignature(StatementType StatementType, StatementCategory StatementGroup, bool HasChildStatements=false) : base(SignatureType.Statement)
         {
             this.Type = StatementType;
             this.Group = StatementGroup;
             if (HasChildStatements)
             {
-                this.ChildStatements = new StatementSignatureList();
+                this.Elements = new SignatureList();
             }
         }
         
@@ -339,7 +325,7 @@ namespace feltic.Language
     {
         public TypeDeclarationSignature TypeDeclaration;
 
-        public TypeDeclarationStatementSignature() : base(StatementType.TypeDeclaration, StatementGroup.TypeDeclaration)
+        public TypeDeclarationStatementSignature() : base(StatementType.TypeDeclaration, StatementCategory.TypeDeclaration)
         { }
 
         public override string ToString()
@@ -352,44 +338,44 @@ namespace feltic.Language
     {
         public ExpressionSignature Expression;
 
-        public ExpressionStatementSignature(StatementType StatementType) : base(StatementType, StatementGroup.ExpressionStatement)
+        public ExpressionStatementSignature(StatementType StatementType) : base(StatementType, StatementCategory.ExpressionStatement)
         { }
 
         public override string ToString()
         {
-            return "expression_statement(type:" + Type + ", expression("+Expression+"))";
+            return "expression_statement(type:" + Type + ", "+Expression+")";
         }
     }
 
     public class BlockStatementSignature : StatementSignature
     {
-        public TokenSymbol BlockBegin;
-        public TokenSymbol BlockEnd;
+        public Symbol BlockBegin;
+        public Symbol BlockEnd;
 
-        public BlockStatementSignature(StatementType StatementType, StatementGroup StatementGroup=StatementGroup.BlockStatement) : base(StatementType, StatementGroup, true)
+        public BlockStatementSignature(StatementType StatementType, StatementCategory StatementGroup=StatementCategory.BlockStatement) : base(StatementType, StatementGroup, true)
         { }
 
         public override string ToString()
         {
             string str = "block_statement(type:" + Type + ")\n";
-            str += ChildStatements.ToString();
+            if(Elements!=null) str += Elements.ToString();
             return str;
         }
     }
 
     public class ConditionBlockStatementSignature : BlockStatementSignature
     {
-        public TokenSymbol ConditionBegin;
-        public TokenSymbol ConditionEnd;
+        public Symbol ConditionBegin;
+        public Symbol ConditionEnd;
         public ExpressionSignature ConditionExpression;
 
-        public ConditionBlockStatementSignature(StatementType StatementType, StatementGroup StatementGroup=StatementGroup.ConditionBlock) : base(StatementType, StatementGroup)
+        public ConditionBlockStatementSignature(StatementType StatementType, StatementCategory StatementGroup=StatementCategory.ConditionBlock) : base(StatementType, StatementGroup)
         { }
 
         public override string ToString()
         {
             string str = "condition_block_statement(type:" + Type + ", expression(" + ConditionExpression + "))\n";
-            str += ChildStatements.ToString();
+            str += (Elements!=null?Elements.ToString():"");
             return str;
         }
     }
@@ -397,11 +383,11 @@ namespace feltic.Language
     public class ForLoopStatementSignature : ConditionBlockStatementSignature
     {
         public SignatureList ParameterList = new SignatureList();
-        public TokenSymbol ParameterDeclarationSeperator;
-        public TokenSymbol ConditionSeperator;
+        public Symbol ParameterDeclarationSeperator;
+        public Symbol ConditionSeperator;
         public SignatureList PostOperationList = new SignatureList();
 
-        public ForLoopStatementSignature() : base(StatementType.For, StatementGroup.ForLoop)
+        public ForLoopStatementSignature() : base(StatementType.For, StatementCategory.ForLoop)
         { }
 
         public override string ToString()
@@ -410,7 +396,7 @@ namespace feltic.Language
             str +="declaration("+ ParameterList + ")";
             str += ", condition_expression(" + ConditionExpression + ")";
             str += ", operations(" + PostOperationList + ")\n";
-            str += ChildStatements.ToString();
+            str += Elements.ToString();
             return str;
         }
     }

@@ -178,7 +178,7 @@ namespace feltic.Integrator
                 if (isClick)
                 {
                     CodeText.CodeSelection.Begin(0, 0);
-                    CodeText.CodeSelection.End(CodeText.TokenContainer.LineCount() - 1, CodeText.TokenContainer.TextCount(CodeText.TokenContainer.LineCount() - 1));
+                    CodeText.CodeSelection.End(CodeText.TokenContainer.LineCount - 1, CodeText.TokenContainer.TextCount(CodeText.TokenContainer.LineCount - 1));
                 }
             }
             // undo

@@ -1,8 +1,8 @@
 
 object BasicObject
 
-	data bool boolean;
-	data char character;
+	bool boolean;
+	char character;
 	byte[] bytes;
 	int integer;
 	float floating;

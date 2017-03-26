@@ -11,14 +11,15 @@ namespace feltic.Language
     {
         public UseSignature TryUse()
         {
-            if (TryToken(KeywordType.Use) == null)
+            TrySpace();
+            if(TryToken(ObjectType.Use) == null)
             {
                 return null;
             }
             UseSignature signatur = new UseSignature();
             signatur.Keyword = PrevToken;
             if (!TrySpace() ||
-                (signatur.IdentifierPath = TryIdentifierPath()) == null ||
+                (signatur.IdentifierPath = TryPath()) == null ||
                 (signatur.Complete = TryNonSpace(StructureType.Complete)) == null
             ){
                 ;
@@ -28,17 +29,17 @@ namespace feltic.Language
 
         public ScopeSignature TryScope()
         {
-            if (TryToken(KeywordType.Scope) == null)
+            TrySpace();
+            if(TryToken(ObjectType.Scope) == null)
             {
                 return null;
             }
             ScopeSignature signatur = new ScopeSignature();
             signatur.Keyword = PrevToken;
             if (!TrySpace() ||
-                (signatur.IdentifierPath = TryIdentifierPath()) == null ||
+                (signatur.IdentifierPath = TryPath()) == null ||
                 (signatur.Complete = TryNonSpace(StructureType.Complete)) == null
-            )
-            {
+            ){
                 ;
             }
             return signatur;
@@ -47,7 +48,7 @@ namespace feltic.Language
         public ObjectSignature TryObject()
         {
             TrySpace();
-            if (TryToken(NativeType.Object) == null)
+            if(TryToken(NativeType.Object) == null)
             {
                 return null;
             }
@@ -57,48 +58,49 @@ namespace feltic.Language
                 (signature.Identifier = TryIdentifier()) == null ||
                 (signature.BlockBegin = TryNonSpace(StructureType.BlockBegin)) == null
             ){
-                return signature;
+                return null;
             }
             SignatureSymbol element;
             while(true)
             {
-                if((element = TryBaseSignature()) == null)
-                {
-                    break;
+                if((element = TryVariable()) != null ||
+                   (element = TryFunction()) != null
+                ){
+                    signature.ElementList.Add(element);
+                    continue;
                 }
-                signature.ElementList.Add(element);
+                break;
             }
-            if ((signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null)
-            {
+            if((signature.BlockEnd = TryNonSpace(StructureType.BlockEnd)) == null){
                 ;
             }
             return signature;
         }
 
-        public MemberSignature TryMember()
+        public VariableSignature TryVariable()
         {
             TrySpace();
             if(!BeginStep()) return null;
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
-            if (typeDeclaration == null)
+            if(typeDeclaration == null)
             {
                 ResetStep();
                 return null;
             }
-            TokenSymbol complete = TryNonSpace(StructureType.Complete);
+            Symbol complete = TryNonSpace(StructureType.Complete);
             if(complete != null)
             {
-                MemberSignature member = new MemberSignature();
-                member.TypeDeclaration = typeDeclaration;
-                member.Complete = complete;
+                VariableSignature variable = new VariableSignature();
+                variable.TypeDeclaration = typeDeclaration;
+                variable.Complete = complete;
                 CommitStep();
-                return member;
+                return variable;
             }
             ResetStep();
             return null;
         }
 
-        public MethodSignature TryMethod()
+        public FunctionSignature TryFunction()
         {
             TrySpace();
             if(!BeginStep()) return null;
@@ -113,19 +115,19 @@ namespace feltic.Language
                 ResetStep();
                 return null;
             }
-            TokenSymbol enclosing = TryNonSpace(StructureType.ClosingBegin);
+            Symbol enclosing = TryNonSpace(StructureType.ClosingBegin);
             ResetStep();
             if(enclosing != null)
             {
-                MethodSignature method = new MethodSignature();
-                method.TypeDeclaration = typeDeclaration;
-                if ((method.ParameterDeclaration = TryParameterDeclaration(StructureType.ClosingBegin, StructureType.ClosingEnd)) == null ||
-                    (method.Code = TryCode()) == null
+                FunctionSignature function = new FunctionSignature();
+                function.TypeDeclaration = typeDeclaration;
+                if ((function.ParameterDeclaration = TryParameterDeclaration(StructureType.ClosingBegin, StructureType.ClosingEnd)) == null ||
+                    (function.Code = TryCode()) == null
                 ){
                     ;
                 }
                 CommitStep();
-                return method;
+                return function;
             }
             ResetStep();
             return null;
@@ -135,8 +137,8 @@ namespace feltic.Language
         {
             TrySpace();
             if(!BeginStep()) return null;
-            TokenSymbol propertyType = null;
-            if((propertyType = TryToken(KeywordType.Get)) == null && (propertyType = TryToken(KeywordType.Set)) == null)
+            Symbol propertyType = null;
+            if((propertyType = TryToken(ObjectType.Get)) == null && (propertyType = TryToken(ObjectType.Set)) == null)
             {
                 ResetStep();
                 return null;
@@ -153,15 +155,14 @@ namespace feltic.Language
                 ResetStep();
                 return null;
             }
-            TokenSymbol enclosing = TryNonSpace(StructureType.BlockBegin);
+            Symbol enclosing = TryNonSpace(StructureType.BlockBegin);
             ResetStep();
             if(enclosing != null)
             {
                 PropertySignature property = new PropertySignature(propertyType);
                 property.TypeDeclaration = typeDeclaration;
                 property.ParameterDeclaration = parameterDeclaration;
-                if ((property.Code = TryCode()) == null)
-                {
+                if((property.Code = TryCode()) == null){
                     ;
                 }
                 CommitStep();
@@ -174,9 +175,9 @@ namespace feltic.Language
 
     public class UseSignature : SignatureSymbol
     {
-        public TokenSymbol Keyword;
-        public IdentifierPathSignature IdentifierPath;
-        public TokenSymbol Complete;
+        public Symbol Keyword;
+        public PathSignature IdentifierPath;
+        public Symbol Complete;
 
         public UseSignature() : base(SignatureType.Use)
         { }
@@ -189,17 +190,12 @@ namespace feltic.Language
 
     public class ScopeSignature : SignatureSymbol
     {
-        public TokenSymbol Keyword;
-        public IdentifierPathSignature IdentifierPath;
-        public TokenSymbol Complete;
+        public Symbol Keyword;
+        public PathSignature IdentifierPath;
+        public Symbol Complete;
 
         public ScopeSignature() : base(SignatureType.Scope)
         { }
-
-        public bool IsDefaultScope()
-        {
-            return (IdentifierPath == null);
-        }
 
         public override string ToString()
         {
@@ -207,66 +203,49 @@ namespace feltic.Language
         }
     }
 
-    public class ObjectSignatureList : ListCollection<ObjectSignature>
-    {
-        public override string ToString()
-        {
-            string str = "";
-            for (int i = 0; i < Size; i++)
-            {
-                str += Get(i);
-            }
-            return str;
-        }
-    }
-
     public class ObjectSignature : SignatureSymbol
     {
-        public TokenSymbol Keyword;
-        public TokenSymbol Identifier;
-        public TokenSymbol BlockBegin;
+        public Symbol Keyword;
+        public Symbol Identifier;
+        public Symbol BlockBegin;
         public SignatureList ElementList = new SignatureList();
-        public TokenSymbol BlockEnd;
+        public Symbol BlockEnd;
 
-        public ObjectSignature() : base(SignatureType.Object)
+        public ObjectSignature() : base(SignatureType.ObjectDec)
         { }
 
         public override string ToString()
         {
-            string str = "object(" + Identifier + ")\n";
-            str += ElementList;
-            return str;
+            return "object(" + Identifier.String + ")\n"+ElementList;
         }
     }
 
-    public class MemberSignature : SignatureSymbol
+    public class VariableSignature : SignatureSymbol
     {
         public TypeDeclarationSignature TypeDeclaration;
-        public TokenSymbol Complete;
+        public Symbol Complete;
 
-        public MemberSignature() : base(SignatureType.Member)
+        public VariableSignature() : base(SignatureType.VariableDec)
         { }
 
         public override string ToString()
         {
-            string str = "member(";
-            str += TypeDeclaration;
-            return str + ")\n";
+            return "variable("+TypeDeclaration+")\n";
         }
     }
 
-    public class MethodSignature : SignatureSymbol
+    public class FunctionSignature : SignatureSymbol
     {
         public TypeDeclarationSignature TypeDeclaration;
         public ParameterDeclarationSignature ParameterDeclaration;
         public CodeSignature Code;
 
-        public MethodSignature() : base(SignatureType.Method)
+        public FunctionSignature() : base(SignatureType.FunctionDec)
         { }
 
         public override string ToString()
         {
-            string str = "method(";
+            string str = "function(";
             str += TypeDeclaration;
             str += ", "+ParameterDeclaration;
             str += ")\n";
@@ -279,10 +258,10 @@ namespace feltic.Language
     {
         public TypeDeclarationSignature TypeDeclaration;
         public ParameterDeclarationSignature ParameterDeclaration;
-        public TokenSymbol CodeType;
+        public Symbol CodeType;
         public CodeSignature Code;
 
-        public PropertySignature(TokenSymbol CodeType) : base(SignatureType.Property)
+        public PropertySignature(Symbol CodeType) : base(SignatureType.PropertyDec)
         {
             this.CodeType = CodeType;
         }
@@ -292,8 +271,8 @@ namespace feltic.Language
             string str = "property(";
             str += "type:"+CodeType.String+", ";
             str += TypeDeclaration;
-            str += ", parameters(" + ParameterDeclaration + ")";
-            str += ")\n";
+            str += ", "+ParameterDeclaration;
+            str += ")";
             str += Code;
             return str;
         }

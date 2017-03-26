@@ -29,11 +29,12 @@ namespace feltic.Integrator
         public void Save()
         {
             StreamWriter streamWriter = new StreamWriter(CodeText.SourceText.Filepath);
-            TokenNode node = TokenContainer.FirstTokenNode;
-            while(node != null)
+            TokenPointer pointer = TokenContainer.FirstToken;
+            Symbol token = pointer.Current;
+            while(token != null)
             {
-                streamWriter.Write(node.Token.String);
-                node = node.Next;
+                streamWriter.Write(token.String);
+                token = pointer.Next;
             }
             streamWriter.Flush();
             streamWriter.Close();
@@ -60,10 +61,10 @@ namespace feltic.Integrator
             this.VisualCode = CodeText.VisualCode;
             if(VisualCode == null) return;
             if(VisualCode.Childrens != null) VisualCode.Childrens.Clear();
-            TokenNode node = TokenContainer.FirstTokenNode;
-            while (node != null)
+            TokenPointer pointer = TokenContainer.FirstToken;
+            Symbol token = pointer.Current;
+            while (token != null)
             {
-                TokenSymbol token = node.Token;
                 if (token.IsStructure(StructureType.WhiteSpace))
                 {
                     new VisualTextElement(" ", VisualCode);
@@ -74,20 +75,19 @@ namespace feltic.Integrator
                 }
                 else if (token.IsStructure(StructureType.LineSpace))
                 {
-                    new VisualElement(VisualElementType.Break, VisualCode);
+                    new VisualElement(VisualType.Break, VisualCode);
                 }
-                else if (token.Type == TokenType.Keyword || token.Type == TokenType.Native || token.Type == TokenType.Statement)
+                else if(token.IsType(TokenType.Object) || token.IsType(TokenType.Native) || token.IsType(TokenType.Statement))
                 {
                     new VisualTextElement(token.String, VisualCode, CodeColor.Keyword);
                 }
-                else if (token.Type == TokenType.Literal)
+                else if (token.IsType(TokenType.Literal))
                 {
-                    LiteralSymbol literal = token.Symbol as LiteralSymbol;
-                    if (literal.Type == LiteralType.String || literal.Type == LiteralType.Char)
+                    if (token.IsLiteral(LiteralType.String) || token.IsLiteral(LiteralType.Char))
                     {
                         new VisualTextElement(token.String, VisualCode, CodeColor.String);
                     }
-                    else if (literal.Type == LiteralType.Number)
+                    else if (token.IsLiteral(LiteralType.Number))
                     {
                         new VisualTextElement(token.String, VisualCode, CodeColor.Normal);
                     }
@@ -96,11 +96,11 @@ namespace feltic.Integrator
                         new VisualTextElement(token.String, VisualCode, CodeColor.Keyword);
                     }
                 }
-                else if (token.Type == TokenType.Comment)
+                else if (token.IsType(TokenType.Comment))
                 {
                     new VisualTextElement(token.String, VisualCode, CodeColor.Comment);
                 }
-                else if (token.Type == TokenType.Unknown)
+                else if (token.IsType(TokenType.Unknown))
                 {
                     new VisualTextElement(token.String, VisualCode, CodeColor.Error);
                 }
@@ -108,7 +108,7 @@ namespace feltic.Integrator
                 {
                     new VisualTextElement(token.String, VisualCode, CodeColor.Normal);
                 }
-                node = node.Next;
+                token = pointer.Next;
             }
             Position pos = VisualCode.Position;
             VisualCode.Size = null;

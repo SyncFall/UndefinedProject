@@ -147,7 +147,7 @@ namespace feltic.Language
 
     public class MemberSymbolList : ListCollection<MemberSymbol>
     {
-        public MemberSymbol GetEqualByIdentifier(MemberSignature Signature)
+        public MemberSymbol GetEqualByIdentifier(VariableSignature Signature)
         {
             for (int i = 0; i < Size; i++)
             {
@@ -163,15 +163,15 @@ namespace feltic.Language
     public class MemberSymbol
     {
         public ObjectSymbol Object;
-        public MemberSignature Signature;
+        public VariableSignature Signature;
 
-        public MemberSymbol(ObjectSymbol ObjectSymbol, MemberSignature Signature)
+        public MemberSymbol(ObjectSymbol ObjectSymbol, VariableSignature Signature)
         {
             this.Object = ObjectSymbol;
             this.Signature = Signature;
         }
 
-        public bool IsEqualIdentifier(MemberSignature Compare)
+        public bool IsEqualIdentifier(VariableSignature Compare)
         {
             return false;
         }
@@ -179,7 +179,7 @@ namespace feltic.Language
 
     public class MethodSymbolList : ListCollection<MethodSymbol>
     {
-        public MethodSymbol GetEqualByIdentifier(MethodSignature Signature)
+        public MethodSymbol GetEqualByIdentifier(FunctionSignature Signature)
         {
             for (int i = 0; i < Size; i++)
             {
@@ -195,16 +195,16 @@ namespace feltic.Language
     public class MethodSymbol
     {
         public ObjectSymbol Object;
-        public MethodSignature Signature;
+        public FunctionSignature Signature;
         public CodeSymbol Code;
 
-        public MethodSymbol(ObjectSymbol ObjectSymbol, MethodSignature Signature)
+        public MethodSymbol(ObjectSymbol ObjectSymbol, FunctionSignature Signature)
         {
             this.Object = ObjectSymbol;
             this.Signature = Signature;
         }
 
-        public bool IsEqualIdentifier(MethodSignature Compare)
+        public bool IsEqualIdentifier(FunctionSignature Compare)
         {
             return false;
         }

@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace feltic.Language
 {
-    // n log n - keyword-lookup
-    public class TokenTrie
+    // n log n - keyword-lookup trie
+    public class SymbolTable
     {
         private Node Root = new Node(null);
 
-        public TokenTrie()
+        public SymbolTable()
         { }
 
-        public void AddSymbol(TokenSymbol Symbol)
+        public void AddSymbol(Symbol Symbol)
         {
             string String = Symbol.String;
             if (String == null || String.Length == 0)
@@ -24,7 +24,7 @@ namespace feltic.Language
             InsertNode(String, Symbol, Root);
         }
 
-        public TokenSymbol FindSymbol(char[] Chars, int start, int end)
+        public Symbol FindSymbol(ref char[] Chars, int start, int end)
         {
             int index=start;
             Node node=Root;
@@ -57,7 +57,7 @@ namespace feltic.Language
             }
         }
 
-        private void InsertNode(string String, TokenSymbol Symbol, Node Node)
+        private void InsertNode(string String, Symbol Symbol, Node Node)
         {
             int Char = String[0];
             if(Char < 0 || Char > 127)
@@ -87,12 +87,12 @@ namespace feltic.Language
             }
         }
 
-        class Node
+        public class Node
         {
-            public TokenSymbol Symbol;
+            public Symbol Symbol;
             public Node[] Childrens;
 
-            public Node(TokenSymbol Symbol)
+            public Node(Symbol Symbol)
             {
                 this.Symbol = Symbol;
                 this.Childrens = new Node[128];
