@@ -109,8 +109,8 @@
     <Compile Include="Symbol\Lookup\Lookup.cs" />
     <Compile Include="Symbol\Lookup\Symbol.cs" />
     <Compile Include="Symbol\Defintion\Visual.cs" />
-    <Compile Include="Lang\Target\TargetWriter.cs" />
-    <Compile Include="Lang\Target\VisualWriter.cs" />
+    <Compile Include="Target\TargetWriter.cs" />
+    <Compile Include="Target\VisualWriter.cs" />
     <Compile Include="Token\TextReader.cs" />
     <Compile Include="Token\Container.cs" />
     <Compile Include="Token\Parser.cs" />

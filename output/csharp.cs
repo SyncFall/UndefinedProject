@@ -8,38 +8,43 @@ using feltic.Integrator;
 
 namespace Scope
 {
-	public class Test
+	public class Editor
 	{
-		public int i1;
-		public int i2 = 0;
-		public Pie p1;
-		public Pie p2 = new Pie();
-		public Pie p3 = new Pie(1, "str");
+		public ActionBar ActionBar actionBar = new ActionBar();
+		public Workspace Workspace workspace = new Workspace();
+		public VisualObject VisualObject Root;
 
-		public void Test()
+		public Editor Editor Create()
 		{
 		}
-		public int Test(int a, string b)
+	}
+
+	public class ActionBar
+	{
+		public Select Select solutionSelect = new Select();
+		public Select Select runSelect = new Select();
+		public VisualObject VisualObject Root;
+
+		public ActionBar ActionBar Create()
 		{
 		}
-		public Bold Test()
+	}
+
+	public class Workspace
+	{
+		public VisualObject VisualObject Root;
+
+		public Workspace Workspace Create()
 		{
-						fuck;
-						fuck.create();
-						fuck.array[2];
-						fuck.thing().pie;
-			if(true && i > 0 || 4 != 4f)
-			{
-								break;
-								continue;
-								return this;
-								return false;
-								return i;
-			}
-			for(int i = 0;i < 100;i++)
-			{
-								i += 1;
-			}
+		}
+	}
+
+	public class Select
+	{
+		public VisualObject VisualObject Root;
+
+		public Select Select Create()
+		{
 		}
 	}
 

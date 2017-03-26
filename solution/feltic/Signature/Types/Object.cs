@@ -80,11 +80,11 @@ namespace feltic.Language
         public VariableSignature TryVariable()
         {
             TrySpace();
-            if(!BeginStep()) return null;
+            if(!Begin()) return null;
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration();
             if(typeDeclaration == null)
             {
-                ResetStep();
+                Reset();
                 return null;
             }
             Symbol complete = TryNonSpace(StructureType.Complete);
@@ -93,70 +93,75 @@ namespace feltic.Language
                 VariableSignature variable = new VariableSignature();
                 variable.TypeDeclaration = typeDeclaration;
                 variable.Complete = complete;
-                CommitStep();
+                Commit();
                 return variable;
             }
-            ResetStep();
+            Reset();
             return null;
         }
 
         public FunctionSignature TryFunction()
         {
             TrySpace();
-            if(!BeginStep()) return null;
+            if(!Begin()) return null;
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration(false);
-            if(typeDeclaration == null)
+            Symbol typeIdentifier = null;
+            if (typeDeclaration == null)
             {
-                ResetStep();
-                return null;
+                if((typeIdentifier = TryType()) == null)
+                {
+                    Reset();
+                    return null;
+                }
             }
-            if(!BeginStep())
+            if(!Begin())
             {
-                ResetStep();
+                Reset();
                 return null;
             }
             Symbol enclosing = TryNonSpace(StructureType.ClosingBegin);
-            ResetStep();
+            Reset();
             if(enclosing != null)
             {
                 FunctionSignature function = new FunctionSignature();
                 function.TypeDeclaration = typeDeclaration;
-                if ((function.ParameterDeclaration = TryParameterDeclaration(StructureType.ClosingBegin, StructureType.ClosingEnd)) == null ||
+                function.TypeIdentifier = typeIdentifier;
+                if ((function.Parameters = TryParameterDeclaration(StructureType.ClosingBegin, StructureType.ClosingEnd)) == null ||
                     (function.Code = TryCode()) == null
                 ){
                     ;
                 }
-                CommitStep();
+                Commit();
                 return function;
             }
-            ResetStep();
+            Reset();
             return null;
         }
 
         public PropertySignature TryProperty()
         {
             TrySpace();
-            if(!BeginStep()) return null;
+            if(!Begin()) return null;
             Symbol propertyType = null;
             if((propertyType = TryToken(ObjectType.Get)) == null && (propertyType = TryToken(ObjectType.Set)) == null)
             {
-                ResetStep();
+                Reset();
                 return null;
             }
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration(false);
             if(typeDeclaration == null)
             {
-                ResetStep();
+                Reset();
                 return null;
             }
-            ParameterDeclarationSignature parameterDeclaration = TryParameterDeclaration(StructureType.BracketBegin, StructureType.BracketEnd);
-            if(!BeginStep())
+            ParameterListSignature parameterDeclaration = TryParameterDeclaration(StructureType.BracketBegin, StructureType.BracketEnd);
+            if(!Begin())
             {
-                ResetStep();
+                Reset();
                 return null;
             }
             Symbol enclosing = TryNonSpace(StructureType.BlockBegin);
-            ResetStep();
+            Reset();
             if(enclosing != null)
             {
                 PropertySignature property = new PropertySignature(propertyType);
@@ -165,10 +170,10 @@ namespace feltic.Language
                 if((property.Code = TryCode()) == null){
                     ;
                 }
-                CommitStep();
+                Commit();
                 return property;
             }
-            ResetStep();
+            Reset();
             return null;
         }
     }
@@ -236,8 +241,9 @@ namespace feltic.Language
 
     public class FunctionSignature : SignatureSymbol
     {
+        public Symbol TypeIdentifier;
         public TypeDeclarationSignature TypeDeclaration;
-        public ParameterDeclarationSignature ParameterDeclaration;
+        public ParameterListSignature Parameters;
         public CodeSignature Code;
 
         public FunctionSignature() : base(SignatureType.FunctionDec)
@@ -246,8 +252,9 @@ namespace feltic.Language
         public override string ToString()
         {
             string str = "function(";
-            str += TypeDeclaration;
-            str += ", "+ParameterDeclaration;
+            if (TypeIdentifier != null) str += "type:" + TypeIdentifier.String;
+            if (TypeDeclaration != null) str += "type_decl:"+ TypeDeclaration;
+            str += ", "+Parameters;
             str += ")\n";
             str += Code;
             return str;
@@ -257,7 +264,7 @@ namespace feltic.Language
     public class PropertySignature : SignatureSymbol
     {
         public TypeDeclarationSignature TypeDeclaration;
-        public ParameterDeclarationSignature ParameterDeclaration;
+        public ParameterListSignature ParameterDeclaration;
         public Symbol CodeType;
         public CodeSignature Code;
 
