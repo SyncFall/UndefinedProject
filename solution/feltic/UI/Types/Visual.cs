@@ -25,9 +25,6 @@ namespace feltic.UI.Types
         public InputListener InputListener;
         public Color Color;
 
-        public VisualElement(int Type, VisualElement Parent) : this((VisualType)Type, Parent)
-        { }
-
         public VisualElement(VisualType Type, VisualElement Parent)
         {
             this.Type = Type;

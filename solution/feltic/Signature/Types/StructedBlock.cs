@@ -11,12 +11,12 @@ namespace feltic.Language
     {
         public StructedBlockSignature TryStructedBlock()
         {
-            if(!Begin()) return null;
+            if(!BeginStep()) return null;
             Symbol openBlockBegin, openBlockIdentifier;
             if((openBlockBegin = TryNonSpace(OperationType.Less)) == null ||
                (openBlockIdentifier = TryNonSpace(TokenType.Visual)) == null && (openBlockIdentifier = TryNonSpace(TokenType.Identifier)) == null
             ){
-                Reset();
+                ResetStep();
                 return null;
             }
             StructedAttributeList attributes = TryStructedBlockAttributes();
@@ -24,7 +24,7 @@ namespace feltic.Language
             Symbol openBlockEnd;
             if((openBlockEnd = TryNonSpace(OperationType.Greater)) == null)
             {
-                Reset();
+                ResetStep();
                 return null;
             }
             StructedBlockSignature signature = new StructedBlockSignature();
@@ -35,7 +35,7 @@ namespace feltic.Language
             signature.OpenBlockEnd = openBlockEnd;
             if(openBlockClosing != null)
             {
-                Commit();
+                CommitStep();
                 return signature;
             }
             signature.Elements = TryStatementList();
@@ -44,10 +44,10 @@ namespace feltic.Language
                 ((signature.CloseBlockIdentifier = TryNonSpace(TokenType.Visual)) == null && (signature.CloseBlockIdentifier = TryNonSpace(TokenType.Identifier)) == null) ||
                 (signature.CloseBlockEnd = TryNonSpace(OperationType.Greater)) == null
             ){
-                Reset();
+                ResetStep();
                 return signature;
             }
-            Commit();
+            CommitStep();
             return signature;
         }
 
@@ -91,7 +91,7 @@ namespace feltic.Language
 
         public override string ToString()
         {
-            return "structed_block(element_count:"+(Elements!=null?Elements.Size:0)+")";
+            return "structed_block(count:"+(Elements!=null?Elements.Size:0)+")";
         }
     }
 

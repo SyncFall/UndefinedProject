@@ -25,7 +25,7 @@ namespace feltic.Integrator
         public SceneView()
         {
             SourceList list = new SourceList();
-            list.Add(SourceText.FromFile("./Compose/second.src"));
+            list.Add(SourceText.FromFile("./Compose/first.src"));
             CodeText = new CodeText();
             this.Registry = new Registry();
             this.Registry.AddSourceList(list);
@@ -34,12 +34,9 @@ namespace feltic.Integrator
             {
                 AddVisualElements(Root, signature);
             }
-            else
-            {
-                Editor editor = new Editor();
-                editor.Create();
-                Root.AddChild(editor.Root.Visual);
-            }
+            //Editor editor = new Editor();
+            //editor.Create();
+            //Root.AddChild(editor.Root.Visual);
             VisualElementMetrics.GetSize(Root);
             VisualElementMetrics.GetPosition(Root, 10, 10);
         }

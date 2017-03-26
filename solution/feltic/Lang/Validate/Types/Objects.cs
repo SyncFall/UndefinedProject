@@ -37,7 +37,7 @@ namespace feltic.Language
                         ;
                     }
                 }
-                ParameterListSignature parameterDeclaration = methodSymbol.Signature.Parameters;
+                ParameterDeclarationSignature parameterDeclaration = methodSymbol.Signature.ParameterDeclaration;
                 if (parameterDeclaration != null)
                 {
                     for (int j = 0; j < parameterDeclaration.Elements.Size; j++)

@@ -33,23 +33,23 @@ namespace feltic.Language
             }
             while(true)
             {
-                if(!Begin())
+                if(!BeginStep())
                 {
                     return signature;
                 }
                 OperationSignature operation = TryOperation();
                 if (operation == null)
                 {
-                    Reset();
+                    ResetStep();
                     break;
                 }
                 ExpressionSignature expressionPair = TryExpression();
                 if (expressionPair == null)
                 {
-                    Reset();
+                    ResetStep();
                     break;
                 }
-                Commit();
+                CommitStep();
                 if (signature.OperationList == null)
                     signature.OperationList = new ExpressionOperationList();
                 signature.OperationList.Add(new ExpressionOperationPair(operation, expressionPair));
@@ -93,7 +93,12 @@ namespace feltic.Language
                 }
                 else
                 {
-                    if((identifier = TryType()) == null)
+                    if(Token != null && (Token.IsType(TokenType.Identifier) || Token.IsType(TokenType.Native)))
+                    {
+                        identifier = Token;
+                        NextToken();
+                    }
+                    else
                     {
                         return null;
                     }
@@ -144,8 +149,9 @@ namespace feltic.Language
 
         public ObjectAccessOperand TryObjectOperand()
         {
+            BeginStep();
             TrySpace();
-            if (!Begin()) return null;
+            if(Token == null) return null;
 
             ObjectAccessOperand objectOperand = null;
             if (Token.IsObject(ObjectType.New))
@@ -173,18 +179,18 @@ namespace feltic.Language
 
             if(objectOperand == null)
             {
-                Reset();
+                ResetStep();
                 return null;
             }
 
             objectOperand.ParameterDefinition = TryParameterDefintion(StructureType.ClosingBegin, StructureType.ClosingEnd);
             if(objectOperand.ParameterDefinition == null)
             {
-                Reset();
+                ResetStep();
                 return null;
             }
 
-            Commit();
+            CommitStep();
             return objectOperand;
         }
         
@@ -320,7 +326,7 @@ namespace feltic.Language
         public Symbol New;
         public Symbol Func;
         public Symbol ObjectType;
-        public ParameterListSignature ParameterDefinition;
+        public ParameterDeclarationSignature ParameterDefinition;
  
 
         public ObjectAccessOperand() : base(SignatureType.ObjectOperand)
@@ -370,7 +376,7 @@ namespace feltic.Language
     public class FunctionOperand : OperandAccessSignature
     {
         public Symbol Identifier;
-        public ParameterListSignature ParameterDefinition;
+        public ParameterDeclarationSignature ParameterDefinition;
 
         public FunctionOperand(Symbol Identifier) : base(SignatureType.FunctionOperand)
         {
@@ -386,7 +392,7 @@ namespace feltic.Language
     public class ArrayOperand : OperandAccessSignature
     {
         public Symbol Identifier;
-        public ParameterListSignature ParameterDefintion;
+        public ParameterDeclarationSignature ParameterDefintion;
 
         public ArrayOperand(Symbol Identifier) : base(SignatureType.ArrayOperand)
         {

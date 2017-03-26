@@ -41,28 +41,30 @@ namespace feltic.Language
             return PrevToken;
         }
 
-        public Symbol TryType()
-        {
-            TrySpace();
-            if (TryToken(TokenType.Identifier) != null || TryToken(TokenType.Native) != null)
-            {
-                return PrevToken;
-            }
-            return null;
-        }
-
         public TypeDeclarationSignature TryTypeDeclaration(bool WithAssigment=true)
         {
-            Symbol typeIdentifier = TryType();
-            if(typeIdentifier == null) return null;
-            if(!Begin()) return null;
+            TrySpace();
+            if(!BeginStep()) return null;
             TypeDeclarationSignature signatur = new TypeDeclarationSignature();
-            signatur.TypeIdentifier = typeIdentifier;
+            if (TryToken(TokenType.Native) != null)
+            {
+                signatur.TypeNative = PrevToken;
+            }
+            else if(TryToken(TokenType.Identifier) != null)
+            {
+                signatur.TypeIdentifier = PrevToken;
+            }
+            else
+            {
+                ResetStep();
+                return null;
+            }
             signatur.TypeGeneric = TryGenericDeclaration();
             signatur.TypeArray = TryArrayDeclaration();
+            TrySpace();
             if((signatur.NameIdentifier = TryIdentifier()) == null)
             {
-                Reset();
+                ResetStep();
                 return null;
             }
             if(WithAssigment)
@@ -73,17 +75,17 @@ namespace feltic.Language
                     ;
                 }
             }
-            Commit();
+            CommitStep();
             return signatur;
         }
 
         public GenericDeclarationSignature TryGenericDeclaration()
         {
-            if(!Begin()) return null;
+            if(!BeginStep()) return null;
             Symbol blockBegin;
             if((blockBegin = TryNonSpace(OperationType.Less)) == null)
             {
-                Reset();
+                ResetStep();
                 return null;
             }
             GenericDeclarationSignature signature = new GenericDeclarationSignature();
@@ -102,11 +104,11 @@ namespace feltic.Language
                 }
                 if((signature.BlockEnd = TryToken(OperationType.Greater)) != null)
                 {
-                    Commit();
+                    CommitStep();
                     break;
                 }
                 //
-                Reset();
+                ResetStep();
                 break;
             }
             return signature;
@@ -115,10 +117,10 @@ namespace feltic.Language
         public ArrayDeclarationSignature TryArrayDeclaration()
         {
             Symbol blockBegin;
-            if(!Begin()) return null;
+            if(!BeginStep()) return null;
             if((blockBegin = TryNonSpace(StructureType.BracketBegin)) == null)
             {
-                Reset();
+                ResetStep();
                 return null; ;
             }
             ArrayDeclarationSignature signature = new ArrayDeclarationSignature();
@@ -127,7 +129,7 @@ namespace feltic.Language
             {
                 if((signature.BlockEnd = TryNonSpace(StructureType.BracketEnd)) != null)
                 {
-                    Commit();
+                    CommitStep();
                     break;
                 }
                 Symbol dimensionToken;
@@ -138,31 +140,32 @@ namespace feltic.Language
                 }
                 if ((signature.BlockEnd = TryNonSpace(StructureType.BracketEnd)) != null)
                 {
-                    Commit();
+                    CommitStep();
                     break;
                 }
                 //
-                Reset();
+                ResetStep();
                 break;
             }
             return signature;
         }
 
-        public ParameterListSignature TryParameterDeclaration(StructureType StructureBegin, StructureType StructureEnd)
+        public ParameterDeclarationSignature TryParameterDeclaration(StructureType StructureBegin, StructureType StructureEnd)
         {
             Symbol blockBegin;
             if((blockBegin = TryNonSpace(StructureBegin)) == null)
             {
                 return null;
             }
-            ParameterListSignature signature = new ParameterListSignature();
+            ParameterDeclarationSignature signature = new ParameterDeclarationSignature();
             signature.BlockBegin = blockBegin;
             TypeDeclarationSignature typeDeclaration;
             while((typeDeclaration = TryTypeDeclaration()) != null)
             {
                 ParameterSignature parameter = new ParameterSignature(typeDeclaration);
                 signature.Elements.Add(parameter);
-                if ((parameter.Seperator = TryNonSpace(StructureType.Seperator)) == null)
+                parameter.Seperator = TryNonSpace(StructureType.Seperator);
+                if (parameter.Seperator == null)
                 {
                     break;
                 }
@@ -171,21 +174,22 @@ namespace feltic.Language
             return signature;
         }
 
-        public ParameterListSignature TryParameterDefintion(StructureType StructureBegin, StructureType StructureEnd)
+        public ParameterDeclarationSignature TryParameterDefintion(StructureType StructureBegin, StructureType StructureEnd)
         {
             Symbol blockBegin;
             if ((blockBegin = TryNonSpace(StructureBegin)) == null)
             {
                 return null;
             }
-            ParameterListSignature signature = new ParameterListSignature();
+            ParameterDeclarationSignature signature = new ParameterDeclarationSignature();
             signature.BlockBegin = blockBegin;
             ExpressionSignature expression;
             while ((expression = TryExpression()) != null)
             {
                 ParameterSignature parameter = new ParameterSignature(expression);
                 signature.Elements.Add(parameter);
-                if((parameter.Seperator = TryNonSpace(StructureType.Seperator)) == null)
+                parameter.Seperator = TryNonSpace(StructureType.Seperator);
+                if (parameter.Seperator == null)
                 {
                     break;
                 }
@@ -197,6 +201,7 @@ namespace feltic.Language
 
     public class TypeDeclarationSignature : SignatureSymbol
     {
+        public Symbol TypeNative;
         public Symbol TypeIdentifier;
         public GenericDeclarationSignature TypeGeneric;
         public ArrayDeclarationSignature TypeArray;
@@ -211,6 +216,8 @@ namespace feltic.Language
         public override string ToString()
         {
             string str = "type(";
+            if(TypeNative != null)
+                str += "native:" + TypeNative.String;
             if(TypeIdentifier != null)
                 str += "object:" + TypeIdentifier.String;
             if(TypeGeneric != null)
@@ -276,13 +283,13 @@ namespace feltic.Language
         }
     }
 
-    public class ParameterListSignature : SignatureSymbol
+    public class ParameterDeclarationSignature : SignatureSymbol
     {
         public Symbol BlockBegin;
         public ListCollection<ParameterSignature> Elements = new ListCollection<ParameterSignature>();
         public Symbol BlockEnd;
 
-        public ParameterListSignature() : base(SignatureType.ParamDec)
+        public ParameterDeclarationSignature() : base(SignatureType.ParamDec)
         { }
 
         public override string ToString()
