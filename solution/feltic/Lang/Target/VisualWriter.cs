@@ -73,32 +73,31 @@ namespace feltic.Language
                 }
                 else
                 {
-                    WriteLine(tabs, "element = new VisualElement(VisualElementType." + sb.OpenBlockIdentifiere.Type + ", parent);");
+                    WriteLine(tabs, "element = new VisualElement(" + sb.OpenBlockIdentifiere.Type + ", parent);");
                 }
             }
             else if(ss != null)
             {
                 OperandSignature op = (ss as ExpressionStatementSignature).Expression.Operand;
-                if (op.AccessList[0] is LiteralOperand)
+                for(int b=0; b<op.AccessList.Size; b++)
                 {
-                    string stringData = (op.AccessList[0] as LiteralOperand).Literal.String;
-                    stringData = stringData.Replace("\"", "");
-                    WriteLine(tabs, "element = new VisualTextElement(\"" + stringData + "\", parent);");
-                }
-                else if(op.AccessList[0] is VariableOperand)
-                {
-                    Write("element.AddChild(this.Object.");
-                    for (int i = 0; i < op.AccessList.Size; i++)
+                    if (op.AccessList[b] is LiteralOperand)
                     {
-                        Write((op.AccessList[i] as VariableOperand).Identifier.String);
-                        if (i < op.AccessList.Size - 1)
-                            Write(".");
+                        string stringData = (op.AccessList[b] as LiteralOperand).Literal.String;
+                        stringData = stringData.Replace("\"", "");
+                        WriteLine(tabs, "element = new VisualTextElement(\"" + stringData + "\", parent);");
                     }
-                    WriteLine(");");
-                }
-                else if(op.AccessList[0] is StructedBlockOperand)
-                {
-                    WriteVisualElement(tabs, sig, (op.AccessList[0] as StructedBlockOperand).StructedBlock);
+                    else if (op.AccessList[b] is VariableOperand)
+                    {
+                        if(b == 0) Write("element.AddChild(this.Object.");
+                        Write((op.AccessList[b] as VariableOperand).Identifier.String);
+                        if (b < op.AccessList.Size - 1) Write(".");
+                        if (b == op.AccessList.Size - 1)WriteLine(");");
+                    }
+                    else if (op.AccessList[b] is StructedBlockOperand)
+                    {
+                        WriteVisualElement(tabs, sig, (op.AccessList[b] as StructedBlockOperand).StructedBlock);
+                    }
                 }
             }
             else
