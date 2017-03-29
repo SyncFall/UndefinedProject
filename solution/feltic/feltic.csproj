@@ -75,7 +75,6 @@
     <Compile Include="Dev\CodeView\CodeCursor.cs" />
     <Compile Include="Dev\CodeView\CodeHistory.cs" />
     <Compile Include="Dev\CodeView\CodeInput.cs" />
-    <Compile Include="Dev\CodeView\CodeMessage.cs" />
     <Compile Include="Dev\CodeView\CodeSelection.cs" />
     <Compile Include="Dev\CodeView\CodeText.cs" />
     <Compile Include="Dev\CodeView\CodeView.cs" />
@@ -135,11 +134,9 @@
     <Compile Include="UI\DelaunayTriangulator\Vertex.cs" />
     <Compile Include="UI\DrawUtils.cs" />
     <Compile Include="UI\GeometryUtils.cs" />
-    <Compile Include="UI\Types\Buffer.cs" />
     <Compile Include="UI\Types\Clipboard.cs" />
     <Compile Include="UI\Types\Color.cs" />
     <Compile Include="UI\Types\Curve.cs" />
-    <Compile Include="UI\Types\Design.cs" />
     <Compile Include="UI\Types\Font.cs" />
     <Compile Include="UI\Types\Glyph.cs" />
     <Compile Include="UI\Types\Image.cs" />
@@ -149,9 +146,7 @@
     <Compile Include="UI\Types\Point.cs" />
     <Compile Include="UI\Types\Shader.cs" />
     <Compile Include="UI\Types\Surface.cs" />
-    <Compile Include="UI\Types\Template.cs" />
     <Compile Include="UI\Types\Text.cs" />
-    <Compile Include="UI\Types\Transform.cs" />
     <Compile Include="UI\Types\Visual.cs" />
     <Compile Include="UI\Types\Way.cs" />
   </ItemGroup>

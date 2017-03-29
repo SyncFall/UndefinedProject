@@ -18,7 +18,6 @@ namespace feltic.UI
     public abstract class Surface
     {
         public SurfaceType Type;
-        public Layout Layout;
         public LineCurve LineCurve = new LineCurve();
 
         public Surface(SurfaceType Type)

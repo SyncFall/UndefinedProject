@@ -30,7 +30,7 @@ namespace feltic.Language
             {
                 MethodSymbol methodSymbol = ObjectSymbol.MethodList.Get(i);
                 TypeDeclarationSignature typeDeclaration = methodSymbol.Signature.TypeDeclaration;
-                if (typeDeclaration.TypeIdentifier != null)
+                if (typeDeclaration!=null && typeDeclaration.TypeIdentifier != null)
                 {
                     if (Registry.GetObjectSymbol(typeDeclaration.TypeIdentifier.String) == null)
                     {

@@ -135,24 +135,17 @@ namespace feltic.Language
 
         public void TryMethod(ObjectSymbol Object, FunctionSignature Signature)
         {
-            if (Signature.TypeDeclaration == null)
+            MethodSymbol methodSymbol = Object.MethodList.GetEqualByIdentifier(Signature);
+            if (methodSymbol == null)
             {
-                ;
+                methodSymbol = new MethodSymbol(Object, Signature);
+                Object.MethodList.Add(methodSymbol);
             }
             else
             {
-                MethodSymbol methodSymbol = Object.MethodList.GetEqualByIdentifier(Signature);
-                if (methodSymbol == null)
-                {
-                    methodSymbol = new MethodSymbol(Object, Signature);
-                    Object.MethodList.Add(methodSymbol);
-                }
-                else
-                {
-                    ;
-                }
-                TryCode(methodSymbol, Signature.Code);
+                ;
             }
+            TryCode(methodSymbol, Signature.Code);
         }
 
         public void TryCode(MethodSymbol Method, CodeSignature Signature)

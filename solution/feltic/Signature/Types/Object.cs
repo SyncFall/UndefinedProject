@@ -105,10 +105,14 @@ namespace feltic.Language
             TrySpace();
             if(!BeginStep()) return null;
             TypeDeclarationSignature typeDeclaration = TryTypeDeclaration(false);
+            Symbol typeIdentifier = null;
             if(typeDeclaration == null)
             {
-                ResetStep();
-                return null;
+                if((typeIdentifier = TryType()) == null)
+                {
+                    ResetStep();
+                    return null;
+                }
             }
             if(!BeginStep())
             {
@@ -120,6 +124,7 @@ namespace feltic.Language
             if(enclosing != null)
             {
                 FunctionSignature function = new FunctionSignature();
+                function.TypeIdentifier = typeIdentifier;
                 function.TypeDeclaration = typeDeclaration;
                 if ((function.ParameterDeclaration = TryParameterDeclaration(StructureType.ClosingBegin, StructureType.ClosingEnd)) == null ||
                     (function.Code = TryCode()) == null
@@ -236,6 +241,7 @@ namespace feltic.Language
 
     public class FunctionSignature : SignatureSymbol
     {
+        public Symbol TypeIdentifier;
         public TypeDeclarationSignature TypeDeclaration;
         public ParameterDeclarationSignature ParameterDeclaration;
         public CodeSignature Code;

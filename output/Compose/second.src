@@ -5,31 +5,23 @@ object Editor
 {
 	ActionBar actionBar = ActionBar();
 	Workspace workspace = Workspace();
-
 	VisualObject Root;
 
-	Editor Create()
+	Editor()
 	{
-		actionBar.Create();
-		workspace.Create();
 		Root =
 			<block width=700px height=500px>
-				<block>actionBar.Root.Visual</block>
+				<block>actionBar.Root</block>
 				<block height=400px>
-					<column width=65%>workspace.Root.Visual</column>
+					<column width=65%>workspace.Root</column>
 					<column width=35%>"navigation"</column>
 				</block>
 				<block height=125px>"status"</block>
 			</block>
 		;
-		return this;
 	}
 }
 
-statement Fuck()
-{
-	
-}
 
 object ActionBar
 {	
@@ -37,17 +29,14 @@ object ActionBar
 	Select runSelect = Select();
 	VisualObject Root;
 	
-	ActionBar Create()
+	ActionBar()
 	{
-		solutionSelect.Create();
-		runSelect.Create();
 		Root = 
 			<block>
-				<inline>solutionSelect.Root.Visual</inline>
-				<inline>runSelect.Root.Visual</inline>
+				<inline>solutionSelect.Root</inline>
+				<inline>runSelect.Root</inline>
 			</block>
 		;
-		return this;
 	}
 }
 
@@ -55,24 +44,23 @@ object Workspace
 {
 	VisualObject Root;
 
-	Workspace Create()
+	Workspace()
 	{ 
 		Root = 
 			<scroll>
 				<block width=800px height=1500px></block>
 			</scroll>
 		;
-		return this;
 	}
 }
 
 object Select
 {
+	string Text;
 	VisualObject Root;
 
-	Select Create()
+	Select(string Param)
 	{  
-		Root = <inline>"select"</inline>;
-		return this;
+		Root = <inline>Param</inline>;
 	}
 }

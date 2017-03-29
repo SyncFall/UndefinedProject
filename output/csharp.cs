@@ -14,13 +14,10 @@ namespace Scope
 		public Workspace workspace = new Workspace();
 		public VisualObject Root;
 
-		public Editor Create()
+		public Editor()
 		{
-						actionBar.Create();
-						workspace.Create();
 						Root = new Visual0(this)
 ;
-						return this;
 		}
 	}
 
@@ -30,13 +27,10 @@ namespace Scope
 		public Select runSelect = new Select();
 		public VisualObject Root;
 
-		public ActionBar Create()
+		public ActionBar()
 		{
-						solutionSelect.Create();
-						runSelect.Create();
 						Root = new Visual1(this)
 ;
-						return this;
 		}
 	}
 
@@ -44,23 +38,22 @@ namespace Scope
 	{
 		public VisualObject Root;
 
-		public Workspace Create()
+		public Workspace()
 		{
 						Root = new Visual2(this)
 ;
-						return this;
 		}
 	}
 
 	public class Select
 	{
+		public string Text;
 		public VisualObject Root;
 
-		public Select Create()
+		public Select(string Param)
 		{
 						Root = new Visual3(this)
 ;
-						return this;
 		}
 	}
 
@@ -173,7 +166,7 @@ element.AddChild(this.Object.runSelect.Root.Visual);
 			element = new VisualElement(3, parent);
 			stack.Push(parent);
 			parent = element;
-			element = new VisualTextElement("select", parent);
+element.AddChild(this.Object.Param.Visual);
 		}
 	}
 

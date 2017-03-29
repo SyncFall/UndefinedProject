@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace feltic.Language
 {
-
     public class VisualComponent
     {
         public static int IdCounter = 0;
@@ -92,7 +91,7 @@ namespace feltic.Language
                         if(b == 0) Write("element.AddChild(this.Object.");
                         Write((op.AccessList[b] as VariableOperand).Identifier.String);
                         if (b < op.AccessList.Size - 1) Write(".");
-                        if (b == op.AccessList.Size - 1)WriteLine(");");
+                        if (b == op.AccessList.Size - 1)WriteLine(".Visual);");
                     }
                     else if (op.AccessList[b] is StructedBlockOperand)
                     {

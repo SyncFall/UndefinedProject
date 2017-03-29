@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace feltic.UI.Types
 {
-    public class VisualObject : object
+    public class VisualObject
     {
         public VisualElement Visual;
     }

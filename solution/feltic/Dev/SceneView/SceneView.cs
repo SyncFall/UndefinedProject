@@ -37,7 +37,6 @@ namespace feltic.Integrator
             else
             {
                 Editor editor = new Editor();
-                editor.Create();
                 Root.AddChild(editor.Root.Visual);
             }
             VisualElementMetrics.GetSize(Root);

@@ -72,7 +72,14 @@ namespace feltic.Language
                 MethodSymbol mth = obj.MethodList[j];
                 WriteTab(tabs+1);
                 Write("public ");
-                WriteTypeDeclaration(obj, mth.Signature.TypeDeclaration);
+                if(mth.Signature.TypeIdentifier != null)
+                {
+                    Write(mth.Signature.TypeIdentifier.String);
+                }
+                else
+                {
+                    WriteTypeDeclaration(obj, mth.Signature.TypeDeclaration);
+                }
                 Write("(");
                 WriteParameterList(obj, mth.Signature.ParameterDeclaration.Elements);
                 WriteLine(")");
@@ -177,8 +184,6 @@ namespace feltic.Language
 
         void WriteTypeDeclaration(ObjectSymbol obj, TypeDeclarationSignature td)
         {
-            if(td.TypeNative != null)
-                Write(td.TypeNative.String + " ");
             if(td.TypeIdentifier != null)
                 Write(td.TypeIdentifier.String + " ");
             if(td.TypeGeneric != null)

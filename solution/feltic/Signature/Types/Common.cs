@@ -34,34 +34,36 @@ namespace feltic.Language
         public Symbol TryIdentifier()
         {
             TrySpace();
-            if(TryToken(TokenType.Identifier) == null)
+            if(TryToken(TokenType.Identifier) != null)
             {
-                return null;
+                return PrevToken;
             }
-            return PrevToken;
+            return null;
+        }
+
+        public Symbol TryType()
+        {
+            TrySpace();
+            if(TryToken(TokenType.Identifier) != null || TryToken(TokenType.Native) != null)
+            {
+                return PrevToken;
+            }
+            return null;
         }
 
         public TypeDeclarationSignature TryTypeDeclaration(bool WithAssigment=true)
         {
-            TrySpace();
             if(!BeginStep()) return null;
-            TypeDeclarationSignature signatur = new TypeDeclarationSignature();
-            if (TryToken(TokenType.Native) != null)
-            {
-                signatur.TypeNative = PrevToken;
-            }
-            else if(TryToken(TokenType.Identifier) != null)
-            {
-                signatur.TypeIdentifier = PrevToken;
-            }
-            else
+            Symbol typeIdentifier = TryType();
+            if (typeIdentifier == null)
             {
                 ResetStep();
                 return null;
             }
+            TypeDeclarationSignature signatur = new TypeDeclarationSignature();
+            signatur.TypeIdentifier = typeIdentifier;
             signatur.TypeGeneric = TryGenericDeclaration();
             signatur.TypeArray = TryArrayDeclaration();
-            TrySpace();
             if((signatur.NameIdentifier = TryIdentifier()) == null)
             {
                 ResetStep();
@@ -201,7 +203,6 @@ namespace feltic.Language
 
     public class TypeDeclarationSignature : SignatureSymbol
     {
-        public Symbol TypeNative;
         public Symbol TypeIdentifier;
         public GenericDeclarationSignature TypeGeneric;
         public ArrayDeclarationSignature TypeArray;
@@ -216,8 +217,6 @@ namespace feltic.Language
         public override string ToString()
         {
             string str = "type(";
-            if(TypeNative != null)
-                str += "native:" + TypeNative.String;
             if(TypeIdentifier != null)
                 str += "object:" + TypeIdentifier.String;
             if(TypeGeneric != null)
