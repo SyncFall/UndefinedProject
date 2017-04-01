@@ -45,19 +45,14 @@ namespace feltic.Language
             {
                 left = ValidateOperand(Expression.Operand);
             }
-            if(Expression.OperationList == null)
-            {
-                return left;
-            }
 
-            ExpressionResultType result = null;
+            ExpressionResultType right, result = null;
+            ExpressionSignature expressionPointer = Expression;
             bool hasResult = false;
-            for (int i=0; i<Expression.OperationList.Size; i++)
+            while (expressionPointer.Operation != null && expressionPointer.ExpressionPair != null)
             {
-                ExpressionOperationPair operationPair = Expression.OperationList.Get(i);
-                OperationSymbol operation = operationPair.Operation.Token as OperationSymbol;
-
-                ExpressionResultType right = ValidateExpression(operationPair.ExpressionPair);
+                OperationSymbol operation = expressionPointer.Operation.Token as OperationSymbol;
+                right = ValidateExpression(expressionPointer.ExpressionPair);
 
                 if(operation.IsCategory(OperationCategory.LogicAndOr))
                 {
@@ -105,6 +100,7 @@ namespace feltic.Language
                 }
 
                 left = right;
+                expressionPointer = expressionPointer.ExpressionPair;
             }
 
             return result;

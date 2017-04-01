@@ -8,6 +8,7 @@ namespace feltic.UI
 {
     public enum WayType
     {
+        None=0,
         Pixel,
         DisplayUnit,
         Percent,
@@ -42,6 +43,12 @@ namespace feltic.UI
     {
         public WayType Type;
         public float way;
+
+        public Way(int Type, float way)
+        {
+            this.Type = (WayType)Type;
+            this.way = way;
+        }
 
         public Way(WayType Type, float way)
         {

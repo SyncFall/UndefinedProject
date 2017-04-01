@@ -1,33 +1,31 @@
 
-object Test
+
+object Peter
 {
-	int i1;
-	int i2 = 0;
-	Pie p1;
-	Pie p2 = Pie();
-	Pie p3 = new Pie(1, "str");
+	int res=0;
 
-	void Test(){}
-	int Test(int a, string b){}
-	Bold Test()
+	state Pussi(int a)
 	{
-		fuck;
-		fuck.create();
-		fuck.array[2];
-		fuck.thing().pie;
-
-		if(true && i > 0 || 4 != 4f){
-			break;
-			continue;
-			return this;
-			return false;
-			return i;
-		}
-
-
-		for(int i=0; i<100; i++){
-			i+=1;
-		}
+		res=((++a)+1);
 	}
 }
+
+object Muh
+{
+	Peter peter = Peter();
+	bool here=false;
+	int before;
+	int after;
+
+	Muh()
+	{
+		peter.Pussi += state(int a){
+			before = peter.res;
+			here = true;
+			after = peter.res;
+		}
+		peter.Pussi(4);
+	}
+}
+
 

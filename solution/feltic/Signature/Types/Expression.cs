@@ -13,11 +13,9 @@ namespace feltic.Language
         {
             TrySpace();
             ExpressionSignature signature = new ExpressionSignature();
-            signature.PreOperation = TryPrePostOperation();
-            Symbol blockBegin;
-            if((blockBegin = TryNonSpace(StructureType.ClosingBegin)) != null)
+            signature.PreOperation = TryPrePostOperation(true);
+            if((signature.BlockBegin = TryNonSpace(StructureType.ClosingBegin)) != null)
             {
-                signature.BlockBegin = blockBegin;
                 if((signature.ChildExpression = TryExpression()) == null ||
                    (signature.BlockEnd = TryNonSpace(StructureType.ClosingEnd)) == null
                 ){
@@ -31,30 +29,28 @@ namespace feltic.Language
                     return null;
                 }
             }
+            ExpressionSignature expressionPointer = signature;
             while(true)
             {
                 if(!BeginStep())
                 {
                     return signature;
                 }
-                OperationSignature operation = TryOperation();
-                if (operation == null)
+                if((expressionPointer.Operation = TryOperation()) == null)
                 {
                     ResetStep();
                     break;
                 }
-                ExpressionSignature expressionPair = TryExpression();
-                if (expressionPair == null)
-                {
+                if((expressionPointer.ExpressionPair = TryExpression()) == null)
+                { 
                     ResetStep();
                     break;
                 }
+                expressionPointer.ExpressionPair.LeftExpression = expressionPointer;
+                expressionPointer = expressionPointer.ExpressionPair;
                 CommitStep();
-                if (signature.OperationList == null)
-                    signature.OperationList = new ExpressionOperationList();
-                signature.OperationList.Add(new ExpressionOperationPair(operation, expressionPair));
             }
-            signature.PostOperation = TryPrePostOperation();
+            signature.PostOperation = TryPrePostOperation(false);
             return signature;
         }
 
@@ -111,7 +107,7 @@ namespace feltic.Language
                 if (identifier != null && Token.IsStructure(StructureType.ClosingBegin))
                 {
                     FunctionOperand functionAccess = new FunctionOperand(identifier);
-                    functionAccess.ParameterDefinition = TryParameterDefintion(StructureType.ClosingBegin, StructureType.ClosingEnd);
+                    functionAccess.ParameterDefinition = TryParameters(StructureType.ClosingBegin, StructureType.ClosingEnd);
                     if(functionAccess.ParameterDefinition == null )
                     {
                         break;
@@ -121,7 +117,7 @@ namespace feltic.Language
                 else if (identifier != null && Token.IsStructure(StructureType.BracketBegin))
                 {
                     ArrayOperand arrayAccess = new ArrayOperand(identifier);
-                    arrayAccess.ParameterDefintion = TryParameterDefintion(StructureType.BracketBegin, StructureType.BracketEnd);
+                    arrayAccess.ParameterDefintion = TryParameters(StructureType.BracketBegin, StructureType.BracketEnd);
                     if (arrayAccess.ParameterDefintion == null)
                     {
                         break;
@@ -183,11 +179,17 @@ namespace feltic.Language
                 return null;
             }
 
-            objectOperand.ParameterDefinition = TryParameterDefintion(StructureType.ClosingBegin, StructureType.ClosingEnd);
+            objectOperand.ParameterDefinition = TryParameters(StructureType.ClosingBegin, StructureType.ClosingEnd);
             if(objectOperand.ParameterDefinition == null)
             {
                 ResetStep();
                 return null;
+            }
+
+            if(TryNonSpace(StructureType.BlockBegin) != null)
+            {
+                objectOperand.ContentSignatures = TryStatementList();
+                TryNonSpace(StructureType.BlockEnd);
             }
 
             CommitStep();
@@ -202,10 +204,10 @@ namespace feltic.Language
             return new OperationSignature(PrevToken);
         }
 
-        public OperationSignature TryPrePostOperation()
+        public OperationSignature TryPrePostOperation(bool Pre)
         {
             TrySpace();
-            if(Token == null || !Token.IsCategory(OperationCategory.Variable)) return null;
+            if(Token == null || (!Token.IsCategory(OperationCategory.Variable) && (!Pre || !Token.IsStructure(StructureType.Point)))) return null;
             NextToken();
             return new OperationSignature(PrevToken);
         }
@@ -214,13 +216,15 @@ namespace feltic.Language
 
     public class ExpressionSignature : SignatureSymbol
     {
+        public ExpressionSignature LeftExpression;
         public OperationSignature PreOperation;
         public Symbol BlockBegin;
         public ExpressionSignature ChildExpression;
         public Symbol BlockEnd;
         public OperandSignature Operand;
         public OperationSignature PostOperation;
-        public ExpressionOperationList OperationList;
+        public OperationSignature Operation;
+        public ExpressionSignature ExpressionPair;
         public Symbol Seperator;
 
         public ExpressionSignature() : base(SignatureType.Expression)
@@ -230,14 +234,13 @@ namespace feltic.Language
         {
             string str = "";
             if (ChildExpression != null)
-            {
                 str += "child(" + ChildExpression + ")";
-            }
-            else if (Operand != null)
-            {
+            if (Operand != null)
                 str += "operand(" + Operand + ")";
-            }
-            str += OperationList;
+            if (Operation != null)
+                str += Operation;
+            if(ExpressionPair!=null)
+                str += "pair("+ExpressionPair+")";
             return str;
         }
     }
@@ -250,35 +253,10 @@ namespace feltic.Language
         {
             this.Token = OperationToken;
         }
-    }
-
-    public class ExpressionOperationList : ListCollection<ExpressionOperationPair>
-    {
-        public override string ToString()
-        {
-            string str = "";
-            for (int i = 0; i < Size; i++)
-            {
-                str += Get(i);
-            }
-            return str;
-        }
-    }
-
-    public class ExpressionOperationPair
-    {
-        public OperationSignature Operation;
-        public ExpressionSignature ExpressionPair;
-
-        public ExpressionOperationPair(OperationSignature Operation, ExpressionSignature ExpressionPair)
-        {
-            this.Operation = Operation;
-            this.ExpressionPair = ExpressionPair;
-        }
 
         public override string ToString()
         {
-            return ", operation(type:" + Operation.Token.Type + ", symbol:" + Operation.Token.String + "), " + ExpressionPair;
+            return "op(" + Token.String + ")";
         }
     }
 
@@ -327,7 +305,7 @@ namespace feltic.Language
         public Symbol Func;
         public Symbol ObjectType;
         public ParameterDeclarationSignature ParameterDefinition;
- 
+        public SignatureList ContentSignatures;
 
         public ObjectAccessOperand() : base(SignatureType.ObjectOperand)
         { }

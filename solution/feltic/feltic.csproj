@@ -83,6 +83,7 @@
     <Compile Include="Dev\VisualView\ActionSelect.cs" />
     <Compile Include="Dev\VisualView\VisualView.cs" />
     <Compile Include="Lang\Registry\Registry.cs" />
+    <Compile Include="Lang\Target\ReceiverWriter.cs" />
     <Compile Include="Signature\Container.cs" />
     <Compile Include="Signature\Parser.cs" />
     <Compile Include="Signature\Signatures.cs" />

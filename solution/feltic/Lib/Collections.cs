@@ -215,11 +215,14 @@ namespace feltic.Library
             return map.ContainsKey(key);
         }
 
-        public K[] GetKeys()
+        public K[] Keys
         {
-            K[] keys = new K[map.Keys.Count];
-            map.Keys.CopyTo(keys, 0);
-            return keys;
+            get
+            {
+                K[] keys = new K[map.Keys.Count];
+                map.Keys.CopyTo(keys, 0);
+                return keys;
+            }
         }
 
         public void Remove(K key)

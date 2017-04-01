@@ -7,6 +7,7 @@ using OpenTK.Input;
 using System;
 using feltic.Library;
 using feltic.Language;
+using Scope;
 
 namespace feltic
 {
@@ -24,7 +25,8 @@ namespace feltic
             registry.WriteToTarget("D:\\dev\\UndefinedProject\\output\\csharp.cs");
 
             //Visual1 elm = new Visual1();
-          
+            //Muh muh = new Muh();
+
             new MainUI().RenderCycle();
         }
 

@@ -171,7 +171,7 @@ namespace feltic.UI.Types
             {
                 throw new Exception("failed to link shader: " + status_code.ToString() + " | info: " + info);
             }
-            string[] attributeKeys = this.Attributes.GetKeys();
+            string[] attributeKeys = this.Attributes.Keys;
             for(int i=0; i<attributeKeys.Length; i++)
             {
                 this.Attributes.GetValue(attributeKeys[i]).Location = GL.GetAttribLocation(ProgramId, attributeKeys[i]);
@@ -180,7 +180,7 @@ namespace feltic.UI.Types
 
         public void Use()
         {
-            string[] attributeKeys = this.Attributes.GetKeys();
+            string[] attributeKeys = this.Attributes.Keys;
             for (int i = 0; i < attributeKeys.Length; i++)
             {
                 GL.EnableVertexAttribArray(this.Attributes.GetValue(attributeKeys[i]).Location);
@@ -189,7 +189,7 @@ namespace feltic.UI.Types
 
         public void Release()
         {
-            string[] attributeKeys = this.Attributes.GetKeys();
+            string[] attributeKeys = this.Attributes.Keys;
             for (int i = 0; i < attributeKeys.Length; i++)
             {
                 GL.DisableVertexAttribArray(this.Attributes.GetValue(attributeKeys[i]).Location);

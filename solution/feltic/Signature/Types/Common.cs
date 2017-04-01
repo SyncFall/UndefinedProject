@@ -152,7 +152,7 @@ namespace feltic.Language
             return signature;
         }
 
-        public ParameterDeclarationSignature TryParameterDeclaration(StructureType StructureBegin, StructureType StructureEnd)
+        public ParameterDeclarationSignature TryParameters(StructureType StructureBegin, StructureType StructureEnd)
         {
             Symbol blockBegin;
             if((blockBegin = TryNonSpace(StructureBegin)) == null)
@@ -161,10 +161,22 @@ namespace feltic.Language
             }
             ParameterDeclarationSignature signature = new ParameterDeclarationSignature();
             signature.BlockBegin = blockBegin;
-            TypeDeclarationSignature typeDeclaration;
-            while((typeDeclaration = TryTypeDeclaration()) != null)
+            SignatureSymbol element = null;
+            ParameterSignature parameter;
+            while (true)
             {
-                ParameterSignature parameter = new ParameterSignature(typeDeclaration);
+                if((element = TryTypeDeclaration()) != null)
+                {
+                    parameter = new ParameterSignature(element as TypeDeclarationSignature);
+                }
+                else if((element = TryExpression()) != null)
+                {
+                    parameter = new ParameterSignature(element as ExpressionSignature);
+                }
+                else
+                {
+                    break;
+                }
                 signature.Elements.Add(parameter);
                 parameter.Seperator = TryNonSpace(StructureType.Seperator);
                 if (parameter.Seperator == null)
@@ -172,30 +184,7 @@ namespace feltic.Language
                     break;
                 }
             }
-            signature.BlockEnd = TryNonSpace(StructureEnd);
-            return signature;
-        }
 
-        public ParameterDeclarationSignature TryParameterDefintion(StructureType StructureBegin, StructureType StructureEnd)
-        {
-            Symbol blockBegin;
-            if ((blockBegin = TryNonSpace(StructureBegin)) == null)
-            {
-                return null;
-            }
-            ParameterDeclarationSignature signature = new ParameterDeclarationSignature();
-            signature.BlockBegin = blockBegin;
-            ExpressionSignature expression;
-            while ((expression = TryExpression()) != null)
-            {
-                ParameterSignature parameter = new ParameterSignature(expression);
-                signature.Elements.Add(parameter);
-                parameter.Seperator = TryNonSpace(StructureType.Seperator);
-                if (parameter.Seperator == null)
-                {
-                    break;
-                }
-            }
             signature.BlockEnd = TryNonSpace(StructureEnd);
             return signature;
         }

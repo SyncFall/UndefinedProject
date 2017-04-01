@@ -126,7 +126,7 @@ namespace feltic.Language
                 FunctionSignature function = new FunctionSignature();
                 function.TypeIdentifier = typeIdentifier;
                 function.TypeDeclaration = typeDeclaration;
-                if ((function.ParameterDeclaration = TryParameterDeclaration(StructureType.ClosingBegin, StructureType.ClosingEnd)) == null ||
+                if ((function.ParameterDeclaration = TryParameters(StructureType.ClosingBegin, StructureType.ClosingEnd)) == null ||
                     (function.Code = TryCode()) == null
                 ){
                     ;
@@ -154,7 +154,7 @@ namespace feltic.Language
                 ResetStep();
                 return null;
             }
-            ParameterDeclarationSignature parameterDeclaration = TryParameterDeclaration(StructureType.BracketBegin, StructureType.BracketEnd);
+            ParameterDeclarationSignature parameterDeclaration = TryParameters(StructureType.BracketBegin, StructureType.BracketEnd);
             if(!BeginStep())
             {
                 ResetStep();

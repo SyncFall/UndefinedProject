@@ -49,7 +49,7 @@ namespace feltic.Language
 
         public void WriteToTarget(string Filepath)
         {
-            new TargetWriter(Filepath).Convert(EntryList[0].SourceSymbol);
+            new TargetWriter(Filepath).Convert(this, EntryList[0].SourceSymbol);
         }
 
         public ObjectSymbol GetObjectSymbol(string ObjectName)

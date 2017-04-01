@@ -16,31 +16,25 @@ namespace feltic.Integrator
 
     public class SceneView
     {
-        Registry Registry;
         GlyphContainer GlyphContainer = new GlyphContainer(new Font("DroidSansMono.ttf"));
         public static VisualElement Root = new VisualElement(VisualType.Block, null);
         public static VisualElement Code = null;
         public CodeText CodeText;
 
         public SceneView()
-        {
-            SourceList list = new SourceList();
-            list.Add(SourceText.FromFile("./Compose/second.src"));
-            CodeText = new CodeText();
-            this.Registry = new Registry();
-            this.Registry.AddSourceList(list);
-            SignatureSymbol signature = Registry.EntryList[0].SourceSymbol.ScopeList[0].VisualElement;
-            if (signature != null)
-            {
-                AddVisualElements(Root, signature);
-            }
-            else
-            {
-                Editor editor = new Editor();
-                Root.AddChild(editor.Root.Visual);
-            }
+        { 
+            Editor editor = new Editor();
+            AddCode(editor);
+            Root.AddChild(editor.Root.Visual);
+            
             VisualElementMetrics.GetSize(Root);
             VisualElementMetrics.GetPosition(Root, 10, 10);
+        }
+
+        public void AddCode(Editor editor)
+        {
+            VisualElement block = new VisualElement(VisualType.Block, editor.workspace.Root.Visual);
+            new VisualTextElement(File.ReadAllText("./Compose/four.src"), block, CodeColor.String);
         }
 
         public void AddVisualElements(VisualElement Parent, SignatureSymbol Signature)
@@ -146,12 +140,10 @@ namespace feltic.Integrator
         {
             if(Root != null)
             {
-                CodeText.CodeSelection.Draw();
+                //CodeText.CodeSelection.Draw();
                 Root.Draw(10, 10);
-                CodeText.CodeCursor.Draw();
+                //CodeText.CodeCursor.Draw();
             }
         }
     }
-
-
 }

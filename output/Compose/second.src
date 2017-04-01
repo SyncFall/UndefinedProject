@@ -6,17 +6,29 @@ object Editor
 	ActionBar actionBar = ActionBar();
 	Workspace workspace = Workspace();
 	VisualObject Root;
+	VisualObject Container;
+	bool doLoop=true;
 
 	Editor()
 	{
-		Root =
+		Container = 
+			<block height=50px>
+				for(int i=0; i<10; i++){
+					."pie/mue"
+				}
+			</block>
+		;
+		Root = 
 			<block width=700px height=500px>
-				<block>actionBar.Root</block>
+				<block>.actionBar.Root</block>
 				<block height=400px>
-					<column width=65%>workspace.Root</column>
+					<column width=65%>.workspace.Root</column>
 					<column width=35%>"navigation"</column>
 				</block>
 				<block height=125px>"status"</block>
+				<block>
+					.Container
+				</block>
 			</block>
 		;
 	}
@@ -25,16 +37,16 @@ object Editor
 
 object ActionBar
 {	
-	Select solutionSelect = Select();
-	Select runSelect = Select();
+	Select solutionSelect = Select(".solution");
+	Select runSelect = Select(".run");
 	VisualObject Root;
 	
 	ActionBar()
 	{
 		Root = 
 			<block>
-				<inline>solutionSelect.Root</inline>
-				<inline>runSelect.Root</inline>
+				.solutionSelect.Root;
+				.runSelect.Root;
 			</block>
 		;
 	}
@@ -48,7 +60,6 @@ object Workspace
 	{ 
 		Root = 
 			<scroll>
-				<block width=800px height=1500px></block>
 			</scroll>
 		;
 	}
@@ -61,6 +72,6 @@ object Select
 
 	Select(string Param)
 	{  
-		Root = <inline>Param</inline>;
+		Root = <inline>.Param</inline>;
 	}
 }
