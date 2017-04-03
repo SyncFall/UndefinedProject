@@ -25,6 +25,7 @@ int, long, big
 float, double, high
 char, string,
 object, type, var, func
+state, data, visual
 list, map,
 linked,stacked
 generic

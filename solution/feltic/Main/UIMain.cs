@@ -19,7 +19,7 @@ namespace feltic
             Utils.PrintSourceTreeStatistics(@"..\solution\feltic\");
 
             SourceList list = new SourceList();
-            list.Add(SourceText.FromFile("Compose/second.src"));
+            list.Add(SourceText.FromFile("Compose/fifth.src"));
             Registry registry = new Registry();
             registry.AddSourceList(list);
             registry.WriteToTarget("D:\\dev\\UndefinedProject\\output\\csharp.cs");

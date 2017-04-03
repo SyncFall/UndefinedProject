@@ -24,18 +24,20 @@ namespace feltic.Integrator
         public SceneView()
         { 
             Editor editor = new Editor();
-            AddCode(editor);
+            //AddCode(editor);
             Root.AddChild(editor.Root.Visual);
             
             VisualElementMetrics.GetSize(Root);
             VisualElementMetrics.GetPosition(Root, 10, 10);
         }
 
+        /*
         public void AddCode(Editor editor)
         {
             VisualElement block = new VisualElement(VisualType.Block, editor.workspace.Root.Visual);
             new VisualTextElement(File.ReadAllText("./Compose/four.src"), block, CodeColor.String);
         }
+        */
 
         public void AddVisualElements(VisualElement Parent, SignatureSymbol Signature)
         {
@@ -141,6 +143,8 @@ namespace feltic.Integrator
             if(Root != null)
             {
                 //CodeText.CodeSelection.Draw();
+                VisualElementMetrics.GetSize(Root);
+                VisualElementMetrics.GetPosition(Root, 10, 10);
                 Root.Draw(10, 10);
                 //CodeText.CodeCursor.Draw();
             }

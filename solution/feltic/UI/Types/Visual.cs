@@ -307,7 +307,7 @@ namespace feltic.UI.Types
         {
             if (Element.Position != null)
             {
-                return Element.Position;
+                //return Element.Position;
             }
 
             if (Element.Childrens != null)
@@ -354,7 +354,7 @@ namespace feltic.UI.Types
             // return already calculated
             if (Element.Size != null)
             {
-                return Element.Size;
+                //return Element.Size;
             }
 
             // text-size

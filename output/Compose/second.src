@@ -3,17 +3,20 @@
 
 object Editor
 {
-	ActionBar actionBar = ActionBar();
+	ActionBar actionBar;
 	Workspace workspace = Workspace();
 	VisualObject Root;
-	VisualObject Container;
+	VisualObject Cont;
 	bool doLoop=true;
+	Editor editor;
 
 	Editor()
 	{
-		Container = 
+		editor = this;
+		actionBar = ActionBar(this);
+		Cont = 
 			<block height=50px>
-				for(int i=0; i<10; i++){
+				for(int i=0; i<2; i++){
 					."pie/mue"
 				}
 			</block>
@@ -27,10 +30,17 @@ object Editor
 				</block>
 				<block height=125px>"status"</block>
 				<block>
-					.Container
+					.Cont
 				</block>
 			</block>
 		;
+		editor.fertig();
+
+	}
+
+	state fertig()
+	{
+		new VisualTextElement("/triggered", editor.Cont.Visual);
 	}
 }
 
@@ -40,15 +50,21 @@ object ActionBar
 	Select solutionSelect = Select(".solution");
 	Select runSelect = Select(".run");
 	VisualObject Root;
+	Editor editor;
 	
-	ActionBar()
+	ActionBar(Editor editor)
 	{
+		this.editor = editor;
 		Root = 
 			<block>
 				.solutionSelect.Root;
 				.runSelect.Root;
 			</block>
 		;
+		editor.fertig += state(){
+			new VisualTextElement("/received", editor.Cont.Visual);
+		}
+		
 	}
 }
 

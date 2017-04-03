@@ -34,7 +34,7 @@ namespace feltic.Language
             string str = "Visual_"+IdCounter;
             if(Object != null)
                 str += "_"+Object.Signature.Identifier.String;
-            if(Method != null)
+            if(Method != null && Method.Signature.TypeIdentifier != null)
                 str += "_"+Method.Signature.TypeIdentifier.String;
             this.IdentifierString = str;
         }

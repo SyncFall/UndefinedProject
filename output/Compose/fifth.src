@@ -1,0 +1,23 @@
+
+
+object Editor
+{
+	VisualObject Root;
+	Select Select;
+
+	Editor()
+	{
+		Select = Select();
+		Root = <block width=250px height=250px>.Select.Root</block>;
+	}
+}
+
+object Select
+{
+	VisualObject Root;
+
+	Select()
+	{
+		Root = <inline>"test"</inline>;
+	}
+}
