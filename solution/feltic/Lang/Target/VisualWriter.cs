@@ -18,6 +18,7 @@ namespace feltic.Language
         public MethodSymbol Method;
         public SignatureSymbol Signature;
         public ListCollection<TypeDeclarationSignature> ParameterVariables = new ListCollection<TypeDeclarationSignature>();
+        public ListCollection<VisualListenerDelegate> ListenerFunctions = new ListCollection<VisualListenerDelegate>();
         public StringBuilder Builder;
 
         public VisualComponent(ObjectSymbol Object, MethodSymbol Method, SignatureSymbol Signature)
@@ -36,6 +37,33 @@ namespace feltic.Language
                 str += "_"+Object.Signature.Identifier.String;
             if(Method != null && Method.Signature.TypeIdentifier != null)
                 str += "_"+Method.Signature.TypeIdentifier.String;
+            this.IdentifierString = str;
+        }
+    }
+
+    public class VisualListenerDelegate
+    {
+        public static int IdCounter = 0;
+        public string IdentifierString;
+        public VisualComponent Visual;
+        public string MethodName;
+        public StringBuilder Builder;
+
+        public VisualListenerDelegate(VisualComponent Visual, string MethodName)
+        {
+            this.Visual = Visual;
+            this.MethodName = MethodName;
+            BuildIdentifier();
+        }
+
+        public void BuildIdentifier()
+        {
+            IdCounter++;
+            string str = "Visual_Listener_" + IdCounter;
+            if (Visual.Object != null)
+                str += "_" + Visual.Object.Signature.Identifier.String;
+            if (MethodName != null)
+                str += "_" + MethodName;
             this.IdentifierString = str;
         }
     }
@@ -76,14 +104,26 @@ namespace feltic.Language
             WriteLine(tabs + 1, "{");
             WriteLine(tabs + 2, "this.Object = Object;");
             WriteLine(tabs + 2, "Stack<VisualElement> stack = new Stack<VisualElement>();");
+            WriteLine(tabs + 2, "List<VisualElement> listeners = new List<VisualElement>();");
             WriteLine(tabs + 2, "VisualElement element, parent=null;");
             WriteLine();
             WriteTab(tabs + 2);
             WriteLine("this.Visual = ");
             Write(elementBuilder.ToString());
+            WriteLine();
+            for(int i=0; i<vis.ListenerFunctions.Size; i++)
+            {
+                WriteLine(tabs + 2, "new "+vis.ListenerFunctions[i].IdentifierString+"(Object, listeners["+i+"]);");
+            }
             WriteLine(tabs+  1, "}");
             WriteLine(tabs, "}");
             WriteLine();
+
+            for (int i=0; i<vis.ListenerFunctions.Size; i++)
+            {
+                WriteVisualListenerItem(tabs, vis.ListenerFunctions[i]);
+                Write(vis.ListenerFunctions[i].Builder.ToString());
+            }
 
             PopBuilder();
         }
@@ -164,7 +204,18 @@ namespace feltic.Language
                     {
                         string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
                         Way way = Way.Try(value);
-                        WriteLine(tabs, "element.Room."+Char.ToUpper(attr[0])+attr.Substring(1)+" = new Way("+(int)way.Type+", "+((way.way)+"").Replace(',', '.')+"f);");
+                        WriteLine(tabs, "element.Room."+char.ToUpper(attr[0])+attr.Substring(1)+" = new Way("+(int)way.Type+", "+((way.way)+"").Replace(',', '.')+"f);");
+                    }
+                    else if(attr == "display")
+                    {
+                        string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
+                        WriteLine(tabs, "element.Display = "+ bool.Parse(value).ToString().ToLower()+";");
+                    }
+                    else if(attr == "listener")
+                    {
+                        string func = (attribute.AssigmentOperand.AccessList[0] as VariableOperand).Identifier.String;
+                        vis.ListenerFunctions.Add(new VisualListenerDelegate(vis, func));
+                        WriteLine(tabs, "listeners.Add(element);");
                     }
                 }
             }
@@ -179,6 +230,29 @@ namespace feltic.Language
                 if(parent != null)
                     WriteLine(tabs, "parent = stack.Pop();");
             }
+        }
+
+
+        public void WriteVisualListenerItem(int tabs, VisualListenerDelegate vlstn)
+        {
+            vlstn.Builder = PushBuilder();
+
+            WriteLine(tabs, "public class " + vlstn.IdentifierString + " : VisualListener");
+            WriteLine(tabs, "{");
+            WriteLine(tabs + 1, "public " + vlstn.Visual.Object.Signature.Identifier.String + " Object;");
+            WriteLine();
+            WriteLine(tabs + 1, "public " + vlstn.IdentifierString + "(" + vlstn.Visual.Object.Signature.Identifier.String + " Object, VisualElement Element) : base(Element)");
+            WriteLine(tabs + 1, "{");
+            WriteLine(tabs + 2, "this.Object = Object;");
+            WriteLine(tabs + 2, "this.Element.InputListener = this;");
+            WriteLine(tabs + 1, "}");
+            WriteLine();
+            WriteLine(tabs + 1, "public override void Event(InputEvent Event){");
+            WriteLine(tabs + 2, "this.Object." + vlstn.MethodName + "(Event);");
+            WriteLine(tabs + 1, "}");
+            WriteLine(tabs, "}");
+
+            PopBuilder();
         }
     }
 }

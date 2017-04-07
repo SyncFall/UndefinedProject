@@ -1,23 +1,29 @@
 
 
-object Editor
+object Editor extend visual
 {
-	VisualObject Root;
-	Select Select;
+	Select Select = Select();
 
 	Editor()
 	{
-		Select = Select();
-		Root = <block width=250px height=250px>.Select.Root</block>;
+		Visual = <block width=250px height=250px listener=Focus>.Select.Visual</block>;
+	}
+
+	func Focus(InputEvent inEvt)
+	{
+		if(inEvt.IsVisual){
+			Console.Write("gainFocus:"+inEvt.Visual.GainFocus);
+			Console.Write("lostFocus:"+inEvt.Visual.LostFocus);
+			Console.WriteLine();
+		}
+
 	}
 }
 
 object Select
 {
-	VisualObject Root;
-
 	Select()
 	{
-		Root = <inline>"test"</inline>;
+		Visual = <inline>"test"</inline>;
 	}
 }

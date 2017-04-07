@@ -32,23 +32,23 @@ namespace feltic.Language
             ExpressionSignature expressionPointer = signature;
             while(true)
             {
-                if(!BeginStep())
+                if(!Begin())
                 {
                     return signature;
                 }
                 if((expressionPointer.Operation = TryOperation()) == null)
                 {
-                    ResetStep();
+                    Reset();
                     break;
                 }
                 if((expressionPointer.ExpressionPair = TryExpression()) == null)
                 { 
-                    ResetStep();
+                    Reset();
                     break;
                 }
                 expressionPointer.ExpressionPair.LeftExpression = expressionPointer;
                 expressionPointer = expressionPointer.ExpressionPair;
-                CommitStep();
+                Commit();
             }
             signature.PostOperation = TryPrePostOperation(false);
             return signature;
@@ -145,7 +145,7 @@ namespace feltic.Language
 
         public ObjectAccessOperand TryObjectOperand()
         {
-            BeginStep();
+            Begin();
             TrySpace();
             if(Token == null) return null;
 
@@ -162,7 +162,7 @@ namespace feltic.Language
                 objectOperand.Func = Token;
                 NextToken();
             }
-
+            
             TrySpace();
             if(Token == null) return null;
             if(Token.IsType(TokenType.Identifier) || Token.IsType(TokenType.Native))
@@ -175,14 +175,14 @@ namespace feltic.Language
 
             if(objectOperand == null)
             {
-                ResetStep();
+                Reset();
                 return null;
             }
 
             objectOperand.ParameterDefinition = TryParameters(StructureType.ClosingBegin, StructureType.ClosingEnd);
             if(objectOperand.ParameterDefinition == null)
             {
-                ResetStep();
+                Reset();
                 return null;
             }
 
@@ -192,7 +192,7 @@ namespace feltic.Language
                 TryNonSpace(StructureType.BlockEnd);
             }
 
-            CommitStep();
+            Commit();
             return objectOperand;
         }
         
@@ -303,6 +303,7 @@ namespace feltic.Language
     {
         public Symbol New;
         public Symbol Func;
+        public GenericDeclarationSignature Generics;
         public Symbol ObjectType;
         public ParameterDeclarationSignature ParameterDefinition;
         public SignatureList ContentSignatures;

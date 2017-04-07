@@ -15,6 +15,7 @@ namespace feltic.UI
         Button,
         Scroll,
         Text,
+        Visual,
     }
 
     public abstract class InputState
@@ -33,41 +34,37 @@ namespace feltic.UI
 
         public bool IsKey
         {
-            get
-            {
-                return (this.Type == InputType.Key);
-            }
+            get{ return (this.Type == InputType.Key); }
         }
 
         public bool IsCursor
         {
-            get
-            {
-                return (this.Type == InputType.Cursor);
-            }
+            get{ return (this.Type == InputType.Cursor); }
         }
 
         public bool IsButton
         {
-            get
-            {
-                return (this.Type == InputType.Button);
-            }
+            get{ return (this.Type == InputType.Button); }
         }
 
         public bool IsText
         {
-            get
-            {
-                return (this.Type == InputType.Text);
-            }
+            get{ return (this.Type == InputType.Text); }
+        }
+
+        public bool IsVisual
+        {
+            get { return (this.Type == InputType.Visual); }
         }
 
         public KeyState Key
         {
             get
             {
-                return (State as KeyState);
+                if (IsKey)
+                    return (State as KeyState);
+                else
+                    return new KeyState(UI.Key.Unknown);
             }
         }
 
@@ -75,7 +72,10 @@ namespace feltic.UI
         {
             get
             {
-                return (State as CursorState);
+                if (IsCursor)
+                    return (State as CursorState);
+                else
+                    return new CursorState();
             }
         }
 
@@ -83,7 +83,10 @@ namespace feltic.UI
         {
             get
             {
-                return (State as ButtonState);
+                if (IsButton)
+                    return (State as ButtonState);
+                else
+                    return new ButtonState(UI.Button.LastButton);
             }
         }
 
@@ -91,50 +94,59 @@ namespace feltic.UI
         {
             get
             {
-                return (State as TextState);
+                if (IsText)
+                    return (State as TextState);
+                else
+                    return new TextState(null);
             }
         }
 
+        public VisualState Visual
+        {
+            get
+            {
+                if (IsVisual)
+                    return (State as VisualState);
+                else
+                    return new VisualState();
+            }
+        }
     }
 
     public class Input
     {
-        public static ListCollection<InputListener> InputListeners = new ListCollection<InputListener>();
+        public static MapCollection<int, InputListener> Listeners = new MapCollection<int, InputListener>();
         public static MouseState Mouse;
+        public static CursorState Cursor;
         public static KeyboardState Keyboard;
 
         public static void Inititialize(OpenTK.GameWindow GameWindow)
         {
             Mouse = new MouseState(GameWindow);
+            Cursor = Mouse.Cursor;
             Keyboard = new KeyboardState(GameWindow);
         }
 
         public static void FireListeners(InputEvent InputEvent)
         {
-            for (int i = 0; i < InputListeners.Size; i++)
+            int[] keys = Listeners.Keys;
+            for (int i=0; i<keys.Length; i++)
             {
-                InputListener inputListener = InputListeners.Get(i);
-                inputListener.ProcessInputEvent(InputEvent);
+                Listeners[keys[i]].ProcessInputEvent(InputEvent);
             }
         }
 
         public static void Add(InputListener InputListener)
         {
             InputListener.Mouse = Mouse;
+            InputListener.Cursor = Cursor;
             InputListener.Keyboard = Keyboard;
-            InputListeners.Add(InputListener);
+            Listeners[InputListener.Id] = InputListener;
         }
 
         public static void Remove(InputListener InputListener)
         {
-            for(int i=0; i<InputListeners.Size; i++)
-            {
-                if(InputListeners.Get(i).Id == InputListener.Id)
-                {
-                    InputListeners.RemoveAt(i);
-                    break;
-                }
-            }
+            Listeners.Remove(InputListener.Id);
         }
     }
 
@@ -144,6 +156,7 @@ namespace feltic.UI
         public readonly int Id;
         public object Sender;
         public MouseState Mouse;
+        public CursorState Cursor;
         public KeyboardState Keyboard;
 
         public InputListener()
@@ -165,6 +178,18 @@ namespace feltic.UI
         public abstract void Input(InputEvent Event);
     }
 
+    public class VisualState : InputState
+    {
+        public bool GainFocus;
+        public bool LostFocus;
+
+        public VisualState(bool GainFocus=false, bool LostFocus=false)
+        {
+            this.GainFocus = GainFocus;
+            this.LostFocus = LostFocus;
+        }
+    }
+
     public class TextState : InputState
     {
         public string TextContent;
@@ -178,6 +203,16 @@ namespace feltic.UI
     public class KeyboardState
     {
         public KeyStateCollection Keys = new KeyStateCollection();
+
+        public bool HoldShift
+        {
+            get { return Keys.HoldShift; }
+        }
+
+        public bool HoldControl
+        {
+            get { return Keys.HoldControl; }
+        }
 
         public KeyboardState(OpenTK.GameWindow GameWindow)
         {
@@ -228,12 +263,14 @@ namespace feltic.UI
 
     public class KeyStateCollection : MapCollection<Key, KeyState>
     {
-        public KeyState this[Key key]
+        public bool HoldShift
         {
-            get
-            {
-                return base.GetValue(key);
-            }
+            get { return (this[UI.Key.ShiftLeft].IsDown || this[UI.Key.ShiftRight].IsDown); }
+        }
+
+        public bool HoldControl
+        {
+            get { return (this[UI.Key.ControlLeft].IsDown || this[UI.Key.ControlRight].IsDown); }
         }
     }
 
@@ -256,34 +293,22 @@ namespace feltic.UI
 
         public bool IsAlphabet
         {
-            get
-            {
-                return (Type >= Key.A && Type <= Key.Z);
-            }
+            get{ return (Type >= Key.A && Type <= Key.Z); }
         }
 
         public char AlphabetChar
         {
-            get
-            {
-                return Alphabet[(int)Type - 83];
-            }
+            get{ return Alphabet[(int)Type - 83]; }
         }
 
         public bool IsNumber
         {
-            get
-            {
-                return (Type >= Key.Number0 && Type <= Key.Number9);
-            } 
+            get{ return (Type >= Key.Number0 && Type <= Key.Number9); } 
         }
 
         public char NumberChar
         {
-            get
-            {
-                return Numbers[(int)Type - 109];
-            }
+            get{ return Numbers[(int)Type - 109]; }
         }
 
         public string TextContent
@@ -435,6 +460,16 @@ namespace feltic.UI
         private CursorState CursorState = new CursorState();
         private ButtonStateCollection ButtonStateCollection = new ButtonStateCollection();
 
+        public CursorState Cursor
+        {
+            get { return CursorState; }
+        }
+
+        public ButtonStateCollection Buttons
+        {
+            get { return ButtonStateCollection; }
+        }
+
         public MouseState(OpenTK.GameWindow GameWindow)
         {
             OpenTK.Input.MouseState mouseState = OpenTK.Input.Mouse.GetCursorState();
@@ -482,39 +517,23 @@ namespace feltic.UI
                 Input.FireListeners(new InputEvent(InputType.Button, mouseButton));
             };
         }
-
-        public CursorState Cursor
-        {
-            get
-            {
-                return CursorState;
-            }
-        }
-
-        public ButtonStateCollection Buttons
-        {
-            get
-            {
-                return ButtonStateCollection;
-            }
-        }
     }
 
     public class ButtonStateCollection : MapCollection<Button, ButtonState>
     {
-        public ButtonState this[Button button]
+        public bool LeftClick
         {
-            get
-            {
-                return base.GetValue(button);
-            }
+            get { return this[UI.Button.Left].IsClick; }
         }
     }
 
     public class CursorState : InputState
     {
-        public int x;
-        public int y;
+        public int x = -1;
+        public int y = -1;
+
+        public CursorState()
+        { }
     }
 
     public class ButtonState : InputState
@@ -530,6 +549,11 @@ namespace feltic.UI
         public ButtonState(Button Button)
         {
             this.Type = Button;
+        }
+
+        public bool LeftClick
+        {
+            get { return (Type == Button.Left && IsClick); }
         }
     }
 
@@ -698,6 +722,7 @@ namespace feltic.UI
         Button7 = 9,
         Button8 = 10,
         Button9 = 11,
-        LastButton = 12
+        LastButton = 12,
+        
     }
 }

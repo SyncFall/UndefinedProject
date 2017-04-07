@@ -40,17 +40,17 @@ namespace feltic.Language
             return Pointer.Next;
         }
 
-        public bool BeginStep()
+        public bool Begin()
         {
             return Pointer.Begin();
         }
 
-        public void ResetStep()
+        public void Reset()
         {
             Pointer.Reset();
         }
 
-        public void CommitStep()
+        public void Commit()
         {
             Pointer.Commit();
         }

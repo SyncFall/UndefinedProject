@@ -30,6 +30,7 @@ namespace feltic.Language
             Builder.Clear();
             WriteLine("using System;");
             WriteLine("using System.IO;");
+            WriteLine("using System.Collections;");
             WriteLine("using System.Collections.Generic;");
             WriteLine("using feltic.Language;");
             WriteLine("using feltic.Library;");
@@ -64,7 +65,16 @@ namespace feltic.Language
 
         void WriteObject(int tabs, ObjectSymbol obj)
         {
-            WriteLine(tabs, "public class " + obj.Signature.Identifier.String);
+            WriteTab(tabs);
+            Write("public class " + obj.Signature.Identifier.String);
+            if (obj.Signature.ExtendKeyword != null)
+            {
+                Symbol typeIdentifier = obj.Signature.ExtendIdentifier;
+                if (typeIdentifier.IsNative(NativeType.Visual))
+                    WriteLine(" : VisualObject");
+                else
+                    WriteLine(" : " + obj.Signature.ExtendIdentifier.String);
+            }
             WriteLine(tabs, "{");
             for (int j = 0; j < obj.MemberList.Size; j++)
             {
@@ -147,11 +157,9 @@ namespace feltic.Language
             {
                 WriteTab(tabs);
                 if(stm.Keyword != null)
-                {
-                    Write(stm.Keyword.String);  
-                    Write(" ");
-                }
-                WriteExpression(obj, mth, vis, (stm as ExpressionStatementSignature).Expression);
+                    Write(stm.Keyword.String+" ");  
+                if((stm as ExpressionStatementSignature).Expression != null)
+                    WriteExpression(obj, mth, vis, (stm as ExpressionStatementSignature).Expression);
                 WriteLine(";");
             }
             else if(stm.Group == StatementCategory.BlockStatement)
@@ -211,9 +219,11 @@ namespace feltic.Language
 
         void WriteTypeDeclaration(ObjectSymbol obj, MethodSymbol mth, VisualComponent vis, TypeDeclarationSignature td)
         {
-            if(td.TypeIdentifier != null)
-                if(td.TypeIdentifier.IsNative(NativeType.State) || td.TypeIdentifier.IsNative(NativeType.Func))
+            if (td.TypeIdentifier != null)
+                if (td.TypeIdentifier.IsNative(NativeType.State) || td.TypeIdentifier.IsNative(NativeType.Func))
                     Write("void ");
+                else if (td.TypeIdentifier.IsNative(NativeType.Visual))
+                    Write("VisualObject ");
                 else
                     Write(td.TypeIdentifier.String + " ");
             if (td.TypeGeneric != null)

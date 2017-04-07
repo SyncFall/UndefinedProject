@@ -1,4 +1,5 @@
-﻿using System;
+﻿using feltic.UI.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace feltic.UI
             return (intersectX && intersectY);
         }
 
-        public static bool IntersetBound(int StartX, int Width, int StartY, int Height, int MouseX, int MouseY)
+        public static bool IntersectBound(int StartX, int Width, int StartY, int Height, int MouseX, int MouseY)
         {
             int minX = StartX;
             int maxX = StartX + Width;
@@ -30,7 +31,7 @@ namespace feltic.UI
             return (intersectX && intersectY);
         }
 
-        public static bool IntersetMarginBound(int StartX, int Width, int StartY, int Height, int Margin, int MouseX, int MouseY)
+        public static bool IntersectMarginBound(int StartX, int Width, int StartY, int Height, int Margin, int MouseX, int MouseY)
         {
             int minX = StartX - Margin;
             int maxX = StartX + Width + Margin;
@@ -39,6 +40,11 @@ namespace feltic.UI
             bool intersectX = (MouseX >= minX && MouseX <= maxX);
             bool intersectY = (MouseY >= minY && MouseY <= maxY);
             return (intersectX && intersectY);
+        }
+
+        public static bool IntersectVisual(VisualElement Visual, CursorState Cursor)
+        {
+            return IntersectBound((int)Visual.Position.x, (int)Visual.Size.Width, (int)Visual.Position.y, (int)Visual.Size.Height, Cursor.x, Cursor.y);
         }
     }
 }

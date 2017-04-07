@@ -22,6 +22,7 @@ namespace feltic.Language
         Var,
         Func,
         State,
+        Visual,
     }
 
     public static class Natives
@@ -45,6 +46,7 @@ namespace feltic.Language
             new NativeSymbol(NativeType.Type, "type"),
             new NativeSymbol(NativeType.Var, "var"),
             new NativeSymbol(NativeType.Enum, "enum"),
+            new NativeSymbol(NativeType.Visual, "visual"),
         };
     }
 

@@ -66,14 +66,15 @@ namespace feltic.UI
             }
         }
 
-        //Color same = new Color(220, 220, 200);
         public void Draw(Color Color, float X=0, float Y=0, float OffsetX=0, float OffsetY=0, float Width=0, float Height=0)
         {
             float currentX = X;
             float currentY = Y;
-            if(Color == null)   Color = new Color(220, 220, 200);
+
+            if (Color == null)
+                Color = new Color(220, 220, 200);
             GL.Color3(Color.GetGlColor().Rgb);
-            //GL.Color3(same.GetGlColor().Rgb);
+
             for (int i = 0; i < String.Length; i++)
             {
                 char textChar = String[i];
@@ -119,7 +120,6 @@ namespace feltic.UI
         public TextFormat()
         {
             this.Font = new Font("D:\\dev\\UndefinedProject\\output\\DroidSansMono.ttf");
-            //this.Color = new Color(0, 100, 150);
             this.Color = new Color(220, 220, 220);
         }
     }

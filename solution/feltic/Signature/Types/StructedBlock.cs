@@ -11,43 +11,37 @@ namespace feltic.Language
     {
         public StructedBlockSignature TryStructedBlock()
         {
-            if(!BeginStep()) return null;
-            Symbol openBlockBegin, openBlockIdentifier;
-            if((openBlockBegin = TryNonSpace(OperationType.Less)) == null ||
-               (openBlockIdentifier = TryNonSpace(TokenType.Visual)) == null && (openBlockIdentifier = TryNonSpace(TokenType.Identifier)) == null
+            if(!Begin()) return null;
+            StructedBlockSignature signature = new StructedBlockSignature();
+            if((signature.OpenBlockBegin = TryNonSpace(OperationType.Less)) == null ||
+               ((signature.OpenBlockIdentifiere = TryNonSpace(TokenType.Visual)) == null && (signature.OpenBlockIdentifiere = TryNonSpace(TokenType.Identifier)) == null)
             ){
-                ResetStep();
+                Reset();
                 return null;
             }
             StructedAttributeList attributes = TryStructedBlockAttributes();
-            Symbol openBlockClosing = TryNonSpace(OperationType.Divide);
-            Symbol openBlockEnd;
-            if((openBlockEnd = TryNonSpace(OperationType.Greater)) == null)
+            signature.OpenBlockClosing = TryNonSpace(OperationType.Divide);
+            if((signature.OpenBlockEnd = TryNonSpace(OperationType.Greater)) == null)
             {
-                ResetStep();
+                Reset();
                 return null;
             }
-            StructedBlockSignature signature = new StructedBlockSignature();
-            signature.OpenBlockBegin = openBlockBegin;
-            signature.OpenBlockIdentifiere = openBlockIdentifier;
             signature.Attributes = attributes;
-            signature.OpenBlockClosing = openBlockClosing;
-            signature.OpenBlockEnd = openBlockEnd;
-            if(openBlockClosing != null)
+            if(signature.OpenBlockClosing != null)
             {
-                CommitStep();
+                Commit();
                 return signature;
             }
             signature.Elements = TryStatementList();
             if ((signature.CloseBlockBegin = TryNonSpace(OperationType.Less)) == null ||
                 (signature.CloseBlockClosing = TryNonSpace(OperationType.Divide)) == null ||
-                ((signature.CloseBlockIdentifier = TryNonSpace(TokenType.Visual)) == null && (signature.CloseBlockIdentifier = TryNonSpace(TokenType.Identifier)) == null) ||
+               ((signature.CloseBlockIdentifier = TryNonSpace(TokenType.Visual)) == null && (signature.CloseBlockIdentifier = TryNonSpace(TokenType.Identifier)) == null) ||
                 (signature.CloseBlockEnd = TryNonSpace(OperationType.Greater)) == null
             ){
-                ResetStep();
+                Reset();
                 return signature;
             }
-            CommitStep();
+            Commit();
             return signature;
         }
 

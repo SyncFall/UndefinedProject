@@ -25,10 +25,7 @@ namespace feltic.Integrator
         { 
             Editor editor = new Editor();
             //AddCode(editor);
-            Root.AddChild(editor.Root.Visual);
-            
-            VisualElementMetrics.GetSize(Root);
-            VisualElementMetrics.GetPosition(Root, 10, 10);
+            Root.AddChild(editor.Visual);
         }
 
         /*

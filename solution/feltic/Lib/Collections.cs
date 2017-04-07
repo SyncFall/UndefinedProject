@@ -184,7 +184,7 @@ namespace feltic.Library
             map = new Dictionary<K, V>(Size);
         }
 
-        public V this[K Key]
+        public virtual V this[K Key]
         {
             get
             {

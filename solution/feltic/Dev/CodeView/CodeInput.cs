@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace feltic.Integrator
 {
-    public class CodeInput : VisualInputListener
+    public class CodeInput : VisualListener
     {
         public CodeText CodeText;
 

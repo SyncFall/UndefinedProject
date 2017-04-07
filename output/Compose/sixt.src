@@ -1,0 +1,98 @@
+
+object Option extend visual 
+{
+	Select select;
+	visual elm;
+	string val;
+	string txt;
+
+	Option(Select select, string val, string txt)
+	{
+		this.select = select;
+		this.val = val;
+		this.txt = txt;
+		this.build();
+	}
+
+	func build()
+	{
+		elm = <block>"option"</block>;
+		select.list.add(elm);
+		Visual = elm.Visual;
+	}
+}
+
+object Select extend visual
+{
+	visual elm;
+	visual view;
+	visual list;
+	
+	int selectedOption;
+
+	Select()
+	{
+		this.build();
+	}
+	
+	func build()
+	{
+		elm = <inline listener=elmListener width=100px/>;
+		view = <block listener=viewListener>"- Select -"</block>;
+		list = <block listener=listListener display=false/>;
+		elm.add(view, list);
+		Visual = elm.Visual;
+	}
+	
+	func selectOption(int index)
+	{
+		selectedOption = index;
+		view.Childrens.Clear();
+		new VisualTextElement("option-"+index, view.Visual);
+		view.display = true;
+		list.display = false;
+	}
+
+	func elmListener(InputEvent inevt)
+	{
+		bool lostFocus = (inevt.Visual.LostFocus);
+		if(lostFocus){
+			list.display = false;
+		}
+	}
+
+	func viewListener(InputEvent inevt)
+	{
+		bool showList = (inevt.Button.LeftClick);
+		if(showList){
+			list.display = true;
+		}
+	}
+
+	func listListener(InputEvent inevt)
+	{
+		bool select = (inevt.Button.LeftClick);
+		if(select){
+			for(int i=0; i<list.Size; i++){
+				if(GeometryUtils.IntersectVisual(list[i], Input.Cursor)){
+					this.selectOption(i);
+					break;
+				}
+			}
+		}
+	}
+}
+
+object Editor extend visual
+{
+	Select select;
+
+	Editor()
+	{
+		select = Select();
+		Option(select, "val1", "text1");
+		Option(select, "val2", "text2");
+		Option(select, "val3", "text3");
+		Visual = select.Visual;
+	}
+}

@@ -43,14 +43,6 @@ namespace feltic.Language
                     for (int j = 0; j < parameterDeclaration.Elements.Size; j++)
                     {
                         ParameterSignature parameter = parameterDeclaration.Elements.Get(j);
-                        TypeDeclarationSignature parameterTypeDeclaration = parameter.TypeDeclaration;
-                        if (parameterTypeDeclaration.TypeIdentifier != null)
-                        {
-                            if (Registry.GetObjectSymbol(parameterTypeDeclaration.TypeIdentifier.String) == null)
-                            {
-                                ;
-                            }
-                        }
                     }
                 }
                 if (methodSymbol.Code != null)

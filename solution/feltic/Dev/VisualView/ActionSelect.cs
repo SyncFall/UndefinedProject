@@ -139,9 +139,9 @@ namespace feltic.Integrator
                 }
                 if (Event.IsCursor)
                 {
-                    ActionButton.Hover = GeometryUtils.IntersetBound(ActionButton.X, Size, ActionButton.Y, Size, Mouse.Cursor.x, Mouse.Cursor.y);
+                    ActionButton.Hover = GeometryUtils.IntersectBound(ActionButton.X, Size, ActionButton.Y, Size, Mouse.Cursor.x, Mouse.Cursor.y);
                 }
-                if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick && GeometryUtils.IntersetBound(ActionButton.X, Size, ActionButton.Y, Size, Mouse.Cursor.x, Mouse.Cursor.y))
+                if (Event.IsButton && Event.Button.Type == Button.Left && Event.Button.IsClick && GeometryUtils.IntersectBound(ActionButton.X, Size, ActionButton.Y, Size, Mouse.Cursor.x, Mouse.Cursor.y))
                 {
                     ActionButton.ActionSelect.ActionEvent(ActionButton);
                 }

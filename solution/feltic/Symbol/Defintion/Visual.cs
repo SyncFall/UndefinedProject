@@ -9,7 +9,6 @@ namespace feltic.Language
     public enum VisualType
     {
         None=0,
-        Compose,
         Block,
         Inline,
         Column,
@@ -26,7 +25,6 @@ namespace feltic.Language
     {
         public static VisualSymbol[] Array =
         {
-            new VisualSymbol(VisualType.Compose, "compose"),
             new VisualSymbol(VisualType.Block, "block"),
             new VisualSymbol(VisualType.Inline, "inline"),
             new VisualSymbol(VisualType.Column, "column"),
