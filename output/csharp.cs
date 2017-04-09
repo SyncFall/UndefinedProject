@@ -14,19 +14,15 @@ namespace Scope
 	{
 		public Select select;
 		public VisualObject elm;
-		public string val;
-		public string txt;
 
 		public Option(Select select, string val, string txt)
 		{
 						this.select = select;
-						this.val = val;
-						this.txt = txt;
-						this.build();
+						this.build(txt);
 		}
-		public void build()
+		public void build(string txt)
 		{
-						elm = new Visual_1_Option(this)
+						elm = new Visual_1_Option(this, txt)
 ;
 						select.list.add(elm);
 						Visual = elm.Visual;
@@ -38,7 +34,7 @@ namespace Scope
 		public VisualObject elm;
 		public VisualObject view;
 		public VisualObject list;
-		public int selectedOption;
+		public int select;
 
 		public Select()
 		{
@@ -57,11 +53,16 @@ namespace Scope
 		}
 		public void selectOption(int index)
 		{
-						selectedOption = index;
+						select = index;
 						view.Childrens.Clear();
-						new VisualTextElement("option-" + index, view.Visual);
-						view.display = true;
+						new VisualTextElement("option-" + select, view.Visual);
 						list.display = false;
+						this.selectedOption(select);
+		}
+		public ReceiverContainer_1_Select_selectedOption RC_1_Select_selectedOption = new ReceiverContainer_1_Select_selectedOption();
+		public void selectedOption(int index)
+		{
+			RC_1_Select_selectedOption.EventState(index);
 		}
 		public void elmListener(InputEvent inevt)
 		{
@@ -103,6 +104,7 @@ namespace Scope
 		public Editor()
 		{
 						select = new Select();
+						new TargetState_1_Select_selectedOption(select.RC_1_Select_selectedOption, this);
 						new Option(select, "val1", "text1");
 						new Option(select, "val2", "text2");
 						new Option(select, "val3", "text3");
@@ -115,7 +117,7 @@ namespace Scope
 	{
 		public Option Object;
 
-		public Visual_1_Option(Option Object)
+		public Visual_1_Option(Option Object, string txt)
 		{
 			this.Object = Object;
 			Stack<VisualElement> stack = new Stack<VisualElement>();
@@ -126,7 +128,7 @@ namespace Scope
 			element = new VisualElement(1, parent);
 			stack.Push(parent);
 			parent = element;
-			element = new VisualTextElement("option", parent);
+			element = new VisualTextElement(txt, parent);
 
 		}
 	}
@@ -236,6 +238,44 @@ namespace Scope
 
 		public override void Event(InputEvent Event){
 			this.Object.listListener(Event);
+		}
+	}
+
+	public class ReceiverContainer_1_Select_selectedOption
+	{
+		public MapCollection<int, StateReceiver_1_Select_selectedOption> Receivers = new MapCollection<int, StateReceiver_1_Select_selectedOption>();
+
+		public void EventState(int index)
+		{
+			int[] keys = Receivers.Keys;
+			for(int i=0; i<keys.Length; i++){
+				Receivers[keys[i]].EventState(index);
+			}
+		}
+	}
+	public abstract class StateReceiver_1_Select_selectedOption
+	{
+		private static int IdCounter = 0;
+		public readonly int Id;
+		public ReceiverContainer_1_Select_selectedOption Container;
+
+		public StateReceiver_1_Select_selectedOption(ReceiverContainer_1_Select_selectedOption Container){
+			this.Container = Container;
+			this.Id = (++IdCounter);
+			this.Container.Receivers.Put(this.Id, this);
+		}
+		public abstract void EventState(int index);
+	}
+	public class TargetState_1_Select_selectedOption : StateReceiver_1_Select_selectedOption
+	{
+		public Editor Object;
+
+		public TargetState_1_Select_selectedOption(ReceiverContainer_1_Select_selectedOption Container, Editor Object) : base(Container){
+			this.Container = Container;
+			this.Object = Object;
+		}
+		public override void EventState(int index){
+						Console.WriteLine("/selected");
 		}
 	}
 

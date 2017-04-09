@@ -3,20 +3,16 @@ object Option extend visual
 {
 	Select select;
 	visual elm;
-	string val;
-	string txt;
 
 	Option(Select select, string val, string txt)
 	{
 		this.select = select;
-		this.val = val;
-		this.txt = txt;
-		this.build();
+		this.build(txt);
 	}
 
-	func build()
+	func build(string txt)
 	{
-		elm = <block>"option"</block>;
+		elm = <block>.txt</block>;
 		select.list.add(elm);
 		Visual = elm.Visual;
 	}
@@ -27,8 +23,7 @@ object Select extend visual
 	visual elm;
 	visual view;
 	visual list;
-	
-	int selectedOption;
+	int select;
 
 	Select()
 	{
@@ -46,12 +41,15 @@ object Select extend visual
 	
 	func selectOption(int index)
 	{
-		selectedOption = index;
+		select = index;
 		view.Childrens.Clear();
-		new VisualTextElement("option-"+index, view.Visual);
-		view.display = true;
+		new VisualTextElement("option-"+select, view.Visual);
 		list.display = false;
+		this.selectedOption(select);
 	}
+
+	state selectedOption(int index)
+	{ }
 
 	func elmListener(InputEvent inevt)
 	{
@@ -90,6 +88,9 @@ object Editor extend visual
 	Editor()
 	{
 		select = Select();
+		select.selectedOption += state(int opt){
+			Console.WriteLine("/selected");
+		}
 		Option(select, "val1", "text1");
 		Option(select, "val2", "text2");
 		Option(select, "val3", "text3");

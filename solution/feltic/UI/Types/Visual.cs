@@ -24,6 +24,11 @@ namespace feltic.UI.Types
             set { Visual.Color = Color.Try(value); }
         }
 
+        public void add(VisualElement e)
+        {
+            Visual.AddChild(e);
+        }
+
         public void add(VisualObject a)
         {
             Visual.AddChild(a.Visual);
@@ -92,11 +97,6 @@ namespace feltic.UI.Types
         public virtual void Draw(float X=0, float Y=0, float OffsetX=0, float OffsetY=0, float Width=0, float Height=0)
         {
             if(!Display) return;
-
-            if(Color != null)
-            {
-                bool yes = true;
-            }
 
             if (Type == VisualType.Text)
             {
@@ -531,14 +531,8 @@ namespace feltic.UI.Types
 
         public string Text
         {
-            get
-            {
-                return (TextHandle.String);
-            }
-            set
-            {
-                TextHandle = new UI.Text(value, null);
-            }
+            get{ return (TextHandle.String); }
+            set{ TextHandle = new UI.Text(value, null); }
         }
 
         public VisualTextElement(string String, VisualElement Parent, Color Color=null) : base(VisualType.Text, Parent)
@@ -684,17 +678,18 @@ namespace feltic.UI.Types
             {
                 if (Event.IsButton && Event.Button.IsClick && Event.Button.Type == Button.Left)
                 {
-                    if(GeometryUtils.IntersectBound((int)(Element.Position.x + Element.Size.Width - Element.ScrollYSize.Width), (int)Element.ScrollYSize.Width,
-                                                   (int)(Element.Position.y + Element.ScrollYPosition), (int)Element.ScrollYSize.Height,
-                                                   Mouse.Cursor.x, Mouse.Cursor.y))
+                    if(GeometryUtils.IntersectBound(
+                            (int)(Element.Position.x + Element.Size.Width - Element.ScrollYSize.Width), (int)Element.ScrollYSize.Width,
+                            (int)(Element.Position.y + Element.ScrollYPosition), (int)Element.ScrollYSize.Height,
+                            Mouse.Cursor.x, Mouse.Cursor.y))
                     {
                         ActiveScrollY = true;
                         ScrollYOffset = (Mouse.Cursor.y - Element.ScrollYPosition);
                     }
                     else if(GeometryUtils.IntersectBound(
-                                (int)(Element.Position.x + Element.ScrollXPosition), (int)Element.ScrollXSize.Width,
-                                (int)(Element.Position.y + Element.Size.Height - Element.ScrollXSize.Height), (int)Element.ScrollXSize.Height,
-                                Mouse.Cursor.x, Mouse.Cursor.y))
+                           (int)(Element.Position.x + Element.ScrollXPosition), (int)Element.ScrollXSize.Width,
+                           (int)(Element.Position.y + Element.Size.Height - Element.ScrollXSize.Height), (int)Element.ScrollXSize.Height,
+                           Mouse.Cursor.x, Mouse.Cursor.y))
                     {
                         ActiveScrollX = true;
                         ScrollXOffset = (Mouse.Cursor.x - Element.ScrollXPosition);

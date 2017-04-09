@@ -21,7 +21,7 @@ namespace feltic.UI
 
         public FpsCounter()
         {
-            GlyphContainer = new GlyphContainer(new Font(@"D:\dev\UndefinedProject\output\source-code-pro-regular.ttf"));
+            GlyphContainer = new GlyphContainer(new Font("DroidSansMono.ttf"));
             Last = DateTime.Now.Ticks;
             Counter = 0;
             DisplayCounter = 0;
