@@ -1,0 +1,61 @@
+
+
+object FileNode extend visual
+{
+	visual Element;
+	visual List;
+	Folder Parent;
+	string Name;
+
+	FileNode(FileNode parent, string Name)
+	{
+		this.Parent = parent;
+		this.Name = Name;
+		this.IsFolder = IsFolder;
+	}
+
+	func build()
+	{
+		Element = <block listener=elmListener>Name</block>;
+		List = <block display=false/>;
+		Visual = <block>.Element;.List;</block>;
+	}
+
+	func addEntry(FileNode child)
+	{
+		List.add(child.Visual);
+	}
+
+	func elmListener(InputEvent inevt)
+	{
+		if(inevt.Button.LeftClick){
+			List.display = !List.display;
+		}
+	}
+}
+
+
+object FileExplorer
+{
+	visual Root;
+
+	FileExplorer()
+	{
+		Root = new FileNode(".", "");
+		buildFolder(Root);
+		Visual = Root.Visual;
+	}
+
+	func buildFolder(string dir, FileNode parent)
+	{
+		parent.addEntry(new FileNode(dir, parent));
+		string[] dirArr = Directory.GetDirectories(dir);
+		for(int i=0; i<dirArr.Length; i++){
+			buildFolder(dirArr[i]);
+		}
+		string[] fileArr = Directory.GetFiles(dirArr[i]);
+		for(int i=0; i<fileArr.Length; i++){
+			parent.addEntry(new FileNode(fileArr[i], parent));
+		}
+	}
+}
