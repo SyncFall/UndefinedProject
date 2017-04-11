@@ -2,60 +2,99 @@
 
 object FileNode extend visual
 {
-	visual Element;
-	visual List;
-	Folder Parent;
-	string Name;
+	visual elm;
+	visual list;
+	FileNode parent;
+	string path;
+	string name;
+	bool isFolder;
+	int depth=0;
+	int depthWidth=0;
+	int depthListWidth=0;
+	int depthTextWidth=0;
 
-	FileNode(FileNode parent, string Name)
+	FileNode(FileNode parent, string path, bool isFolder, int depth)
 	{
-		this.Parent = parent;
-		this.Name = Name;
-		this.IsFolder = IsFolder;
+		this.parent = parent;
+		this.path = path;
+		if(isFolder){
+			if(path.StartsWith(".\u005C")){
+				this.name = path.Substring(2);
+			}else{
+				this.name = path;
+			}
+		}else{
+			this.name += Path.GetFileName(path);
+		}
+		this.isFolder = isFolder;
+		this.depth = depth;
+		this.build(this.name);
 	}
 
-	func build()
+	func build(string n)
 	{
-		Element = <block listener=elmListener>Name</block>;
-		List = <block display=false/>;
-		Visual = <block>.Element;.List;</block>;
+		depthWidth = (depth * 12);
+		depthListWidth = (depthWidth + 12);
+		if(this.isFolder){
+			elm = <block listener=elmListener marginLeft=depthWidth><image source="folder.png" height=12/>.n;</block>;
+		}else{
+			elm = <block listener=elmListener marginLeft=depthListWidth><image source="file.png" height=12/>.n;</block>;
+		}
+		list = <block/>;
+		visual b = <block/>;
+		b.add(elm, list);
+		Visual = b.Visual;
 	}
 
 	func addEntry(FileNode child)
 	{
-		List.add(child.Visual);
+		list.add(child.Visual);
+		list.display = true;
 	}
 
 	func elmListener(InputEvent inevt)
 	{
 		if(inevt.Button.LeftClick){
-			List.display = !List.display;
+			list.display = !list.display;
+		}
+		if(inevt.Visual.GainFocus){
+			elm.Childrens[0].color = "#ff0000";
+		}
+		if(inevt.Visual.LostFocus){
+			elm.Childrens[0].color = "#ffffff";
 		}
 	}
 }
 
 
-object FileExplorer
+object FileExplorer extend visual
 {
-	visual Root;
+	FileNode Root;
 
 	FileExplorer()
 	{
-		Root = new FileNode(".", "");
-		buildFolder(Root);
+		Root = new FileNode(null, "ROOT", true, 0);
+		this.buildFolder(".", Root, 0);
 		Visual = Root.Visual;
 	}
 
-	func buildFolder(string dir, FileNode parent)
+	func buildFolder(string dir, FileNode parent, int depth)
 	{
-		parent.addEntry(new FileNode(dir, parent));
+		if(dir.Contains("\\.")){
+			return;
+		} 
+		FileNode folder = new FileNode(parent, dir, true, depth);
+		if(dir != "."){
+			parent.addEntry(folder);
+			parent = folder;
+		}
 		string[] dirArr = Directory.GetDirectories(dir);
 		for(int i=0; i<dirArr.Length; i++){
-			buildFolder(dirArr[i]);
+			this.buildFolder(dirArr[i], parent, depth+1);
 		}
-		string[] fileArr = Directory.GetFiles(dirArr[i]);
+		string[] fileArr = Directory.GetFiles(dir);
 		for(int i=0; i<fileArr.Length; i++){
-			parent.addEntry(new FileNode(fileArr[i], parent));
+			parent.addEntry(new FileNode(parent, fileArr[i], false, depth));
 		}
 	}
 }

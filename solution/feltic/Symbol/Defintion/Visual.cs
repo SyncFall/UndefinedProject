@@ -19,6 +19,7 @@ namespace feltic.Language
         Break,
         Input,
         Scroll,
+        Image,
     }
 
     public static class Visuals
@@ -35,6 +36,7 @@ namespace feltic.Language
             new VisualSymbol(VisualType.Input, "input"),
             new VisualSymbol(VisualType.Scroll, "scroll"),
             new VisualSymbol(VisualType.Break, "br"),
+            new VisualSymbol(VisualType.Image, "image"),
         };
     }
 

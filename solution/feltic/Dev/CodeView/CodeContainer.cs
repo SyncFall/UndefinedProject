@@ -110,11 +110,13 @@ namespace feltic.Integrator
                 }
                 token = pointer.Next;
             }
+            /*
             Position pos = VisualCode.Position;
             VisualCode.Size = null;
             VisualCode.Position = null;
             VisualElementMetrics.GetSize(VisualCode);
             VisualCode.Position = pos;
+            */
         }
     }
 }

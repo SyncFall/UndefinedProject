@@ -14,6 +14,33 @@ namespace feltic.UI
         Percent,
     }
 
+    public class Spacing
+    {
+        public Way Left;
+        public Way Top;
+        public Way Right;
+        public Way Bottom;
+
+        public Spacing()
+        { }
+
+        public Spacing(float leftPixel, float topPixel, float rightPixel=0, float bottomPixel=0)
+        {
+            this.Left = new Way(WayType.Pixel, leftPixel);
+            this.Top = new Way(WayType.Pixel, leftPixel);
+            this.Right = new Way(WayType.Pixel, leftPixel);
+            this.Bottom = new Way(WayType.Pixel, leftPixel);
+        }
+
+        public Spacing(Way left, Way top, Way right, Way bottom)
+        {
+            this.Left = left;
+            this.Top = top;
+            this.Right = right;
+            this.Bottom = bottom;
+        }
+    }
+
     public class Room
     {
         public Way Width;

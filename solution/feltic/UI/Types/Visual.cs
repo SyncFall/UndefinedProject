@@ -24,6 +24,16 @@ namespace feltic.UI.Types
             set { Visual.Color = Color.Try(value); }
         }
 
+        public int marginLeft
+        {
+            set { Visual.Margin = new Spacing(value, 0, 0, 0); }
+        }
+
+        public int paddingLeft
+        {
+            set { Visual.Padding = new Spacing(value, 0, 0, 0); }
+        }
+
         public void add(VisualElement e)
         {
             Visual.AddChild(e);
@@ -62,6 +72,8 @@ namespace feltic.UI.Types
         public VisualType Type;
         public VisualElement Parent;
         public Room Room;
+        public Spacing Margin;
+        public Spacing Padding; 
         public Size Size;
         public Position Position;
         public VisualElementList Childrens;
@@ -94,13 +106,28 @@ namespace feltic.UI.Types
             set { Color = Color.Try(value); }
         }
 
+        public string source
+        {
+            set { (this as VisualImageElement).Source = value; }
+        }
+
         public virtual void Draw(float X=0, float Y=0, float OffsetX=0, float OffsetY=0, float Width=0, float Height=0)
         {
             if(!Display) return;
 
+            Position position = GetPositionOffset(GetPositionOffset(new Position(X, Y), Margin), Padding);
+            X = position.x;
+            Y = position.y;
+
             if (Type == VisualType.Text)
             {
                 (this as VisualTextElement).DrawText(this.Color, X, Y-2, OffsetX, OffsetY, Width, Height);
+                return;
+            }
+
+            if(Type == VisualType.Image)
+            {
+                (this as VisualImageElement).DrawImage(X, Y, OffsetX, OffsetY, Size.Width, Size.Height);
                 return;
             }
 
@@ -125,7 +152,8 @@ namespace feltic.UI.Types
             float h = Height!=0 ? Height : (Size!=null&&Size.Height!=-1f?Size.Height:0f);
             if(w > 0f && h > 0f)
             {
-                GL.Color3(1f, 1f, 1f);
+                /*
+                GL.Color4(1f, 1f, 1f, 0.2f);
                 GL.LineWidth(1f);
                 GL.Begin(PrimitiveType.LineLoop);
                 GL.Vertex2(X, Y);
@@ -133,6 +161,7 @@ namespace feltic.UI.Types
                 GL.Vertex2(X + w, Y + h);
                 GL.Vertex2(X, Y + h);
                 GL.End();
+                */
             }
 
             if (Childrens == null)
@@ -144,13 +173,13 @@ namespace feltic.UI.Types
             float realY = currentY;
             for (int i = 0; i < Childrens.Size; i++)
             {
-                VisualElement childElement = Childrens[i];
-                Size childSize = childElement.Size;
+                VisualElement child = Childrens[i];
+                Size childSize = child.Size;
                 if (childSize == null) return;
                 bool smaller = (currentY + childSize.Height < Y + OffsetY);
                 bool taller = false;
                 bool notVisible = false;
-                if (childElement.Type == VisualType.Text && Childrens.Size > 1)
+                if (child.Type == VisualType.Text && Childrens.Size > 1)
                 {
                     taller = (realY - Y + childSize.Height > (Height > 0 ? Height : Size.Height));
                     notVisible = (currentX + childSize.Width < X + OffsetX) || (currentX > X + OffsetX + (Width > 0 ? Width : Size.Width));
@@ -160,7 +189,7 @@ namespace feltic.UI.Types
                     {
                         float oo = (int)Math.Ceiling(offset);
                         float ww = childSize.Width - offset;
-                        childElement.Draw(realX, realY, oo, 0, ww, 0);
+                        child.Draw(realX, realY, oo, 0, ww, 0);
                         realX += ww;
                         currentX += childSize.Width;
                         continue;
@@ -168,33 +197,33 @@ namespace feltic.UI.Types
                     else if (!smaller && !notVisible && offset2 < childSize.Width)
                     {
                         float ww = (int)Math.Round(offset2);
-                        childElement.Draw(realX, realY, 0, 0, ww, 0);
+                        child.Draw(realX, realY, 0, 0, ww, 0);
                         realX += ww;
                         currentX += childSize.Width;
                         continue;
                     }
                     else if (!smaller && !taller && !notVisible)
                     {
-                        childElement.Draw(realX, realY, 0, 0, 0, 0);
+                        child.Draw(currentX, currentY, 0, 0, 0, 0);
                     }
                 }
                 else if (!smaller && !taller)
                 {
                     float childWidth = (childSize.Width > w ? w : 0);
                     float childHeight = (childSize.Height > h ? h : 0);
-                    childElement.Draw(currentX, currentY, OffsetX, OffsetY, childWidth, childHeight);
+                    child.Draw(currentX, currentY, OffsetX, OffsetY, childWidth, childHeight);
                 }
                 if (childSize != null && childSize.Width != -1f && childSize.Height != -1f)
                 {
-                    if(childElement.Type == VisualType.Block)
+                    if (child.Type == VisualType.Block)
                     {
                         currentY += childSize.Height;
                     }
-                    else if(childElement.Type == VisualType.Inline || childElement.Type == VisualType.Column)
+                    else if(child.Type == VisualType.Inline || child.Type == VisualType.Column || child.Type == VisualType.Image)
                     {
                         currentX += childSize.Width;
                     }
-                    else if(childElement.Type == VisualType.Text)
+                    else if(child.Type == VisualType.Text)
                     {
                         if (Childrens.Size == 1)
                             break;
@@ -207,7 +236,7 @@ namespace feltic.UI.Types
                             }                            
                         }
                     }
-                    else if(childElement.Type == VisualType.Break)
+                    else if(child.Type == VisualType.Break)
                     {
                         currentY += childSize.Height;
                         currentX = X;
@@ -221,57 +250,177 @@ namespace feltic.UI.Types
                 if(taller) break;
             }
         }
-    }
 
-    public abstract class VisualListener : InputListener
-    {
-        public VisualElement Element;
-        public bool Active = false;
 
-        public VisualListener(VisualElement Element)
+        public void CalculateSizeAndPosition(Position startPosition)
         {
-            this.Element = Element;
-        }
+            // initial position with margin
+            Position = GetPositionOffset(startPosition, Margin);
 
-        public override void Input(InputEvent Event)
-        {
-            if (Element == null || Element.Size == null || Element.Position == null)
-            {
+            // not to display
+            if (!Display){
+                Size = new Size(0, 0);
                 return;
             }
-            if(Event.IsCursor)
+
+            // text-size
+            if (Type == VisualType.Text){
+                Size = GetSizeWithSpacing((this as VisualTextElement).TextHandle.Size, Padding);
+                return;
+            }
+
+            // break-size
+            if (Type == VisualType.Break){
+                Size = GetSizeWithSpacing(new Size(0, new UI.Text(" ", null).Size.Height), Padding);
+                return;
+            }
+
+            // size from definition
+            float width = GetWidth(this);
+            float height = GetHeight(this);
+
+            // default image size
+            if (Type == VisualType.Image && (width <= 0f || height <= 0f))
             {
-                if(GeometryUtils.IntersectVisual(Element, Event.Cursor))
+                VisualImageElement imageElement = (this as VisualImageElement);
+                if(imageElement.ImageHandle == null) return;
+                Size imgSize = imageElement.ImageHandle.Size;
+                if(width <= 0f && height <= 0f)
                 {
-                    this.Event(Event);
+                    width = imgSize.Width;
+                    height = imgSize.Height;
+                }
+                if (width <= 0f)
+                {
+                    float factor = (imgSize.Width / imgSize.Height);
+                    width = height * factor;
+                }
+                else if(height <= 0f)
+                {
+                    float factor = (imgSize.Height / imgSize.Width);
+                    height = width * factor;
+                }
+                Size = GetSizeWithSpacing(new Size(width, height), Padding);
+                return;
+            }
+
+            // default size for input-field
+            if (Type == VisualType.Input && (width == 0f || height == 0f))
+            {
+                Size textSize = new Text(new string(' ', 15), null).Size;
+                if(width == 0f) width = textSize.Width;
+                if(height == 0f) height = textSize.Height;
+                Size = GetSizeWithSpacing(new Size(width, height), Padding);
+                return;
+            }
+
+            // total width from parent
+            if (width <= 0f && (Type == VisualType.Block || Type == VisualType.Scroll)){
+                if ((width = ParentWidth(this)) != 0f){
+                    ;
                 }
             }
-            else if(Event.IsButton)
-            {
-                bool doActive = GeometryUtils.IntersectVisual(Element, Cursor);
-                if(!Active && doActive)
-                    this.Event(new InputEvent(InputType.Visual, new VisualState(true, false)));
-                if (Active && !doActive)
-                    this.Event(new InputEvent(InputType.Visual, new VisualState(false, true)));
-                Active = doActive;
-                if (doActive)
-                    this.Event(Event);
+
+            // total height from parent
+            if (height <= 0f && (Type == VisualType.Column || Type == VisualType.Scroll)){
+                if ((height = ParentHeight(this)) != 0f){
+                    ;
+                }
             }
-            else if(Active && Event.IsKey)
+
+            // initial size without padding
+            Size baseSize = GetSizeWithoutSpacing(new Size(width, height), Padding);
+
+            // calculate childrens
+            Position childPosition = GetPositionOffset(Position, Padding);
+            Size allChildSize = new Size(0, 0);
+            float currentLeft = 0f;
+            float currentTop = 0f;
+            float currentHeight = 0f;
+            
+            for (int i = 0; Childrens != null && i < Childrens.Size; i++)
             {
-                this.Event(Event);
+                VisualElement child = Childrens[i];
+                child.CalculateSizeAndPosition(new Position(childPosition.x + currentLeft, childPosition.y + currentTop));
+                Size childSize = child.Size;
+
+                if (child.Type == VisualType.Block || child.Type == VisualType.Scroll)
+                {
+                    if(childSize.Width > allChildSize.Width)
+                        allChildSize.Width = childSize.Width;
+                    allChildSize.Height += childSize.Height;
+                    currentTop += childSize.Height;
+                    currentLeft = 0f;
+                    currentHeight = 0f;
+                }
+                else if(child.Type == VisualType.Inline || child.Type == VisualType.Column || 
+                        child.Type == VisualType.Text || child.Type == VisualType.Input || child.Type == VisualType.Image
+                ){
+                    allChildSize.Width += childSize.Width;
+                    currentLeft += childSize.Width;
+                    if (childSize.Height > currentHeight) {
+                        allChildSize.Height += (childSize.Height - currentHeight);
+                        currentHeight = childSize.Height;
+                    }
+                }
+                else if (child.Type == VisualType.Break)
+                {
+                    currentTop += currentHeight;
+                    currentLeft = 0f;
+                    currentHeight = 0f;
+                }
             }
-            else if(Active && Event.IsText)
+
+            // may extend element size 
+            if (Type != VisualType.Scroll)
             {
-               this.Event(Event);
+                if (allChildSize.Width > baseSize.Width)
+                    baseSize.Width = allChildSize.Width;
+                if (allChildSize.Height > baseSize.Height)
+                    baseSize.Height = allChildSize.Height;
             }
+
+            // overall size
+            Size = GetSizeWithSpacing(baseSize, Padding);
+
+            // done, may zero or unknown
+            return;
         }
 
-        public abstract void Event(InputEvent Event);
-    }
 
-    public class VisualElementMetrics
-    {
+        public static Size GetSizeWithSpacing(Size Size, Spacing Spacing, float factor = 1f)
+        {
+            Size newSize = new Size(Size);
+            if (Spacing == null)
+                return newSize;
+            if (Spacing.Left != null)
+                newSize.Width += (factor * Spacing.Left.way);
+            if (Spacing.Top != null)
+                newSize.Height += (factor * Spacing.Top.way);
+            if (Spacing.Right != null)
+                newSize.Width += (factor * Spacing.Right.way);
+            if (Spacing.Bottom != null)
+                newSize.Height += (factor * Spacing.Bottom.way);
+            return newSize;
+        }
+
+        public static Size GetSizeWithoutSpacing(Size Size, Spacing Spacing)
+        {
+            return GetSizeWithSpacing(Size, Spacing, -1f);
+        }
+
+        public static Position GetPositionOffset(Position Position, Spacing Spacing)
+        {
+            Position newPosition = new Position(Position);
+            if (Spacing == null)
+                return newPosition;
+            if (Spacing.Left != null)
+                newPosition.x += Spacing.Left.way;
+            if (Spacing.Top != null)
+                newPosition.y += Spacing.Top.way;
+            return newPosition;
+        }
+
         public static float GetWidth(VisualElement Element)
         {
             Room room = Element.Room;
@@ -362,164 +511,54 @@ namespace feltic.UI.Types
             return 0f;
         }
 
-        public static Position GetPosition(VisualElement Element, float X, float Y)
+    }
+
+    public abstract class VisualListener : InputListener
+    {
+        public VisualElement Element;
+        public bool Active = false;
+
+        public VisualListener(VisualElement Element)
         {
-            if (Element.Position != null)
-            {
-                //return Element.Position;
-            }
-
-            if (Element.Childrens != null)
-            {
-                float currentX = X;
-                float currentY = Y;
-                for (int i = 0; i < Element.Childrens.Size; i++)
-                {
-                    VisualElement childElement = Element.Childrens[i];
-                    Size childSize = GetSize(childElement);
-                    Position childPosition = GetPosition(childElement, currentX, currentY);
-                    if (childElement.Type == VisualType.Block)
-                    {
-                        currentY += childSize.Height;
-                    }
-                    else if (childElement.Type == VisualType.Inline || childElement.Type == VisualType.Column)
-                    {
-                        currentX += childSize.Width;
-                    }
-                    else if (childElement.Type == VisualType.Text || childElement.Type == VisualType.Input)
-                    {
-                        if(Element.Childrens.Size==1)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            currentX += childSize.Width;   
-                        }
-                    }
-                    else if (childElement.Type == VisualType.Break)
-                    {
-                        currentY += childSize.Height;
-                        currentX = 0;
-                    }
-                }
-            }
-
-            return (Element.Position = new Position(X, Y));
+            this.Element = Element;
         }
 
-        public static Size GetSize(VisualElement Element)
+        public override void Input(InputEvent Event)
         {
-            // return already calculated
-            if (Element.Size != null)
+            if (Element == null || Element.Size == null || Element.Position == null)
             {
-                //return Element.Size;
+                return;
             }
-
-            // not to display
-            if (!Element.Display) return new Size(0, 0);
-
-            // text-size
-            if (Element.Type == VisualType.Text)
+            if(Event.IsCursor)
             {
-                return (Element.Size = (Element as VisualTextElement).TextHandle.Size);
-            }
-
-            // break-size
-            if(Element.Type == VisualType.Break)
-            {
-                return (Element.Size = new Size(0, new UI.Text(" ", null).Size.Height));
-            }
-
-            // size from definition
-            float width = GetWidth(Element);
-            float height = GetHeight(Element);
-
-            // total width from parents for block element
-            if (width == 0f && (Element.Type == VisualType.Block || Element.Type == VisualType.Scroll))
-            {
-                if ((width = ParentWidth(Element)) != 0f)
+                if(GeometryUtils.IntersectVisual(Element, Event.Cursor))
                 {
-                    ;
+                    this.Event(Event);
                 }
             }
-
-            // total height from parents for columen element
-            if (height == 0f && (Element.Type == VisualType.Column || Element.Type == VisualType.Scroll))
+            else if(Event.IsButton)
             {
-                if ((height = ParentHeight(Element)) != 0f)
-                {
-                    ;
-                }
+                bool doActive = GeometryUtils.IntersectVisual(Element, Cursor);
+                if(!Active && doActive)
+                    this.Event(new InputEvent(InputType.Visual, new VisualState(true, false)));
+                if (Active && !doActive)
+                    this.Event(new InputEvent(InputType.Visual, new VisualState(false, true)));
+                Active = doActive;
+                if (doActive)
+                    this.Event(Event);
             }
-            
-            // default sizes for input-field
-            if ((width == 0f || height == 0f) && Element.Type == VisualType.Input)
+            else if(Active && Event.IsKey)
             {
-                Size size = new Text(new string(' ', 15), null).Size;
-                if(width == 0f) width = size.Width;
-                if(height == 0f) height = size.Height;
+                this.Event(Event);
             }
-
-            // size from childrens
-            float childsWidth = 0f;
-            float currentWidth = 0f;
-            float childsHeight = 0f;
-            for (int i = 0; Element.Childrens != null && i < Element.Childrens.Size; i++)
+            else if(Active && Event.IsText)
             {
-                VisualElement childElement = Element.Childrens[i];
-                Size childSize = GetSize(childElement);
-                if (childElement.Type == VisualType.Block || childElement.Type == VisualType.Scroll)
-                {
-                    if (childSize.Width > childsWidth)
-                    {
-                        childsWidth = childSize.Width;
-                    }
-                    childsHeight += childSize.Height;
-                }
-                else if(childElement.Type == VisualType.Inline || childElement.Type == VisualType.Column){
-                    childsWidth += childSize.Width;
-                    if (childSize.Height > childsHeight)
-                    {
-                        childsHeight = childSize.Height;
-                    }
-                }
-                else if(childElement.Type == VisualType.Text || childElement.Type == VisualType.Input)
-                {
-                    if(Element.Childrens.Size == 1)
-                    {
-                        childsHeight = childSize.Height;
-                        childsWidth = childSize.Width;
-                        break;
-                    }
-                    else
-                    {
-                        currentWidth += childSize.Width;
-                    }
-                }
-                else if (childElement.Type == VisualType.Break)
-                {
-                    childsHeight += childSize.Height;
-                    if(currentWidth > childsWidth)
-                    {
-                        childsWidth = currentWidth;
-                    }
-                    currentWidth = 0;
-                }
+               this.Event(Event);
             }
-
-            // extend element size
-            if(Element.Type != VisualType.Scroll)
-            {
-                if (childsWidth > width)
-                    width = childsWidth;
-                if (childsHeight > height)
-                    height = childsHeight;
-            }
-
-            // may complete, zero or unknown
-            return (Element.Size = new Size(width, height));
         }
+
+        public abstract void Event(InputEvent Event);
+
     }
 
     public class VisualElementList : ListCollection<VisualElement>
@@ -543,10 +582,30 @@ namespace feltic.UI.Types
 
         public void DrawText(Color Color, float X =0, float Y=0, float OffsetX=0, float OffsetY=0, float Width=0, float Height=0)
         {
-            TextHandle.Draw(Color, X, Y, OffsetX, OffsetY, Width, Height);
+            this.TextHandle.Draw(Color, X, Y, OffsetX, OffsetY, Width, Height);
         }
     }
 
+    public class VisualImageElement : VisualElement
+    {
+        public Image ImageHandle;
+
+        public VisualImageElement(VisualElement Parent) : base(VisualType.Image, Parent)
+        { }
+
+        public string Source
+        {
+            set{
+                this.ImageHandle = new Image(value);
+            }
+        }
+
+        public void DrawImage(float X = 0, float Y = 0, float OffsetX = 0, float OffsetY = 0, float Width = 0, float Height = 0)
+        {
+            if(this.ImageHandle == null) return;
+            this.ImageHandle.Draw(X, Y, Width, Height);
+        }
+    }
 
     public class VisualInputElement : VisualElement
     {

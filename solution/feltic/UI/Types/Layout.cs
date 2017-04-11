@@ -12,11 +12,18 @@ namespace feltic.UI
         public float y;
         public float z;
 
-        public Position(float x=0, float y=0, float z=0)
+        public Position(float x = 0, float y=0, float z = 0)
         {
             this.x = x;
             this.y = y;
             this.z = y;
+        }
+
+        public Position(Position position)
+        {
+            this.x = position.x;
+            this.y = position.y;
+            this.z = position.z;
         }
     }
 
@@ -28,6 +35,13 @@ namespace feltic.UI
 
         public Size()
         { }
+
+        public Size(Size Size)
+        {
+            this.Width = Size.Width;
+            this.Height = Size.Height;
+            this.Depth = Size.Depth;
+        }
 
         public Size(float width, float height, float depth=0f)
         {

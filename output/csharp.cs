@@ -10,114 +10,126 @@ using feltic.Integrator;
 
 namespace Scope
 {
-	public class Option : VisualObject
-	{
-		public Select select;
-		public VisualObject elm;
-
-		public Option(Select select, string val, string txt)
-		{
-						this.select = select;
-						this.build(txt);
-		}
-		public void build(string txt)
-		{
-						elm = new Visual_1_Option(this, txt)
-;
-						select.list.add(elm);
-						Visual = elm.Visual;
-		}
-	}
-
-	public class Select : VisualObject
+	public class FileNode : VisualObject
 	{
 		public VisualObject elm;
-		public VisualObject view;
 		public VisualObject list;
-		public int select;
+		public FileNode parent;
+		public string path;
+		public string name;
+		public bool isFolder;
+		public int depth = 0;
+		public int depthWidth = 0;
+		public int depthListWidth = 0;
+		public int depthTextWidth = 0;
 
-		public Select()
+		public FileNode(FileNode parent, string path, bool isFolder, int depth)
 		{
-						this.build();
+						this.parent = parent;
+						this.path = path;
+			if(isFolder)
+			{
+				if(path.StartsWith(".\u005C"))
+				{
+										this.name = path.Substring(2);
+				}
+				else
+				{
+										this.name = path;
+				}
+			}
+			else
+			{
+								this.name += Path.GetFileName(path);
+			}
+						this.isFolder = isFolder;
+						this.depth = depth;
+						this.build(this.name);
 		}
-		public void build()
+		public void build(string n)
 		{
-						elm = new Visual_2_Select(this)
+						depthWidth = (depth * 12);
+						depthListWidth = (depthWidth + 12);
+			if(this.isFolder)
+			{
+								elm = new Visual_1_FileNode(this, n)
 ;
-						view = new Visual_3_Select(this)
+			}
+			else
+			{
+								elm = new Visual_2_FileNode(this, n)
 ;
-						list = new Visual_4_Select(this)
+			}
+						list = new Visual_3_FileNode(this)
 ;
-						elm.add(view, list);
-						Visual = elm.Visual;
+			VisualObject b = new Visual_4_FileNode(this)
+;
+						b.add(elm, list);
+						Visual = b.Visual;
 		}
-		public void selectOption(int index)
+		public void addEntry(FileNode child)
 		{
-						select = index;
-						view.Childrens.Clear();
-						new VisualTextElement("option-" + select, view.Visual);
-						list.display = false;
-						this.selectedOption(select);
-		}
-		public ReceiverContainer_1_Select_selectedOption RC_1_Select_selectedOption = new ReceiverContainer_1_Select_selectedOption();
-		public void selectedOption(int index)
-		{
-			RC_1_Select_selectedOption.EventState(index);
+						list.add(child.Visual);
+						list.display = true;
 		}
 		public void elmListener(InputEvent inevt)
 		{
-			bool lostFocus = (inevt.Visual.LostFocus);
-			if(lostFocus)
+			if(inevt.Button.LeftClick)
 			{
-								list.display = false;
+								list.display = !list.display;
 			}
-		}
-		public void viewListener(InputEvent inevt)
-		{
-			bool showList = (inevt.Button.LeftClick);
-			if(showList)
+			if(inevt.Visual.GainFocus)
 			{
-								list.display = true;
+								elm.Childrens[0].color = "#ff0000";
 			}
-		}
-		public void listListener(InputEvent inevt)
-		{
-			bool select = (inevt.Button.LeftClick);
-			if(select)
+			if(inevt.Visual.LostFocus)
 			{
-				for(int i = 0;i < list.Size;i++)
-				{
-					if(GeometryUtils.IntersectVisual(list[i], Input.Cursor))
-					{
-												this.selectOption(i);
-												break;
-					}
-				}
+								elm.Childrens[0].color = "#ffffff";
 			}
 		}
 	}
 
-	public class Editor : VisualObject
+	public class FileExplorer : VisualObject
 	{
-		public Select select;
+		public FileNode Root;
 
-		public Editor()
+		public FileExplorer()
 		{
-						select = new Select();
-						new TargetState_1_Select_selectedOption(select.RC_1_Select_selectedOption, this);
-						new Option(select, "val1", "text1");
-						new Option(select, "val2", "text2");
-						new Option(select, "val3", "text3");
-						Visual = select.Visual;
+						Root = new FileNode(null, "ROOT", true, 0);
+						this.buildFolder(".", Root, 0);
+						Visual = Root.Visual;
+		}
+		public void buildFolder(string dir, FileNode parent, int depth)
+		{
+			if(dir.Contains("\\."))
+			{
+								return ;
+			}
+			FileNode folder = new FileNode(parent, dir, true, depth);
+			if(dir != ".")
+			{
+								parent.addEntry(folder);
+								parent = folder;
+			}
+			string []dirArr = Directory.GetDirectories(dir);
+			for(int i = 0;i < dirArr.Length;i++)
+			{
+								this.buildFolder(dirArr[i], parent, depth + 1);
+			}
+			string []fileArr = Directory.GetFiles(dir);
+			for(int i = 0;i < fileArr.Length;i++)
+			{
+								parent.addEntry(new FileNode(parent, fileArr[i], false, depth));
+			}
 		}
 	}
 
 
-	public class Visual_1_Option : VisualObject
+	public class Visual_1_FileNode : VisualObject
 	{
-		public Option Object;
+		public FileNode Object;
 
-		public Visual_1_Option(Option Object, string txt)
+		public Visual_1_FileNode(FileNode Object, string n)
 		{
 			this.Object = Object;
 			Stack<VisualElement> stack = new Stack<VisualElement>();
@@ -126,39 +138,24 @@ namespace Scope
 
 			this.Visual = 
 			element = new VisualElement(1, parent);
+			listeners.Add(element);
+			element.Margin = new Spacing(Object.depthWidth, 0, 0, 0);
 			stack.Push(parent);
 			parent = element;
-			element = new VisualTextElement(txt, parent);
+			element = new VisualImageElement(parent);
+			element.source = "folder.png";
+			element.Room.Height = new Way(1, 12f);
+			element = new VisualTextElement(n, parent);
 
+			new Visual_Listener_1_FileNode_elmListener(Object, listeners[0]);
 		}
 	}
 
-
-	public class Visual_2_Select : VisualObject
+	public class Visual_Listener_1_FileNode_elmListener : VisualListener
 	{
-		public Select Object;
+		public FileNode Object;
 
-		public Visual_2_Select(Select Object)
-		{
-			this.Object = Object;
-			Stack<VisualElement> stack = new Stack<VisualElement>();
-			List<VisualElement> listeners = new List<VisualElement>();
-			VisualElement element, parent=null;
-
-			this.Visual = 
-			element = new VisualElement(2, parent);
-			listeners.Add(element);
-			element.Room.Width = new Way(1, 100f);
-
-			new Visual_Listener_1_Select_elmListener(Object, listeners[0]);
-		}
-	}
-
-	public class Visual_Listener_1_Select_elmListener : VisualListener
-	{
-		public Select Object;
-
-		public Visual_Listener_1_Select_elmListener(Select Object, VisualElement Element) : base(Element)
+		public Visual_Listener_1_FileNode_elmListener(FileNode Object, VisualElement Element) : base(Element)
 		{
 			this.Object = Object;
 			this.Element.InputListener = this;
@@ -169,11 +166,11 @@ namespace Scope
 		}
 	}
 
-	public class Visual_3_Select : VisualObject
+	public class Visual_2_FileNode : VisualObject
 	{
-		public Select Object;
+		public FileNode Object;
 
-		public Visual_3_Select(Select Object)
+		public Visual_2_FileNode(FileNode Object, string n)
 		{
 			this.Object = Object;
 			Stack<VisualElement> stack = new Stack<VisualElement>();
@@ -183,34 +180,38 @@ namespace Scope
 			this.Visual = 
 			element = new VisualElement(1, parent);
 			listeners.Add(element);
+			element.Margin = new Spacing(Object.depthListWidth, 0, 0, 0);
 			stack.Push(parent);
 			parent = element;
-			element = new VisualTextElement("- Select -", parent);
+			element = new VisualImageElement(parent);
+			element.source = "file.png";
+			element.Room.Height = new Way(1, 12f);
+			element = new VisualTextElement(n, parent);
 
-			new Visual_Listener_2_Select_viewListener(Object, listeners[0]);
+			new Visual_Listener_2_FileNode_elmListener(Object, listeners[0]);
 		}
 	}
 
-	public class Visual_Listener_2_Select_viewListener : VisualListener
+	public class Visual_Listener_2_FileNode_elmListener : VisualListener
 	{
-		public Select Object;
+		public FileNode Object;
 
-		public Visual_Listener_2_Select_viewListener(Select Object, VisualElement Element) : base(Element)
+		public Visual_Listener_2_FileNode_elmListener(FileNode Object, VisualElement Element) : base(Element)
 		{
 			this.Object = Object;
 			this.Element.InputListener = this;
 		}
 
 		public override void Event(InputEvent Event){
-			this.Object.viewListener(Event);
+			this.Object.elmListener(Event);
 		}
 	}
 
-	public class Visual_4_Select : VisualObject
+	public class Visual_3_FileNode : VisualObject
 	{
-		public Select Object;
+		public FileNode Object;
 
-		public Visual_4_Select(Select Object)
+		public Visual_3_FileNode(FileNode Object)
 		{
 			this.Object = Object;
 			Stack<VisualElement> stack = new Stack<VisualElement>();
@@ -219,64 +220,27 @@ namespace Scope
 
 			this.Visual = 
 			element = new VisualElement(1, parent);
-			listeners.Add(element);
-			element.Display = false;
 
-			new Visual_Listener_3_Select_listListener(Object, listeners[0]);
 		}
 	}
 
-	public class Visual_Listener_3_Select_listListener : VisualListener
-	{
-		public Select Object;
 
-		public Visual_Listener_3_Select_listListener(Select Object, VisualElement Element) : base(Element)
+	public class Visual_4_FileNode : VisualObject
+	{
+		public FileNode Object;
+
+		public Visual_4_FileNode(FileNode Object)
 		{
 			this.Object = Object;
-			this.Element.InputListener = this;
-		}
+			Stack<VisualElement> stack = new Stack<VisualElement>();
+			List<VisualElement> listeners = new List<VisualElement>();
+			VisualElement element, parent=null;
 
-		public override void Event(InputEvent Event){
-			this.Object.listListener(Event);
+			this.Visual = 
+			element = new VisualElement(1, parent);
+
 		}
 	}
 
-	public class ReceiverContainer_1_Select_selectedOption
-	{
-		public MapCollection<int, StateReceiver_1_Select_selectedOption> Receivers = new MapCollection<int, StateReceiver_1_Select_selectedOption>();
-
-		public void EventState(int index)
-		{
-			int[] keys = Receivers.Keys;
-			for(int i=0; i<keys.Length; i++){
-				Receivers[keys[i]].EventState(index);
-			}
-		}
-	}
-	public abstract class StateReceiver_1_Select_selectedOption
-	{
-		private static int IdCounter = 0;
-		public readonly int Id;
-		public ReceiverContainer_1_Select_selectedOption Container;
-
-		public StateReceiver_1_Select_selectedOption(ReceiverContainer_1_Select_selectedOption Container){
-			this.Container = Container;
-			this.Id = (++IdCounter);
-			this.Container.Receivers.Put(this.Id, this);
-		}
-		public abstract void EventState(int index);
-	}
-	public class TargetState_1_Select_selectedOption : StateReceiver_1_Select_selectedOption
-	{
-		public Editor Object;
-
-		public TargetState_1_Select_selectedOption(ReceiverContainer_1_Select_selectedOption Container, Editor Object) : base(Container){
-			this.Container = Container;
-			this.Object = Object;
-		}
-		public override void EventState(int index){
-						Console.WriteLine("/selected");
-		}
-	}
 
 }

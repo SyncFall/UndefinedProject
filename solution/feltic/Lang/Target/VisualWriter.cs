@@ -138,6 +138,10 @@ namespace feltic.Language
                 {
                     WriteLine(tabs, "element = new VisualScrollElement(parent);");
                 }
+                else if(sb.OpenBlockIdentifiere.IsVisual(VisualType.Image))
+                {
+                    WriteLine(tabs, "element = new VisualImageElement(parent);");
+                }
                 else
                 {
                     WriteLine(tabs, "element = new VisualElement(" + sb.OpenBlockIdentifiere.Type + ", parent);");
@@ -206,16 +210,26 @@ namespace feltic.Language
                         Way way = Way.Try(value);
                         WriteLine(tabs, "element.Room."+char.ToUpper(attr[0])+attr.Substring(1)+" = new Way("+(int)way.Type+", "+((way.way)+"").Replace(',', '.')+"f);");
                     }
-                    else if(attr == "display")
+                    if (attr == "marginLeft")
+                    {
+                        string value = (attribute.AssigmentOperand.AccessList[0] as VariableOperand).Identifier.String;
+                        WriteLine(tabs, "element.Margin = new Spacing(Object." + value + ", 0, 0, 0);");
+                    }
+                    else if (attr == "display")
                     {
                         string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
-                        WriteLine(tabs, "element.Display = "+ bool.Parse(value).ToString().ToLower()+";");
+                        WriteLine(tabs, "element.Display = " + bool.Parse(value).ToString().ToLower() + ";");
                     }
-                    else if(attr == "listener")
+                    else if (attr == "listener")
                     {
                         string func = (attribute.AssigmentOperand.AccessList[0] as VariableOperand).Identifier.String;
                         vis.ListenerFunctions.Add(new VisualListenerDelegate(vis, func));
                         WriteLine(tabs, "listeners.Add(element);");
+                    }
+                    else if (attr == "source")
+                    {
+                        string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
+                        WriteLine(tabs, "element.source = " + value + ";");
                     }
                 }
             }

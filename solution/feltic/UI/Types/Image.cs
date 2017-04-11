@@ -15,8 +15,7 @@ namespace feltic.UI
         public readonly string Filepath;
         private byte[] BitmapRgbaBytes;
         private int BitmapBufferId;
-        public int Width;
-        public int Height;
+        public Size Size;
 
         public Image(string ImagePath)
         {
@@ -28,9 +27,8 @@ namespace feltic.UI
         public void ReadFile()
         {
             Bitmap bitmap = new Bitmap(Filepath);
-            this.Width = bitmap.Width;
-            this.Height = bitmap.Height;
-            BitmapRgbaBytes = BitmapToByteArray(bitmap);
+            this.Size = new Size(bitmap.Width, bitmap.Height);
+            this.BitmapRgbaBytes = BitmapToByteArray(bitmap);
         }
 
         public static byte[] BitmapToByteArray(Bitmap bitmap)
@@ -61,7 +59,26 @@ namespace feltic.UI
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Width, Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, Utils.ByteArrayToIntPtr(BitmapRgbaBytes));
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, (int)Size.Width, (int)Size.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, Utils.ByteArrayToIntPtr(BitmapRgbaBytes));
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+        }
+
+        public void Draw(float X=0, float Y=0, float Width=0, float Height=0)
+        {
+            GL.Color3(1f, 1f, 1f);
+            if(Width <= 0) Width = this.Size.Width;
+            if(Height <= 0) Height = this.Size.Height;
+            GL.BindTexture(TextureTarget.Texture2D, BitmapBufferId);
+            GL.Begin(PrimitiveType.Quads);
+            GL.TexCoord2(0, 0);
+            GL.Vertex2(X, Y);
+            GL.TexCoord2(1, 0);
+            GL.Vertex2(X + Width, Y);
+            GL.TexCoord2(1, 1);
+            GL.Vertex2(X + Width, Y + Height);
+            GL.TexCoord2(0, 1);
+            GL.Vertex2(X, Y + Height);
+            GL.End();
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 

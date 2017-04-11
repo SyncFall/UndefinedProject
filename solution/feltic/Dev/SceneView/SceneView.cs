@@ -22,10 +22,11 @@ namespace feltic.Integrator
         public CodeText CodeText;
 
         public SceneView()
-        { 
-            Editor editor = new Editor();
+        {
+            //Editor editor = new Editor();
+            FileExplorer fe = new FileExplorer();
             //AddCode(editor);
-            Root.AddChild(editor.Visual);
+            Root.AddChild(fe.Root.Visual);
         }
 
         /*
@@ -87,24 +88,25 @@ namespace feltic.Integrator
                         for (int j = 0; j < structedSignature.Attributes.Size; j++)
                         {
                             StructedAttributeSignature attribute = structedSignature.Attributes[j];
-                            if (attribute.Identifier.String == "width")
+                            string attrName = attribute.Identifier.String;
+                            if (attrName == "width")
                             {
                                 string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
                                 element.Room.Width = Way.Try(value);
                             }
-                            else if (attribute.Identifier.String == "height")
+                            else if (attrName == "height")
                             {
                                 string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
                                 element.Room.Height = Way.Try(value);
                             }
-                            else if (attribute.Identifier.String == "color")
+                            else if (attrName == "color")
                             {
                                 string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
                                 value = value.Replace("\"", "");
                                 element.Color = Color.Try(value);
                                 int q = 0;
                             }
-                            if (attribute.Identifier.String == "id")
+                            else if (attrName == "id")
                             {
                                 string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
                                 if (value.Replace("\"", "") == "code")
@@ -114,6 +116,19 @@ namespace feltic.Integrator
                                     CodeText.CodeInput = new CodeInput(CodeText, element);
                                 }
 
+                            }
+                            else if(attrName == "padding" || attrName == "margin")
+                            {
+                                ObjectAccessOperand objectOperand = (attribute.AssigmentOperand.AccessList[0] as ObjectAccessOperand);
+                                Spacing spacing = new Spacing();
+                                spacing.Left = Way.Try((objectOperand.ParameterDefinition.Elements[0].Expression.Operand.AccessList[0] as LiteralOperand).Literal.String);
+                                spacing.Top = Way.Try((objectOperand.ParameterDefinition.Elements[1].Expression.Operand.AccessList[0] as LiteralOperand).Literal.String);
+                                spacing.Right = Way.Try((objectOperand.ParameterDefinition.Elements[2].Expression.Operand.AccessList[0] as LiteralOperand).Literal.String);
+                                spacing.Bottom = Way.Try((objectOperand.ParameterDefinition.Elements[3].Expression.Operand.AccessList[0] as LiteralOperand).Literal.String);
+                                if (attrName == "padding")
+                                    element.Padding = spacing;
+                                else if (attrName == "margin")
+                                    element.Margin = spacing;
                             }
                         }
                     }
@@ -140,9 +155,9 @@ namespace feltic.Integrator
             if(Root != null)
             {
                 //CodeText.CodeSelection.Draw();
-                VisualElementMetrics.GetSize(Root);
-                VisualElementMetrics.GetPosition(Root, 10, 10);
-                Root.Draw(10, 10);
+                Position offset = new Position(20, 20);
+                Root.CalculateSizeAndPosition(offset);
+                Root.Draw(offset.x, offset.y);
                 //CodeText.CodeCursor.Draw();
             }
         }
