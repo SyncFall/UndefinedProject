@@ -11,6 +11,7 @@ namespace feltic.Language
     {
         public ExpressionSignature TryExpression()
         {
+            if (!Begin()) return null;
             TrySpace();
             ExpressionSignature signature = new ExpressionSignature();
             signature.PreOperation = TryPrePostOperation(true);
@@ -19,38 +20,29 @@ namespace feltic.Language
                 if((signature.ChildExpression = TryExpression()) == null ||
                    (signature.BlockEnd = TryNonSpace(StructureType.ClosingEnd)) == null
                 ){
-                    return signature;
+                    Reset();
+                    return null;
                 }
+                Commit();
+                return signature;
             }
             else
             {
                 if((signature.Operand = TryOperand()) == null)
                 {
+                    Reset();
                     return null;
                 }
             }
-            ExpressionSignature expressionPointer = signature;
-            while(true)
-            {
-                if(!Begin())
-                {
-                    return signature;
-                }
-                if((expressionPointer.Operation = TryOperation()) == null)
-                {
-                    Reset();
-                    break;
-                }
-                if((expressionPointer.ExpressionPair = TryExpression()) == null)
-                { 
-                    Reset();
-                    break;
-                }
-                expressionPointer.ExpressionPair.LeftExpression = expressionPointer;
-                expressionPointer = expressionPointer.ExpressionPair;
+            if(!Begin()) return signature;
+            if((signature.Operation = TryOperation()) == null ||
+               (signature.ExpressionPair = TryExpression()) == null
+            ){
+                Reset();
+            }else
                 Commit();
-            }
             signature.PostOperation = TryPrePostOperation(false);
+            Commit();
             return signature;
         }
 
@@ -216,7 +208,6 @@ namespace feltic.Language
 
     public class ExpressionSignature : SignatureSymbol
     {
-        public ExpressionSignature LeftExpression;
         public OperationSignature PreOperation;
         public Symbol BlockBegin;
         public ExpressionSignature ChildExpression;

@@ -18,10 +18,9 @@ namespace Scope
 		public string path;
 		public string name;
 		public bool isFolder;
-		public int depth = 0;
-		public int depthWidth = 0;
-		public int depthListWidth = 0;
-		public int depthTextWidth = 0;
+		public int depth;
+		public int depthFolderWidth;
+		public int depthFileWidth;
 
 		public FileNode(FileNode parent, string path, bool isFolder, int depth)
 		{
@@ -44,28 +43,29 @@ namespace Scope
 			}
 						this.isFolder = isFolder;
 						this.depth = depth;
-						this.build(this.name);
+						this.depthFolderWidth = (depth * 16);
+						this.depthFileWidth = (depthFolderWidth + 16);
+						this.build();
 		}
-		public void build(string n)
+		public void build()
 		{
-						depthWidth = (depth * 12);
-						depthListWidth = (depthWidth + 12);
 			if(this.isFolder)
 			{
-								elm = new Visual_1_FileNode(this, n)
+				VisualObject b = new Visual_1_FileNode(this)
 ;
+								elm = new Visual_2_FileNode(this)
+;
+								list = new Visual_3_FileNode(this)
+;
+								b.add(elm, list);
+								Visual = b.Visual;
 			}
 			else
 			{
-								elm = new Visual_2_FileNode(this, n)
+								elm = new Visual_4_FileNode(this)
 ;
+								Visual = elm.Visual;
 			}
-						list = new Visual_3_FileNode(this)
-;
-			VisualObject b = new Visual_4_FileNode(this)
-;
-						b.add(elm, list);
-						Visual = b.Visual;
 		}
 		public void addEntry(FileNode child)
 		{
@@ -76,15 +76,10 @@ namespace Scope
 		{
 			if(inevt.Button.LeftClick)
 			{
-								list.display = !list.display;
-			}
-			if(inevt.Visual.GainFocus)
-			{
-								elm.Childrens[0].color = "#ff0000";
-			}
-			if(inevt.Visual.LostFocus)
-			{
-								elm.Childrens[0].color = "#ffffff";
+				if(list != null)
+				{
+										list.display = !list.display;
+				}
 			}
 		}
 	}
@@ -129,7 +124,25 @@ namespace Scope
 	{
 		public FileNode Object;
 
-		public Visual_1_FileNode(FileNode Object, string n)
+		public Visual_1_FileNode(FileNode Object)
+		{
+			this.Object = Object;
+			Stack<VisualElement> stack = new Stack<VisualElement>();
+			List<VisualElement> listeners = new List<VisualElement>();
+			VisualElement element, parent=null;
+
+			this.Visual = 
+			element = new VisualElement(1, parent);
+
+		}
+	}
+
+
+	public class Visual_2_FileNode : VisualObject
+	{
+		public FileNode Object;
+
+		public Visual_2_FileNode(FileNode Object)
 		{
 			this.Object = Object;
 			Stack<VisualElement> stack = new Stack<VisualElement>();
@@ -139,13 +152,15 @@ namespace Scope
 			this.Visual = 
 			element = new VisualElement(1, parent);
 			listeners.Add(element);
-			element.Margin = new Spacing(Object.depthWidth, 0, 0, 0);
+			element.Margin = new Spacing(Object.depthFolderWidth, 0, 0, 0);;
+			element.Padding = new Spacing(0, 2, 0, 0);;
 			stack.Push(parent);
 			parent = element;
 			element = new VisualImageElement(parent);
 			element.source = "folder.png";
-			element.Room.Height = new Way(1, 12f);
-			element = new VisualTextElement(n, parent);
+			element.Room.Height = new Way(1, 14f);
+			element.Margin = new Spacing(0, 0, 4, 0);;
+			element.AddChild(new VisualTextElement(Object.name, parent));
 
 			new Visual_Listener_1_FileNode_elmListener(Object, listeners[0]);
 		}
@@ -156,47 +171,6 @@ namespace Scope
 		public FileNode Object;
 
 		public Visual_Listener_1_FileNode_elmListener(FileNode Object, VisualElement Element) : base(Element)
-		{
-			this.Object = Object;
-			this.Element.InputListener = this;
-		}
-
-		public override void Event(InputEvent Event){
-			this.Object.elmListener(Event);
-		}
-	}
-
-	public class Visual_2_FileNode : VisualObject
-	{
-		public FileNode Object;
-
-		public Visual_2_FileNode(FileNode Object, string n)
-		{
-			this.Object = Object;
-			Stack<VisualElement> stack = new Stack<VisualElement>();
-			List<VisualElement> listeners = new List<VisualElement>();
-			VisualElement element, parent=null;
-
-			this.Visual = 
-			element = new VisualElement(1, parent);
-			listeners.Add(element);
-			element.Margin = new Spacing(Object.depthListWidth, 0, 0, 0);
-			stack.Push(parent);
-			parent = element;
-			element = new VisualImageElement(parent);
-			element.source = "file.png";
-			element.Room.Height = new Way(1, 12f);
-			element = new VisualTextElement(n, parent);
-
-			new Visual_Listener_2_FileNode_elmListener(Object, listeners[0]);
-		}
-	}
-
-	public class Visual_Listener_2_FileNode_elmListener : VisualListener
-	{
-		public FileNode Object;
-
-		public Visual_Listener_2_FileNode_elmListener(FileNode Object, VisualElement Element) : base(Element)
 		{
 			this.Object = Object;
 			this.Element.InputListener = this;
@@ -238,9 +212,34 @@ namespace Scope
 
 			this.Visual = 
 			element = new VisualElement(1, parent);
+			listeners.Add(element);
+			element.Margin = new Spacing(Object.depthFileWidth, 0, 0, 0);;
+			element.Padding = new Spacing(0, 2, 0, 0);;
+			stack.Push(parent);
+			parent = element;
+			element = new VisualImageElement(parent);
+			element.source = "file.png";
+			element.Room.Height = new Way(1, 14f);
+			element.Margin = new Spacing(0, 0, 2, 0);;
+			element.AddChild(new VisualTextElement(Object.name, parent));
 
+			new Visual_Listener_2_FileNode_elmListener(Object, listeners[0]);
 		}
 	}
 
+	public class Visual_Listener_2_FileNode_elmListener : VisualListener
+	{
+		public FileNode Object;
+
+		public Visual_Listener_2_FileNode_elmListener(FileNode Object, VisualElement Element) : base(Element)
+		{
+			this.Object = Object;
+			this.Element.InputListener = this;
+		}
+
+		public override void Event(InputEvent Event){
+			this.Object.elmListener(Event);
+		}
+	}
 
 }

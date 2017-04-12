@@ -8,10 +8,9 @@ object FileNode extend visual
 	string path;
 	string name;
 	bool isFolder;
-	int depth=0;
-	int depthWidth=0;
-	int depthListWidth=0;
-	int depthTextWidth=0;
+	int depth;
+	int depthFolderWidth;
+	int depthFileWidth;
 
 	FileNode(FileNode parent, string path, bool isFolder, int depth)
 	{
@@ -28,22 +27,23 @@ object FileNode extend visual
 		}
 		this.isFolder = isFolder;
 		this.depth = depth;
-		this.build(this.name);
+		this.depthFolderWidth = (depth * 16);
+		this.depthFileWidth = (depthFolderWidth + 16);
+		this.build();
 	}
 
-	func build(string n)
+	func build()
 	{
-		depthWidth = (depth * 12);
-		depthListWidth = (depthWidth + 12);
 		if(this.isFolder){
-			elm = <block listener=elmListener marginLeft=depthWidth><image source="folder.png" height=12/>.n;</block>;
+			visual b = <block/>;
+			elm = <block listener=elmListener marginLeft=depthFolderWidth paddingTop=2><image source="folder.png" height=14 marginRight=4/>.name;</block>;
+			list = <block/>;
+			b.add(elm, list);
+			Visual = b.Visual;
 		}else{
-			elm = <block listener=elmListener marginLeft=depthListWidth><image source="file.png" height=12/>.n;</block>;
-		}
-		list = <block/>;
-		visual b = <block/>;
-		b.add(elm, list);
-		Visual = b.Visual;
+			elm = <block listener=elmListener marginLeft=depthFileWidth paddingTop=2><image source="file.png" height=14 marginRight=2/>.name;</block>;
+			Visual = elm.Visual;
+		}		
 	}
 
 	func addEntry(FileNode child)
@@ -55,13 +55,9 @@ object FileNode extend visual
 	func elmListener(InputEvent inevt)
 	{
 		if(inevt.Button.LeftClick){
-			list.display = !list.display;
-		}
-		if(inevt.Visual.GainFocus){
-			elm.Childrens[0].color = "#ff0000";
-		}
-		if(inevt.Visual.LostFocus){
-			elm.Childrens[0].color = "#ffffff";
+			if(list!=null){
+				list.display = !list.display;
+			}
 		}
 	}
 }

@@ -173,14 +173,28 @@ namespace feltic.Language
                         if ((variableDeclaration = GetObjectMemberTypeDeclaration(vis.Object, variableIdentifier)) != null)
                         {
                             WriteTab(tabs);
-                            Write("element.AddChild(Object." + variableIdentifier);
-                            for (int b = 1; b < op.AccessList.Size; b++)
+                            if(variableDeclaration.TypeIdentifier.IsNative(NativeType.String) || variableDeclaration.TypeIdentifier.IsNative(NativeType.Int))
                             {
-                                Write(".");
-                                variableIdentifier = (op.AccessList[b] as VariableOperand).Identifier.String;
-                                Write(variableIdentifier);
+                                Write("element.AddChild(new VisualTextElement(Object." + variableIdentifier);
+                                for (int b = 1; b < op.AccessList.Size; b++)
+                                {
+                                    Write(".");
+                                    variableIdentifier = (op.AccessList[b] as VariableOperand).Identifier.String;
+                                    Write(variableIdentifier);
+                                }
+                                WriteLine(", parent));");
                             }
-                            WriteLine(".Visual);");
+                            else
+                            {
+                                Write("element.AddChild(Object." + variableIdentifier);
+                                for (int b = 1; b < op.AccessList.Size; b++)
+                                {
+                                    Write(".");
+                                    variableIdentifier = (op.AccessList[b] as VariableOperand).Identifier.String;
+                                    Write(variableIdentifier);
+                                }
+                                WriteLine(".Visual);");
+                            }
                         }
                         else if((variableDeclaration = GetMethodParameterTypeDeclaration(vis.Method, variableIdentifier)) != null)
                         {
@@ -210,10 +224,56 @@ namespace feltic.Language
                         Way way = Way.Try(value);
                         WriteLine(tabs, "element.Room."+char.ToUpper(attr[0])+attr.Substring(1)+" = new Way("+(int)way.Type+", "+((way.way)+"").Replace(',', '.')+"f);");
                     }
-                    if (attr == "marginLeft")
+                    if(attr == "margin" || attr == "padding")
+                    {
+                        WriteTab(tabs);
+                        if (attr == "margin")
+                            Write("element.Margin = ");
+                        else if (attr == "padding")
+                            Write("element.Padding = ");
+                        else
+                            throw new Exception("invalid data");
+                        ParameterDeclarationSignature parameters = (attribute.AssigmentOperand.AccessList[0] as ObjectAccessOperand).ParameterDefinition;
+                        Write("new Spacing(");
+                        for (int p = 0; p < parameters.Elements.Size; p++)
+                            WriteExpression(null, null, vis, parameters.Elements[i].Expression);
+                        WriteLine(");");
+                    }
+                    else if (attr.StartsWith("margin") || attr.StartsWith("padding"))
+                    {
+                        string value;
+                        if (attribute.AssigmentOperand.AccessList[0].Type == SignatureType.VariableOperand)
+                            value = "Object." + (attribute.AssigmentOperand.AccessList[0] as VariableOperand).Identifier.String;
+                        else if (attribute.AssigmentOperand.AccessList[0].Type == SignatureType.LiteralOperand)
+                            value = ""+(attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
+                        else
+                            throw new Exception("invalid state");
+                        string space;
+                        if (attr.EndsWith("Left"))
+                            space = "new Spacing("+value+", 0, 0, 0);";
+                        else if (attr.EndsWith("Top"))
+                            space = "new Spacing(0, " + value + ", 0, 0);";
+                        else if (attr.EndsWith("Right"))
+                            space = "new Spacing(0, 0, " + value + ", 0);";
+                        else if (attr.EndsWith("Bottom"))
+                            space = "new Spacing(0, 0, 0, " + value + ");";
+                        else if (attr.EndsWith("H"))
+                            space = "new Spacing(" + value + ", 0, " + value + ", 0);";
+                        else if (attr.EndsWith("V"))
+                            space = "new Spacing(0, " + value + ", 0, " + value + ");";
+                        else if(attr.EndsWith("VH") || attr.EndsWith("HV"))
+                            space = "new Spacing" + value + ", " + value + ", " + value + ", " + value + ");";
+                        else
+                            throw new Exception("invalid data");
+                        if(attr.StartsWith("margin"))
+                             WriteLine(tabs, "element.Margin = "+space+";");
+                        else if(attr.StartsWith("padding"))
+                            WriteLine(tabs, "element.Padding = "+space+";");
+                    }
+                    if (attr == "marginRigth")
                     {
                         string value = (attribute.AssigmentOperand.AccessList[0] as VariableOperand).Identifier.String;
-                        WriteLine(tabs, "element.Margin = new Spacing(Object." + value + ", 0, 0, 0);");
+                        WriteLine(tabs, "element.Margin = new Spacing(0, 0, Object." + value + ", 0);");
                     }
                     else if (attr == "display")
                     {

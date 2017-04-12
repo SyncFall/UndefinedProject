@@ -392,12 +392,10 @@ namespace feltic.Language
             }
             if (exp.PostOperation != null) Write(exp.PostOperation.Token.String);
 
-            ExpressionSignature expPtr = exp;
-            while(expPtr.Operation != null && expPtr.ExpressionPair != null)
+            if(exp.Operation != null && exp.ExpressionPair != null)
             {
-                Write(" " + expPtr.Operation.Token.String + " ");
-                WriteExpression(obj, mth, vis, expPtr.ExpressionPair);
-                expPtr = expPtr.ExpressionPair;
+                Write(" " + exp.Operation.Token.String + " ");
+                WriteExpression(obj, mth, vis, exp.ExpressionPair);
             }
         }
     

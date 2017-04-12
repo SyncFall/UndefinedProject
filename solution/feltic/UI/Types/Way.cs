@@ -27,9 +27,9 @@ namespace feltic.UI
         public Spacing(float leftPixel, float topPixel, float rightPixel=0, float bottomPixel=0)
         {
             this.Left = new Way(WayType.Pixel, leftPixel);
-            this.Top = new Way(WayType.Pixel, leftPixel);
-            this.Right = new Way(WayType.Pixel, leftPixel);
-            this.Bottom = new Way(WayType.Pixel, leftPixel);
+            this.Top = new Way(WayType.Pixel, topPixel);
+            this.Right = new Way(WayType.Pixel, rightPixel);
+            this.Bottom = new Way(WayType.Pixel, bottomPixel);
         }
 
         public Spacing(Way left, Way top, Way right, Way bottom)

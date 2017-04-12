@@ -507,7 +507,7 @@ namespace feltic.Integrator
             VisualElement VisualCode = CodeText.VisualCode;
             if (VisualCode == null) return;
 
-            if (!CodeText.CodeInput.Active) return;
+            //if (!CodeText.CodeInput.Active) return;
 
             FontMetric fontMetric = Text.GlyphContainer.Font.Metric;
 

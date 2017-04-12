@@ -108,7 +108,7 @@ namespace feltic.UI
                 if (IsVisual)
                     return (State as VisualState);
                 else
-                    return new VisualState();
+                    return new VisualState(VisualEventState.None, false);
             }
         }
     }
@@ -178,15 +178,36 @@ namespace feltic.UI
         public abstract void Input(InputEvent Event);
     }
 
+    public enum VisualEventState
+    {
+        None=0,
+        Active,
+        Focus,
+    }
+
     public class VisualState : InputState
     {
+        public bool GainActive;
+        public bool LostActive;
         public bool GainFocus;
         public bool LostFocus;
 
-        public VisualState(bool GainFocus=false, bool LostFocus=false)
+        public VisualState(VisualEventState State, bool Boolean)
         {
-            this.GainFocus = GainFocus;
-            this.LostFocus = LostFocus;
+            if (State == VisualEventState.Active)
+            {
+                if (Boolean)
+                    GainActive = true;
+                else
+                    LostActive = true;
+            }
+            else if(State == VisualEventState.Focus)
+            {
+                if (Boolean)
+                    GainFocus = true;
+                else
+                    LostFocus = true;
+            }
         }
     }
 
