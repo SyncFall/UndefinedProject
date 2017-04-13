@@ -77,6 +77,12 @@ namespace feltic.UI.Types
             }
         }
 
+        public VisualType type
+        {
+            get { return Type; }
+            set { this.Type = value; }
+        }
+
         public string color
         {
             set { Color = Color.Try(value); }
@@ -140,8 +146,8 @@ namespace feltic.UI.Types
                 }
             }
 
-            float w = Width!=0 ? Width : (Size!=null&&Size.Width!=-1f?Size.Width:0f);
-            float h = Height!=0 ? Height : (Size!=null&&Size.Height!=-1f?Size.Height:0f);
+            float w = Size.Width;
+            float h = Size.Height;
             if(w > 0f && h > 0f)
             {
                 /*
@@ -169,7 +175,6 @@ namespace feltic.UI.Types
         {
             this.Size = GetSizeWithSpacing(BaseSize, this.Padding);
             this.Bound = GetSizeWithSpacing(Size, this.Margin);
-            int i = 0;
         }
 
         public void CalculateSizeAndPosition(Position InitialPosition)

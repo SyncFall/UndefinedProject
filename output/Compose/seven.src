@@ -2,9 +2,9 @@
 
 object FileNode extend visual
 {
+	FileNode parent;
 	visual elm;
 	visual list;
-	FileNode parent;
 	string path;
 	string name;
 	bool isFolder;
@@ -25,7 +25,6 @@ object FileNode extend visual
 		}
 		this.isFolder = isFolder;
 		this.depth = depth;
-
 		this.build();
 	}
 
@@ -51,10 +50,9 @@ object FileNode extend visual
 
 	func elmListener(InputEvent inevt)
 	{
-		if(inevt.Button.LeftClick){
-			if(list!=null){
-				list.display = !list.display;
-			}
+		bool toogleList = (inevt.Button.LeftClick);
+		if(list != null && toogleList){
+			list.display = !list.display;
 		}
 	}
 }

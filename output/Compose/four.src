@@ -1,5 +1,4 @@
 
-
 object Peter
 {
 	int res=0;
@@ -27,5 +26,3 @@ object Muh
 		peter.Pussi(4);
 	}
 }
-
-

@@ -23,19 +23,15 @@ namespace feltic.Integrator
 
         public SceneView()
         {
-            //Editor editor = new Editor();
-            FileExplorer fe = new FileExplorer();
-            //AddCode(editor);
-            Root.add(fe);
+            Editor editor = new Editor();
+            AddCode(editor);
+            Root.add(editor);
         }
 
-        /*
         public void AddCode(Editor editor)
         {
-            VisualElement block = new VisualElement(VisualType.Block, editor.workspace.Root.Visual);
-            new VisualTextElement(File.ReadAllText("./Compose/four.src"), block, CodeColor.String);
+            editor.Workspace.Nodes[0].add(new VisualTextElement(File.ReadAllText("./Compose/four.src"), CodeColor.String));
         }
-        */
         
         public void Draw()
         {

@@ -43,7 +43,7 @@ namespace feltic.Language
             new NativeSymbol(NativeType.Object, "object"),
             new NativeSymbol(NativeType.Func, "func"),
             new NativeSymbol(NativeType.State, "state"),
-            new NativeSymbol(NativeType.Type, "type"),
+            //new NativeSymbol(NativeType.Type, "type"),
             new NativeSymbol(NativeType.Var, "var"),
             new NativeSymbol(NativeType.Enum, "enum"),
             new NativeSymbol(NativeType.Visual, "visual"),
