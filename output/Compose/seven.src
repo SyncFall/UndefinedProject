@@ -9,8 +9,6 @@ object FileNode extend visual
 	string name;
 	bool isFolder;
 	int depth;
-	int depthFolderWidth;
-	int depthFileWidth;
 
 	FileNode(FileNode parent, string path, bool isFolder, int depth)
 	{
@@ -27,28 +25,27 @@ object FileNode extend visual
 		}
 		this.isFolder = isFolder;
 		this.depth = depth;
-		this.depthFolderWidth = (depth * 16);
-		this.depthFileWidth = (depthFolderWidth + 16);
+
 		this.build();
 	}
 
 	func build()
 	{
+		int depthFolderWidth = (depth * 16);
+		int depthFileWidth = (depthFolderWidth + 16);
 		if(this.isFolder){
-			visual b = <block/>;
 			elm = <block listener=elmListener marginLeft=depthFolderWidth paddingTop=2><image source="folder.png" height=14 marginRight=4/>.name;</block>;
 			list = <block/>;
-			b.add(elm, list);
-			Visual = b.Visual;
+			this.add(elm, list);
 		}else{
 			elm = <block listener=elmListener marginLeft=depthFileWidth paddingTop=2><image source="file.png" height=14 marginRight=2/>.name;</block>;
-			Visual = elm.Visual;
+			this.add(elm);
 		}		
 	}
 
 	func addEntry(FileNode child)
 	{
-		list.add(child.Visual);
+		list.add(child);
 		list.display = true;
 	}
 
@@ -71,7 +68,7 @@ object FileExplorer extend visual
 	{
 		Root = new FileNode(null, "ROOT", true, 0);
 		this.buildFolder(".", Root, 0);
-		Visual = Root.Visual;
+		this.add(Root);
 	}
 
 	func buildFolder(string dir, FileNode parent, int depth)

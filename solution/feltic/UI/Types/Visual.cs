@@ -9,64 +9,6 @@ using System.Threading.Tasks;
 
 namespace feltic.UI.Types
 {
-    public class VisualObject
-    {
-        public VisualElement Visual;
-
-        public bool display
-        {
-            get { return Visual.Display; }
-            set { Visual.Display = value; }
-        }
-
-        public string color
-        {
-            set { Visual.Color = Color.Try(value); }
-        }
-
-        public int marginLeft
-        {
-            set { Visual.Margin = new Spacing(value, 0, 0, 0); }
-        }
-
-        public int paddingLeft
-        {
-            set { Visual.Padding = new Spacing(value, 0, 0, 0); }
-        }
-
-        public void add(VisualElement e)
-        {
-            Visual.AddChild(e);
-        }
-
-        public void add(VisualObject a)
-        {
-            Visual.AddChild(a.Visual);
-        }
-
-        public void add(VisualObject a, VisualObject b)
-        {
-            Visual.AddChild(a.Visual);
-            Visual.AddChild(b.Visual);
-        }
-
-        public VisualElement this[int idx]
-        {
-            get { return Visual.Childrens[idx]; }
-            set { Visual.Childrens[idx] = value; }
-        }
-
-        public int Size
-        {
-            get { return Visual.Childrens.Size; }
-        }
-
-        public VisualElementList Childrens
-        {
-            get { return Visual.Childrens; }
-        }
-    }
-
     public class VisualElement
     {
         public VisualType Type;
@@ -77,36 +19,83 @@ namespace feltic.UI.Types
         public Size Size;
         public Size Bound;
         public Position Position;
-        public VisualElementList Childrens;
+        public VisualElementList Nodes;
         public InputListener InputListener;
         public bool Display = true;
         public Color Color;
         public bool Active;
         public bool Focus;
 
-        public VisualElement(int Type, VisualElement Parent) : this((VisualType)Type, Parent)
+        public VisualElement() : this(VisualType.Block)
         { }
 
-        public VisualElement(VisualType Type, VisualElement Parent)
+        public VisualElement(int Type) : this((VisualType)Type)
+        { }
+
+        public VisualElement(VisualType Type)
         {
             this.Type = Type;
-            this.Parent = Parent;
-            this.Room = new Room();
-            if (Parent != null)
-                Parent.AddChild(this);
         }
 
-        public void AddChild(VisualElement VisualElement)
+        public VisualElement add(VisualElement Element)
         {
-            if (Childrens == null)
-                Childrens = new VisualElementList();
-            VisualElement.Parent = this;
-            Childrens.Add(VisualElement);
+            if (Nodes == null)
+                Nodes = new VisualElementList();
+            Element.Parent = this;
+            Nodes.Add(Element);
+            return this;
+        }
+
+        public VisualElement add(VisualElement a, VisualElement b)
+        {
+            this.add(a);
+            this.add(b);
+            return this;
+        }
+
+        public void clear()
+        {
+            if (Nodes != null){
+                Nodes.Clear();
+                Nodes = null;
+            }
+        }
+
+        public VisualElement this[int Index]
+        {
+            get { return (Nodes != null && Nodes.Size > Index ? Nodes[Index] : null); }
+            set { Nodes[Index] = value; }
+        }
+
+
+        public VisualElement content
+        {
+            get { return (Nodes != null ? Nodes[0] : null); }
+            set {
+                Nodes = new VisualElementList();
+                this.add(value);
+            }
         }
 
         public string color
         {
             set { Color = Color.Try(value); }
+        }
+
+        public bool display
+        {
+            set { Display = value; }
+            get { return Display; }
+        }
+
+        public int marginLeft
+        {
+            set { Margin = new Spacing(value, 0, 0, 0); }
+        }
+
+        public int paddingLeft
+        {
+            set { Padding = new Spacing(value, 0, 0, 0); }
         }
 
         public string source
@@ -136,9 +125,9 @@ namespace feltic.UI.Types
 
             if (Type == VisualType.Scroll)
             {
-                if (Childrens != null && Childrens.Size == 1)
+                if (Nodes != null && Nodes.Size == 1)
                 {
-                    VisualElement child = Childrens[0];
+                    VisualElement child = Nodes[0];
                     VisualScrollElement scroll = this as VisualScrollElement;
                     float factorHeight = (child.Size.Height / scroll.Size.Height);
                     float offsetHeight = (scroll.ScrollYPosition * factorHeight);
@@ -168,10 +157,10 @@ namespace feltic.UI.Types
             }
 
             // calculate childrens
-            if (Childrens == null) return;
-            for (int i = 0; i < Childrens.Size; i++)
+            if (Nodes == null) return;
+            for (int i = 0; i < Nodes.Size; i++)
             {
-                VisualElement child = Childrens[i];
+                VisualElement child = Nodes[i];
                 child.Draw(child.Position.x, child.Position.y);
             }
 
@@ -353,9 +342,9 @@ namespace feltic.UI.Types
             float currentLeft = 0f;
             float currentTop = 0f;
             float currentHeight = 0f;
-            for (int i = 0; Childrens != null && i < Childrens.Size; i++)
+            for (int i = 0; Nodes != null && i < Nodes.Size; i++)
             {
-                VisualElement child = Childrens[i];
+                VisualElement child = Nodes[i];
                 child.CalculateSizeAndPosition(new Position(childsPosition.x + currentLeft, childsPosition.y + currentTop));
                 Size bound = child.Bound;
 
@@ -442,7 +431,7 @@ namespace feltic.UI.Types
             float width = 0f;
 
             // width definition
-            if (room.Width != null)
+            if (room != null && room.Width != null)
             {
                 // absolute pixel size
                 if (room.Width != null && room.Width.Type == WayType.Pixel)
@@ -470,7 +459,7 @@ namespace feltic.UI.Types
             float height = 0f;
 
             // height definition
-            if (room.Height != null)
+            if (room != null && room.Height != null)
             {
                 // absolute pixel size
                 if (room.Height.Type == WayType.Pixel)
@@ -592,7 +581,7 @@ namespace feltic.UI.Types
             set{ TextHandle = new UI.Text(value, null); }
         }
 
-        public VisualTextElement(string String, VisualElement Parent, Color Color=null) : base(VisualType.Text, Parent)
+        public VisualTextElement(string String, Color Color=null) : base(VisualType.Text)
         {
             this.Text = String;
             this.Color = Color;
@@ -608,7 +597,7 @@ namespace feltic.UI.Types
     {
         public Image ImageHandle;
 
-        public VisualImageElement(VisualElement Parent) : base(VisualType.Image, Parent)
+        public VisualImageElement() : base(VisualType.Image)
         { }
 
         public string Source
@@ -631,18 +620,18 @@ namespace feltic.UI.Types
         {
             get
             {
-                if (Childrens != null && Childrens[0].Type == VisualType.Text)
-                    return (Childrens[0] as VisualTextElement).Text;
+                if (Nodes != null && Nodes[0].Type == VisualType.Text)
+                    return (Nodes[0] as VisualTextElement).Text;
                 return "";
             }
             set
             {
-                if (Childrens != null && Childrens[0].Type == VisualType.Text)
-                    (Childrens[0] as VisualTextElement).Text = (value != null ? value : "");
+                if (Nodes != null && Nodes[0].Type == VisualType.Text)
+                    (Nodes[0] as VisualTextElement).Text = (value != null ? value : "");
             }
         }
 
-        public VisualInputElement(VisualElement Parent) : base(VisualType.Input, Parent)
+        public VisualInputElement() : base(VisualType.Input)
         {
             this.InputListener = new TextListener(this);
         }
@@ -683,17 +672,17 @@ namespace feltic.UI.Types
         public Size ScrollYSize = new Size(ScrollThickness, 0);
         public Size ScrollXSize = new Size(0, ScrollThickness);
 
-        public VisualScrollElement(VisualElement Parent) : base(VisualType.Scroll, Parent)
+        public VisualScrollElement() : base(VisualType.Scroll)
         {
             this.InputListener = new ScrollListener(this);
         }
 
         public void DrawScrollY(float X = 0, float Y = 0)
         {
-            if(Childrens==null||Childrens.Size != 1)
+            if(Nodes == null|| Nodes.Size != 1)
                 return;
 
-            VisualElement child = Childrens[0];
+            VisualElement child = Nodes[0];
             Size childSize = child.Size;
 
             float factor = (Size.Height / childSize.Height);
@@ -715,10 +704,10 @@ namespace feltic.UI.Types
 
         public void DrawScrollX(float X=0, float Y=0)
         {
-            if (Childrens == null || Childrens.Size != 1)
+            if (Nodes == null || Nodes.Size != 1)
                 return;
     
-            VisualElement child = Childrens[0];
+            VisualElement child = Nodes[0];
             Size childSize = child.Size;
 
             float factor = (Size.Width / childSize.Width);

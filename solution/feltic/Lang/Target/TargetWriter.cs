@@ -50,13 +50,13 @@ namespace feltic.Language
                 WriteObject(1, objectSymbolList[i]);
             }
             WriteLine();
+            for (int i = 0; i < StateReceivers.Size; i++)
+            {
+                WriteLine(StateReceivers[i].Builder.ToString());
+            }
             for (int i=0; i<VisualComponents.Size; i++)
             {
                 WriteLine(VisualComponents[i].Builder.ToString());
-            }
-            for(int i=0; i<StateReceivers.Size; i++)
-            {
-                WriteLine(StateReceivers[i].Builder.ToString());
             }
             WriteLine("}");
             File.WriteAllText(Filepath, Builder.ToString());
@@ -71,7 +71,7 @@ namespace feltic.Language
             {
                 Symbol typeIdentifier = obj.Signature.ExtendIdentifier;
                 if (typeIdentifier.IsNative(NativeType.Visual))
-                    WriteLine(" : VisualObject");
+                    WriteLine(" : VisualElement");
                 else
                     WriteLine(" : " + obj.Signature.ExtendIdentifier.String);
             }
@@ -165,9 +165,7 @@ namespace feltic.Language
             else if(stm.Group == StatementCategory.BlockStatement)
             {
                 if(stm.Keyword != null)
-                {
                     WriteLine(stm.Keyword.String);
-                }
                 WriteLine(tabs, "{");
                 WriteStatements(tabs+1, obj, mth, vis, (stm as BlockStatementSignature).Elements);
                 WriteLine(tabs, "}");
@@ -190,13 +188,9 @@ namespace feltic.Language
                 for (int j = 0; j < sl.Size; j++)
                 {
                     if (sl[j] is TypeDeclarationSignature)
-                    {
                         WriteTypeDeclaration(obj, mth, vis, (sl[j] as TypeDeclarationSignature));
-                    }
                     if (sl[j] is ExpressionSignature)
-                    {
                         WriteExpression(obj, mth, vis, (sl[j] as ExpressionSignature));
-                    }
                 }
                 Write(";");
                 WriteExpression(obj, mth, vis, forLoop.ConditionExpression);
@@ -223,7 +217,7 @@ namespace feltic.Language
                 if (td.TypeIdentifier.IsNative(NativeType.State) || td.TypeIdentifier.IsNative(NativeType.Func))
                     Write("void ");
                 else if (td.TypeIdentifier.IsNative(NativeType.Visual))
-                    Write("VisualObject ");
+                    Write("VisualElement ");
                 else
                     Write(td.TypeIdentifier.String + " ");
             if (td.TypeGeneric != null)
@@ -309,31 +303,26 @@ namespace feltic.Language
                 OperandAccessSignature access = exp.Operand.AccessList[i];
                 if(access.Type == SignatureType.LiteralOperand)
                 {
-                    if(exp.PreOperation != null && vis != null && exp.PreOperation.Token.IsStructure(StructureType.Point))
-                    {
-                        string stringData = (access as LiteralOperand).Literal.String;
-                        stringData = stringData.Replace("\"", "");
-                        Write("new VisualTextElement(\"" + stringData + "\", parent)");
-                    }
+                    string stringData = (access as LiteralOperand).Literal.String;
+                    if (exp.PreOperation != null && vis != null && exp.PreOperation.Token.IsStructure(StructureType.Point))
+                        Write("parent.add(new VisualTextElement(" + stringData + "))");
                     else
-                        Write((access as LiteralOperand).Literal.String);
+                        Write(stringData);
                 }
                 else if(access.Type == SignatureType.VariableOperand)
                 {
-                    if(vis == null)
-                        Write((access as VariableOperand).Identifier.String);
+                    string variableIdentfier = (access as VariableOperand).Identifier.String;
+                    if (vis == null)
+                        Write(variableIdentfier);
                     else
                     {
-                        string variableIdentfier = (access as VariableOperand).Identifier.String;
                         if(GetObjectMemberTypeDeclaration(vis.Object, variableIdentfier) != null)
                         {
-                            Write("Object." + variableIdentfier);
                             if (exp.PreOperation != null && exp.PreOperation.Token.IsStructure(StructureType.Point))
-                            {
-                                Write(";parent.AddChild(Object."+variableIdentfier+")");
-                            }
-                        }
-                        else
+                                Write("parent.add(Object."+variableIdentfier+")");
+                            else
+                                Write("Object." + variableIdentfier);
+                        }else
                             Write(variableIdentfier);        
                     }
                 }
@@ -368,27 +357,16 @@ namespace feltic.Language
                     if (vis == null)
                         Write("new " + visual.IdentifierString + "(this");
                     else
-                    {
-                        if (exp.PreOperation != null && vis != null && exp.PreOperation.Token.IsStructure(StructureType.Point))
-                        {
-                            Write("parent.AddChild(new " + visual.IdentifierString + "(Object");
-                        }
-                        else
-                            Write("parent.AddChild(new " + visual.IdentifierString + "(Object");
-                    }
+                        Write("parent.add(new " + visual.IdentifierString + "(Object");
                     for (int p = 0; p < visual.ParameterVariables.Size; p++)
-                    {
-                        Write(", " + visual.ParameterVariables[i].NameIdentifier.String);
-                    }
+                        Write(", " + visual.ParameterVariables[p].NameIdentifier.String);
                     if (vis == null)
-                        WriteLine(")");
+                        Write(")");
                     else
-                        WriteLine(").Visual)");
+                        Write("))");
                 }
                 if(access.Seperator != null)
-                {
-                    Write(access.Seperator.String);
-                }
+                    Write(access.Seperator.String);   
             }
             if (exp.PostOperation != null) Write(exp.PostOperation.Token.String);
 

@@ -60,53 +60,53 @@ namespace feltic.Integrator
         {
             this.VisualCode = CodeText.VisualCode;
             if(VisualCode == null) return;
-            if(VisualCode.Childrens != null) VisualCode.Childrens.Clear();
+            if(VisualCode.Nodes != null) VisualCode.Nodes.Clear();
             TokenPointer pointer = TokenContainer.FirstToken;
             Symbol token = pointer.Current;
             while (token != null)
             {
                 if (token.IsStructure(StructureType.WhiteSpace))
                 {
-                    new VisualTextElement(" ", VisualCode);
+                    VisualCode.add(new VisualTextElement(" "));
                 }
                 else if (token.IsStructure(StructureType.TabSpace))
                 {
-                    new VisualTextElement("\t", VisualCode);
+                    VisualCode.add(new VisualTextElement("\t"));
                 }
                 else if (token.IsStructure(StructureType.LineSpace))
                 {
-                    new VisualElement(VisualType.Break, VisualCode);
+                    VisualCode.add(new VisualElement(VisualType.Break));
                 }
                 else if(token.IsType(TokenType.Object) || token.IsType(TokenType.Native) || token.IsType(TokenType.Statement))
                 {
-                    new VisualTextElement(token.String, VisualCode, CodeColor.Keyword);
+                    VisualCode.add(new VisualTextElement(token.String, CodeColor.Keyword));
                 }
                 else if (token.IsType(TokenType.Literal))
                 {
                     if (token.IsLiteral(LiteralType.String) || token.IsLiteral(LiteralType.Char))
                     {
-                        new VisualTextElement(token.String, VisualCode, CodeColor.String);
+                        VisualCode.add(new VisualTextElement(token.String, CodeColor.String));
                     }
                     else if (token.IsLiteral(LiteralType.Number))
                     {
-                        new VisualTextElement(token.String, VisualCode, CodeColor.Normal);
+                        VisualCode.add(new VisualTextElement(token.String, CodeColor.Normal));
                     }
                     else
                     {
-                        new VisualTextElement(token.String, VisualCode, CodeColor.Keyword);
+                        VisualCode.add(new VisualTextElement(token.String, CodeColor.Keyword));
                     }
                 }
                 else if (token.IsType(TokenType.Comment))
                 {
-                    new VisualTextElement(token.String, VisualCode, CodeColor.Comment);
+                    VisualCode.add(new VisualTextElement(token.String, CodeColor.Comment));
                 }
                 else if (token.IsType(TokenType.Unknown))
                 {
-                    new VisualTextElement(token.String, VisualCode, CodeColor.Error);
+                    VisualCode.add(new VisualTextElement(token.String, CodeColor.Error));
                 }
                 else
                 {
-                    new VisualTextElement(token.String, VisualCode, CodeColor.Normal);
+                    VisualCode.add(new VisualTextElement(token.String, CodeColor.Normal));
                 }
                 token = pointer.Next;
             }

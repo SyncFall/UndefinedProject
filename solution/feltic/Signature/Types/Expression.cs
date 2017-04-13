@@ -213,9 +213,9 @@ namespace feltic.Language
         public ExpressionSignature ChildExpression;
         public Symbol BlockEnd;
         public OperandSignature Operand;
-        public OperationSignature PostOperation;
         public OperationSignature Operation;
         public ExpressionSignature ExpressionPair;
+        public OperationSignature PostOperation;
         public Symbol Seperator;
 
         public ExpressionSignature() : base(SignatureType.Expression)

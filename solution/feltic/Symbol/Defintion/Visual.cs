@@ -20,6 +20,7 @@ namespace feltic.Language
         Input,
         Scroll,
         Image,
+        Custom,
     }
 
     public static class Visuals

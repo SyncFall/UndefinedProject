@@ -88,7 +88,7 @@ namespace feltic.Language
             WriteVisualElement(tabs + 2, vis, null, vis.Signature);
             PopBuilder();
 
-            WriteLine(tabs, "public class " + vis.IdentifierString+" : VisualObject");
+            WriteLine(tabs, "public class " + vis.IdentifierString+ " : VisualElement");
             WriteLine(tabs, "{");
             WriteLine(tabs + 1, "public " + vis.Object.Signature.Identifier.String+ " Object;");
             WriteLine();
@@ -100,7 +100,7 @@ namespace feltic.Language
                 TypeDeclarationSignature typeDec = vis.ParameterVariables[i];
                 Write(typeDec.TypeIdentifier.String + " " + typeDec.NameIdentifier.String);
             }
-            WriteLine(")");
+            WriteLine(") : base(VisualType.Block)");
             WriteLine(tabs + 1, "{");
             WriteLine(tabs + 2, "this.Object = Object;");
             WriteLine(tabs + 2, "Stack<VisualElement> stack = new Stack<VisualElement>();");
@@ -108,7 +108,7 @@ namespace feltic.Language
             WriteLine(tabs + 2, "VisualElement element, parent=null;");
             WriteLine();
             WriteTab(tabs + 2);
-            WriteLine("this.Visual = ");
+            WriteLine("parent = this;");
             Write(elementBuilder.ToString());
             WriteLine();
             for(int i=0; i<vis.ListenerFunctions.Size; i++)
@@ -136,15 +136,15 @@ namespace feltic.Language
             {
                 if(sb.OpenBlockIdentifiere.IsVisual(VisualType.Scroll))
                 {
-                    WriteLine(tabs, "element = new VisualScrollElement(parent);");
+                    WriteLine(tabs, "parent.add((element = new VisualScrollElement()));");
                 }
                 else if(sb.OpenBlockIdentifiere.IsVisual(VisualType.Image))
                 {
-                    WriteLine(tabs, "element = new VisualImageElement(parent);");
+                    WriteLine(tabs, "parent.add((element = new VisualImageElement()));");
                 }
                 else
                 {
-                    WriteLine(tabs, "element = new VisualElement(" + sb.OpenBlockIdentifiere.Type + ", parent);");
+                    WriteLine(tabs, "parent.add((element = new VisualElement(" + sb.OpenBlockIdentifiere.Type + ")));");
                 }
             }
             else if(ss != null)
@@ -156,8 +156,7 @@ namespace feltic.Language
                     if (op.AccessList[0].Type == SignatureType.LiteralOperand)
                     {
                         string stringData = (op.AccessList[0] as LiteralOperand).Literal.String;
-                        stringData = stringData.Replace("\"", "");
-                        WriteLine(tabs, "element = new VisualTextElement(\"" + stringData + "\", parent);");
+                        WriteLine(tabs, "parent.add((element = new VisualTextElement(" + stringData + ")));");
                     }
                     else if (op.AccessList[0].Type == SignatureType.StructedBlockOperand)
                     {
@@ -170,37 +169,38 @@ namespace feltic.Language
                     {
                         string variableIdentifier = (op.AccessList[0] as VariableOperand).Identifier.String;
                         TypeDeclarationSignature variableDeclaration;
-                        if ((variableDeclaration = GetObjectMemberTypeDeclaration(vis.Object, variableIdentifier)) != null)
-                        {
-                            WriteTab(tabs);
-                            if(variableDeclaration.TypeIdentifier.IsNative(NativeType.String) || variableDeclaration.TypeIdentifier.IsNative(NativeType.Int))
-                            {
-                                Write("element.AddChild(new VisualTextElement(Object." + variableIdentifier);
-                                for (int b = 1; b < op.AccessList.Size; b++)
-                                {
-                                    Write(".");
-                                    variableIdentifier = (op.AccessList[b] as VariableOperand).Identifier.String;
-                                    Write(variableIdentifier);
-                                }
-                                WriteLine(", parent));");
-                            }
-                            else
-                            {
-                                Write("element.AddChild(Object." + variableIdentifier);
-                                for (int b = 1; b < op.AccessList.Size; b++)
-                                {
-                                    Write(".");
-                                    variableIdentifier = (op.AccessList[b] as VariableOperand).Identifier.String;
-                                    Write(variableIdentifier);
-                                }
-                                WriteLine(".Visual);");
-                            }
+
+                        bool isObjectMember = false;
+                        bool isMethodParameter = false;
+                        bool isLocalVariable = false;
+                        if(((variableDeclaration = GetObjectMemberTypeDeclaration(vis.Object, variableIdentifier)) != null && (isObjectMember=true)) ||
+                           ((variableDeclaration = GetMethodParameterTypeDeclaration(vis.Method, variableIdentifier)) != null && (isMethodParameter=true)) ||
+                           ((variableDeclaration = GetVariableTypeDeclaration(vis.Method, variableIdentifier)) != null && (isLocalVariable = true))
+                        ){
+                            ;
                         }
-                        else if((variableDeclaration = GetMethodParameterTypeDeclaration(vis.Method, variableIdentifier)) != null)
+
+                        string value = variableIdentifier;
+                        for (int b = 1; b < op.AccessList.Size; b++)
                         {
-                            WriteLine(tabs, "element = new VisualTextElement(" + variableIdentifier+", parent);");
-                            vis.ParameterVariables.Add(variableDeclaration);
+                            variableIdentifier = (op.AccessList[b] as VariableOperand).Identifier.String;
+                            value += "."+variableIdentifier;
                         }
+
+                        bool isDataNative = false;
+                        bool isVisualType = false;
+                        if((((variableDeclaration.TypeIdentifier.IsNative(NativeType.String) || variableDeclaration.TypeIdentifier.IsNative(NativeType.Int) || variableDeclaration.TypeIdentifier.IsNative(NativeType.Float))) && (isDataNative = true)) ||
+                             (isVisualType = true)
+                        ){
+                            ;
+                        }
+
+                        if (isDataNative)
+                            WriteLine(tabs, "parent.add((element = new VisualTextElement("+value+")));");
+                        else
+                            WriteLine(tabs, "parent.add((element = "+value+"));");
+
+                        vis.ParameterVariables.Add(variableDeclaration);
                     }
                 }
                 else
@@ -222,6 +222,7 @@ namespace feltic.Language
                     {
                         string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
                         Way way = Way.Try(value);
+                        WriteLine(tabs, "if(element.Room == null) element.Room = new Room();");
                         WriteLine(tabs, "element.Room."+char.ToUpper(attr[0])+attr.Substring(1)+" = new Way("+(int)way.Type+", "+((way.way)+"").Replace(',', '.')+"f);");
                     }
                     if(attr == "margin" || attr == "padding")
@@ -243,7 +244,27 @@ namespace feltic.Language
                     {
                         string value;
                         if (attribute.AssigmentOperand.AccessList[0].Type == SignatureType.VariableOperand)
-                            value = "Object." + (attribute.AssigmentOperand.AccessList[0] as VariableOperand).Identifier.String;
+                        {
+                            string variableIdentifier = (attribute.AssigmentOperand.AccessList[0] as VariableOperand).Identifier.String;
+                            TypeDeclarationSignature variableDeclaration;
+
+                            bool isObjectMember = false;
+                            bool isMethodParameter = false;
+                            bool isLocalVariable = false;
+                            if(((variableDeclaration = GetObjectMemberTypeDeclaration(vis.Object, variableIdentifier)) != null && (isObjectMember = true)) ||
+                               ((variableDeclaration = GetMethodParameterTypeDeclaration(vis.Method, variableIdentifier)) != null && (isMethodParameter = true)) ||
+                               ((variableDeclaration = GetVariableTypeDeclaration(vis.Method, variableIdentifier)) != null && (isLocalVariable = true))
+                            ){
+                                ;
+                            }
+                            if (isObjectMember)
+                                value = "Object." + variableIdentifier;
+                            else
+                            {
+                                value = variableIdentifier;
+                                vis.ParameterVariables.Add(variableDeclaration);
+                            }
+                        }  
                         else if (attribute.AssigmentOperand.AccessList[0].Type == SignatureType.LiteralOperand)
                             value = ""+(attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
                         else
@@ -269,11 +290,6 @@ namespace feltic.Language
                              WriteLine(tabs, "element.Margin = "+space+";");
                         else if(attr.StartsWith("padding"))
                             WriteLine(tabs, "element.Padding = "+space+";");
-                    }
-                    if (attr == "marginRigth")
-                    {
-                        string value = (attribute.AssigmentOperand.AccessList[0] as VariableOperand).Identifier.String;
-                        WriteLine(tabs, "element.Margin = new Spacing(0, 0, Object." + value + ", 0);");
                     }
                     else if (attr == "display")
                     {
