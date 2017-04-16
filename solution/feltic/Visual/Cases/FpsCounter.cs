@@ -1,5 +1,5 @@
-﻿using feltic.UI;
-using feltic.UI.Types;
+﻿using feltic.Visual;
+using feltic.Visual.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace feltic.UI
+namespace feltic.Visual
 {
     public class FpsCounter
     {

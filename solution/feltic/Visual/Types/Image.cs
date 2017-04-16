@@ -8,13 +8,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace feltic.UI
+namespace feltic.Visual
 {
     public class Image
     {
         public readonly string Filepath;
-        private byte[] BitmapRgbaBytes;
-        private int BitmapBufferId;
+        public byte[] BitmapRgbaBytes;
+        public int BitmapBufferId;
         public Size Size;
 
         public Image(string ImagePath)
@@ -63,33 +63,27 @@ namespace feltic.UI
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 
-        public void Draw(float X=0, float Y=0, float Width=0, float Height=0)
+        public void Draw(Position Position, Size Size, Position Offset=null, Size Clip=null)
         {
+            float texLeft = (Offset != null ? (Offset.X / Size.Width) : 0f);
+            float texTop = (Offset != null ? (Offset.Y / Size.Height) : 0f);
+            float texWidth = (Clip != null && Clip.Width > 0f ? (Clip.Width / Size.Width) : 1f);
+            float texHeight = (Clip != null && Clip.Height > 0f ? (Clip.Height / Size.Height) : 1f);
+
             GL.Color3(1f, 1f, 1f);
-            if(Width <= 0) Width = this.Size.Width;
-            if(Height <= 0) Height = this.Size.Height;
             GL.BindTexture(TextureTarget.Texture2D, BitmapBufferId);
             GL.Begin(PrimitiveType.Quads);
-            GL.TexCoord2(0, 0);
-            GL.Vertex2(X, Y);
-            GL.TexCoord2(1, 0);
-            GL.Vertex2(X + Width, Y);
-            GL.TexCoord2(1, 1);
-            GL.Vertex2(X + Width, Y + Height);
-            GL.TexCoord2(0, 1);
-            GL.Vertex2(X, Y + Height);
+            GL.TexCoord2(texLeft, texTop);
+            GL.Vertex2(Position.X, Position.Y);
+            GL.TexCoord2(texWidth, texTop);
+            GL.Vertex2(Position.X + Size.Width, Position.Y);
+            GL.TexCoord2(texWidth, texHeight);
+            GL.Vertex2(Position.X + Size.Width, Position.Y + Size.Height);
+            GL.TexCoord2(texLeft, texHeight);
+            GL.Vertex2(Position.X, Position.Y + Size.Height);
             GL.End();
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 
-        public void Bind()
-        {
-            GL.BindTexture(TextureTarget.Texture2D, BitmapBufferId);
-        }
-
-        public void Unbind()
-        {
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-        }
     }
 }

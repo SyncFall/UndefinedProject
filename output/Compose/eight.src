@@ -15,8 +15,8 @@ object Editor extend visual
 			<block width=700px height=500px>
 				<block>.ActionBar</block>
 				<block height=400px>
-					<column width=65%>.Workspace</column>
-					<column width=35%>.FileExplorer</column>
+					<column width=65pc>.Workspace</column>
+					<column width=35pc>.FileExplorer</column>
 				</block>
 				<block height=125px><image source="1.png" height=100/></block>
 			</block>
@@ -34,12 +34,7 @@ object ActionBar extend visual
 	ActionBar(Editor Editor)
 	{
 		this.Editor = Editor;
-		this.content = 
-			<block>
-				.solutionSelect;
-				.runSelect;
-			</block>
-		;
+		this.add(solutionSelect, runSelect);
 	}
 }
 
@@ -61,7 +56,8 @@ object Select extend visual
 	Select(string Text)
 	{  
 		this.Text = Text;
-		this.content = <block>.Text</block>;
+		this.type = VisualType.Inline;
+		this.content = <inline>.Text</inline>;
 	}
 }
 

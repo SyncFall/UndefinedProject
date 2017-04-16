@@ -9,7 +9,7 @@ namespace feltic.Language
 {
     public partial class SignatureParser
     {
-        public ExpressionSignature TryExpression()
+        public ExpressionSignature TryExpression(bool WithStructedBlock=true)
         {
             if (!Begin()) return null;
             TrySpace();
@@ -17,7 +17,7 @@ namespace feltic.Language
             signature.PreOperation = TryPrePostOperation(true);
             if((signature.BlockBegin = TryNonSpace(StructureType.ClosingBegin)) != null)
             {
-                if((signature.ChildExpression = TryExpression()) == null ||
+                if((signature.ChildExpression = TryExpression(WithStructedBlock)) == null ||
                    (signature.BlockEnd = TryNonSpace(StructureType.ClosingEnd)) == null
                 ){
                     Reset();
@@ -28,15 +28,15 @@ namespace feltic.Language
             }
             else
             {
-                if((signature.Operand = TryOperand()) == null)
+                if((signature.Operand = TryOperand(WithStructedBlock)) == null)
                 {
                     Reset();
                     return null;
                 }
             }
             if(!Begin()) return signature;
-            if((signature.Operation = TryOperation()) == null ||
-               (signature.ExpressionPair = TryExpression()) == null
+            if((signature.Operation = TryOperation(WithStructedBlock)) == null ||
+               (signature.ExpressionPair = TryExpression(WithStructedBlock)) == null
             ){
                 Reset();
             }else
@@ -46,31 +46,40 @@ namespace feltic.Language
             return signature;
         }
 
-        public OperandSignature TryOperand()
+        public OperandSignature TryOperand(bool WitchStructedBlock=true)
         {
             OperandSignature operand = null;
             OperandAccessSignature accessSignatur = null;
             Symbol identifier = null;
 
             TrySpace();
+            if(!Begin()) return null;
             if(Token != null && Token.IsType(TokenType.Literal))
             {
                 LiteralOperand literalAccess = new LiteralOperand(Token);
                 accessSignatur = literalAccess;
                 NextToken();
             }
-            else if(Token != null && Token.IsOperation(OperationType.Less))
+            else if(WitchStructedBlock && Token != null && Token.IsOperation(OperationType.Less))
             {
                 while(true)
                 {
-                    TrySpace();
                     StructedBlockSignature blockSignature = TryStructedBlock();
                     if (blockSignature == null) break;
                     if (operand == null)
                         operand = new OperandSignature();
                     operand.AccessList.Add(new StructedBlockOperand(blockSignature));
                 }
-                return operand;
+                if(operand != null)
+                {
+                    Commit();
+                    return operand;
+                }
+                else
+                {
+                    Reset();
+                    return null;
+                }
             }
             else
             {
@@ -88,6 +97,7 @@ namespace feltic.Language
                     }
                     else
                     {
+                        Reset();
                         return null;
                     }
                 }
@@ -132,6 +142,7 @@ namespace feltic.Language
                 identifier = TryIdentifier();
             }
 
+            Commit();
             return operand;
         }
 
@@ -188,10 +199,10 @@ namespace feltic.Language
             return objectOperand;
         }
         
-        public OperationSignature TryOperation()
+        public OperationSignature TryOperation(bool WithStructedBlock=true)
         {
             TrySpace();
-            if (Token == null || !Token.IsType(TokenType.Operation)) return null;
+            if (Token == null || !Token.IsType(TokenType.Operation) || (!WithStructedBlock && Token.IsOperation(OperationType.Greater))) return null;
             NextToken();
             return new OperationSignature(PrevToken);
         }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace feltic.UI
+namespace feltic.Visual
 {
     public enum InputType
     {
@@ -64,7 +64,7 @@ namespace feltic.UI
                 if (IsKey)
                     return (State as KeyState);
                 else
-                    return new KeyState(UI.Key.Unknown);
+                    return new KeyState(feltic.Visual.Key.Unknown);
             }
         }
 
@@ -86,7 +86,7 @@ namespace feltic.UI
                 if (IsButton)
                     return (State as ButtonState);
                 else
-                    return new ButtonState(UI.Button.LastButton);
+                    return new ButtonState(feltic.Visual.Button.LastButton);
             }
         }
 
@@ -162,7 +162,7 @@ namespace feltic.UI
         public InputListener()
         {
             this.Id = (++IdCounter);
-            UI.Input.Add(this);
+            Visual.Input.Add(this);
         }
 
         public void ProcessInputEvent(InputEvent Event)
@@ -172,7 +172,7 @@ namespace feltic.UI
 
         public void Dispose()
         {
-            UI.Input.Remove(this);
+            Visual.Input.Remove(this);
         }
 
         public abstract void Input(InputEvent Event);
@@ -286,12 +286,12 @@ namespace feltic.UI
     {
         public bool HoldShift
         {
-            get { return (this[UI.Key.ShiftLeft].IsDown || this[UI.Key.ShiftRight].IsDown); }
+            get { return (this[Visual.Key.ShiftLeft].IsDown || this[Visual.Key.ShiftRight].IsDown); }
         }
 
         public bool HoldControl
         {
-            get { return (this[UI.Key.ControlLeft].IsDown || this[UI.Key.ControlRight].IsDown); }
+            get { return (this[Visual.Key.ControlLeft].IsDown || this[Visual.Key.ControlRight].IsDown); }
         }
     }
 
@@ -345,10 +345,10 @@ namespace feltic.UI
                     else if (chr == 'y')
                         chr = 'z';
                     // upper char
-                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                    if (Visual.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
                         chr = Char.ToUpper(chr);
                     // @
-                    else if (UI.Input.Keyboard.Keys[Key.AltRight].IsDown)
+                    else if (Visual.Input.Keyboard.Keys[Key.AltRight].IsDown)
                         chr = '@';
                     // ret
                     return chr+"";
@@ -357,7 +357,7 @@ namespace feltic.UI
                 {
                     char chr = NumberChar;
                     // shift
-                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                    if (Visual.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
                     {
                         if (chr == '0')
                             chr = '=';
@@ -381,7 +381,7 @@ namespace feltic.UI
                             chr = ')';
                     }
                     // alt-gr
-                    else if (UI.Input.Keyboard.Keys[Key.AltLeft].IsDown || UI.Input.Keyboard.Keys[Key.AltRight].IsDown)
+                    else if (Visual.Input.Keyboard.Keys[Key.AltLeft].IsDown || Visual.Input.Keyboard.Keys[Key.AltRight].IsDown)
                     {
                         if (chr == '7')
                             chr = '{';
@@ -408,9 +408,9 @@ namespace feltic.UI
                 // ?
                 else if (Type == Key.Minus)
                 {
-                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                    if (Visual.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
                         return "?";
-                    else if (UI.Input.Keyboard.Keys[Key.AltRight].IsDown || UI.Input.Keyboard.Keys[Key.AltRight].IsDown)
+                    else if (Visual.Input.Keyboard.Keys[Key.AltRight].IsDown || Visual.Input.Keyboard.Keys[Key.AltRight].IsDown)
                         return "\\";
                     else
                         return "?";
@@ -418,9 +418,9 @@ namespace feltic.UI
                 // +
                 else if (Type == Key.BracketRight)
                 {
-                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                    if (Visual.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
                         return "*";
-                    else if (UI.Input.Keyboard.Keys[Key.AltLeft].IsDown || UI.Input.Keyboard.Keys[Key.AltRight].IsDown)
+                    else if (Visual.Input.Keyboard.Keys[Key.AltLeft].IsDown || Visual.Input.Keyboard.Keys[Key.AltRight].IsDown)
                         return "~";
                     else
                         return "+";
@@ -428,7 +428,7 @@ namespace feltic.UI
                 // -
                 else if (Type == Key.Slash)
                 {
-                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                    if (Visual.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
                         return "_";
                     else
                         return "-";
@@ -436,7 +436,7 @@ namespace feltic.UI
                 // #
                 else if (Type == Key.BackSlash)
                 {
-                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                    if (Visual.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
                         return "'";
                     else
                         return "#";
@@ -444,7 +444,7 @@ namespace feltic.UI
                 // .
                 else if (Type == Key.Period)
                 {
-                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                    if (Visual.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
                         return ":";
                     else
                         return ".";
@@ -452,7 +452,7 @@ namespace feltic.UI
                 // ,
                 else if (Type == Key.Comma)
                 {
-                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                    if (Visual.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
                         return ";";
                     else
                         return ",";
@@ -460,9 +460,9 @@ namespace feltic.UI
                 // <
                 else if (Type == Key.NonUSBackSlash)
                 {
-                    if (UI.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
+                    if (Visual.Input.Keyboard.Keys[Key.ShiftLeft].IsDown)
                         return ">";
-                    else if (UI.Input.Keyboard.Keys[Key.AltLeft].IsDown || UI.Input.Keyboard.Keys[Key.AltRight].IsDown)
+                    else if (Visual.Input.Keyboard.Keys[Key.AltLeft].IsDown || Visual.Input.Keyboard.Keys[Key.AltRight].IsDown)
                         return  "|";
                     else
                         return "<";
@@ -544,7 +544,7 @@ namespace feltic.UI
     {
         public bool LeftClick
         {
-            get { return this[UI.Button.Left].IsClick; }
+            get { return this[Visual.Button.Left].IsClick; }
         }
     }
 

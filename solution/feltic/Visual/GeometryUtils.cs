@@ -1,11 +1,11 @@
-﻿using feltic.UI.Types;
+﻿using feltic.Visual.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace feltic.UI
+namespace feltic.Visual
 {
     public class GeometryUtils
     {
@@ -44,7 +44,7 @@ namespace feltic.UI
 
         public static bool IntersectVisual(VisualElement Visual, CursorState Cursor)
         {
-            return IntersectBound((int)Visual.Position.x, (int)Visual.Size.Width, (int)Visual.Position.y, (int)Visual.Size.Height, Cursor.x, Cursor.y);
+            return IntersectBound((int)Visual.RenderPosition.X, (int)Visual.RenderSize.Width, (int)Visual.RenderPosition.Y, (int)Visual.RenderSize.Height, Cursor.x, Cursor.y);
         }
     }
 }

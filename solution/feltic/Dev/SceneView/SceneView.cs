@@ -1,7 +1,7 @@
 ﻿using feltic.Language;
-using feltic.UI;
+using feltic.Visual;
 using Scope;
-using feltic.UI.Types;
+using feltic.Visual.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -16,10 +16,8 @@ namespace feltic.Integrator
 
     public class SceneView
     {
-        GlyphContainer GlyphContainer = new GlyphContainer(new Font("DroidSansMono.ttf"));
-        public static VisualElement Root = new VisualElement(VisualType.Block);
-        public static VisualElement Code = null;
-        public CodeText CodeText;
+        VisualElement Root = new VisualElement(VisualType.Block);
+        CodeText CodeText;
 
         public SceneView()
         {
@@ -30,7 +28,16 @@ namespace feltic.Integrator
 
         public void AddCode(Editor editor)
         {
-            editor.Workspace.Nodes[0].add(new VisualTextElement(File.ReadAllText("./Compose/four.src"), CodeColor.String));
+            editor.content.content.Offset = new Position(0, 125);
+            //VisualText txt = new VisualText("asdfasdfasdf", CodeColor.String);
+            //txt.Offset = new Position(20);
+            //txt.Clip = new Size(50, 20);
+            //editor.Workspace.content.content.add(txt);
+            //VisualImage img = new VisualImage("cut.png");
+            //img.Room = new Room(Way.Try("100px"), null);
+            //img.Offset = new Position(25, 25);
+            //img.Clip = new Size(75, 75);
+            // editor.Workspace.content.content.add(img);
         }
         
         public void Draw()
@@ -38,9 +45,8 @@ namespace feltic.Integrator
             if(Root != null)
             {
                 //CodeText.CodeSelection.Draw();
-                Position offset = new Position(20, 20);
-                Root.CalculateSizeAndPosition(offset);
-                Root.Draw(offset.x, offset.y);
+                Root.Metrics(new Position(20, 20));
+                Root.Draw();
                 //CodeText.CodeCursor.Draw();
             }
         }

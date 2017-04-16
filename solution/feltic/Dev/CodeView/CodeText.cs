@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using feltic.UI.Types;
+using feltic.Visual.Types;
 using feltic.Language;
 using OpenTK.Graphics.OpenGL;
-using feltic.UI;
+using feltic.Visual;
 using feltic.Language;
 
 namespace feltic.Integrator

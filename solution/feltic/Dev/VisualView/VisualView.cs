@@ -1,6 +1,6 @@
 ﻿using feltic.Lib;
 using feltic.Library;
-using feltic.UI;
+using feltic.Visual;
 using DelaunayTriangulator;
 using OpenTK.Graphics.OpenGL;
 using System;

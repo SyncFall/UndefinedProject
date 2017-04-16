@@ -34,8 +34,7 @@ namespace feltic.Language
             WriteLine("using System.Collections.Generic;");
             WriteLine("using feltic.Language;");
             WriteLine("using feltic.Library;");
-            WriteLine("using feltic.UI;");
-            WriteLine("using feltic.UI.Types;");
+            WriteLine("using feltic.Visual;");
             WriteLine("using feltic.Integrator;"); 
             for (int i = 0; i < SourceSymbol.UseList.Size; i++)
             {

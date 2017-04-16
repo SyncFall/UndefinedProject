@@ -1,6 +1,6 @@
 ﻿using feltic.Integrator;
-using feltic.UI;
-using feltic.UI.Types;
+using feltic.Visual;
+using feltic.Visual.Types;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
@@ -19,10 +19,10 @@ namespace feltic
             Utils.PrintSourceTreeStatistics(@"..\solution\feltic\");
 
             SourceList list = new SourceList();
-            list.Add(SourceText.FromFile("Compose/eight.src"));
+            list.Add(SourceText.FromFile("Compose/nine.src"));
             Registry registry = new Registry();
             registry.AddSourceList(list);
-            registry.WriteToTarget("D:\\dev\\UndefinedProject\\output\\csharp.cs");
+            registry.WriteToTarget("C:\\dev\\UndefinedProject\\output\\csharp.cs");
 
             //Visual1 elm = new Visual1();
             //Muh muh = new Muh();

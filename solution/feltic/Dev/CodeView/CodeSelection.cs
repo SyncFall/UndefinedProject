@@ -1,4 +1,4 @@
-﻿using feltic.UI.Types;
+﻿using feltic.Visual.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using feltic.Language;
-using feltic.UI;
+using feltic.Visual;
 
 namespace feltic.Integrator
 { 
@@ -126,15 +126,15 @@ namespace feltic.Integrator
             Position start = CodeText.CodeContainer.Start;
 
             float scrollOffset = (VisualCode.Parent as VisualScrollElement).ScrollYPosition;
-            float scrollHeight = (VisualCode.Parent as VisualScrollElement).Size.Height;
-            float codeHeight = (VisualCode.Size.Height);
+            float scrollHeight = (VisualCode.Parent as VisualScrollElement).RenderSize.Height;
+            float codeHeight = (VisualCode.RenderSize.Height);
             float factorHeight = (codeHeight / scrollHeight);
             float offsetHeight = (scrollOffset * factorHeight);
 
             for (int line=CodeSelection.BeginPart.LinePosition; line <= CodeSelection.EndPart.LinePosition; line++)
             {
-                float yOffset = start.y - 3 + (((fontMetric.VerticalAdvance + fontMetric.LineSpace) * line) - offsetHeight); //start.y - 3 + ((fontMetric.VerticalAdvance + fontMetric.LineSpace) * line);
-                float xOffset = start.x;
+                float yOffset = start.Y - 3 + (((fontMetric.VerticalAdvance + fontMetric.LineSpace) * line) - offsetHeight); //start.y - 3 + ((fontMetric.VerticalAdvance + fontMetric.LineSpace) * line);
+                float xOffset = start.X;
                 float xBegin=0, xEnd=0;
 
                 string lineText = TokenContainer.LineText(line);

@@ -1,6 +1,6 @@
 ﻿using feltic.Language;
-using feltic.UI;
-using feltic.UI.Types;
+using feltic.Visual;
+using feltic.Visual.Types;
 using feltic.Library;
 using OpenTK.Graphics.OpenGL;
 using System;
@@ -50,9 +50,9 @@ namespace feltic.Integrator
         {
             get
             {
-                if (VisualCode == null || VisualCode.Position == null)
+                if (VisualCode == null || VisualCode.RenderPosition == null)
                     return null;
-                return VisualCode.Position;
+                return VisualCode.RenderPosition;
             }
         }
 
@@ -67,11 +67,11 @@ namespace feltic.Integrator
             {
                 if (token.IsStructure(StructureType.WhiteSpace))
                 {
-                    VisualCode.add(new VisualTextElement(" "));
+                    VisualCode.add(new VisualText(" "));
                 }
                 else if (token.IsStructure(StructureType.TabSpace))
                 {
-                    VisualCode.add(new VisualTextElement("\t"));
+                    VisualCode.add(new VisualText("\t"));
                 }
                 else if (token.IsStructure(StructureType.LineSpace))
                 {
@@ -79,34 +79,34 @@ namespace feltic.Integrator
                 }
                 else if(token.IsType(TokenType.Object) || token.IsType(TokenType.Native) || token.IsType(TokenType.Statement))
                 {
-                    VisualCode.add(new VisualTextElement(token.String, CodeColor.Keyword));
+                    VisualCode.add(new VisualText(token.String, CodeColor.Keyword));
                 }
                 else if (token.IsType(TokenType.Literal))
                 {
                     if (token.IsLiteral(LiteralType.String) || token.IsLiteral(LiteralType.Char))
                     {
-                        VisualCode.add(new VisualTextElement(token.String, CodeColor.String));
+                        VisualCode.add(new VisualText(token.String, CodeColor.String));
                     }
                     else if (token.IsLiteral(LiteralType.Number))
                     {
-                        VisualCode.add(new VisualTextElement(token.String, CodeColor.Normal));
+                        VisualCode.add(new VisualText(token.String, CodeColor.Normal));
                     }
                     else
                     {
-                        VisualCode.add(new VisualTextElement(token.String, CodeColor.Keyword));
+                        VisualCode.add(new VisualText(token.String, CodeColor.Keyword));
                     }
                 }
                 else if (token.IsType(TokenType.Comment))
                 {
-                    VisualCode.add(new VisualTextElement(token.String, CodeColor.Comment));
+                    VisualCode.add(new VisualText(token.String, CodeColor.Comment));
                 }
                 else if (token.IsType(TokenType.Unknown))
                 {
-                    VisualCode.add(new VisualTextElement(token.String, CodeColor.Error));
+                    VisualCode.add(new VisualText(token.String, CodeColor.Error));
                 }
                 else
                 {
-                    VisualCode.add(new VisualTextElement(token.String, CodeColor.Normal));
+                    VisualCode.add(new VisualText(token.String, CodeColor.Normal));
                 }
                 token = pointer.Next;
             }

@@ -173,7 +173,7 @@ namespace feltic.Language
                     {
                         TextParser.Finish(++idx);
                     }
-                    else if(TextParser.EqualString("em") || TextParser.EqualString("px") || TextParser.EqualChar('%'))
+                    else if(TextParser.EqualString("em") || TextParser.EqualString("px") || TextParser.EqualString("pc"))
                     {
                         idx = TextParser.Position;
                     }

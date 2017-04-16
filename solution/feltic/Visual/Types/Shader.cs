@@ -7,7 +7,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using feltic.Library;
 
-namespace feltic.UI.Types
+namespace feltic.Visual.Types
 {
     public enum ShaderType
     {

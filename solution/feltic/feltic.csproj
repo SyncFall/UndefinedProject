@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -83,7 +83,7 @@
     <Compile Include="Dev\VisualView\ActionSelect.cs" />
     <Compile Include="Dev\VisualView\VisualView.cs" />
     <Compile Include="Lang\Registry\Registry.cs" />
-    <Compile Include="Lang\Target\ReceiverWriter.cs" />
+    <Compile Include="Target\ReceiverWriter.cs" />
     <Compile Include="Signature\Container.cs" />
     <Compile Include="Signature\Parser.cs" />
     <Compile Include="Signature\Signatures.cs" />
@@ -109,8 +109,8 @@
     <Compile Include="Symbol\Lookup\Lookup.cs" />
     <Compile Include="Symbol\Lookup\Symbol.cs" />
     <Compile Include="Symbol\Defintion\Visual.cs" />
-    <Compile Include="Lang\Target\TargetWriter.cs" />
-    <Compile Include="Lang\Target\VisualWriter.cs" />
+    <Compile Include="Target\TargetWriter.cs" />
+    <Compile Include="Target\VisualWriter.cs" />
     <Compile Include="Token\TextReader.cs" />
     <Compile Include="Token\Container.cs" />
     <Compile Include="Token\Parser.cs" />
@@ -126,30 +126,30 @@
     <Compile Include="Main\TestMain.cs" />
     <Compile Include="Main\UIMain.cs" />
     <Compile Include="Main\Utils.cs" />
-    <Compile Include="UI\Cases\FpsCounter.cs" />
-    <Compile Include="UI\Cases\TrackBox.cs" />
-    <Compile Include="UI\DelaunayTriangulator\Hull.cs" />
-    <Compile Include="UI\DelaunayTriangulator\Set.cs" />
-    <Compile Include="UI\DelaunayTriangulator\Triad.cs" />
-    <Compile Include="UI\DelaunayTriangulator\Triangulator.cs" />
-    <Compile Include="UI\DelaunayTriangulator\Vertex.cs" />
-    <Compile Include="UI\DrawUtils.cs" />
-    <Compile Include="UI\GeometryUtils.cs" />
-    <Compile Include="UI\Types\Clipboard.cs" />
-    <Compile Include="UI\Types\Color.cs" />
-    <Compile Include="UI\Types\Curve.cs" />
-    <Compile Include="UI\Types\Font.cs" />
-    <Compile Include="UI\Types\Glyph.cs" />
-    <Compile Include="UI\Types\Image.cs" />
-    <Compile Include="UI\Types\Input.cs" />
-    <Compile Include="UI\Types\Layout.cs" />
-    <Compile Include="UI\Types\LineCurve.cs" />
-    <Compile Include="UI\Types\Point.cs" />
-    <Compile Include="UI\Types\Shader.cs" />
-    <Compile Include="UI\Types\Surface.cs" />
-    <Compile Include="UI\Types\Text.cs" />
-    <Compile Include="UI\Types\Visual.cs" />
-    <Compile Include="UI\Types\Way.cs" />
+    <Compile Include="Visual\Cases\FpsCounter.cs" />
+    <Compile Include="Visual\Cases\TrackBox.cs" />
+    <Compile Include="Visual\DelaunayTriangulator\Hull.cs" />
+    <Compile Include="Visual\DelaunayTriangulator\Set.cs" />
+    <Compile Include="Visual\DelaunayTriangulator\Triad.cs" />
+    <Compile Include="Visual\DelaunayTriangulator\Triangulator.cs" />
+    <Compile Include="Visual\DelaunayTriangulator\Vertex.cs" />
+    <Compile Include="Visual\DrawUtils.cs" />
+    <Compile Include="Visual\GeometryUtils.cs" />
+    <Compile Include="Visual\Types\Clipboard.cs" />
+    <Compile Include="Visual\Types\Color.cs" />
+    <Compile Include="Visual\Types\Curve.cs" />
+    <Compile Include="Visual\Types\Font.cs" />
+    <Compile Include="Visual\Types\Glyph.cs" />
+    <Compile Include="Visual\Types\Image.cs" />
+    <Compile Include="Visual\Types\Input.cs" />
+    <Compile Include="Visual\Types\Layout.cs" />
+    <Compile Include="Visual\Types\LineCurve.cs" />
+    <Compile Include="Visual\Types\Point.cs" />
+    <Compile Include="Visual\Types\Shader.cs" />
+    <Compile Include="Visual\Types\Surface.cs" />
+    <Compile Include="Visual\Types\Text.cs" />
+    <Compile Include="Visual\Types\Visual.cs" />
+    <Compile Include="Visual\Types\Way.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />

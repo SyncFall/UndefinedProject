@@ -1,6 +1,6 @@
 ﻿using feltic.Integrator;
 using feltic.Library;
-using feltic.UI.Types;
+using feltic.Visual.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace feltic.UI
+namespace feltic.Visual
 {
     public class Text
     {
@@ -38,74 +38,80 @@ namespace feltic.UI
                 }
                 for (int i = 0; i < String.Length; i++)
                 {
-                    char textChar = String[i];
-                    if (textChar == ' ')
+                    char _char = String[i];
+                    if (_char == ' ')
                     {
                         width += GlyphContainer.Font.Metric.SpaceWidth;
                     }
-                    else if (textChar == '\t')
+                    else if (_char == '\t')
                     {
                         width += GlyphContainer.Font.Metric.TabWidth;
                     }
-                    else if (textChar == '\n')
+                    else if (_char == '\n')
                     {
                         totalHeight += (GlyphContainer.Font.Metric.VerticalAdvance + GlyphContainer.Font.Metric.LineSpace);
                         width = 0f;
                     }
+                    else if (_char == '\r')
+                    {;}
                     else
                     {
                         Glyph glyph = GlyphContainer.GetGlyph(String[i]);
                         width += glyph.HoriziontalAdvance;
                     }
                     if (width > maxWidth)
-                    {
                         maxWidth = width;
-                    }
                 }
                 return new Size(maxWidth, totalHeight);
             }
         }
 
-        public void Draw(Color Color, float X=0, float Y=0, float OffsetX=0, float OffsetY=0, float Width=0, float Height=0)
+        public void Draw(Position Position, Size Size, Color Color, Position Offset=null, Size Clip=null)
         {
-            float currentX = X;
-            float currentY = Y;
-
             if (Color == null)
                 Color = new Color(220, 220, 200);
             GL.Color3(Color.GetGlColor().Rgb);
 
+            float currentLeft = 0f;
+            float currentTop = 0f;
             for (int i = 0; i < String.Length; i++)
             {
-                char textChar = String[i];
-                if(textChar == ' ')
+                char _char = String[i];
+                if(_char == ' ')
                 {
-                    currentX += GlyphContainer.Font.Metric.SpaceWidth;
+                    currentLeft += GlyphContainer.Font.Metric.SpaceWidth;
                 }
-                else if(textChar == '\t')
+                else if(_char == '\t')
                 {
-                    currentX += GlyphContainer.Font.Metric.TabWidth;
+                    currentLeft += GlyphContainer.Font.Metric.TabWidth;
                 }
-                else if(textChar == '\n')
+                else if(_char == '\n')
                 {
-                    currentY += (GlyphContainer.Font.Metric.VerticalAdvance + GlyphContainer.Font.Metric.LineSpace);
-                    currentX = X;
+                    currentTop += (GlyphContainer.Font.Metric.VerticalAdvance + GlyphContainer.Font.Metric.LineSpace);
+                    currentLeft = 0f;
                 }
+                else if (_char == '\r')
+                {;}
                 else
                 {
-                    Glyph glyph = GlyphContainer.GetGlyph(textChar);
-                    if(currentX < X + OffsetX)
+                    Glyph glyph = GlyphContainer.GetGlyph(_char);
+                    float width = glyph.HoriziontalAdvance;
+                    float height = glyph.VerticalAdvance;
+                    if (Offset != null && (currentLeft < Offset.X || currentTop < Offset.Y))
                     {
-                        currentX += glyph.HoriziontalAdvance;
+                        currentLeft += width;
                         continue;
                     }
-                    if(currentY < Y + OffsetY) continue; 
-                    if(Width > 0 && currentX - X - OffsetX + glyph.HoriziontalAdvance > Width) continue;
-                    if(Height > 0 && currentY - Y - OffsetY + glyph.VerticalAdvance > Height) break;
-                    float glyphX = (currentX - OffsetX + glyph.HoriziontalBearingX);
-                    float glyphY = (currentY - OffsetY + glyph.VerticalAdvance - glyph.HoriziontalBearingY);
+                    float left = (currentLeft - (Offset != null ? Offset.X : 0));
+                    float top = (currentTop - (Offset != null ? Offset.Y : 0));
+                    if(Clip != null && ((Clip.Width > 0f && left + width > Clip.Width) || (Clip.Height > 0f && top + height > Clip.Height)))
+                    {
+                        continue;
+                    }
+                    float glyphX = ((Position.X + left) + glyph.HoriziontalBearingX);
+                    float glyphY = ((Position.Y + top) + glyph.VerticalAdvance - glyph.HoriziontalBearingY);
                     glyph.Draw(glyphX, glyphY);
-                    currentX += glyph.HoriziontalAdvance;
+                    currentLeft += width;
                 }
             }
         }
@@ -119,7 +125,7 @@ namespace feltic.UI
 
         public TextFormat()
         {
-            this.Font = new Font("D:\\dev\\UndefinedProject\\output\\DroidSansMono.ttf");
+            this.Font = new Font("DroidSansMono.ttf");
             this.Color = new Color(220, 220, 220);
         }
     }

@@ -1,7 +1,7 @@
 ﻿using feltic.Language;
 using feltic.Library;
-using feltic.UI;
-using feltic.UI.Types;
+using feltic.Visual;
+using feltic.Visual.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -140,7 +140,7 @@ namespace feltic.Language
                 }
                 else if(sb.OpenBlockIdentifiere.IsVisual(VisualType.Image))
                 {
-                    WriteLine(tabs, "parent.add((element = new VisualImageElement()));");
+                    WriteLine(tabs, "parent.add((element = new VisualImage()));");
                 }
                 else
                 {
@@ -156,7 +156,7 @@ namespace feltic.Language
                     if (op.AccessList[0].Type == SignatureType.LiteralOperand)
                     {
                         string stringData = (op.AccessList[0] as LiteralOperand).Literal.String;
-                        WriteLine(tabs, "parent.add((element = new VisualTextElement(" + stringData + ")));");
+                        WriteLine(tabs, "parent.add((element = new VisualText(" + stringData + ")));");
                     }
                     else if (op.AccessList[0].Type == SignatureType.StructedBlockOperand)
                     {
@@ -196,7 +196,7 @@ namespace feltic.Language
                         }
 
                         if (isDataNative)
-                            WriteLine(tabs, "parent.add((element = new VisualTextElement("+value+")));");
+                            WriteLine(tabs, "parent.add((element = new VisualText("+value+")));");
                         else
                             WriteLine(tabs, "parent.add((element = "+value+"));");
 
@@ -218,93 +218,104 @@ namespace feltic.Language
                 {
                     StructedAttributeSignature attribute = sb.Attributes[i];
                     string attr = attribute.Identifier.String;
+
+                    string value;
+                    if (attribute.AssigmentExpression.Operand.AccessList[0].Type == SignatureType.LiteralOperand)
+                    {
+                        value = "" + (attribute.AssigmentExpression.Operand.AccessList[0] as LiteralOperand).Literal.String;
+                        if(value.EndsWith("px") || value.EndsWith("em") || value.EndsWith("pc"))
+                            value = "\"" + value + "\"";
+                    }  
+                    else if (attribute.AssigmentExpression.Operand.AccessList[0].Type == SignatureType.VariableOperand)
+                    {
+                        string variableIdentifier = (attribute.AssigmentExpression.Operand.AccessList[0] as VariableOperand).Identifier.String;
+                        TypeDeclarationSignature variableDeclaration;
+
+                        bool isObjectMember = false;
+                        bool isMethodParameter = false;
+                        bool isLocalVariable = false;
+                        if(((variableDeclaration = GetObjectMemberTypeDeclaration(vis.Object, variableIdentifier)) != null && (isObjectMember = true)) ||
+                           ((variableDeclaration = GetMethodParameterTypeDeclaration(vis.Method, variableIdentifier)) != null && (isMethodParameter = true)) ||
+                           ((variableDeclaration = GetVariableTypeDeclaration(vis.Method, variableIdentifier)) != null && (isLocalVariable = true))
+                        )
+                        {
+                            ;
+                        }
+                        if (isObjectMember)
+                            value = "Object." + variableIdentifier;
+                        else
+                        {
+                            value = variableIdentifier;
+                            if(attr != "listener")
+                                vis.ParameterVariables.Add(variableDeclaration);
+                        }
+                    }
+                    else if((attribute.AssigmentExpression.Operand.AccessList[0].Type == SignatureType.ObjectOperand))
+                    {
+                        ObjectAccessOperand objectOperand = attribute.AssigmentExpression.Operand.AccessList[0] as ObjectAccessOperand;
+                        value = "new " + objectOperand.ObjectType + "(";
+                        for (int p = 0; p < objectOperand.ParameterDefinition.Elements.Size; p++)
+                        {
+                            WriteExpression(null, null, vis, objectOperand.ParameterDefinition.Elements[i].Expression);
+                            if (p < objectOperand.ParameterDefinition.Elements.Size - 1) Write(", ");
+                        }
+                        value += ")";
+                    }
+                    else
+                        throw new Exception("invalid state");
+
+
                     if (attr == "width" || attr == "height")
                     {
-                        string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
-                        Way way = Way.Try(value);
-                        WriteLine(tabs, "if(element.Room == null) element.Room = new Room();");
-                        WriteLine(tabs, "element.Room."+char.ToUpper(attr[0])+attr.Substring(1)+" = new Way("+(int)way.Type+", "+((way.way)+"").Replace(',', '.')+"f);");
+                        WriteLine(tabs, "if(element.Size == null) element.Size = new Room();");
+                        WriteLine(tabs, "element.Size." + char.ToUpper(attr[0])+attr.Substring(1)+" = Way.Try("+value+");");
                     }
                     if(attr == "margin" || attr == "padding")
                     {
                         WriteTab(tabs);
                         if (attr == "margin")
-                            Write("element.Margin = ");
+                            Write("element.Margin = Spacing.Combine(element.Margin, " + value + ");");
                         else if (attr == "padding")
-                            Write("element.Padding = ");
+                            Write("element.Padding = Spacing.Combine(element.Padding, " + value + ");");
                         else
                             throw new Exception("invalid data");
-                        ParameterDeclarationSignature parameters = (attribute.AssigmentOperand.AccessList[0] as ObjectAccessOperand).ParameterDefinition;
-                        Write("new Spacing(");
-                        for (int p = 0; p < parameters.Elements.Size; p++)
-                            WriteExpression(null, null, vis, parameters.Elements[i].Expression);
-                        WriteLine(");");
                     }
                     else if (attr.StartsWith("margin") || attr.StartsWith("padding"))
                     {
-                        string value;
-                        if (attribute.AssigmentOperand.AccessList[0].Type == SignatureType.VariableOperand)
-                        {
-                            string variableIdentifier = (attribute.AssigmentOperand.AccessList[0] as VariableOperand).Identifier.String;
-                            TypeDeclarationSignature variableDeclaration;
-
-                            bool isObjectMember = false;
-                            bool isMethodParameter = false;
-                            bool isLocalVariable = false;
-                            if(((variableDeclaration = GetObjectMemberTypeDeclaration(vis.Object, variableIdentifier)) != null && (isObjectMember = true)) ||
-                               ((variableDeclaration = GetMethodParameterTypeDeclaration(vis.Method, variableIdentifier)) != null && (isMethodParameter = true)) ||
-                               ((variableDeclaration = GetVariableTypeDeclaration(vis.Method, variableIdentifier)) != null && (isLocalVariable = true))
-                            ){
-                                ;
-                            }
-                            if (isObjectMember)
-                                value = "Object." + variableIdentifier;
-                            else
-                            {
-                                value = variableIdentifier;
-                                vis.ParameterVariables.Add(variableDeclaration);
-                            }
-                        }  
-                        else if (attribute.AssigmentOperand.AccessList[0].Type == SignatureType.LiteralOperand)
-                            value = ""+(attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
-                        else
-                            throw new Exception("invalid state");
+                        value = "Way.Try(" + value + ")";
                         string space;
                         if (attr.EndsWith("Left"))
-                            space = "new Spacing("+value+", 0, 0, 0);";
+                            space = "new Spacing("+value+ ", null, null, null)";
                         else if (attr.EndsWith("Top"))
-                            space = "new Spacing(0, " + value + ", 0, 0);";
+                            space = "new Spacing(null, " + value + ", null, null)";
                         else if (attr.EndsWith("Right"))
-                            space = "new Spacing(0, 0, " + value + ", 0);";
+                            space = "new Spacing(null, null, " + value + ", null)";
                         else if (attr.EndsWith("Bottom"))
-                            space = "new Spacing(0, 0, 0, " + value + ");";
+                            space = "new Spacing(null, null, null, " + value + ")";
                         else if (attr.EndsWith("H"))
-                            space = "new Spacing(" + value + ", 0, " + value + ", 0);";
+                            space = "new Spacing(" + value + ", null, " + value + ", null)";
                         else if (attr.EndsWith("V"))
-                            space = "new Spacing(0, " + value + ", 0, " + value + ");";
+                            space = "new Spacing(null, " + value + ", null, " + value + ")";
                         else if(attr.EndsWith("VH") || attr.EndsWith("HV"))
-                            space = "new Spacing" + value + ", " + value + ", " + value + ", " + value + ");";
+                            space = "new Spacing(" + value + ", " + value + ", " + value + ", " + value + ")";
                         else
                             throw new Exception("invalid data");
                         if(attr.StartsWith("margin"))
-                             WriteLine(tabs, "element.Margin = "+space+";");
+                             WriteLine(tabs, "element.Margin = Spacing.Combine(element.Margin, "+space+");");
                         else if(attr.StartsWith("padding"))
-                            WriteLine(tabs, "element.Padding = "+space+";");
+                            WriteLine(tabs, "element.Padding = Spacing.Combine(element.Padding, "+space+");");
                     }
                     else if (attr == "display")
                     {
-                        string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
                         WriteLine(tabs, "element.Display = " + bool.Parse(value).ToString().ToLower() + ";");
                     }
                     else if (attr == "listener")
                     {
-                        string func = (attribute.AssigmentOperand.AccessList[0] as VariableOperand).Identifier.String;
-                        vis.ListenerFunctions.Add(new VisualListenerDelegate(vis, func));
+                        vis.ListenerFunctions.Add(new VisualListenerDelegate(vis, value));
                         WriteLine(tabs, "listeners.Add(element);");
                     }
                     else if (attr == "source")
                     {
-                        string value = (attribute.AssigmentOperand.AccessList[0] as LiteralOperand).Literal.String;
                         WriteLine(tabs, "element.source = " + value + ";");
                     }
                 }

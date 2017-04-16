@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace feltic.UI
+namespace feltic.Visual
 {
     public enum WayType
     {
@@ -38,6 +38,21 @@ namespace feltic.UI
             this.Top = top;
             this.Right = right;
             this.Bottom = bottom;
+        }
+
+        public static Spacing Combine(Spacing Source, Spacing Target)
+        {
+            if (Source == null)
+                Source = new Spacing();
+            if(Target.Left != null)
+                Source.Left = Target.Left;
+            if(Target.Top != null)
+                Source.Top = Target.Top;
+            if(Target.Right != null)
+                Source.Right = Target.Right;
+            if(Target.Bottom != null)
+                Source.Bottom = Target.Bottom;
+            return Source;
         }
     }
 
@@ -96,9 +111,9 @@ namespace feltic.UI
                 {
                     return new Way(WayType.Pixel, float.Parse(str.Replace("px", "")));
                 }
-                else if (str.EndsWith("%"))
+                else if (str.EndsWith("pc"))
                 {
-                    return new Way(WayType.Percent, float.Parse(str.Replace("%", ""))/100f);
+                    return new Way(WayType.Percent, float.Parse(str.Replace("pc", ""))/100f);
                 }
                 else if (str.EndsWith("em"))
                 {
@@ -110,6 +125,21 @@ namespace feltic.UI
                 }
             }
             catch(Exception e)
+            {
+                return null;
+            }
+        }
+
+
+        public static Way Try(object obj)
+        {
+            try
+            {
+                if(obj == null) return null;
+                if(obj is Way) return (obj as Way);
+                return Way.Try(obj.ToString());
+            }
+            catch (Exception e)
             {
                 return null;
             }

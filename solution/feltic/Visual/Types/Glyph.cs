@@ -1,4 +1,4 @@
-﻿using feltic.UI.Types;
+﻿using feltic.Visual.Types;
 using feltic.Library;
 using OpenTK.Graphics.OpenGL;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace feltic.UI
+namespace feltic.Visual
 {
     public class GlyphContainer
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace feltic.UI.Types
+namespace feltic.Visual.Types
 {
     public class Clipboard
     {

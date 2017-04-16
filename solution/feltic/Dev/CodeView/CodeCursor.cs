@@ -1,6 +1,6 @@
 ﻿using feltic.Language;
-using feltic.UI;
-using feltic.UI.Types;
+using feltic.Visual;
+using feltic.Visual.Types;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Text;
@@ -177,10 +177,10 @@ namespace feltic.Integrator
             Position start = CodeText.CodeContainer.Start;
             if (start == null) return;
 
-            float cursorOffset = (CursorY - start.y);
+            float cursorOffset = (CursorY - start.Y);
             float scrollOffset = (VisualCode.Parent as VisualScrollElement).ScrollYPosition;
-            float scrollHeight = (VisualCode.Parent as VisualScrollElement).Size.Height;
-            float codeHeight = (VisualCode.Size.Height);
+            float scrollHeight = (VisualCode.Parent as VisualScrollElement).RenderSize.Height;
+            float codeHeight = (VisualCode.RenderSize.Height);
             float factorHeight = (codeHeight / scrollHeight);
             float offsetHeight = (scrollOffset * factorHeight);
            
@@ -198,7 +198,7 @@ namespace feltic.Integrator
             }
 
             string lineText = CodeText.TokenContainer.LineText(lineNumber);
-            float currentX = start.x;
+            float currentX = start.X;
             bool cursorSet = false;
             for (int i = 0; i < lineText.Length; i++)
             {
@@ -515,18 +515,18 @@ namespace feltic.Integrator
             if (start == null) return;
 
 
-            float yOffset = start.y + ((fontMetric.VerticalAdvance + fontMetric.LineSpace) * LineNumber);
-            float xOffset = start.x;
+            float yOffset = start.Y + ((fontMetric.VerticalAdvance + fontMetric.LineSpace) * LineNumber);
+            float xOffset = start.X;
 
  
             float scrollOffset = (VisualCode.Parent as VisualScrollElement).ScrollYPosition;
-            float scrollHeight = (VisualCode.Parent as VisualScrollElement).Size.Height;
-            float codeHeight = (VisualCode.Size.Height);
+            float scrollHeight = (VisualCode.Parent as VisualScrollElement).RenderSize.Height;
+            float codeHeight = (VisualCode.RenderSize.Height);
             float factorHeight = (codeHeight / scrollHeight);
             float offsetHeight = (scrollOffset * factorHeight);
 
 
-            yOffset = start.y + (((fontMetric.VerticalAdvance + fontMetric.LineSpace) * (LineNumber)) - (offsetHeight));
+            yOffset = start.Y + (((fontMetric.VerticalAdvance + fontMetric.LineSpace) * (LineNumber)) - (offsetHeight));
 
             TokenPointer pointer = TokenContainer.FirstLineToken(LineNumber);
             if (pointer == null) return;

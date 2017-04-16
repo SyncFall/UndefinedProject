@@ -11,6 +11,7 @@ namespace feltic.Language
     {
         public StructedBlockSignature TryStructedBlock()
         {
+            TrySpace();
             if(!Begin()) return null;
             StructedBlockSignature signature = new StructedBlockSignature();
             if((signature.OpenBlockBegin = TryNonSpace(OperationType.Less)) == null ||
@@ -55,7 +56,7 @@ namespace feltic.Language
                 StructedAttributeSignature attribute = new StructedAttributeSignature();
                 attribute.Identifier = identifier;
                 if((attribute.Assigment = TryNonSpace(OperationType.Assigment)) == null ||
-                   (attribute.AssigmentOperand = TryOperand()) == null
+                   (attribute.AssigmentExpression = TryExpression(false)) == null
                 ){
                     ;
                 }
@@ -96,7 +97,7 @@ namespace feltic.Language
     {
         public Symbol Identifier;
         public Symbol Assigment;
-        public OperandSignature AssigmentOperand;
+        public ExpressionSignature AssigmentExpression;
         public Symbol Complete;
 
         public StructedAttributeSignature() : base(SignatureType.StructedAttribute)

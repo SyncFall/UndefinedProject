@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using feltic.Integrator;
-using feltic.UI.Types;
-using feltic.UI;
+using feltic.Visual.Types;
+using feltic.Visual;
 using feltic.Language;
 
 namespace feltic.Integrator

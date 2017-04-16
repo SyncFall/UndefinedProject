@@ -1,4 +1,4 @@
-﻿using feltic.UI;
+﻿using feltic.Visual;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -106,14 +106,14 @@ namespace feltic.Integrator
             {
                 GL.Color3(230 / 255f, 230 / 255f, 230 / 255f);
             }
-            Image.Bind();
+            GL.BindTexture(TextureTarget.Texture2D, Image.BitmapBufferId);
             GL.Begin(PrimitiveType.Quads);
             GL.TexCoord2(0, 0); GL.Vertex2(X, Y);
             GL.TexCoord2(1, 0); GL.Vertex2(X + Size, Y);
             GL.TexCoord2(1, 1); GL.Vertex2(X + Size, Y + Size);
             GL.TexCoord2(0, 1); GL.Vertex2(X, Y + Size);
             GL.End();
-            Image.Unbind();
+            GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 
         public void Dispose()

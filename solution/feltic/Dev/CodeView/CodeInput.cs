@@ -1,6 +1,6 @@
 ﻿using feltic.Integrator;
-using feltic.UI;
-using feltic.UI.Types;
+using feltic.Visual;
+using feltic.Visual.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
