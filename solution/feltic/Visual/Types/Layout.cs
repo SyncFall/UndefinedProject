@@ -12,7 +12,7 @@ namespace feltic.Visual
         public float Y;
         public float Z;
 
-        public Position(float x = 0, float y=0, float z = 0)
+        public Position(float x = 0f, float y=0f, float z = 0f)
         {
             this.X = x;
             this.Y = y;
@@ -35,28 +35,50 @@ namespace feltic.Visual
             }
         }
 
-        public static Position Add(Position A, Position B)
+        public Position Plus(Position B)
+        {
+            if (B == null) return null;
+            this.X += B.X;
+            this.Y += B.Y;
+            this.Z += B.Z;
+            return this;
+        }
+
+        public Position Minus(Position B)
+        {
+            if (B == null) return null;
+            this.X -= B.X;
+            this.Y -= B.Y;
+            this.Z -= B.Z;
+            return this;
+        }
+
+        public bool GreaterAny(Position B)
+        {
+            if (B == null) return false;
+            return (B.X > X || B.Y > Y || B.Z > Z);
+        }
+
+        public static Position Plus(Position A, Position B)
         {
             if (A == null && B == null) return null;
-            if (A == null) return B;
-            if (B == null) return A;
-            Position c = new Position(A);
-            c.X += B.X;
-            c.Y += B.Y;
-            c.Z += B.Z;
-            return c;
+            if (A == null) return new Position(B);
+            if (B == null) return new Position(A);
+            return new Position(A).Plus(B); 
         }
 
         public static Position Minus(Position A, Position B)
         {
             if (A == null && B == null) return null;
-            if (A == null) return B;
-            if (B == null) return A;
-            Position c = new Position(A);
-            c.X -= B.X;
-            c.Y -= B.Y;
-            c.Z -= B.Z;
-            return c;
+            if (A == null) return new Position(B);
+            if (B == null) return new Position(A);
+            return new Position(A).Minus(B);
+        }
+
+        public static bool GreaterAny(Position A, Position B)
+        {
+            if (A == null || B == null) return false;
+            return A.GreaterAny(B);
         }
     }
 
@@ -93,7 +115,7 @@ namespace feltic.Visual
         }
 
 
-        public static Size Add(Size A, Size B)
+        public static Size Plus(Size A, Size B)
         {
             if (A == null && B == null) return null;
             if (A == null) return B;
@@ -115,6 +137,23 @@ namespace feltic.Visual
             c.Height -= B.Height;
             c.Depth -= B.Depth;
             return c;
+        }
+
+        public Size Plus(Position Position)
+        {
+            this.Width += Position.X;
+            this.Height += Position.Y;
+            this.Depth += Position.Z;
+            return this;
+        }
+
+        public Size Minus(Position Position)
+        {
+            if (Position == null) return this;
+            this.Width -= Position.X;
+            this.Height -= Position.Y;
+            this.Depth -= Position.Z;
+            return this;
         }
     }
 }

@@ -28,16 +28,7 @@ namespace feltic.Integrator
 
         public void AddCode(Editor editor)
         {
-            editor.content.content.Offset = new Position(0, 125);
-            //VisualText txt = new VisualText("asdfasdfasdf", CodeColor.String);
-            //txt.Offset = new Position(20);
-            //txt.Clip = new Size(50, 20);
-            //editor.Workspace.content.content.add(txt);
-            //VisualImage img = new VisualImage("cut.png");
-            //img.Room = new Room(Way.Try("100px"), null);
-            //img.Offset = new Position(25, 25);
-            //img.Clip = new Size(75, 75);
-            // editor.Workspace.content.content.add(img);
+            editor.content.content.Offset = new Position(50, 50);
         }
         
         public void Draw()

@@ -65,8 +65,8 @@ namespace feltic.Visual
 
         public void Draw(Position Position, Size Size, Position Offset=null, Size Clip=null)
         {
-            float texLeft = (Offset != null ? (Offset.X / Size.Width) : 0f);
-            float texTop = (Offset != null ? (Offset.Y / Size.Height) : 0f);
+            float texLeft = (Offset != null ? (Offset.X / (Size.Width + Offset.X)) : 0f);
+            float texTop = (Offset != null ? (Offset.Y / (Size.Height + Offset.Y)) : 0f);
             float texWidth = (Clip != null && Clip.Width > 0f ? (Clip.Width / Size.Width) : 1f);
             float texHeight = (Clip != null && Clip.Height > 0f ? (Clip.Height / Size.Height) : 1f);
 

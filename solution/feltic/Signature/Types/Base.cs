@@ -163,8 +163,7 @@ namespace feltic.Language
     }
 
     public class SignatureList : ListCollection<SignatureSymbol>
-    {
-    }
+    { }
 
     public class UnknownSignatur : SignatureSymbol
     {

@@ -11,8 +11,8 @@ namespace feltic.Visual
 {
     public class FpsCounter
     {
-        public static readonly int Timer = 1000;
-        public static readonly int Second = 1000;
+        public static readonly float Timer = 1000;
+        public static readonly float Second = 1000;
         public GlyphContainer GlyphContainer;
         public bool Started;
         public long Last;
@@ -42,7 +42,7 @@ namespace feltic.Visual
             else
             {
                 float multi = (span / Timer);
-                float rest = (span % Timer) / (float)Timer;
+                float rest = (span % Timer) / Timer;
                 float fps = (Counter * (multi + rest));
                 DisplayCounter = (int)Math.Round(fps * Second / Timer);
                 Counter = 0;

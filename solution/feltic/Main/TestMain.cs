@@ -1,4 +1,5 @@
 ﻿using feltic.Language;
+using feltic.Visual;
 using System;
 using System.Diagnostics;
 using System.Threading;

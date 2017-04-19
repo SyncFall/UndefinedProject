@@ -32,25 +32,21 @@ namespace Scope
 
 			parent = this;
 			parent.add((element = new VisualElement(1)));
-			if(element.Size == null) element.Size = new Room();
-			element.Size.Width = Way.Try(700);
 			stack.Push(parent);
 			parent = element;
 			parent.add((element = new VisualElement(1)));
 			stack.Push(parent);
 			parent = element;
-			parent.add((element = new VisualImage()));
-			if(element.Size == null) element.Size = new Room();
-			element.Size.Width = Way.Try(100);
-			element.source = "cut.png";
-			parent = stack.Pop();
 			parent.add((element = new VisualElement(1)));
-			stack.Push(parent);
-			parent = element;
-			parent.add((element = new VisualImage()));
 			if(element.Size == null) element.Size = new Room();
 			element.Size.Width = Way.Try(100);
-			element.source = "cut.png";
+			if(element.Size == null) element.Size = new Room();
+			element.Size.Height = Way.Try(100);
+			parent.add((element = new VisualElement(1)));
+			if(element.Size == null) element.Size = new Room();
+			element.Size.Width = Way.Try(100);
+			if(element.Size == null) element.Size = new Room();
+			element.Size.Height = Way.Try(100);
 			parent = stack.Pop();
 
 		}

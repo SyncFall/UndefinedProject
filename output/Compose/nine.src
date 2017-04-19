@@ -4,9 +4,11 @@ object Editor extend visual
 	Editor()
 	{
 		this.content = 
-			<block width=700>
-				<block><image width=100 source="cut.png"/></block>
-				<block><image width=100 source="cut.png"/></block>
+			<block>
+				<block>
+					<block width=100 height=100></block>
+					<block width=100 height=100></block>
+				</block>
 			</block>
 		;
 	}

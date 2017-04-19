@@ -71,8 +71,10 @@ namespace feltic.Language
             while(true)
             {
                 if((element = TryVariable()) != null ||
-                   (element = TryFunction()) != null
-                ){
+                   (element = TryFunction()) != null ||
+                   (element = TryProperty()) != null
+                )
+                {
                     signature.ElementList.Add(element);
                     continue;
                 }

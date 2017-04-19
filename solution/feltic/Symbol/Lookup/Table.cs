@@ -65,26 +65,15 @@ namespace feltic.Language
                 throw new Exception("invalid char");
             }
             Node child = Node.Childrens[Char];
-            if(child == null)
+            if (child == null)
             {
                 child = new Node((String.Length == 1 ? Symbol : null));
                 Node.Childrens[Char] = child;
-                if(String.Length > 1)
-                {
-                    InsertNode(String.Substring(1), Symbol, child);
-                }
             }
+            if (String.Length == 1)
+                child.Symbol = Symbol;
             else
-            {
-                if(String.Length == 1)
-                {
-                    child.Symbol = Symbol;
-                }
-                else
-                {
-                    InsertNode(String.Substring(1), Symbol, child);
-                }
-            }
+                InsertNode(String.Substring(1), Symbol, child);
         }
 
         public class Node

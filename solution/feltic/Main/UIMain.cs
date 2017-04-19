@@ -16,16 +16,19 @@ namespace feltic
         [STAThread]
         public static void Main()
         {
+            /*
+            Position dif = VisualElement.GetDifference(new Position(1, 1), new Position(5, 5), new Position(10, 10));
+            Console.WriteLine(dif.X + "|" + dif.Y);
+            Console.ReadLine();
+            */
+
             Utils.PrintSourceTreeStatistics(@"..\solution\feltic\");
 
             SourceList list = new SourceList();
             list.Add(SourceText.FromFile("Compose/nine.src"));
             Registry registry = new Registry();
             registry.AddSourceList(list);
-            registry.WriteToTarget("C:\\dev\\UndefinedProject\\output\\csharp.cs");
-
-            //Visual1 elm = new Visual1();
-            //Muh muh = new Muh();
+            registry.WriteToTarget("csharp.cs");
 
             new MainUI().RenderCycle();
         }
