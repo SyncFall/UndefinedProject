@@ -120,11 +120,7 @@ namespace feltic.Visual
             if (A == null && B == null) return null;
             if (A == null) return B;
             if (B == null) return A;
-            Size c = new Size(A);
-            c.Width += B.Width;
-            c.Height += B.Height;
-            c.Depth += B.Depth;
-            return c;
+            return new Size(A).Plus(B);
         }
 
         public static Size Minus(Size A, Size B)
@@ -137,6 +133,14 @@ namespace feltic.Visual
             c.Height -= B.Height;
             c.Depth -= B.Depth;
             return c;
+        }
+
+        public Size Plus(Size Size)
+        {
+            this.Width += Size.Width;
+            this.Height += Size.Height;
+            this.Depth += Size.Depth;
+            return this;
         }
 
         public Size Plus(Position Position)

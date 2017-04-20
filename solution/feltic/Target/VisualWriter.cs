@@ -263,12 +263,11 @@ namespace feltic.Language
                     }
                     else
                         throw new Exception("invalid state");
-
-
+                    
                     if (attr == "width" || attr == "height")
                     {
-                        WriteLine(tabs, "if(element.Size == null) element.Size = new Room();");
-                        WriteLine(tabs, "element.Size." + char.ToUpper(attr[0])+attr.Substring(1)+" = Way.Try("+value+");");
+                        WriteLine(tabs, "if(element.Room == null) element.Room = new Room();");
+                        WriteLine(tabs, "element.Room." + char.ToUpper(attr[0])+attr.Substring(1)+" = Way.Try("+value+");");
                     }
                     if(attr == "margin" || attr == "padding")
                     {

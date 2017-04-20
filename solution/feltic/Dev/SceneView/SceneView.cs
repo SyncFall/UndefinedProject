@@ -28,7 +28,13 @@ namespace feltic.Integrator
 
         public void AddCode(Editor editor)
         {
-            editor.content.content.Offset = new Position(50, 50);
+            editor.content.content.Offset = new Position(0, 0);
+            editor.content.content.Clip = new Size(0, 100);
+            editor.content.content.Padding = new Spacing(20, 20, 20, 10);
+            editor.content.content.Nodes[0].Margin = new Spacing(20, 10);
+            editor.content.content.Nodes[1].Margin = new Spacing(40, 20, 40, 20);
+            editor.content.content.Nodes[2].Margin = new Spacing(10, 10, 10, 10);
+            editor.content.content.Nodes[2].Nodes[0].Padding = new Spacing(20, 20, 20, 20);
         }
         
         public void Draw()

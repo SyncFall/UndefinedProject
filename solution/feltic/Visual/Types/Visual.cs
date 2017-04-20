@@ -16,11 +16,13 @@ namespace feltic.Visual
         public VisualElement Parent;
         public VisualElementList Nodes;
         // public-properties
-        public Room Size;
+        public Room Room;
         public Spacing Margin;
         public Spacing Padding;
         public Position Offset;
         public Size Clip;
+        public Position Position;
+        public Size Size;
         public bool Display = true;
         public Color Color;
         // render-properties
@@ -170,47 +172,73 @@ namespace feltic.Visual
             }
         }
 
-
-        public void SetRenderState(Position BasePosition, Position ElementPosition, Size BaseSize, Position BaseOffset, Position Offset)
+        public void ClearRenderState()
         {
-            RenderPosition = ElementPosition;
+            Render = false;
+            Position = null;
+            Size = null;
+            RenderPosition = null;
             RenderSize = null;
             RenderBound = null;
             RenderOffset = null;
-            Render = false;
+        }
+
+        public void SetRenderState(Position BasePosition, Position MarginStart, Position PaddingStart, Size BaseSize, Size PreferSize, Position BaseOffset, Size BaseClip=null)
+        {
+            // clear state
+            ClearRenderState();
+
+            if(BaseSize == null) return;
 
             // size
-            if (BaseSize == null) return;
             RenderSize = new Size(BaseSize);
+            if (PreferSize != null){
+                if (PreferSize.Width > BaseSize.Width)
+                    RenderSize.Width = PreferSize.Width;
+                if (PreferSize.Height > BaseSize.Height)
+                    RenderSize.Height = PreferSize.Height;
+            }
+
+            // position
+            Position = new Position(MarginStart);
+            RenderPosition = new Position(PaddingStart);
+
+            // bound
+            RenderBound = new Size(RenderSize);
+            RenderBound.Plus(Position.Minus(RenderPosition, BasePosition));
+            RenderBound.Plus(GetRightBottomSpacing(new Position(0, 0), Padding));
+            RenderBound.Plus(GetRightBottomSpacing(new Position(0, 0), Margin));
 
             // offset
-            if (BaseOffset.Y > 0 || BaseOffset.X > 0)
+            if (BaseOffset != null && (BaseOffset.X > 0 || BaseOffset.Y > 0))
             {
                 Position diff = GetDifference(new Position(RenderSize.Width, RenderSize.Height), BaseOffset);
                 RenderOffset = diff;
                 BaseOffset.Minus(diff);
                 RenderSize.Minus(diff);
+                RenderBound.Minus(diff);
+            }
+
+            // clip
+            if(BaseClip != null && (BaseClip.Width > 0 || BaseClip.Height > 0))
+            {
+                Position diff = GetDifference(new Position(RenderSize.Width, RenderSize.Height), new Position(BaseClip.Width, BaseClip.Height));
+                BaseClip.Minus(diff);
+                RenderSize.Minus(diff);
+                RenderBound.Minus(diff);
             }
 
             // render
-            if (RenderSize.Width <= 0f || RenderSize.Height <= 0f) { 
-                Render = false;
-                RenderSize = null;
-                return;
-            }else{ 
+            if (RenderSize.Width > 0 && RenderSize.Height > 0){
                 Render = true;
+            }else{
+                ClearRenderState();
             }
-
-            // bound
-            RenderBound = new Size(RenderSize);
-            RenderBound.Plus(Position.Minus(ElementPosition, BasePosition));
-            RenderBound.Plus(GetRightBottomSpacing(new Position(0, 0), Padding));
-            RenderBound.Plus(GetRightBottomSpacing(new Position(0, 0), Margin));
         }
 
         public static Position GetDifference(Position Base, Position Minus)
         {
-            if (Minus == null || Minus.X == 0 && Minus.Y == 0)
+            if (Minus == null || (Minus.X == 0 && Minus.Y == 0))
                 return new Position(0, 0);
             float dx, dy;
             if (Minus.X >= Base.X)
@@ -226,37 +254,45 @@ namespace feltic.Visual
 
         public void Metrics(Position BasePosition=null, Position BaseOffset=null, Size BaseClip=null)
         {
-            // initial position with margin and padding
-            Position position = new Position(BasePosition);
-            position = GetTopLeftSpacing(position, Margin);
-            position = GetTopLeftSpacing(position, Padding);
+            // not to display
+            if (!Display){
+                SetRenderState(BasePosition, null, null, null, null, null, null);
+                return;
+            }
 
-            // postion without parent-offset
-            Position diff = GetDifference(Position.Minus(position, BasePosition), BaseOffset);
-            position.Minus(diff);
-
-            // content offset
+            // offset
             if (BaseOffset == null)
-                BaseOffset = new Position(0, 0);
+                BaseOffset = new Position(0f, 0f);
             if (Offset != null)
                 BaseOffset.Plus(Offset);
             Position offset = new Position(BaseOffset);
 
-            // not to display
-            if (!Display){
-                SetRenderState(BasePosition, position, null, null, null);
-                return;
-            }
+            // clip
+            if (BaseClip == null)
+                BaseClip = new Size(0f, 0f);
+            if (Clip != null)
+                BaseClip.Plus(Clip);
+            Size clip = new Size(BaseClip);
+
+            // element start
+            Position position;
+            position = GetTopLeftSpacing(new Position(BasePosition), Margin);
+            position.Minus(GetDifference(Position.Minus(position, BasePosition), BaseOffset));
+            Position marginStart = new Position(position);
+            position = GetTopLeftSpacing(new Position(BasePosition), Margin);
+            position = GetTopLeftSpacing(new Position(position), Padding);
+            position.Minus(GetDifference(Position.Minus(position, BasePosition), BaseOffset));
+            Position paddingStart = new Position(position);
 
             // text-size
             if (Type == VisualType.Text){
-                SetRenderState(BasePosition, position, (this as VisualText).TextHandle.Size, BaseOffset, offset);
+                SetRenderState(BasePosition, marginStart, paddingStart, (this as VisualText).TextHandle.Size, null, BaseOffset, BaseClip);
                 return;
             }
 
             // break-size
             if (Type == VisualType.Break){
-                SetRenderState(BasePosition, position, new Size(1, new Visual.Text(" ", null).Size.Height), BaseOffset, offset);
+                SetRenderState(BasePosition, marginStart, paddingStart, new Size(1, new Visual.Text(" ", null).Size.Height), null, BaseOffset, BaseClip);
                 return;
             }
 
@@ -265,7 +301,7 @@ namespace feltic.Visual
             float height = GetHeight(this);
 
             // default image size
-            if (Type == VisualType.Image && (width <= 0f || height <= 0f))
+            if (Type == VisualType.Image)
             {
                 Size imageSize = (this as VisualImage).ImageHandle.Size;
                 if(width <= 0f && height <= 0f)
@@ -283,17 +319,17 @@ namespace feltic.Visual
                     float factor = (imageSize.Height / imageSize.Width);
                     height = width * factor;
                 }
-                SetRenderState(BasePosition, position, new Size(width, height), BaseOffset, offset);
+                SetRenderState(BasePosition, marginStart, paddingStart, new Size(width, height), null, BaseOffset, BaseClip);
                 return;
             }
 
             // default input size
-            if (Type == VisualType.Input && (width <= 0f || height <= 0f))
+            if (Type == VisualType.Input)
             {
                 Size textSize = new Text(new string(' ', 15), null).Size;
-                if(width == 0f) width = textSize.Width;
-                if(height == 0f) height = textSize.Height;
-                SetRenderState(BasePosition, position, new Size(width, height), BaseOffset, offset);
+                if(width <= 0f) width = textSize.Width;
+                if(height <= 0f) height = textSize.Height;
+                SetRenderState(BasePosition, marginStart, paddingStart, new Size(width, height), null, BaseOffset, BaseClip);
                 return;
             }
 
@@ -323,10 +359,10 @@ namespace feltic.Visual
             for (int i = 0; Nodes != null && i < Nodes.Size; i++)
             {
                 VisualElement child = Nodes[i];
-                Position childPosition = new Position(position.X + currentLeft, position.Y + currentTop);
-                if (currentLeft == 0f) BaseOffset.X = offset.X; // xoffset on left-begin for all childs
-                child.Metrics(childPosition, BaseOffset);
-                if (!child.display || !child.Render) continue;
+                Position childPosition = new Position(paddingStart.X + currentLeft, paddingStart.Y + currentTop);
+                if(currentLeft == 0f && offset != null) BaseOffset.X = offset.X; // xoffset on left-begin for all childs
+                child.Metrics(childPosition, BaseOffset, BaseClip);
+                if(!child.display || !child.Render) continue;
                 Size bound = child.RenderBound;
                 if (child.Type == VisualType.Block || child.Type == VisualType.Scroll)
                 {
@@ -355,23 +391,8 @@ namespace feltic.Visual
                 }
             }
 
-            // base size
-            diff = Position.Minus(offset, BaseOffset);
-            Position size = new Position(width, height);
-            diff = GetDifference(size, diff);
-            Size baseSize = new Size(size.X - diff.X, size.Y - diff.Y);
-
-            // may extend element size 
-            if (Type != VisualType.Scroll)
-            {
-                if (allBound.Width > baseSize.Width)
-                    baseSize.Width = allBound.Width;
-                if (allBound.Height > baseSize.Height)
-                    baseSize.Height = allBound.Height;
-            }
-
             // overall size
-            SetRenderState(BasePosition, position, baseSize, BaseOffset, offset);
+            SetRenderState(BasePosition, marginStart, paddingStart, allBound, new Size(width, height), BaseOffset, BaseClip);
 
             // done, may zero or unknown
             return;
@@ -403,7 +424,7 @@ namespace feltic.Visual
 
         public static float GetWidth(VisualElement Element)
         {
-            Room room = Element.Size;
+            Room room = Element.Room;
             float width = 0f;
 
             // width definition
@@ -431,7 +452,7 @@ namespace feltic.Visual
 
         public static float GetHeight(VisualElement Element)
         {
-            Room room = Element.Size;
+            Room room = Element.Room;
             float height = 0f;
 
             // height definition

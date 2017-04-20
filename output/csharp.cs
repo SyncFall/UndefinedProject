@@ -35,18 +35,23 @@ namespace Scope
 			stack.Push(parent);
 			parent = element;
 			parent.add((element = new VisualElement(1)));
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Width = Way.Try(100);
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Height = Way.Try(100);
+			parent.add((element = new VisualElement(1)));
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Width = Way.Try(100);
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Height = Way.Try(100);
+			parent.add((element = new VisualElement(1)));
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Width = Way.Try(100);
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Height = Way.Try(100);
 			stack.Push(parent);
 			parent = element;
-			parent.add((element = new VisualElement(1)));
-			if(element.Size == null) element.Size = new Room();
-			element.Size.Width = Way.Try(100);
-			if(element.Size == null) element.Size = new Room();
-			element.Size.Height = Way.Try(100);
-			parent.add((element = new VisualElement(1)));
-			if(element.Size == null) element.Size = new Room();
-			element.Size.Width = Way.Try(100);
-			if(element.Size == null) element.Size = new Room();
-			element.Size.Height = Way.Try(100);
+			parent.add((element = new VisualText("test")));
 			parent = stack.Pop();
 
 		}

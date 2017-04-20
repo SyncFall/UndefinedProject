@@ -5,10 +5,9 @@ object Editor extend visual
 	{
 		this.content = 
 			<block>
-				<block>
 					<block width=100 height=100></block>
 					<block width=100 height=100></block>
-				</block>
+					<block width=100 height=100>"test"</block>
 			</block>
 		;
 	}
