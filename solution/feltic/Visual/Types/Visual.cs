@@ -193,10 +193,14 @@ namespace feltic.Visual
             // size
             RenderSize = new Size(BaseSize);
             if (PreferSize != null){
-                if (PreferSize.Width > BaseSize.Width)
-                    RenderSize.Width = PreferSize.Width;
-                if (PreferSize.Height > BaseSize.Height)
-                    RenderSize.Height = PreferSize.Height;
+                // prefer-size without padding
+                Size preferSize = new Size(PreferSize);
+                preferSize.Minus(GetTopLeftSpacing(new Position(0, 0), Padding));
+                preferSize.Minus(GetRightBottomSpacing(new Position(0, 0), Padding));
+                if (preferSize.Width > BaseSize.Width)
+                    RenderSize.Width = preferSize.Width;
+                if (preferSize.Height > BaseSize.Height)
+                    RenderSize.Height = preferSize.Height;
             }
 
             // position
