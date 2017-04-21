@@ -123,7 +123,7 @@ namespace feltic.Visual
 
         public virtual void Draw()
         {
-            if (!Display || !Render) return;
+            if (!Display || !Render || Type == VisualType.Break) return;
 
             if (RenderSize.Width > 0f && RenderSize.Height > 0f)
             {
@@ -151,19 +151,20 @@ namespace feltic.Visual
 
             if (Type == VisualType.Scroll)
             {
-                if (Nodes != null && Nodes.Size == 1)
-                {
-                    VisualElement child = Nodes[0];
-                    VisualScrollElement scroll = this as VisualScrollElement;
-                    float factorHeight = (child.RenderSize.Height / scroll.RenderSize.Height);
-                    float offsetHeight = (scroll.ScrollYPosition * factorHeight);
-                    float factorWidth = (child.RenderSize.Width / scroll.RenderSize.Width);
-                    float offsetWidth = (scroll.ScrollXPosition * factorWidth);
-                    child.Draw();
-                    //scroll.DrawScrollY(X, Y);
-                    //scroll.DrawScrollX(X, Y);
-                    return;
-                }
+                VisualScrollElement scroll = this as VisualScrollElement;
+                Size originalSize = new Size(Nodes[0].GetOriginalSize());
+                Size scrollSize = new Size(GetWidth(this), GetHeight(this));
+                float factorX = (originalSize.Width / scrollSize.Width);
+                float factorY = (originalSize.Height / scrollSize.Height);
+                scroll.Offset = new Position(factorX * scroll.ScrollXPosition, factorY * scroll.ScrollYPosition);
+                Size clip = new Size(Visual.Size.Minus(originalSize, scrollSize));
+                clip.Minus(scroll.Offset);
+                scroll.Clip = clip;
+                Metrics(RenderPosition);
+                scroll.Clip = null;
+                scroll.Offset = null;
+                scroll.DrawScrollY(originalSize);
+                scroll.DrawScrollX(originalSize);
             }
 
             // calculate childrens
@@ -171,6 +172,17 @@ namespace feltic.Visual
             for (int i = 0; i < Nodes.Size; i++){
                 Nodes[i].Draw();
             }
+        }
+
+        public Size GetOriginalSize(Size Size=null)
+        {
+            if (Size == null)
+                Size = new Size(RenderBound);
+            if(Offset != null) Size.Plus(Offset);
+            if(Clip != null) Size.Plus(Clip);
+            for (int i = 0; Nodes != null && i < Nodes.Size; i++)
+                Nodes[i].GetOriginalSize(Size);
+            return Size;
         }
 
         public void ClearRenderState()
@@ -272,7 +284,15 @@ namespace feltic.Visual
                 else if(child.Type == VisualType.Inline || child.Type == VisualType.Column ||
                         child.Type == VisualType.Text || child.Type == VisualType.Image || child.Type == VisualType.Input
                 ){
-                    maxSize = new Size((boundAfter.Width > 0 && boundAfter.Width < boundBefore.Width ? boundBefore.Width - boundAfter.Width : boundBefore.Width), MaxSize.Height);
+                    maxSize = new Size(maxSize.Width - (boundAfter.Width > 0 && boundAfter.Width < boundBefore.Width ? boundBefore.Width - boundAfter.Width : boundBefore.Width), maxSize.Height);
+                }
+                else if(child.Type == VisualType.Break)
+                {
+                    maxSize = new Size(MaxSize.Width, maxSize.Height - boundBefore.Height);
+                }
+                if(maxSize.Width <= 0 && maxSize.Height <= 0){
+                    for(int j=i+1; j < Nodes.Size; j++)
+                        Nodes[j].ClearRenderState();
                 }
             }
         }
@@ -389,6 +409,7 @@ namespace feltic.Visual
             Size allBound = new Size(0f, 0f);
             float currentLeft = 0f;
             float currentTop = 0f;
+            float currentWidth = 0f;
             float currentHeight = 0f;
             for (int i = 0; Nodes != null && i < Nodes.Size; i++)
             {
@@ -411,7 +432,9 @@ namespace feltic.Visual
                 else if(child.Type == VisualType.Inline || child.Type == VisualType.Column || 
                         child.Type == VisualType.Text ||  child.Type == VisualType.Image || child.Type == VisualType.Input
                 ){
-                    allBound.Width += bound.Width;
+                    currentWidth += bound.Width;
+                    if(currentWidth > allBound.Width)
+                        allBound.Width += bound.Width;
                     currentLeft += bound.Width;
                     if (bound.Height > currentHeight){
                         allBound.Height += (bound.Height - currentHeight);
@@ -420,8 +443,10 @@ namespace feltic.Visual
                 }
                 else if (child.Type == VisualType.Break)
                 {
-                    currentTop += currentHeight;
+                    allBound.Height += currentHeight;
+                    currentTop += bound.Height;
                     currentLeft = 0f;
+                    currentWidth = 0f;
                     currentHeight = 0f;
                 }
             }
@@ -610,7 +635,7 @@ namespace feltic.Visual
         public string Text
         {
             get{ return (TextHandle.String); }
-            set{ TextHandle = new Visual.Text(value, null); }
+            set{ TextHandle = new Text(value, null); }
         }
 
         public VisualText(string String, Color Color=null) : base(VisualType.Text)
@@ -713,15 +738,9 @@ namespace feltic.Visual
             this.InputListener = new ScrollListener(this);
         }
 
-        public void DrawScrollY(float X = 0, float Y = 0)
+        public void DrawScrollY(Size OriginalSize)
         {
-            if(Nodes == null|| Nodes.Size != 1)
-                return;
-
-            VisualElement child = Nodes[0];
-            Size childSize = child.RenderSize;
-
-            float factor = (RenderSize.Height / childSize.Height);
+            float factor = (RenderSize.Height / OriginalSize.Height);
             ScrollYSize.Height = (RenderSize.Height * factor);
             
             float w = ScrollYSize.Width;
@@ -738,15 +757,9 @@ namespace feltic.Visual
             GL.End();
         }
 
-        public void DrawScrollX(float X=0, float Y=0)
+        public void DrawScrollX(Size OriginalSize)
         {
-            if (Nodes == null || Nodes.Size != 1)
-                return;
-    
-            VisualElement child = Nodes[0];
-            Size childSize = child.RenderSize;
-
-            float factor = (RenderSize.Width / childSize.Width);
+            float factor = (RenderSize.Width / OriginalSize.Width);
             ScrollXSize.Width = (RenderSize.Width * factor);
 
             float w = ScrollXSize.Width;

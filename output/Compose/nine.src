@@ -3,10 +3,12 @@ object Editor extend visual
 {
 	Editor()
 	{
+		string str = File.ReadAllText("csharp.cs");
 		this.content = 
 			<block>
-				<block><image source="cut.png" width=100 height=100/></block>
-				<block><image source="cut.png" width=100 height=100/></block>
+				<scroll width=500 height=500>
+					.str;
+				</scroll>
 			</block>
 		;
 	}

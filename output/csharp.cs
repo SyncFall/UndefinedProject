@@ -14,7 +14,8 @@ namespace Scope
 
 		public Editor()
 		{
-						this.content = new Visual_1_Editor_Editor(this);
+			string str = File.ReadAllText("csharp.cs");
+						this.content = new Visual_1_Editor_Editor(this, str);
 		}
 	}
 
@@ -23,7 +24,7 @@ namespace Scope
 	{
 		public Editor Object;
 
-		public Visual_1_Editor_Editor(Editor Object) : base(VisualType.Block)
+		public Visual_1_Editor_Editor(Editor Object, string str) : base(VisualType.Block)
 		{
 			this.Object = Object;
 			Stack<VisualElement> stack = new Stack<VisualElement>();
@@ -34,25 +35,14 @@ namespace Scope
 			parent.add((element = new VisualElement(1)));
 			stack.Push(parent);
 			parent = element;
-			parent.add((element = new VisualElement(1)));
+			parent.add((element = new VisualScrollElement()));
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Width = Way.Try(500);
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Height = Way.Try(500);
 			stack.Push(parent);
 			parent = element;
-			parent.add((element = new VisualImage()));
-			element.source = "cut.png";
-			if(element.Room == null) element.Room = new Room();
-			element.Room.Width = Way.Try(100);
-			if(element.Room == null) element.Room = new Room();
-			element.Room.Height = Way.Try(100);
-			parent = stack.Pop();
-			parent.add((element = new VisualElement(1)));
-			stack.Push(parent);
-			parent = element;
-			parent.add((element = new VisualImage()));
-			element.source = "cut.png";
-			if(element.Room == null) element.Room = new Room();
-			element.Room.Width = Way.Try(100);
-			if(element.Room == null) element.Room = new Room();
-			element.Room.Height = Way.Try(100);
+			parent.add((element = new VisualText(str)));
 			parent = stack.Pop();
 
 		}

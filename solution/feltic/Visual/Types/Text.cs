@@ -91,7 +91,7 @@ namespace feltic.Visual
                     currentLeft = 0f;
                 }
                 else if (_char == '\r')
-                {;}
+                { ; }
                 else
                 {
                     Glyph glyph = GlyphContainer.GetGlyph(_char);
@@ -104,8 +104,7 @@ namespace feltic.Visual
                     }
                     float left = (currentLeft - (Offset != null ? Offset.X : 0));
                     float top = (currentTop - (Offset != null ? Offset.Y : 0));
-                    if(Clip != null && ((Clip.Width > 0f && left + width > Clip.Width) || (Clip.Height > 0f && top + height > Clip.Height)))
-                    {
+                    if(Clip != null && ((Clip.Width > 0f && left + width > Size.Width) || (Clip.Height > 0f && top + height > Size.Height))){
                         continue;
                     }
                     float glyphX = ((Position.X + left) + glyph.HoriziontalBearingX);
