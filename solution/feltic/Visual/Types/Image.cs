@@ -67,8 +67,8 @@ namespace feltic.Visual
         {
             float texLeft = (Offset != null ? (Offset.X / (Size.Width + Offset.X)) : 0f);
             float texTop = (Offset != null ? (Offset.Y / (Size.Height + Offset.Y)) : 0f);
-            float texWidth = (Clip != null && Clip.Width > 0f ? (Clip.Width / Size.Width) : 1f);
-            float texHeight = (Clip != null && Clip.Height > 0f ? (Clip.Height / Size.Height) : 1f);
+            float texWidth = (Clip != null && Clip.Width > 0f ? 1f - (Clip.Width / (Size.Width + Clip.Width)) : 1f);
+            float texHeight = (Clip != null && Clip.Height > 0f ? 1f - (Clip.Height / (Size.Height + Clip.Height)) : 1f);
 
             GL.Color3(1f, 1f, 1f);
             GL.BindTexture(TextureTarget.Texture2D, BitmapBufferId);
