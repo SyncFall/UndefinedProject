@@ -32,7 +32,6 @@ namespace feltic.Visual
         public Size RenderBound;
         public Position RenderOffset;
         public Size RenderClip;
-        public Size UncutSize;
         // visual input-state
         public InputListener InputListener;
         public bool Active;
@@ -153,19 +152,19 @@ namespace feltic.Visual
             if (Type == VisualType.Scroll)
             {
                 VisualScrollElement scroll = this as VisualScrollElement;
-                Size uncutSize = scroll.Nodes[0].UncutSize;
+                Size originalSize = new Size(Nodes[0].GetOriginalSize());
                 Size scrollSize = new Size(GetWidth(this), GetHeight(this));
-                float factorX = (uncutSize.Width / scrollSize.Width);
-                float factorY = (uncutSize.Height / scrollSize.Height);
+                float factorX = (originalSize.Width / scrollSize.Width);
+                float factorY = (originalSize.Height / scrollSize.Height);
                 scroll.Offset = new Position(factorX * scroll.ScrollXPosition, factorY * scroll.ScrollYPosition);
-                Size clip = new Size(Visual.Size.Minus(uncutSize, scrollSize));
+                Size clip = new Size(Visual.Size.Minus(originalSize, scrollSize));
                 clip.Minus(scroll.Offset);
                 scroll.Clip = clip;
                 Metrics(RenderPosition);
                 scroll.Clip = null;
                 scroll.Offset = null;
-                scroll.DrawScrollY(uncutSize);
-                scroll.DrawScrollX(uncutSize);
+                scroll.DrawScrollY(originalSize);
+                scroll.DrawScrollX(originalSize);
             }
 
             // calculate childrens
@@ -215,13 +214,6 @@ namespace feltic.Visual
                     RenderSize.Width = preferSize.Width;
                 if (preferSize.Height > BaseSize.Height)
                     RenderSize.Height = preferSize.Height;
-                if (Type == VisualType.Scroll)
-                {
-                    if (preferSize.Width < BaseSize.Width)
-                        RenderSize.Width = preferSize.Width;
-                    if (preferSize.Height < BaseSize.Height)
-                        RenderSize.Height = preferSize.Height;
-                }
             }
 
             // position
@@ -256,12 +248,7 @@ namespace feltic.Visual
             // render
             if (RenderSize != null && (RenderSize.Width > 0 && RenderSize.Height > 0)){
                 Render = true;
-                // size
-                UncutSize = new Size(RenderBound);
-                UncutSize.Plus(Offset);
-                UncutSize.Plus(Clip);
-            }
-            else{
+            }else{
                 ClearRenderState();
             }
         }
