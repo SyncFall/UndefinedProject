@@ -6,8 +6,16 @@ object Editor extend visual
 		string str = File.ReadAllText("csharp.cs");
 		this.content = 
 			<block>
-				<scroll width=500 height=500>
-					.str;
+				<scroll width=150 height=175>
+					<block>
+						<block width=250 height=100/>
+						<block width=250 height=100>
+							<block width=50 height=50/>
+							<block width=100 height=50/>
+							<block width=50 height=50/>
+						</block>
+						<block width=50 height=50/>
+					</block>
 				</scroll>
 			</block>
 		;

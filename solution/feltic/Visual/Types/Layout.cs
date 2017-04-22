@@ -91,22 +91,6 @@ namespace feltic.Visual
         public Size()
         { }
 
-        public Size(Size Size)
-        {
-            if(Size == null)
-            {
-                Width = 0f;
-                Height = 0f;
-                Depth = 0f;
-            }
-            else
-            {
-                this.Width = Size.Width;
-                this.Height = Size.Height;
-                this.Depth = Size.Depth;
-            }
-        }
-
         public Size(float width, float height, float depth=0f)
         {
             this.Width = width;
@@ -114,37 +98,53 @@ namespace feltic.Visual
             this.Depth = depth;
         }
 
+        public Size(Size Size)
+        {
+            if (Size != null)
+            {
+                this.Width = Size.Width;
+                this.Height = Size.Height;
+                this.Depth = Size.Depth;
+            }
+        }
 
         public static Size Plus(Size A, Size B)
         {
             if (A == null && B == null) return null;
-            if (A == null) return B;
-            if (B == null) return A;
+            if (A == null) return new Size(B);
+            if (B == null) return new Size(A);
             return new Size(A).Plus(B);
         }
 
         public static Size Minus(Size A, Size B)
         {
             if (A == null && B == null) return null;
-            if (A == null) return B;
-            if (B == null) return A;
-            Size c = new Size(A);
-            c.Width -= B.Width;
-            c.Height -= B.Height;
-            c.Depth -= B.Depth;
-            return c;
+            if (A == null) return new Size(B);
+            if (B == null) return new Size(A);
+            return new Size(A).Minus(B);
         }
 
         public Size Plus(Size Size)
         {
+            if (Size == null) return this;
             this.Width += Size.Width;
             this.Height += Size.Height;
             this.Depth += Size.Depth;
             return this;
         }
 
+        public Size Minus(Size Size)
+        {
+            if (Size == null) return this;
+            this.Width -= Size.Width;
+            this.Height -= Size.Height;
+            this.Depth -= Size.Depth;
+            return this;
+        }
+
         public Size Plus(Position Position)
         {
+            if (Position == null) return this;
             this.Width += Position.X;
             this.Height += Position.Y;
             this.Depth += Position.Z;

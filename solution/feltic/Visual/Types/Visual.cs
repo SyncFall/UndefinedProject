@@ -32,6 +32,7 @@ namespace feltic.Visual
         public Size RenderBound;
         public Position RenderOffset;
         public Size RenderClip;
+        public Size UncutSize;
         // visual input-state
         public InputListener InputListener;
         public bool Active;
@@ -152,19 +153,16 @@ namespace feltic.Visual
             if (Type == VisualType.Scroll)
             {
                 VisualScrollElement scroll = this as VisualScrollElement;
-                Size originalSize = new Size(Nodes[0].GetOriginalSize());
-                Size scrollSize = new Size(GetWidth(this), GetHeight(this));
+                VisualElement child = Nodes[0];
+                Size originalSize = new Size(child.UncutSize);
+                Size scrollSize = new Size(scroll.UncutSize);
                 float factorX = (originalSize.Width / scrollSize.Width);
                 float factorY = (originalSize.Height / scrollSize.Height);
-                scroll.Offset = new Position(factorX * scroll.ScrollXPosition, factorY * scroll.ScrollYPosition);
-                Size clip = new Size(Visual.Size.Minus(originalSize, scrollSize));
-                clip.Minus(scroll.Offset);
-                scroll.Clip = clip;
-                Metrics(RenderPosition);
-                scroll.Clip = null;
-                scroll.Offset = null;
-                scroll.DrawScrollY(originalSize);
-                scroll.DrawScrollX(originalSize);
+                scroll.ValidateScroll(originalSize);
+                child.Offset = new Position(factorX * scroll.ScrollXPosition, factorY * scroll.ScrollYPosition);
+                child.Clip = new Size(Visual.Size.Minus(originalSize, scrollSize)).Minus(child.Offset);
+                scroll.DrawScrollY();
+                scroll.DrawScrollX();
             }
 
             // calculate childrens
@@ -194,6 +192,7 @@ namespace feltic.Visual
             RenderSize = null;
             RenderBound = null;
             RenderOffset = null;
+            UncutSize = null;
         }
 
         public void SetRenderState(Position BasePosition, Position MarginStart, Position PaddingStart, Size BaseSize, Size PreferSize, Position BaseOffset)
@@ -214,6 +213,13 @@ namespace feltic.Visual
                     RenderSize.Width = preferSize.Width;
                 if (preferSize.Height > BaseSize.Height)
                     RenderSize.Height = preferSize.Height;
+                if(Type == VisualType.Scroll)
+                {
+                    if (preferSize.Width < BaseSize.Width)
+                        RenderSize.Width = preferSize.Width;
+                    if (preferSize.Height < BaseSize.Height)
+                        RenderSize.Height = preferSize.Height;
+                }
             }
 
             // position
@@ -248,7 +254,12 @@ namespace feltic.Visual
             // render
             if (RenderSize != null && (RenderSize.Width > 0 && RenderSize.Height > 0)){
                 Render = true;
-            }else{
+                // size
+                UncutSize = new Size(RenderBound);
+                UncutSize.Plus(Offset);
+                UncutSize.Plus(Clip);
+            }
+            else{
                 ClearRenderState();
             }
         }
@@ -263,7 +274,7 @@ namespace feltic.Visual
             RenderSize.Minus(diff);
             RenderBound.Minus(diff);
             RenderClip = new Size(diff.X, diff.Y);
-            if (RenderBound.Width <= 0 || RenderBound.Height <= 0)
+            if (RenderBound.Width <= 0f || RenderBound.Height <= 0f)
             {
                 ClearRenderState();
                 return;
@@ -290,9 +301,10 @@ namespace feltic.Visual
                 {
                     maxSize = new Size(MaxSize.Width, maxSize.Height - boundBefore.Height);
                 }
-                if(maxSize.Width <= 0 && maxSize.Height <= 0){
+                if(maxSize.Width <= 0f && maxSize.Height <= 0f){
                     for(int j=i+1; j < Nodes.Size; j++)
                         Nodes[j].ClearRenderState();
+                    break;
                 }
             }
         }
@@ -732,17 +744,29 @@ namespace feltic.Visual
         public float ScrollXPosition = 0f;
         public Size ScrollYSize = new Size(ScrollThickness, 0);
         public Size ScrollXSize = new Size(0, ScrollThickness);
-
+        public float FactorY;
+        public float FactorX;
+        
         public VisualScrollElement() : base(VisualType.Scroll)
         {
             this.InputListener = new ScrollListener(this);
         }
 
-        public void DrawScrollY(Size OriginalSize)
+        public void ValidateScroll(Size OriginalSize)
         {
-            float factor = (RenderSize.Height / OriginalSize.Height);
-            ScrollYSize.Height = (RenderSize.Height * factor);
-            
+            FactorY = (RenderSize.Height / OriginalSize.Height);
+            ScrollYSize.Height = (RenderSize.Height * FactorY);
+            if(ScrollYPosition + ScrollYSize.Height > RenderSize.Height)
+                ScrollYPosition = RenderSize.Height - ScrollYSize.Height;
+
+            FactorX = (RenderSize.Width / OriginalSize.Width);
+            ScrollXSize.Width = (RenderSize.Width * FactorX);
+            if (ScrollXPosition + ScrollXSize.Width > RenderSize.Width)
+                ScrollXPosition = RenderSize.Width - ScrollYSize.Width;
+        }
+
+        public void DrawScrollY()
+        {
             float w = ScrollYSize.Width;
             float h = ScrollYSize.Height;
             float x = RenderPosition.X + RenderSize.Width - w;
@@ -757,11 +781,8 @@ namespace feltic.Visual
             GL.End();
         }
 
-        public void DrawScrollX(Size OriginalSize)
+        public void DrawScrollX()
         {
-            float factor = (RenderSize.Width / OriginalSize.Width);
-            ScrollXSize.Width = (RenderSize.Width * factor);
-
             float w = ScrollXSize.Width;
             float h = ScrollXSize.Height;
             float x = RenderPosition.X + ScrollXPosition;

@@ -15,7 +15,7 @@ namespace Scope
 		public Editor()
 		{
 			string str = File.ReadAllText("csharp.cs");
-						this.content = new Visual_1_Editor_Editor(this, str);
+						this.content = new Visual_1_Editor_Editor(this);
 		}
 	}
 
@@ -24,7 +24,7 @@ namespace Scope
 	{
 		public Editor Object;
 
-		public Visual_1_Editor_Editor(Editor Object, string str) : base(VisualType.Block)
+		public Visual_1_Editor_Editor(Editor Object) : base(VisualType.Block)
 		{
 			this.Object = Object;
 			Stack<VisualElement> stack = new Stack<VisualElement>();
@@ -37,12 +37,48 @@ namespace Scope
 			parent = element;
 			parent.add((element = new VisualScrollElement()));
 			if(element.Room == null) element.Room = new Room();
-			element.Room.Width = Way.Try(500);
+			element.Room.Width = Way.Try(150);
 			if(element.Room == null) element.Room = new Room();
-			element.Room.Height = Way.Try(500);
+			element.Room.Height = Way.Try(175);
 			stack.Push(parent);
 			parent = element;
-			parent.add((element = new VisualText(str)));
+			parent.add((element = new VisualElement(1)));
+			stack.Push(parent);
+			parent = element;
+			parent.add((element = new VisualElement(1)));
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Width = Way.Try(250);
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Height = Way.Try(100);
+			parent.add((element = new VisualElement(1)));
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Width = Way.Try(250);
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Height = Way.Try(100);
+			stack.Push(parent);
+			parent = element;
+			parent.add((element = new VisualElement(1)));
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Width = Way.Try(50);
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Height = Way.Try(50);
+			parent.add((element = new VisualElement(1)));
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Width = Way.Try(100);
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Height = Way.Try(50);
+			parent.add((element = new VisualElement(1)));
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Width = Way.Try(50);
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Height = Way.Try(50);
+			parent = stack.Pop();
+			parent.add((element = new VisualElement(1)));
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Width = Way.Try(50);
+			if(element.Room == null) element.Room = new Room();
+			element.Room.Height = Way.Try(50);
+			parent = stack.Pop();
 			parent = stack.Pop();
 
 		}
