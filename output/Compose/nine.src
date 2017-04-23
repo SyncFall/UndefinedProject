@@ -5,19 +5,17 @@ object Editor extend visual
 	{
 		string str = File.ReadAllText("csharp.cs");
 		this.content = 
-			<block>
-				<scroll width=150 height=175>
-					<block>
-						<block width=250 height=100/>
-						<block width=250 height=100>
-							<block width=50 height=50/>
-							<block width=100 height=50/>
-							<block width=50 height=50/>
-						</block>
-						<block width=50 height=50/>
+			<scroll width=175 height=225>
+				<block width=350>
+					<block width=300 height=75/>
+					<block width=200 height=175>
+						<block width=75 height=50/>
+						<block width=100 height=50/>
+						<block width=25 height=25/>
 					</block>
-				</scroll>
-			</block>
+					<block width=125 height=75/>
+				</block>
+			</scroll>
 		;
 	}
 }

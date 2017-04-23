@@ -136,7 +136,7 @@ namespace feltic.Language
             {
                 if(sb.OpenBlockIdentifiere.IsVisual(VisualType.Scroll))
                 {
-                    WriteLine(tabs, "parent.add((element = new VisualScrollElement()));");
+                    WriteLine(tabs, "parent.add((element = new VisualScroll()));");
                 }
                 else if(sb.OpenBlockIdentifiere.IsVisual(VisualType.Image))
                 {

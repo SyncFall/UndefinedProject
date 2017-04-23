@@ -125,8 +125,8 @@ namespace feltic.Integrator
 
             Position start = CodeText.CodeContainer.Start;
 
-            float scrollOffset = (VisualCode.Parent as VisualScrollElement).ScrollYPosition;
-            float scrollHeight = (VisualCode.Parent as VisualScrollElement).RenderSize.Height;
+            float scrollOffset = (VisualCode.Parent as VisualScroll).ScrollYPosition;
+            float scrollHeight = (VisualCode.Parent as VisualScroll).RenderSize.Height;
             float codeHeight = (VisualCode.RenderSize.Height);
             float factorHeight = (codeHeight / scrollHeight);
             float offsetHeight = (scrollOffset * factorHeight);

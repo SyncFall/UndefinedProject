@@ -28,8 +28,8 @@ namespace feltic.Integrator
 
         public void AddCode(Editor editor)
         {
-            editor.content.content.Offset = new Position(0, 0);
-            editor.content.content.Clip = new Size(0, 0);
+           /// editor.content.content.Offset = new Position(25, 50);
+           /// editor.content.content.Clip = new Size(50, 100);
         }
         
         public void Draw()

@@ -18,7 +18,7 @@ object Editor extend visual
 					<column width=65pc>.Workspace</column>
 					<column width=35pc>.FileExplorer</column>
 				</block>
-				<block height=125px><image source="cut.png" height=100/></block>
+				<block height=125px>"status"</block>
 			</block>
 		;
 	}
@@ -130,7 +130,7 @@ object FileExplorer extend visual
 		this.Editor = Editor;
 		RootNode = new FileNode(null, "ROOT", true, 0);
 		this.buildFolder(".", RootNode, 0);
-		this.content = RootNode;
+		this.content = <scroll>.RootNode</scroll>;
 	}
 
 	func buildFolder(string dir, FileNode parent, int depth)
