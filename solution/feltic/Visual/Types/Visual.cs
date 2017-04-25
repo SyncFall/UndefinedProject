@@ -654,7 +654,7 @@ namespace feltic.Visual
 
         public VisualImage(string Filepath) : base(VisualType.Image)
         {
-            this.source = Filepath;
+            this.Source = Filepath;
         }
 
         public string Source
