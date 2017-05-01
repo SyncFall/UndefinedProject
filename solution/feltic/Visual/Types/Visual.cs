@@ -270,7 +270,7 @@ namespace feltic.Visual
                 if(!child.Display) continue;
                 Size bound = new Size(child.Render ? child.RenderBound : child.UncutSize);
                 Size clip = new Size(0f, 0f);
-                if (child.Type == VisualType.Block || child.Type == VisualType.Scroll)
+                if(child.Type == VisualType.Block || child.Type == VisualType.Scroll)
                 {
                     if(bound.Height > maxSize.Height){
                         clip.Height = bound.Height - maxSize.Height;
@@ -280,6 +280,19 @@ namespace feltic.Visual
                     }
                     if(bound.Width > maxSize.Width){
                         clip.Width = bound.Width - maxSize.Width;
+                    }
+                }
+                else if(child.Type == VisualType.Inline || child.Type == VisualType.Column ||
+                        child.Type == VisualType.Text || child.Type == VisualType.Image || child.Type == VisualType.Input
+                ){
+                    if(bound.Width > maxSize.Width){
+                        clip.Width = bound.Width - maxSize.Width;
+                        maxSize.Width = 0;
+                    }else{
+                        maxSize.Width -= bound.Width;
+                    }
+                    if(bound.Height > maxSize.Height){
+                        clip.Height = bound.Height - maxSize.Height;
                     }
                 }
                 if (child.Render)
@@ -336,7 +349,7 @@ namespace feltic.Visual
 
             // break-size
             if (Type == VisualType.Break){
-                SetRenderState(BasePosition, marginStart, paddingStart, new Size(1, new Visual.Text(" ", null).Size.Height), null, BaseOffset);
+                SetRenderState(BasePosition, marginStart, paddingStart, new Size(1, new Text(" ", null).Size.Height), null, BaseOffset);
                 return;
             }
 
@@ -441,14 +454,11 @@ namespace feltic.Visual
                 }
             }
 
-            if (Offset != null && width > allBound.Width && Parent.Type == VisualType.Scroll)
-                BaseOffset.Minus(new Position(0, Offset.Y));
-            else if(Offset != null)
-                BaseOffset.Minus(Offset);
+            BaseOffset.Minus(Position.Minus(BaseOffset, offset));
 
             // overall size
             SetRenderState(BasePosition, marginStart, paddingStart, allBound, new Size(width, height), BaseOffset);
-
+            
             // done, may zero or unknown
             return;
         }

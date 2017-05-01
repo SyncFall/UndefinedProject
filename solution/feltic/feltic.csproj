@@ -146,7 +146,6 @@
     <Compile Include="Visual\Types\LineCurve.cs" />
     <Compile Include="Visual\Types\Point.cs" />
     <Compile Include="Visual\Types\Shader.cs" />
-    <Compile Include="Visual\Types\Surface.cs" />
     <Compile Include="Visual\Types\Text.cs" />
     <Compile Include="Visual\Types\Visual.cs" />
     <Compile Include="Visual\Types\Way.cs" />

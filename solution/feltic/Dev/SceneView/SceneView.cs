@@ -21,17 +21,9 @@ namespace feltic.Integrator
 
         public SceneView()
         {
-            Editor editor = new Editor();
-            AddCode(editor);
-            Root.add(editor);
+            Root.add(new FileExplorer());
         }
-
-        public void AddCode(Editor editor)
-        {
-           /// editor.content.content.Offset = new Position(25, 50);
-           /// editor.content.content.Clip = new Size(50, 100);
-        }
-        
+ 
         public void Draw()
         {
             if(Root != null)

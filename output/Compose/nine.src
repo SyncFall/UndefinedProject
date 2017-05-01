@@ -8,7 +8,7 @@ object Editor extend visual
 			<scroll width=175 height=225>
 				<block width=350>
 					<block width=300 height=75/>
-					<block width=200 height=175>
+					<block width=200>
 						<block width=75 height=50/>
 						<block width=100 height=50/>
 						<block width=25 height=25/>

@@ -21,18 +21,9 @@ namespace feltic.Visual
 
         public Position(Position Position)
         {
-            if(Position == null)
-            {
-                this.X = 0f;
-                this.Y = 0f;
-                this.Z = 0f;
-            }
-            else
-            {
-                this.X = Position.X;
-                this.Y = Position.Y;
-                this.Z = Position.Z;
-            }
+            this.X = Position.X;
+            this.Y = Position.Y;
+            this.Z = Position.Z;
         }
 
         public Position Plus(Position B)

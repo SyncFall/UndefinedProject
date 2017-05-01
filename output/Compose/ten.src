@@ -1,0 +1,90 @@
+
+object FileNode extend visual
+{
+	FileNode parent;
+	visual elm;
+	visual list;
+	string path;
+	string name;
+	bool isFolder;
+	int depth;
+
+	FileNode(FileNode parent, string path, bool isFolder, int depth)
+	{
+		this.parent = parent;
+		this.path = path;
+		if(isFolder){
+			if(path.StartsWith(".\u005C")){
+				this.name = path.Substring(2);
+			}else{
+				this.name = path;
+			}
+		}else{
+			this.name += Path.GetFileName(path);
+		}
+		this.isFolder = isFolder;
+		this.depth = depth;
+		this.build();
+	}
+
+	func build()
+	{
+		int depthFolderWidth = (depth * 16);
+		int depthFileWidth = (depthFolderWidth + 16);
+		if(this.isFolder){
+			elm = <block listener=elmListener marginLeft=depthFolderWidth paddingTop=2>.name;</block>;
+			list = <block/>;
+			this.add(elm, list);
+		}else{
+			elm = <block listener=elmListener marginLeft=depthFileWidth paddingTop=2>.name;</block>;
+			this.add(elm);
+		}		
+	}
+
+	func addEntry(FileNode child)
+	{
+		list.add(child);
+		list.display = true;
+	}
+
+	func elmListener(InputEvent inevt)
+	{
+		bool toogleList = (inevt.Button.LeftClick);
+		if(list != null && toogleList){
+			list.display = !list.display;
+		}
+	}
+}
+
+
+object FileExplorer extend visual
+{
+	FileNode RootNode;
+
+	FileExplorer()
+	{
+		RootNode = new FileNode(null, "ROOT", true, 0);
+		this.buildFolder(".", RootNode, 0);
+		this.content = <scroll width=150 height=300>.RootNode</scroll>;
+	}
+
+	func buildFolder(string dir, FileNode parent, int depth)
+	{
+		if(dir.Contains("\\.")){
+			return;
+		} 
+		FileNode folder = new FileNode(parent, dir, true, depth);
+		if(dir != "."){
+			parent.addEntry(folder);
+			parent = folder;
+		}
+		string[] dirArr = Directory.GetDirectories(dir);
+		for(int i=0; i<dirArr.Length; i++){
+			this.buildFolder(dirArr[i], parent, depth+1);
+		}
+		string[] fileArr = Directory.GetFiles(dir);
+		for(int i=0; i<fileArr.Length; i++){
+			parent.addEntry(new FileNode(parent, fileArr[i], false, depth));
+		}
+	}
+}
