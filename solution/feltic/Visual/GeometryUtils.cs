@@ -44,7 +44,13 @@ namespace feltic.Visual
 
         public static bool IntersectVisual(VisualElement Visual, CursorState Cursor)
         {
-            return IntersectBound((int)Visual.RenderPosition.X, (int)Visual.RenderSize.Width, (int)Visual.RenderPosition.Y, (int)Visual.RenderSize.Height, Cursor.x, Cursor.y);
+            return IntersectBound(
+                (int)Visual.RenderPosition.X, 
+                (int)Visual.RenderSize.Width, 
+                (int)Visual.RenderPosition.Y, 
+                (int)Visual.RenderSize.Height, 
+                Cursor.x, Cursor.y
+            );
         }
     }
 }

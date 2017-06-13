@@ -23,11 +23,11 @@ namespace feltic.Integrator
         public CodeSelection CodeSelection;
         public CodeHistory CodeHistory;
         public TokenContainer TokenContainer;
-        public VisualElement VisualCode;
+        public VisualElement VisualCode = new VisualElement();
 
         public CodeText()
         {
-            this.SourceText = SourceText.FromFile("Compose/second.src");
+            this.SourceText = SourceText.FromFile("Compose/eight.src");
             SourceList list = new SourceList();
             list.Add(this.SourceText);
             this.Registry = new Registry();
@@ -51,8 +51,12 @@ namespace feltic.Integrator
        
         public void Draw()
         {
+            CodeContainer.Build();
+            CodeContainer.VisualCode.Metrics(new Position(20, 20));
+            CodeContainer.VisualCode.Draw();
             CodeSelection.Draw();
             CodeCursor.Draw();
+
         }
     }
 }

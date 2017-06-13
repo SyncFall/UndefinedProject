@@ -132,7 +132,8 @@ namespace feltic.Visual
             int[] keys = Listeners.Keys;
             for (int i=0; i<keys.Length; i++)
             {
-                Listeners[keys[i]].ProcessInputEvent(InputEvent);
+                if(Listeners.KeyExist(keys[i]))
+                    Listeners[keys[i]].ProcessInputEvent(InputEvent);
             }
         }
 

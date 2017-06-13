@@ -118,7 +118,7 @@ namespace feltic.Integrator
                     ActionCurve.Points[1].y = y;
                     ActionCurve.BuildKnots();
                 }
-                if (ActionCurve.Type == CurveType.Quadratic && Event.IsCursor)
+                if (ActionCurve.Type == CurveType.Conic && Event.IsCursor)
                 {
                     ActionCurve.Points[1].x = x;
                     ActionCurve.Points[1].y = ActionCurve.Points.First.y;
@@ -129,7 +129,7 @@ namespace feltic.Integrator
                 if (ActionCurve.Type == CurveType.Cubic && Event.IsCursor)
                 {
                     ActionCurve.Points[1].x = ((ActionCurve.Points.First.x + x) / 2);
-                    ActionCurve.Points[1].y = ActionCurve.Points.Get(0).y;
+                    ActionCurve.Points[1].y = ActionCurve.Points.First.y;
                     ActionCurve.Points[2].x = x;
                     ActionCurve.Points[2].y = ((ActionCurve.Points.First.y + y) / 2);
                     ActionCurve.Points[3].x = x;
@@ -250,7 +250,7 @@ namespace feltic.Integrator
             }
             else if(!InProgress && ActionButton.Type == ActionButtonType.QuadraticPath)
             {
-                ActionCurve = Surface.AddSegment(CurveType.Quadratic, 20);
+                ActionCurve = Surface.AddSegment(CurveType.Conic, 20);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);
                 ActionCurve.AddPoint(x, y);

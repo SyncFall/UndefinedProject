@@ -188,11 +188,11 @@ namespace feltic.Library
         {
             get
             {
-                return map[Key];
+                return GetValue(Key);
             }
             set
             {
-                map[Key] = value;
+                Put(Key, value);
             }
         }
 
@@ -232,10 +232,7 @@ namespace feltic.Library
 
         public int Size
         {
-            get
-            {
-                return map.Count;
-            }
+            get{ return map.Count; }
         }
 
         public void Clear()

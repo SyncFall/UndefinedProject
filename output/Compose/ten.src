@@ -88,3 +88,14 @@ object FileExplorer extend visual
 		}
 	}
 }
+
+object Test extend visual
+{
+	FileExplorer explorer;
+
+	Test()
+	{
+		this.explorer = new FileExplorer();
+		this.content = this.explorer;
+	}
+}

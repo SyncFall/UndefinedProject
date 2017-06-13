@@ -168,7 +168,7 @@ namespace feltic.Visual
                 scroll.DrawScrollX();
             }
 
-            // calculate childrens
+            // draw childrens
             if(Nodes == null) return;
             for(int i=0; i<Nodes.Size; i++){
                 Nodes[i].Draw();

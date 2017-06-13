@@ -15,9 +15,9 @@ namespace feltic.Visual
     public enum CurveType
     {
         Line,
-        Quadratic,
+        Conic,
         Cubic,
-        Nurbs,
+        Nurb,
     }
 
     public class CurvePointList : ListCollection<CurvePoint>
@@ -244,7 +244,7 @@ namespace feltic.Visual
         {
             Knots.Clear();
             int knotCount = (Points.Size + Degree + 1);
-            if (Type == CurveType.Nurbs)
+            if (Type == CurveType.Nurb)
             {
                 float uniformVal = (1 / (float)knotCount);
                 float uniformSum = 0;

@@ -103,7 +103,6 @@ namespace feltic.Language
                 }
                 return new Symbol(new string(charArray), (int)TokenType.Identifier);
             }
-            // none here
             return null;
         }
 
@@ -126,7 +125,6 @@ namespace feltic.Language
                 string charData = new string(TextParser.Text, start, end - start);
                 return new Symbol(charData, (int)TokenType.Literal, (int)LiteralType.Char);
             }
-            // none here
             return null;
         }
 
@@ -205,7 +203,6 @@ namespace feltic.Language
                 string commentData = new string(TextParser.Text, start, end - start);
                 return new Symbol(commentData, (int)TokenType.Comment, 2);
             }
-            // none here
             return null;
         }
 

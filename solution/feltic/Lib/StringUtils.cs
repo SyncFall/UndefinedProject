@@ -3,7 +3,7 @@ namespace feltic.Library
 {
     public static class StringUtils
     {
-        public static int CountSearchString(string str, string search)
+        public static int Count(string str, string search)
         {
             if(str == null || str.Length == 0)
             {
@@ -26,24 +26,20 @@ namespace feltic.Library
                     }
                 }
                 if(match)
-                {
                     count++;
-                }
                 else
-                {
                     i++;
-                }
             }
             return count;
         }
 
-        public static string[] SplitSearchString(string str, string search)
+        public static string[] Split(string str, string search)
         {
             if(str == null || str.Length == 0)
             {
                 return new string[]{};
             }
-            int count = CountSearchString(str, search);
+            int count = Count(str, search);
             if(count == 0)
             {
                 return new string[] { str };

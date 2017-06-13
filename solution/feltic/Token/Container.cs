@@ -156,9 +156,9 @@ namespace feltic.Language
 
         public TokenPointer FirstLineToken(int lineNumber)
         {
-            if (AllTokens.Size == 0 || lineNumber-1 < 0 || lineNumber >= LineTokenPositions.Size-1)
+            if (AllTokens.Size == 0 || lineNumber < 0 || lineNumber >= LineTokenPositions.Size-1)
                 return null;
-            int position = (LineTokenPositions[lineNumber-1])+1;
+            int position = (LineTokenPositions[lineNumber])+1;
             return new TokenPointer(this, position);
         }
     }

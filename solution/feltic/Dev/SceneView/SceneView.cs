@@ -21,7 +21,7 @@ namespace feltic.Integrator
 
         public SceneView()
         {
-            Root.add(new FileExplorer());
+            Root.add(new Test());
         }
  
         public void Draw()

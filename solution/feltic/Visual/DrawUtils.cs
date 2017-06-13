@@ -12,8 +12,8 @@ namespace feltic.Visual
     {
         public static void Rotate(float x, float y)
         {
-            GL.Rotate(x, 1.0, 0.0, 0.0);
-            GL.Rotate(y, 0.0, 1.0, 0.0);
+            GL.Rotate(x, 1f, 0f, 0f);
+            GL.Rotate(y, 0f, 1f, 0f);
         }
 
         public static void DrawTriangleCycle(float x, float y, float radius, int triangleCount=20)

@@ -27,7 +27,7 @@ namespace feltic.Language
                 {
                     lastScopeSymbol = TryScope(sourceSymbol, signature as ScopeSignature);
                 }
-                else if(signature.Type == SignatureType.ObjectDec)
+                else if(signature.Type == SignatureType.ObjectDef)
                 {
                     TryObject(lastScopeSymbol, signature as ObjectSignature);
                 }
@@ -100,11 +100,11 @@ namespace feltic.Language
                 for (int i = 0; i < Signature.ElementList.Size; i++)
                 {
                     SignatureSymbol element = Signature.ElementList[i];
-                    if(element.Type == SignatureType.VariableDec)
+                    if(element.Type == SignatureType.VariableDef)
                     {
                         TryMember(objectSymbol, element as VariableSignature);
                     }
-                    else if(element.Type == SignatureType.FunctionDec)
+                    else if(element.Type == SignatureType.FunctionDef)
                     {
                         TryMethod(objectSymbol, element as FunctionSignature);
                     }

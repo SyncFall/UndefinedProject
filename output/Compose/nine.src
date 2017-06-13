@@ -1,7 +1,7 @@
 
-object Editor extend visual
+object Test extend visual
 {
-	Editor()
+	Test()
 	{
 		string str = File.ReadAllText("csharp.cs");
 		this.content = 

@@ -108,6 +108,17 @@ namespace Scope
 		}
 	}
 
+	public class Test : VisualElement
+	{
+		public FileExplorer explorer;
+
+		public Test()
+		{
+						this.explorer = new FileExplorer();
+						this.content = this.explorer;
+		}
+	}
+
 
 	public class Visual_1_FileNode : VisualElement
 	{

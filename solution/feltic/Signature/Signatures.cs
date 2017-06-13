@@ -20,18 +20,18 @@ namespace feltic.Language
         Path,
         PathNode,
         // object, function, variable
-        ObjectDec,
-        VariableDec,
-        FunctionDec,
-        PropertyDec,
+        ObjectDef,
+        VariableDef,
+        FunctionDef,
+        PropertyDef,
         BlockDef,
-        TypeDec,
-        GenericDec,
+        TypeDef,
+        GenericDef,
         GenericElm,
-        ArrayDec,
+        ArrayDef,
         ArrayParam,
-        ParamDec,
-        Param,
+        ParamDef,
+        ParamElm,
         // code
         Code,
         Statement,
@@ -49,7 +49,7 @@ namespace feltic.Language
         ArrayOperand,
         BlockOperand,
         StructedBlockOperand,
-        // structed/visual-elements
+        // structed-block
         StructedBlock,
         StructedAttribute,
     }

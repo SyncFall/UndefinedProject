@@ -228,7 +228,7 @@ namespace feltic.Language
         public SignatureList ElementList = new SignatureList();
         public Symbol BlockEnd;
 
-        public ObjectSignature() : base(SignatureType.ObjectDec)
+        public ObjectSignature() : base(SignatureType.ObjectDef)
         { }
 
         public override string ToString()
@@ -242,7 +242,7 @@ namespace feltic.Language
         public TypeDeclarationSignature TypeDeclaration;
         public Symbol Complete;
 
-        public VariableSignature() : base(SignatureType.VariableDec)
+        public VariableSignature() : base(SignatureType.VariableDef)
         { }
 
         public override string ToString()
@@ -258,7 +258,7 @@ namespace feltic.Language
         public ParameterDeclarationSignature ParameterDeclaration;
         public CodeSignature Code;
 
-        public FunctionSignature() : base(SignatureType.FunctionDec)
+        public FunctionSignature() : base(SignatureType.FunctionDef)
         { }
 
         public override string ToString()
@@ -279,7 +279,7 @@ namespace feltic.Language
         public Symbol CodeType;
         public CodeSignature Code;
 
-        public PropertySignature(Symbol CodeType) : base(SignatureType.PropertyDec)
+        public PropertySignature(Symbol CodeType) : base(SignatureType.PropertyDef)
         {
             this.CodeType = CodeType;
         }

@@ -57,7 +57,7 @@ namespace feltic.Language
                     StatementSignature parentStatement = statement.Parent;
                     while (parentStatement != null)
                     {
-                        if (parentStatement.Type == StatementType.While)
+                        if (parentStatement.Type == StatementType.While || parentStatement.Type == StatementType.For)
                         {
                             foundLoopBlock = true;
                             break;

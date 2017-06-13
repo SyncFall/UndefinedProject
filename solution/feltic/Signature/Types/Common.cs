@@ -201,7 +201,7 @@ namespace feltic.Language
         public ExpressionSignature AssigmentExpression;
         public Symbol Seperator;
      
-        public TypeDeclarationSignature() : base(SignatureType.TypeDec)
+        public TypeDeclarationSignature() : base(SignatureType.TypeDef)
         { }
 
         public override string ToString()
@@ -227,7 +227,7 @@ namespace feltic.Language
         public ListCollection<GenericElementSignature> ElementList = new ListCollection<GenericElementSignature>();
         public Symbol BlockEnd;
 
-        public GenericDeclarationSignature() : base(SignatureType.GenericDec)
+        public GenericDeclarationSignature() : base(SignatureType.GenericDef)
         { }
 
         public override string ToString()
@@ -263,7 +263,7 @@ namespace feltic.Language
         public ListCollection<Symbol> DimensionSymbols = new ListCollection<Symbol>();
         public Symbol BlockEnd;
 
-        public ArrayDeclarationSignature() : base(SignatureType.ArrayDec)
+        public ArrayDeclarationSignature() : base(SignatureType.ArrayDef)
         { }
 
         public override string ToString()
@@ -278,7 +278,7 @@ namespace feltic.Language
         public ListCollection<ParameterSignature> Elements = new ListCollection<ParameterSignature>();
         public Symbol BlockEnd;
 
-        public ParameterDeclarationSignature() : base(SignatureType.ParamDec)
+        public ParameterDeclarationSignature() : base(SignatureType.ParamDef)
         { }
 
         public override string ToString()
@@ -293,12 +293,12 @@ namespace feltic.Language
         public ExpressionSignature Expression;
         public Symbol Seperator;
 
-        public ParameterSignature(TypeDeclarationSignature TypeDeclaration) : base(SignatureType.Param)
+        public ParameterSignature(TypeDeclarationSignature TypeDeclaration) : base(SignatureType.ParamElm)
         {
             this.TypeDeclaration = TypeDeclaration;
         }
 
-        public ParameterSignature(ExpressionSignature Expression) : base(SignatureType.Param)
+        public ParameterSignature(ExpressionSignature Expression) : base(SignatureType.ParamElm)
         {
             this.Expression = Expression;
         }

@@ -22,7 +22,7 @@ namespace feltic.Visual
             {
                 Curve = new Curve(Type, 1, Detail);
             }
-            else if (Type == CurveType.Quadratic)
+            else if (Type == CurveType.Conic)
             {
                 Curve = new Curve(Type, 2, Detail);
             }
@@ -30,7 +30,7 @@ namespace feltic.Visual
             {
                 Curve = new Curve(Type, 3, Detail);
             }
-            else if (Type == CurveType.Nurbs)
+            else if (Type == CurveType.Nurb)
             {
                 Curve = new Curve(Type, 2, Detail);
             }

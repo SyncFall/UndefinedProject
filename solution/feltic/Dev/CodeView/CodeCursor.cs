@@ -29,13 +29,9 @@ namespace feltic.Integrator
             int rest = (int)(span % BlinkInterval);
             int half = (BlinkInterval / 2);
             if(rest <= half)
-            {
                 return true;
-            }
             else
-            {
                 return false;
-            }
         }
     }
 
@@ -519,14 +515,14 @@ namespace feltic.Integrator
             float xOffset = start.X;
 
  
-            float scrollOffset = (VisualCode.Parent as VisualScroll).ScrollYPosition;
-            float scrollHeight = (VisualCode.Parent as VisualScroll).RenderSize.Height;
-            float codeHeight = (VisualCode.RenderSize.Height);
-            float factorHeight = (codeHeight / scrollHeight);
-            float offsetHeight = (scrollOffset * factorHeight);
+            //float scrollOffset = (VisualCode.Parent as VisualScroll).ScrollYPosition;
+            //float scrollHeight = (VisualCode.Parent as VisualScroll).RenderSize.Height;
+            //float codeHeight = (VisualCode.RenderSize.Height);
+            //float factorHeight = (codeHeight / scrollHeight);
+            //float offsetHeight = (scrollOffset * factorHeight);
 
 
-            yOffset = start.Y + (((fontMetric.VerticalAdvance + fontMetric.LineSpace) * (LineNumber)) - (offsetHeight));
+            //yOffset = start.Y + (((fontMetric.VerticalAdvance + fontMetric.LineSpace) * (LineNumber)) - (offsetHeight));
 
             TokenPointer pointer = TokenContainer.FirstLineToken(LineNumber);
             if (pointer == null) return;

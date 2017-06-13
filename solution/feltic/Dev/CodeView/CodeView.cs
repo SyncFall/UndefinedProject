@@ -19,7 +19,7 @@ namespace feltic.Integrator
         public CodeView(IntegratorView IntegratorView)
         {
             this.IntegratorView = IntegratorView;
-            //this.CodeText = new CodeText();
+            this.CodeText = new CodeText();
         }
 
         public void Draw()
