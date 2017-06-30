@@ -28,10 +28,8 @@ namespace feltic.Integrator
         {
             if(Root != null)
             {
-                //CodeText.CodeSelection.Draw();
                 Root.Metrics(new Position(20, 20));
                 Root.Draw();
-                //CodeText.CodeCursor.Draw();
             }
         }
     }

@@ -32,11 +32,11 @@ object FileNode extend visual
 		int depthFolderWidth = (depth * 16);
 		int depthFileWidth = (depthFolderWidth + 16);
 		if(this.isFolder){
-			elm = <block listener=elmListener marginLeft=depthFolderWidth paddingTop=2>.name;</block>;
+			elm = <block listener=elmListener marginLeft=depthFolderWidth paddingTop=2><image source="folder.png" height=14/>.name;</block>;
 			list = <block/>;
 			this.add(elm, list);
 		}else{
-			elm = <block listener=elmListener marginLeft=depthFileWidth paddingTop=2>.name;</block>;
+			elm = <block listener=elmListener marginLeft=depthFileWidth paddingTop=2><image source="file.png" height=14/>.name;</block>;
 			this.add(elm);
 		}		
 	}

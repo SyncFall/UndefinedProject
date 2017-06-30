@@ -344,7 +344,7 @@ namespace feltic.Language
             WriteLine(tabs + 1, "public " + vlstn.IdentifierString + "(" + vlstn.Visual.Object.Signature.Identifier.String + " Object, VisualElement Element) : base(Element)");
             WriteLine(tabs + 1, "{");
             WriteLine(tabs + 2, "this.Object = Object;");
-            WriteLine(tabs + 2, "this.Element.InputListener = this;");
+            WriteLine(tabs + 2, "this.Element.Listener = this;");
             WriteLine(tabs + 1, "}");
             WriteLine();
             WriteLine(tabs + 1, "public override void Event(InputEvent Event){");

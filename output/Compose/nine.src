@@ -3,10 +3,9 @@ object Test extend visual
 {
 	Test()
 	{
-		string str = File.ReadAllText("csharp.cs");
 		this.content = 
-			<scroll width=175 height=225>
-				<block width=350>
+			<scroll width=175 height=150>
+				<block>
 					<block width=300 height=75/>
 					<block width=200>
 						<block width=75 height=50/>

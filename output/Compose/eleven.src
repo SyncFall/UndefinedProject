@@ -1,0 +1,25 @@
+
+object Test extend visual
+{
+	Test()
+	{
+		this.content = 
+			<scroll width=75 height=60>
+				<block>
+					<image height=50 width=50 source="folder.png"/>
+					<image height=50 width=50 source="file.png"/>
+					<image height=50 width=50 source="folder.png"/>
+					<br/>
+					<image height=50 width=50 source="file.png"/>
+					<br/>
+					<image height=50 width=50 source="folder.png"/>
+					<image height=50 width=50 source="file.png"/>
+					<image height=50 width=50 source="folder.png"/>
+					<br/>
+					<image height=50 width=50 source="file.png"/>
+					<br/>
+				</block>
+			</scroll>
+		;
+	}
+}

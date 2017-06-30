@@ -12,7 +12,7 @@ namespace feltic.Visual
         public float Y;
         public float Z;
 
-        public Position(float x = 0f, float y=0f, float z = 0f)
+        public Position(float x=0f, float y=0f, float z=0f)
         {
             this.X = x;
             this.Y = y;
@@ -21,14 +21,27 @@ namespace feltic.Visual
 
         public Position(Position Position)
         {
-            this.X = Position.X;
-            this.Y = Position.Y;
-            this.Z = Position.Z;
+            if(Position != null)
+            {
+                this.X = Position.X;
+                this.Y = Position.Y;
+                this.Z = Position.Z;
+            }
+        }
+
+        public Position(Size Size)
+        {
+            if (Size != null)
+            {
+                this.X = Size.Width;
+                this.Y = Size.Height;
+                this.Z = Size.Depth;
+            }
         }
 
         public Position Plus(Position B)
         {
-            if (B == null) return null;
+            if (B == null) return this;
             this.X += B.X;
             this.Y += B.Y;
             this.Z += B.Z;
@@ -37,17 +50,11 @@ namespace feltic.Visual
 
         public Position Minus(Position B)
         {
-            if (B == null) return null;
+            if (B == null) return this;
             this.X -= B.X;
             this.Y -= B.Y;
             this.Z -= B.Z;
             return this;
-        }
-
-        public bool GreaterAny(Position B)
-        {
-            if (B == null) return false;
-            return (B.X > X || B.Y > Y || B.Z > Z);
         }
 
         public static Position Plus(Position A, Position B)
@@ -64,12 +71,6 @@ namespace feltic.Visual
             if (A == null) return new Position(B);
             if (B == null) return new Position(A);
             return new Position(A).Minus(B);
-        }
-
-        public static bool GreaterAny(Position A, Position B)
-        {
-            if (A == null || B == null) return false;
-            return A.GreaterAny(B);
         }
     }
 
@@ -96,6 +97,16 @@ namespace feltic.Visual
                 this.Width = Size.Width;
                 this.Height = Size.Height;
                 this.Depth = Size.Depth;
+            }
+        }
+
+        public Size(Position Position)
+        {
+            if (Position != null)
+            {
+                this.Width = Position.X;
+                this.Height = Position.Y;
+                this.Depth = Position.Z;
             }
         }
 
