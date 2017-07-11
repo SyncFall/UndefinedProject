@@ -50,9 +50,9 @@ namespace feltic.Integrator
         {
             get
             {
-                if (VisualCode == null || VisualCode.RenderPosition == null)
+                if (VisualCode == null || VisualCode.Render == null || !VisualCode.Render.True)
                     return null;
-                return VisualCode.RenderPosition;
+                return VisualCode.Render.Position;
             }
         }
 

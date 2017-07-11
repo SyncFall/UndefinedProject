@@ -153,3 +153,10 @@ object FileExplorer extend visual
 		}
 	}
 }
+
+object Test extend visual
+{
+	Test(){
+		this.content = new Editor();
+	}
+}

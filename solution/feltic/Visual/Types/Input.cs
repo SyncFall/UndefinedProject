@@ -182,32 +182,32 @@ namespace feltic.Visual
     public enum VisualEventState
     {
         None=0,
-        Active,
         Focus,
+        Hover,
     }
 
     public class VisualState : InputState
     {
-        public bool GainActive;
-        public bool LostActive;
         public bool GainFocus;
         public bool LostFocus;
+        public bool GainHover;
+        public bool LostHover;
 
         public VisualState(VisualEventState State, bool Boolean)
         {
-            if (State == VisualEventState.Active)
-            {
-                if (Boolean)
-                    GainActive = true;
-                else
-                    LostActive = true;
-            }
-            else if(State == VisualEventState.Focus)
+            if (State == VisualEventState.Focus)
             {
                 if (Boolean)
                     GainFocus = true;
                 else
                     LostFocus = true;
+            }
+            else if(State == VisualEventState.Hover)
+            {
+                if (Boolean)
+                    GainHover = true;
+                else
+                    LostHover = true;
             }
         }
     }

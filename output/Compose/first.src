@@ -1,23 +1,31 @@
 
-<block width=900px height=550px>
-	<block height=25px>"Compose-Editor"</block>
-	<block height=20px>
-		<column>"Workspace"</column>
-		<column>"Settings"</column>
-		<column>"About"</column>
-		<column><input>"text-write"</input></column>
-	</block>
-	<block height=25px>
-		<column>"Undo"</column>
-		<column>"Redo"</column>
-	</block>
-	<block height=500px>
-		<column width=70%>
-			<scroll>
-				<block id="code"/>
-			</scroll>
-		</column>
-		<column width=30%>"navigation"</column>
-	</block>
-	<block height=125px>"status"</block>
-</block>
+
+object Test extend visual
+{
+	Test()
+	{
+		this.content = 
+			<block width=900px height=550px>
+				<block height=25px>"Compose-Editor"</block>
+				<block height=20px>
+					<inline>"Workspace"</inline>
+					<inline>"Settings"</inline>
+					<inline>"About"</inline>
+				</block>
+				<block height=25px>
+					<inline>"Undo"</inline>
+					<inline>"Redo"</inline>
+				</block>
+				<block height=500px>
+					<inline width=70pc>
+						<scroll>
+							<block id="code"/>
+						</scroll>
+					</inline>
+					<inline width=30pc>"navigation"</inline>
+				</block>
+				<block height=125px>"status"</block>
+			</block>
+		;
+	}
+}

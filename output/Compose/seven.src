@@ -1,54 +1,34 @@
 
-
-object FileNode extend visual
+object Node extend visual
 {
-	FileNode parent;
-	visual elm;
 	visual list;
-	string path;
-	string name;
-	bool isFolder;
-	int depth;
 
-	FileNode(FileNode parent, string path, bool isFolder, int depth)
+	Node(visual parent, string dir, int depth)
 	{
-		this.parent = parent;
-		this.path = path;
-		if(isFolder){
-			if(path.StartsWith(".\u005C")){
-				this.name = path.Substring(2);
-			}else{
-				this.name = path;
-			}
-		}else{
-			this.name += Path.GetFileName(path);
+		this.buildFolder(parent, dir, depth);
+	}
+	
+	func buildFolder(visual parent, string dir, int depth)
+	{
+		int margin1 = depth * 20;
+		int margin2 = margin1 + 20;
+		string[] folderArr = Directory.GetDirectories(dir);
+		string folder;
+		for(int i=0; i<folderArr.Length; i++){
+			folder = folderArr[i].Substring(dir.Length+1);
+			parent.add(<block marginLeft=margin2><image source="folder.png" marginRight=10 height=20/>.folder<br/></block>);
+			new Node(parent, dir+"/"+folder, depth+1);
 		}
-		this.isFolder = isFolder;
-		this.depth = depth;
-		this.build();
+
+		string[] fileArr = Directory.GetFiles(dir);
+		string file;
+		for(int i=0; i<fileArr.Length; i++){
+			file = fileArr[i].Substring(dir.Length+1);
+			parent.add(<block marginLeft=margin2><image source="file.png" marginRight=10 height=20/>.file<br/></block>);
+		}
 	}
 
-	func build()
-	{
-		int depthFolderWidth = (depth * 16);
-		int depthFileWidth = (depthFolderWidth + 16);
-		if(this.isFolder){
-			elm = <block listener=elmListener marginLeft=depthFolderWidth paddingTop=2><image source="folder.png" height=14 marginRight=4/>.name;</block>;
-			list = <block/>;
-			this.add(elm, list);
-		}else{
-			elm = <block listener=elmListener marginLeft=depthFileWidth paddingTop=2><image source="file.png" height=14 marginRight=2/>.name;</block>;
-			this.add(elm);
-		}		
-	}
-
-	func addEntry(FileNode child)
-	{
-		list.add(child);
-		list.display = true;
-	}
-
-	func elmListener(InputEvent inevt)
+	func Toggle(InputEvent inevt)
 	{
 		bool toogleList = (inevt.Button.LeftClick);
 		if(list != null && toogleList){
@@ -57,35 +37,14 @@ object FileNode extend visual
 	}
 }
 
-
-object FileExplorer extend visual
+object Test extend visual
 {
-	FileNode Root;
-
-	FileExplorer()
+	Test()
 	{
-		Root = new FileNode(null, "ROOT", true, 0);
-		this.buildFolder(".", Root, 0);
-		this.add(Root);
-	}
-
-	func buildFolder(string dir, FileNode parent, int depth)
-	{
-		if(dir.Contains("\\.")){
-			return;
-		} 
-		FileNode folder = new FileNode(parent, dir, true, depth);
-		if(dir != "."){
-			parent.addEntry(folder);
-			parent = folder;
-		}
-		string[] dirArr = Directory.GetDirectories(dir);
-		for(int i=0; i<dirArr.Length; i++){
-			this.buildFolder(dirArr[i], parent, depth+1);
-		}
-		string[] fileArr = Directory.GetFiles(dir);
-		for(int i=0; i<fileArr.Length; i++){
-			parent.addEntry(new FileNode(parent, fileArr[i], false, depth));
-		}
+		visual root = <block/>;
+		new Node(root, ".", 0);
+		visual cnt = <scroll width=150 height=300/>;
+		cnt.Nodes[0].add(root);
+		this.content = cnt;
 	}
 }

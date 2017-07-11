@@ -1,7 +1,6 @@
 
 object FileNode extend visual
 {
-	FileNode parent;
 	visual elm;
 	visual list;
 	string path;
@@ -9,9 +8,8 @@ object FileNode extend visual
 	bool isFolder;
 	int depth;
 
-	FileNode(FileNode parent, string path, bool isFolder, int depth)
+	FileNode(string path, bool isFolder, int depth)
 	{
-		this.parent = parent;
 		this.path = path;
 		if(isFolder){
 			if(path.StartsWith(".\u005C")){
@@ -32,18 +30,19 @@ object FileNode extend visual
 		int depthFolderWidth = (depth * 16);
 		int depthFileWidth = (depthFolderWidth + 16);
 		if(this.isFolder){
-			elm = <block listener=elmListener marginLeft=depthFolderWidth paddingTop=2><image source="folder.png" height=14/>.name;</block>;
-			list = <block/>;
-			this.add(elm, list);
+			elm = <block listener=elmListener>.name</block>;
+			this.add(elm);
+			list = <block></block>;
+			this.add(list);
 		}else{
-			elm = <block listener=elmListener marginLeft=depthFileWidth paddingTop=2><image source="file.png" height=14/>.name;</block>;
+			elm = <block listener=elmListener>.name</block>;
 			this.add(elm);
 		}		
 	}
 
 	func addEntry(FileNode child)
 	{
-		list.add(child);
+		list.Nodes.Add(child);
 		list.display = true;
 	}
 
@@ -63,28 +62,21 @@ object FileExplorer extend visual
 
 	FileExplorer()
 	{
-		RootNode = new FileNode(null, "ROOT", true, 0);
+		RootNode = new FileNode("ROOT", true, 0);
 		this.buildFolder(".", RootNode, 0);
-		this.content = <scroll width=150 height=300>.RootNode</scroll>;
+		this.content = <block width=150 height=300>.RootNode</block>;
 	}
 
 	func buildFolder(string dir, FileNode parent, int depth)
 	{
-		if(dir.Contains("\\.")){
-			return;
-		} 
-		FileNode folder = new FileNode(parent, dir, true, depth);
-		if(dir != "."){
-			parent.addEntry(folder);
-			parent = folder;
-		}
+		parent.addEntry(new FileNode(dir, true, depth));
 		string[] dirArr = Directory.GetDirectories(dir);
 		for(int i=0; i<dirArr.Length; i++){
 			this.buildFolder(dirArr[i], parent, depth+1);
 		}
 		string[] fileArr = Directory.GetFiles(dir);
 		for(int i=0; i<fileArr.Length; i++){
-			parent.addEntry(new FileNode(parent, fileArr[i], false, depth));
+			parent.addEntry(new FileNode(fileArr[i], false, depth));
 		}
 	}
 }

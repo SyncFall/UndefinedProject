@@ -54,6 +54,17 @@ namespace feltic.Visual
                 Source.Bottom = Target.Bottom;
             return Source;
         }
+
+        public static Spacing Combine(Spacing Source, float Target)
+        {
+            if (Source == null)
+                Source = new Spacing();
+            Source.Left = new Way(Target);
+            Source.Top = new Way(Target);
+            Source.Right = new Way(Target);
+            Source.Bottom = new Way(Target);
+            return Source;
+        }
     }
 
     public class Room
@@ -85,6 +96,12 @@ namespace feltic.Visual
     {
         public WayType Type;
         public float way;
+
+        public Way(float way)
+        {
+            this.Type = WayType.Pixel;
+            this.way = way;
+        }
 
         public Way(int Type, float way)
         {

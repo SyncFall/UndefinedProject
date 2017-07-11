@@ -6,6 +6,8 @@ using OpenTK.Input;
 using System;
 using feltic.Language;
 using Scope;
+using System.Threading;
+using OpenTK.Graphics;
 
 namespace feltic
 {
@@ -17,7 +19,7 @@ namespace feltic
             Utils.PrintSourceTreeStatistics(@"..\solution\feltic\");
 
             SourceList list = new SourceList();
-            list.Add(SourceText.FromFile("Compose/nine.src"));
+            list.Add(SourceText.FromFile("Compose/seven.src"));
             Registry registry = new Registry();
             registry.AddSourceList(list);
             registry.WriteToTarget("csharp.cs");
@@ -59,8 +61,8 @@ namespace feltic
                 gameWindow.RenderFrame += (sender, e) =>
                 {
                     /*
-                    todo: multi-threaded, non-blocking environment processing
-                    todo: non-blocking render thread
+                    //todo: multi-threaded, non-blocking environment processing
+                    //todo: non-blocking render thread
                     new Thread(() =>
                     {
                         IGraphicsContext context = new GraphicsContext(GraphicsMode.Default, gameWindow.WindowInfo);
